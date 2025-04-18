@@ -2,23 +2,45 @@
 
 ## Architectural Patterns
 
-### 1. Route Groups Pattern
+### 1. Navigation System
 
-- Using Next.js App Router route groups
+[2025-04-18 14:28:34]
+
+- Provider Pattern for Sidebar
+  - Centralized state management
+  - Context-based configuration
+  - Cookie-based persistence
+- Responsive Layout Strategy
+  - Desktop: Collapsible sidebar
+  - Mobile: Sheet-based navigation
+  - Keyboard shortcut integration
+
+### 2. Route Organization
+
+- Next.js App Router route groups
 - Protected dashboard routes under (dashboard)
 - Authentication routes under auth/
 - API routes for authentication under api/auth/
 
-### 2. Component Architecture
+### 3. Component Architecture
 
-- Atomic design principles with UI components
-- Separation of concerns:
-  - UI components in components/ui/
-  - Providers in components/providers/
-  - Custom hooks in hooks/
-  - Utility functions in lib/
+- Composition Pattern with shadcn/ui
+  - Base components from Radix UI
+  - Enhanced with Tailwind utilities
+  - Compound components for complex UIs
+- Component Hierarchy:
+  ```
+  SidebarProvider
+  └── Sidebar
+      ├── SidebarHeader
+      ├── SidebarContent
+      │   └── SidebarMenu
+      │       └── SidebarMenuItem
+      │           └── SidebarMenuButton
+      └── SidebarTrigger
+  ```
 
-### 3. Authentication Pattern
+### 4. Authentication Pattern
 
 - Better Auth integration
 - Custom UI providers
@@ -31,17 +53,21 @@
 
 - Authentication UI providers
 - Theme provider (next-themes)
+- Sidebar state management
+- Mobile responsiveness detection
 
 ### 2. Hook Pattern
 
-- Custom mobile detection hook (use-mobile.ts)
-- Separation of client-side logic
+- Custom mobile detection (useIsMobile)
+- Path-based active state (usePathname)
+- Sidebar state management (useSidebar)
 
 ### 3. Component Composition
 
+- Compound components for navigation
 - Radix UI primitives as base
 - Enhanced with Tailwind utilities
-- Class variance authority for component variants
+- Class variance authority for variants
 
 ## Code Organization
 
@@ -51,6 +77,7 @@
 src/
 ├── app/          # Routes and pages
 ├── components/   # Reusable components
+│   └── ui/      # UI components
 ├── hooks/        # Custom hooks
 └── lib/         # Shared utilities
 ```
@@ -59,6 +86,14 @@ src/
 
 - PascalCase for components
 - camelCase for utilities and hooks
-- Kebab-case for file names
+- kebab-case for file names
+- data-\* attributes for component states
 
-[2025-04-18 14:20:01] - Initial system patterns documented
+### 3. State Management
+
+- Context for global states
+- Local state for component-specific data
+- Cookie persistence for user preferences
+- URL-based active states
+
+[2025-04-18 14:28:34] - Updated with shadcn/ui Sidebar patterns
