@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/better-auth-ui-providers";
 import { Toaster } from "sonner";
+import BProgressProviders from "@/components/providers/bprogress-providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <BProgressProviders>
+          <Providers>{children}</Providers>
+        </BProgressProviders>
         <Toaster />
       </body>
     </html>
