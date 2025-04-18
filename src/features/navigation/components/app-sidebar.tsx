@@ -3,10 +3,10 @@
 import * as React from "react";
 import { Command } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-project";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+import { NavMain } from "@/features/navigation/components/nav-main";
+import { NavProjects } from "@/features/navigation/components/nav-project";
+import { NavSecondary } from "@/features/navigation/components/nav-secondary";
+import { NavUser } from "@/features/navigation/components/nav-user";
 import { NavigationMain } from "@/features/navigation/types/navigation";
 import { getIconByName, iconMap } from "@/lib/icons";
 import {

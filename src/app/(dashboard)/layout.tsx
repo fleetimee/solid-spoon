@@ -1,4 +1,3 @@
-import { AppSidebar } from "@/components/app-sidebar";
 import { BreadcrumbNav } from "@/components/breadcrumb-nav";
 import { BreadcrumbProvider } from "@/components/providers/breadcrumb-provider";
 import { Separator } from "@/components/ui/separator";
@@ -7,6 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/features/navigation/components/app-sidebar";
 import { getNavigation } from "@/features/navigation/api/getNavigation";
 
 export default async function Layout({
