@@ -4,11 +4,11 @@ import * as React from "react";
 import { Command } from "lucide-react";
 
 import { NavMain } from "@/features/navigation/components/nav-main";
-import { NavProjects } from "@/features/navigation/components/nav-project";
+// import { NavProjects } from "@/features/navigation/components/nav-project";
 import { NavSecondary } from "@/features/navigation/components/nav-secondary";
 import { NavUser } from "@/features/navigation/components/nav-user";
 import { NavigationMain } from "@/features/navigation/types/navigation";
-import { getIconByName, iconMap } from "@/lib/icons";
+import { getIconByName } from "@/lib/icons";
 import {
   Sidebar,
   SidebarContent,
@@ -20,35 +20,38 @@ import {
 } from "@/components/ui/sidebar";
 
 const staticData = {
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: iconMap.LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: iconMap.Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: iconMap.Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: iconMap.PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: iconMap.Map,
-    },
-  ],
+  //   navSecondary: [
+  //     {
+  //       title: "Support",
+  //       url: "#",
+  //       icon: iconMap.LifeBuoy,
+  //     },
+  //     {
+  //       title: "Feedback",
+  //       url: "#",
+  //       icon: iconMap.Send,
+  //     },
+  //   ],
+
+  //   projects: [
+  //     {
+  //       name: "Design Engineering",
+  //       url: "#",
+  //       icon: iconMap.Frame,
+  //     },
+  //     {
+  //       name: "Sales & Marketing",
+  //       url: "#",
+  //       icon: iconMap.PieChart,
+  //     },
+  //     {
+  //       name: "Travel",
+  //       url: "#",
+  //       icon: iconMap.Map,
+  //     },
+  //   ],
+  navSecondary: [],
+  projects: [],
   defaultUser: {
     name: "Guest User",
     email: "guest@example.com",
@@ -102,7 +105,7 @@ export function AppSidebar({ navMain, userData, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={processedNavMain} />
-        <NavProjects projects={staticData.projects} />
+        {/* <NavProjects projects={staticData.projects} /> */}
         <NavSecondary items={staticData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
