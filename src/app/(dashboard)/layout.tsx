@@ -7,14 +7,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { getNavigation } from "@/lib/db";
+import { getNavigation } from "@/features/navigation/api/getNavigation";
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Query menu from the database
   const navMainItems = await getNavigation();
 
   return (
