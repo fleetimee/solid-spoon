@@ -7,7 +7,7 @@ import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-project";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
-import { NavigationMain } from "@/lib/db";
+import { NavigationMain } from "@/features/navigation/types/navigation";
 import { getIconByName, iconMap } from "@/lib/icons";
 import {
   Sidebar,
