@@ -20,11 +20,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const staticData = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navSecondary: [
     {
       title: "Support",
@@ -54,6 +49,12 @@ const staticData = {
       icon: iconMap.Map,
     },
   ],
+  defaultUser: {
+    name: "Guest User",
+    email: "guest@example.com",
+    image: null,
+    role: "guest",
+  },
 };
 
 function processNavItems(items: NavigationMain[]) {
@@ -68,10 +69,17 @@ function processNavItems(items: NavigationMain[]) {
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   navMain: NavigationMain[];
+  userData?: {
+    name: string;
+    email: string;
+    image: string | null | undefined;
+    role: string;
+  } | null;
 }
 
-export function AppSidebar({ navMain, ...props }: AppSidebarProps) {
+export function AppSidebar({ navMain, userData, ...props }: AppSidebarProps) {
   const processedNavMain = processNavItems(navMain);
+  const userForNav = userData || staticData.defaultUser;
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -98,7 +106,7 @@ export function AppSidebar({ navMain, ...props }: AppSidebarProps) {
         <NavSecondary items={staticData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={staticData.user} />
+        <NavUser user={userForNav} />
       </SidebarFooter>
     </Sidebar>
   );
