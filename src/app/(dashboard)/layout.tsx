@@ -6,6 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getAppSettings } from "@/features/application/api/getAppSettings";
 import { AppSidebar } from "@/features/navigation/components/app-sidebar";
 import { getNavigation } from "@/features/navigation/api/getNavigation";
 import { auth } from "@/lib/auth";
@@ -23,11 +24,12 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const [navMainItems, session] = await Promise.all([
+  const [navMainItems, session, appSettings] = await Promise.all([
     getNavigation(),
     auth.api.getSession({
       headers: await headers(),
     }),
+    getAppSettings(),
   ]);
 
   const userData: UserData | null = session?.user
@@ -44,7 +46,12 @@ export default async function Layout({
       <BreadcrumbProvider
         initialItems={[{ label: "Dashboard", href: "/dashboard" }]}
       >
-        <AppSidebar navMain={navMainItems} userData={userData} />
+        <AppSidebar
+          navMain={navMainItems}
+          userData={userData}
+          appName={appSettings.appName}
+          appDescription={appSettings.appDescription}
+        />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b">
             <div className="flex items-center gap-2 px-4">

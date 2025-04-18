@@ -78,9 +78,17 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     image: string | null | undefined;
     role: string;
   } | null;
+  appName: string;
+  appDescription: string;
 }
 
-export function AppSidebar({ navMain, userData, ...props }: AppSidebarProps) {
+export function AppSidebar({
+  navMain,
+  userData,
+  appName,
+  appDescription,
+  ...props
+}: AppSidebarProps) {
   const processedNavMain = processNavItems(navMain);
   const userForNav = userData || staticData.defaultUser;
 
@@ -95,8 +103,8 @@ export function AppSidebar({ navMain, userData, ...props }: AppSidebarProps) {
                   <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-semibold">{appName}</span>
+                  <span className="truncate text-xs">{appDescription}</span>
                 </div>
               </a>
             </SidebarMenuButton>
