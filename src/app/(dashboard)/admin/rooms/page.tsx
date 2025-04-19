@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Metadata } from "next";
 import { Plus, Search, Info, RefreshCw, Building2 } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,18 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "Room Management | Capstone Room Reservation",
+  description: "View and manage all available rooms in the reservation system",
+  openGraph: {
+    title: "Room Management System",
+    description: "Browse and manage all rooms in the reservation system",
+    type: "website",
+  },
+};
+
+export const fetchCache = "default-cache";
 
 const roomsBreadcrumb = [{ label: "Rooms" }, { label: "Manage Rooms" }];
 
