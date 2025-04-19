@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "shared.cloudflare.steamstatic.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "asset-minio.fleetime.my.id",
+        pathname: "/**",
+      },
     ],
   },
 };
