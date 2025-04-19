@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import mime from "mime-types";
 
-import { getSignedUploadUrl } from "@/helpers/upload";
+import { getUnsignedUploadUrl } from "@/helpers/upload";
 
 const signedUrlSchema = z.object({
   fileName: z.string().min(1, "fileName is required"),
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     console.log("Content type:", contentType);
 
     // Generate the signed URL for uploading the file to S3.
-    const uploadUrl = await getSignedUploadUrl(fileName, contentType!);
+    const uploadUrl = await getUnsignedUploadUrl(fileName);
     return NextResponse.json({ uploadUrl });
   } catch (error) {
     console.error("Error generating signed URL:", error);

@@ -54,15 +54,23 @@ interface RoomFormProps {
   initialValues?: Partial<FormValues>;
 }
 
+type ImageState = {
+  file: File;
+  preview: string;
+  isCover: boolean;
+  status: "pending" | "uploading" | "success" | "error";
+  uploadUrl?: string;
+  errorMessage?: string;
+};
+
 export function RoomForm({ initialValues }: RoomFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Image preview state
-  const [images, setImages] = useState<
-    { file: File; preview: string; isCover: boolean }[]
-  >([]);
+  // Image preview state with upload status
+  const [images, setImages] = useState<ImageState[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,18 +83,107 @@ export function RoomForm({ initialValues }: RoomFormProps) {
     },
   });
 
-  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Function to upload a single file to MinIO via server proxy
+  const uploadFileToMinIO = async (file: File): Promise<string> => {
+    try {
+      // Create a FormData object to send the file
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Upload through our server proxy endpoint
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || "Failed to upload file");
+      }
+
+      const { fileUrl } = await response.json();
+      return fileUrl;
+    } catch (error) {
+      console.error("Upload error:", error);
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Unknown upload error");
+    }
+  };
+
+  const handleImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const newFiles = Array.from(e.target.files);
+      setIsUploading(true);
 
-      // Create previews for the new images
-      const newImages = newFiles.map((file) => ({
-        file,
-        preview: URL.createObjectURL(file),
-        isCover: images.length === 0, // First image is cover by default
-      }));
+      try {
+        // Create pending images
+        const pendingImages = newFiles.map((file) => ({
+          file,
+          preview: URL.createObjectURL(file),
+          isCover: images.length === 0, // First image is cover by default
+          status: "pending" as const,
+        }));
 
-      setImages((prev) => [...prev, ...newImages]);
+        // Add pending images to state
+        setImages((prev) => [...prev, ...pendingImages]);
+
+        // Upload each image and update its state
+        for (let i = 0; i < newFiles.length; i++) {
+          const file = newFiles[i];
+          const index = images.length + i;
+
+          // Update status to uploading
+          setImages((prev) => {
+            const updated = [...prev];
+            updated[index] = {
+              ...updated[index],
+              status: "uploading",
+            };
+            return updated;
+          });
+
+          try {
+            // Upload the file and get the URL
+            const uploadUrl = await uploadFileToMinIO(file);
+
+            // Update state with success
+            setImages((prev) => {
+              const updated = [...prev];
+              updated[index] = {
+                ...updated[index],
+                status: "success",
+                uploadUrl,
+              };
+              return updated;
+            });
+
+            toast(`Uploaded ${file.name}`, {
+              description: "File uploaded successfully",
+            });
+          } catch (error) {
+            // Update state with error
+            setImages((prev) => {
+              const updated = [...prev];
+              updated[index] = {
+                ...updated[index],
+                status: "error",
+                errorMessage:
+                  error instanceof Error ? error.message : "Upload failed",
+              };
+              return updated;
+            });
+
+            toast(`Failed to upload ${file.name}`, {
+              description:
+                error instanceof Error ? error.message : "Upload failed",
+            });
+          }
+        }
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -120,6 +217,24 @@ export function RoomForm({ initialValues }: RoomFormProps) {
   const onSubmit = (values: FormValues) => {
     setErrorMessage(null); // Reset error message on new submission
 
+    // Check if we have any images with upload errors
+    const hasErrorImages = images.some((img) => img.status === "error");
+    const hasUploadingImages = images.some(
+      (img) => img.status === "uploading" || img.status === "pending"
+    );
+
+    if (hasErrorImages) {
+      setErrorMessage(
+        "Please remove or re-upload failed images before submitting"
+      );
+      return;
+    }
+
+    if (hasUploadingImages) {
+      setErrorMessage("Please wait for all images to finish uploading");
+      return;
+    }
+
     startTransition(async () => {
       // Prepare form data for submission
       const formData = new FormData();
@@ -131,11 +246,13 @@ export function RoomForm({ initialValues }: RoomFormProps) {
         }
       });
 
-      // Append all images to the form data
+      // Append image URLs instead of files
       images.forEach((img, index) => {
-        formData.append("images", img.file);
-        if (img.isCover) {
-          formData.append(`cover_${index}`, "true");
+        if (img.status === "success" && img.uploadUrl) {
+          formData.append("imageUrls", img.uploadUrl);
+          if (img.isCover) {
+            formData.append(`cover_${index}`, "true");
+          }
         }
       });
 
@@ -281,15 +398,27 @@ export function RoomForm({ initialValues }: RoomFormProps) {
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="images"
-                  className="flex flex-col items-center justify-center w-full h-32 
+                  className={`flex flex-col items-center justify-center w-full h-32 
                           border-2 border-dashed rounded-md cursor-pointer 
-                          border-gray-300 hover:border-gray-400 transition-colors"
+                          border-gray-300 hover:border-gray-400 transition-colors
+                          ${isUploading ? "opacity-50 cursor-wait" : ""}`}
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 text-gray-500" />
-                    <p className="mt-2 text-sm text-gray-500">
-                      Click to upload images
-                    </p>
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+                        <p className="mt-2 text-sm text-gray-500">
+                          Uploading...
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-8 h-8 text-gray-500" />
+                        <p className="mt-2 text-sm text-gray-500">
+                          Click to upload images
+                        </p>
+                      </>
+                    )}
                   </div>
                 </label>
                 <Input
@@ -300,6 +429,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                   multiple
                   className="hidden"
                   onChange={handleImagesChange}
+                  disabled={isUploading}
                 />
               </div>
             </div>
@@ -314,7 +444,9 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                   {images.map((img, index) => (
                     <Card
                       key={index}
-                      className="relative overflow-hidden group"
+                      className={`relative overflow-hidden group ${
+                        img.status === "error" ? "border-red-500" : ""
+                      }`}
                     >
                       <div className="aspect-square relative">
                         <Image
@@ -328,6 +460,20 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                             <Check className="w-4 h-4" />
                           </div>
                         )}
+
+                        {/* Upload status indicator */}
+                        <div
+                          className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center
+                            ${img.status === "uploading" ? "visible" : "invisible"}`}
+                        >
+                          <Loader2 className="w-8 h-8 text-white animate-spin" />
+                        </div>
+
+                        {img.status === "error" && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-red-500 text-white p-1 text-xs">
+                            Upload failed
+                          </div>
+                        )}
                       </div>
                       <div className="absolute top-2 right-2 flex gap-2">
                         <Button
@@ -339,7 +485,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                         >
                           <X className="w-4 h-4" />
                         </Button>
-                        {!img.isCover && (
+                        {!img.isCover && img.status === "success" && (
                           <Button
                             type="button"
                             size="icon"
@@ -361,8 +507,9 @@ export function RoomForm({ initialValues }: RoomFormProps) {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                Add at least one image to showcase the room. The first image
-                will automatically be set as the cover image.
+                Add at least one image to showcase the room. Images will be
+                uploaded immediately. The first successful upload will
+                automatically be set as the cover image.
               </AlertDescription>
             </Alert>
           </div>
@@ -376,7 +523,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
         )}
 
         <div className="flex gap-4">
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending || isUploading}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Room
           </Button>

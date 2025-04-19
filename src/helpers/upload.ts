@@ -131,3 +131,16 @@ export async function getSignedUploadUrl(
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
   return signedUrl;
 }
+
+export async function getUnsignedUploadUrl(fileName: string): Promise<string> {
+  // Extract the file extension (e.g., .png, .jpg)
+  const fileExtension = fileName.substring(fileName.lastIndexOf("."));
+
+  // Generate a unique file name using nanoid
+  const uniqueFileName = `${nanoid()}${fileExtension}`;
+
+  // Build the complete S3 file path
+  const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
+
+  return `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${filePath}`;
+}

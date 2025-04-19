@@ -5,7 +5,6 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { headers } from "next/headers";
-import { uploadFileToS3 } from "@/helpers/upload";
 import { Room } from "../types/room";
 
 // Define validation schema for new room
@@ -28,7 +27,7 @@ export type CreateRoomFormState = {
 };
 
 /**
- * Server action to create a new room and upload room images
+ * Server action to create a new room with pre-uploaded images
  */
 export async function createRoomAction(
   formData: FormData
@@ -105,42 +104,31 @@ export async function createRoomAction(
 
     const newRoom = roomResult.rows[0] as Room;
 
-    // Process images
-    const images = formData.getAll("images") as File[];
+    // Process image URLs
+    const imageUrls = formData.getAll("imageUrls") as string[];
     let coverImageSet = false;
 
-    if (images && images.length > 0) {
-      for (const [index, image] of images.entries()) {
-        if (image.size > 0) {
-          // Only process non-empty files
-          const buffer = Buffer.from(await image.arrayBuffer());
-          const contentType = image.type;
+    if (imageUrls && imageUrls.length > 0) {
+      for (let index = 0; index < imageUrls.length; index++) {
+        const imageUrl = imageUrls[index];
 
-          // Upload image to S3/MinIO
-          const imageUrl = await uploadFileToS3(
-            buffer,
-            image.name,
-            contentType
-          );
+        // Set first image as cover by default or check if this image is marked as cover
+        const isCover =
+          index === 0 || formData.get(`cover_${index}`) === "true";
 
-          // Set first image as cover by default
-          const isCover =
-            index === 0 || formData.get(`cover_${index}`) === "true";
+        // Insert image record
+        await db.query(
+          `
+          INSERT INTO room_image 
+            (room_id, image_url, is_cover, sort_order) 
+          VALUES 
+            ($1, $2, $3, $4)
+          `,
+          [newRoom.id, imageUrl, isCover, index]
+        );
 
-          // Insert image record
-          await db.query(
-            `
-            INSERT INTO room_image 
-              (room_id, image_url, is_cover, sort_order) 
-            VALUES 
-              ($1, $2, $3, $4)
-            `,
-            [newRoom.id, imageUrl, isCover, index]
-          );
-
-          if (isCover) {
-            coverImageSet = true;
-          }
+        if (isCover) {
+          coverImageSet = true;
         }
       }
     }
