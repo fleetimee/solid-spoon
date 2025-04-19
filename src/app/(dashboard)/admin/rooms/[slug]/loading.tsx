@@ -16,7 +16,6 @@ export default function RoomDetailLoading() {
       <BreadcrumbSetter items={roomBreadcrumb} />
 
       <main className="flex flex-col grow p-4 max-w-7xl mx-auto w-full gap-8">
-        {/* Room Header Skeleton */}
         <div className="flex flex-col gap-2">
           <Skeleton className="h-10 w-2/3 max-w-md" />
           <div className="flex items-center gap-2 text-muted-foreground">
@@ -28,13 +27,11 @@ export default function RoomDetailLoading() {
           </div>
         </div>
 
-        {/* Image Gallery Skeleton */}
         <div className="w-full">
           <Skeleton className="w-full h-[400px] rounded-lg" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Room Details Skeleton */}
           <Card className="md:col-span-2">
             <CardContent className="pt-6">
               <div className="space-y-6">
@@ -66,13 +63,11 @@ export default function RoomDetailLoading() {
             </CardContent>
           </Card>
 
-          {/* Room Metadata Skeleton */}
           <Card>
             <CardContent className="pt-6">
               <Skeleton className="h-7 w-52 mb-4" />
               <Table>
                 <TableBody>
-                  {/* Capacity */}
                   <TableRow className="border-0 hover:bg-transparent">
                     <TableCell className="pl-0 py-2 w-1/3">
                       <div className="flex items-center gap-2">
@@ -85,7 +80,6 @@ export default function RoomDetailLoading() {
                     </TableCell>
                   </TableRow>
 
-                  {/* Created by */}
                   <TableRow className="border-0 hover:bg-transparent">
                     <TableCell className="pl-0 py-2 w-1/3">
                       <div className="flex items-center gap-2">
@@ -98,7 +92,6 @@ export default function RoomDetailLoading() {
                     </TableCell>
                   </TableRow>
 
-                  {/* Created at */}
                   <TableRow className="border-0 hover:bg-transparent">
                     <TableCell className="pl-0 py-2 w-1/3">
                       <div className="flex items-center gap-2">
@@ -111,7 +104,6 @@ export default function RoomDetailLoading() {
                     </TableCell>
                   </TableRow>
 
-                  {/* Updated by */}
                   <TableRow className="border-0 hover:bg-transparent">
                     <TableCell className="pl-0 py-2 w-1/3">
                       <div className="flex items-center gap-2">
@@ -136,7 +128,6 @@ export default function RoomDetailLoading() {
                     </TableCell>
                   </TableRow>
 
-                  {/* Status */}
                   <TableRow className="border-0 hover:bg-transparent">
                     <TableCell className="pl-0 py-2 w-1/3">
                       <span className="font-medium">Status</span>
