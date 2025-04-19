@@ -7,7 +7,6 @@ import db from "@/lib/db";
 import { headers } from "next/headers";
 import { Room } from "../types/room";
 
-// Define validation schema for new room
 const newRoomSchema = z.object({
   name: z.string().min(1, "Room name is required"),
   location: z.string().min(1, "Location is required"),
@@ -33,7 +32,6 @@ export async function createRoomAction(
   formData: FormData
 ): Promise<CreateRoomFormState> {
   try {
-    // Check authentication
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -45,14 +43,12 @@ export async function createRoomAction(
       };
     }
 
-    // Process and validate form data
     const name = formData.get("name") as string;
     const location = formData.get("location") as string;
     const capacity = formData.get("capacity") as string;
     const description = formData.get("description") as string;
     const facilities = formData.get("facilities") as string;
 
-    // Check if at least one image is provided
     const imageUrls = formData.getAll("imageUrls") as string[];
     if (!imageUrls || imageUrls.length === 0) {
       return {
@@ -61,7 +57,6 @@ export async function createRoomAction(
       };
     }
 
-    // Validate room data
     const validationResult = newRoomSchema.safeParse({
       name,
       location,
@@ -71,7 +66,6 @@ export async function createRoomAction(
     });
 
     if (!validationResult.success) {
-      // Return validation errors
       return {
         success: false,
         message: "Invalid room data",
@@ -79,13 +73,10 @@ export async function createRoomAction(
       };
     }
 
-    // Prepare data for db insertion
     const roomData = validationResult.data;
 
-    // Begin transaction
     await db.query("BEGIN");
 
-    // Insert room data
     const roomResult = await db.query(
       `
       INSERT INTO room 
@@ -119,11 +110,9 @@ export async function createRoomAction(
       for (let index = 0; index < imageUrls.length; index++) {
         const imageUrl = imageUrls[index];
 
-        // Set first image as cover by default or check if this image is marked as cover
         const isCover =
           index === 0 || formData.get(`cover_${index}`) === "true";
 
-        // Insert image record
         await db.query(
           `
           INSERT INTO room_image 
@@ -140,10 +129,8 @@ export async function createRoomAction(
       }
     }
 
-    // Commit transaction
     await db.query("COMMIT");
 
-    // Fetch cover image for the new room
     if (coverImageSet) {
       const coverImageResult = await db.query(
         `
@@ -160,7 +147,6 @@ export async function createRoomAction(
       }
     }
 
-    // Revalidate relevant paths
     revalidatePath("/admin/rooms");
 
     return {
@@ -169,13 +155,11 @@ export async function createRoomAction(
       room: newRoom,
     };
   } catch (error) {
-    // Roll back transaction on error
     await db.query("ROLLBACK");
 
     console.error("Failed to create room:", error);
 
     if (error instanceof Error) {
-      // Check for unique constraint violation
       if (
         error.message.includes(
           'duplicate key value violates unique constraint "room_name_key"'
