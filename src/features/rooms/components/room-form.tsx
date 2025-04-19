@@ -63,7 +63,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Define validation schema for new room
 const formSchema = z.object({
   name: z.string().min(1, "Room name is required"),
   location: z.string().min(1, "Location is required"),
@@ -75,7 +74,6 @@ const formSchema = z.object({
   facilities: z.array(z.string()).optional(),
 });
 
-// Define common room facilities with icons
 const facilityOptions = [
   { value: "Projector", label: "Projector", icon: Projector },
   { value: "Whiteboard", label: "Whiteboard", icon: PanelTop },
@@ -125,7 +123,6 @@ export function RoomForm({ initialValues }: RoomFormProps) {
     initialValues?.facilities ?? []
   );
 
-  // Use the image upload hook
   const {
     images,
     isUploading,
@@ -149,9 +146,8 @@ export function RoomForm({ initialValues }: RoomFormProps) {
   });
 
   const onSubmit = (values: FormValues) => {
-    setErrorMessage(null); // Reset error message on new submission
+    setErrorMessage(null);
 
-    // Validate images
     const imageValidation = validateImages();
     if (!imageValidation.isValid) {
       setErrorMessage(imageValidation.error || "Image validation failed");
@@ -159,10 +155,8 @@ export function RoomForm({ initialValues }: RoomFormProps) {
     }
 
     startTransition(async () => {
-      // Prepare form data for submission
       const formData = new FormData();
 
-      // Add basic form fields
       formData.append("name", values.name);
       formData.append("location", values.location);
       formData.append("capacity", String(values.capacity));
@@ -171,28 +165,23 @@ export function RoomForm({ initialValues }: RoomFormProps) {
         formData.append("description", values.description);
       }
 
-      // Process facilities - convert array to JSON string for server handling
       if (values.facilities && values.facilities.length > 0) {
         formData.append("facilities", JSON.stringify(values.facilities));
       } else {
         formData.append("facilities", "");
       }
 
-      // Add image data to formData
       prepareImagesForSubmission(formData);
 
-      // Submit the form data
       const result = await createRoomAction(formData);
 
       if (result.success) {
         toast("Room created successfully!", {});
 
-        // Redirect to rooms list after successful submission
         router.push("/admin/rooms");
       } else {
         setErrorMessage(result.message);
 
-        // Set form errors if applicable
         if (result.fieldErrors) {
           Object.entries(result.fieldErrors).forEach(([field, errors]) => {
             if (field in form.formState.errors && errors.length > 0) {
@@ -343,8 +332,8 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                           animation={1}
                           options={facilityOptions}
                           onValueChange={(values) => {
-                            setSelectedFacilities(values); // update local state
-                            field.onChange(values); // update form value
+                            setSelectedFacilities(values);
+                            field.onChange(values);
                           }}
                           value={selectedFacilities}
                           placeholder="Select facilities"
@@ -480,7 +469,6 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                 </div>
               </div>
 
-              {/* Image previews */}
               {images.length > 0 && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -522,7 +510,6 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                             </div>
                           )}
 
-                          {/* Upload status indicator */}
                           <div
                             className={`absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center
                               ${img.status === "uploading" ? "visible" : "invisible"}`}
