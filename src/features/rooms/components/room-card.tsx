@@ -21,10 +21,18 @@ import {
   Lightbulb,
   PanelLeftClose,
   Lightbulb as LightbulbIcon,
+  ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Room } from "../types/room";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 // Define facility icon mapping to match the room-form component
 const facilityIcons: Record<string, LucideIcon> = {
@@ -63,6 +71,17 @@ export function RoomCard({ room, className }: RoomCardProps) {
         : room.facilities.split(",").map((facility) => facility.trim())
       : []
     : [];
+
+  // Create a facility badge with icon
+  const FacilityBadge = ({ facility }: { facility: string }) => {
+    const IconComponent = facilityIcons[facility] || Home;
+    return (
+      <Badge variant="secondary" className="flex items-center gap-1 py-1">
+        <IconComponent className="h-3 w-3" />
+        <span>{facility}</span>
+      </Badge>
+    );
+  };
 
   return (
     <Card
@@ -107,21 +126,42 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
         {facilities.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {facilities.slice(0, 3).map((facility: string, index: number) => {
-              const IconComponent: LucideIcon = facilityIcons[facility] || Home;
-              return (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="flex items-center gap-1 py-1"
-                >
-                  <IconComponent className="h-3 w-3" />
-                  <span>{facility}</span>
-                </Badge>
-              );
-            })}
+            {facilities.slice(0, 3).map((facility: string, index: number) => (
+              <FacilityBadge key={index} facility={facility} />
+            ))}
+
+            {/* If there are more than 3 facilities, show a popover with the rest */}
             {facilities.length > 3 && (
-              <Badge variant="outline">+{facilities.length - 3} more</Badge>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer hover:bg-secondary flex items-center gap-1"
+                  >
+                    +{facilities.length - 3} more
+                    <ChevronDown className="h-3 w-3 ml-0.5" />
+                  </Badge>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  className="w-72 p-3"
+                  sideOffset={5}
+                >
+                  <div className="font-medium mb-2 text-sm">All Facilities</div>
+                  <ScrollArea
+                    className={cn(
+                      "pr-3",
+                      facilities.length > 8 ? "max-h-[280px]" : "max-h-full"
+                    )}
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      {facilities.map((facility: string, index: number) => (
+                        <FacilityBadge key={index} facility={facility} />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
             )}
           </div>
         )}
