@@ -1,4 +1,3 @@
-// ** Import Third Party Packages **
 import {
   S3Client,
   PutObjectCommand,
@@ -6,22 +5,19 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-// ** Import Third Party Packages **
 import { nanoid } from "nanoid";
 
-// Define root and subfolder names
 const rootFolder = "uploads";
 const subFolder = "images";
 
-// Configure S3Client to use self-hosted MinIO
 const s3Client = new S3Client({
-  region: process.env.MINIO_REGION || "us-east-1", // MinIO typically uses a default region
+  region: process.env.MINIO_REGION || "us-east-1",
   endpoint: process.env.MINIO_ENDPOINT || "https://minio.fleetime.my.id",
   credentials: {
     accessKeyId: process.env.MINIO_ACCESS_KEY!,
     secretAccessKey: process.env.MINIO_SECRET_KEY!,
   },
-  forcePathStyle: true, // Required for MinIO
+  forcePathStyle: true,
 });
 
 /**
@@ -37,13 +33,10 @@ export async function uploadFileToS3(
   fileName: string,
   contentType: string
 ): Promise<string> {
-  // Extract the file extension (e.g., .png, .jpg)
   const fileExtension = fileName.substring(fileName.lastIndexOf("."));
 
-  // Generate a unique file name using nanoid
   const uniqueFileName = `${nanoid()}${fileExtension}`;
 
-  // Build the complete S3 file path
   const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
 
   const command = new PutObjectCommand({
@@ -55,7 +48,6 @@ export async function uploadFileToS3(
 
   await s3Client.send(command);
 
-  // Return the public URL of the uploaded file
   return `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${filePath}`;
 }
 
@@ -69,7 +61,6 @@ export function extractKeyFromUrl(url: string): string {
   const bucketUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/`;
 
   if (url.startsWith(bucketUrl)) {
-    // Return only the relative path (S3 key) by stripping the bucket URL
     return url.replace(bucketUrl, "");
   }
 
@@ -83,7 +74,7 @@ export function extractKeyFromUrl(url: string): string {
  * @param key - The key of the file to be deleted.
  */
 export async function deleteFileFromS3(key: string): Promise<void> {
-  console.log("Deleting MinIO file with key:", key); // Debugging log
+  console.log("Deleting MinIO file with key:", key);
 
   const command = new DeleteObjectCommand({
     Bucket: process.env.MINIO_BUCKET_NAME,
@@ -112,20 +103,16 @@ export async function getSignedUploadUrl(
   contentType: string,
   expiresIn: number = 3600
 ): Promise<string> {
-  // Extract the file extension (e.g., .png, .jpg)
   const fileExtension = fileName.substring(fileName.lastIndexOf("."));
 
-  // Generate a unique file name using nanoid
   const uniqueFileName = `${nanoid()}${fileExtension}`;
 
-  // Build the complete S3 file path
   const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
 
   const command = new PutObjectCommand({
     Bucket: process.env.MINIO_BUCKET_NAME,
     Key: filePath,
     ContentType: contentType,
-    // ACL: "public-read", // # checkout the MinIO guide file.
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
@@ -133,13 +120,10 @@ export async function getSignedUploadUrl(
 }
 
 export async function getUnsignedUploadUrl(fileName: string): Promise<string> {
-  // Extract the file extension (e.g., .png, .jpg)
   const fileExtension = fileName.substring(fileName.lastIndexOf("."));
 
-  // Generate a unique file name using nanoid
   const uniqueFileName = `${nanoid()}${fileExtension}`;
 
-  // Build the complete S3 file path
   const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
 
   return `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${filePath}`;
