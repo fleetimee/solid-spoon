@@ -1,10 +1,16 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Search, Info, RefreshCw, Building2 } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Button } from "@/components/ui/button";
 import { RoomCard } from "@/features/rooms/components/room-card";
 import { RoomFilters } from "@/features/rooms/components/room-filters";
 import { getRooms, RoomSearchParams } from "@/features/rooms/api/getRooms";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 
 const roomsBreadcrumb = [
   { label: "Rooms", href: "/admin/rooms" },
@@ -39,6 +45,9 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
         : undefined,
   };
 
+  // Check if filters are applied
+  const hasFilters = Object.keys(searchParams).length > 0;
+
   // Fetch rooms with filters
   const rooms = await getRooms(parsedSearchParams);
 
@@ -60,32 +69,87 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
           </Button>
         </div>
 
-        {/* Search and Filters */}
         <div className="mb-6">
           <RoomFilters />
         </div>
 
         {rooms.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-            <h2 className="text-xl font-semibold">No rooms found</h2>
-            <p className="mb-4 text-muted-foreground">
-              {Object.keys(searchParams).length > 0
-                ? "Try adjusting your filters to see more results"
-                : "Get started by creating your first room"}
-            </p>
-            {Object.keys(searchParams).length > 0 ? (
-              <Button asChild variant="outline">
-                <Link href="/admin/rooms">Clear all filters</Link>
-              </Button>
-            ) : (
-              <Button asChild>
-                <Link href="/admin/rooms/add">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Room
-                </Link>
-              </Button>
-            )}
-          </div>
+          <Card className="border-dashed bg-muted/50 w-full max-w-3xl mx-auto">
+            <CardHeader className="flex flex-col items-center justify-center pb-0 pt-8">
+              <div className="flex flex-col items-center justify-center mb-6">
+                {hasFilters ? (
+                  <div className="bg-muted rounded-full p-6 mb-4">
+                    <Search
+                      className="h-12 w-12 text-muted-foreground"
+                      strokeWidth={1.25}
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-muted rounded-full p-6 mb-4">
+                    <Building2
+                      className="h-12 w-12 text-muted-foreground"
+                      strokeWidth={1.25}
+                    />
+                  </div>
+                )}
+                <h2 className="text-xl font-semibold text-center mt-2">
+                  {hasFilters
+                    ? "No matching rooms found"
+                    : "No rooms available"}
+                </h2>
+              </div>
+            </CardHeader>
+
+            <CardContent className="text-center space-y-2 pb-6 px-8">
+              {hasFilters ? (
+                <div className="space-y-4">
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    Your current filter settings didn&apos;t return any results.
+                    Try adjusting your filters or clearing them to see all
+                    rooms.
+                  </p>
+
+                  <div className="flex flex-col gap-2 items-center mt-2">
+                    <div className="bg-background/80 rounded-lg p-3 inline-flex gap-2 text-sm text-muted-foreground">
+                      <Info className="h-4 w-4 flex-shrink-0" />
+                      <span>Tip: Try broadening your search criteria</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  There are no rooms set up yet. Get started by adding your
+                  first room.
+                </p>
+              )}
+            </CardContent>
+
+            <CardFooter className="flex justify-center pb-8 pt-0">
+              {hasFilters ? (
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Button asChild variant="outline" className="gap-2">
+                    <Link href="/admin/rooms">
+                      <RefreshCw className="h-4 w-4" />
+                      Clear all filters
+                    </Link>
+                  </Button>
+                  <Button asChild className="gap-2">
+                    <Link href="/admin/rooms/add">
+                      <Plus className="h-4 w-4" />
+                      Add new room
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
+                <Button asChild className="gap-2">
+                  <Link href="/admin/rooms/add">
+                    <Plus className="h-4 w-4" />
+                    Add your first room
+                  </Link>
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rooms.map((room) => (
