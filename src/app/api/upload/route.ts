@@ -6,6 +6,39 @@ import {
 } from "@/helpers/upload";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import sharp from "sharp";
+
+// Image compression options
+const COMPRESSION_QUALITY = 80; // 0-100, higher means better quality but larger file size
+
+/**
+ * Compresses an image using Sharp based on its format
+ */
+async function compressImage(buffer: Buffer, format: string): Promise<Buffer> {
+  const sharpInstance = sharp(buffer);
+
+  switch (format.toLowerCase()) {
+    case "image/png":
+      return await sharpInstance
+        .png({ quality: COMPRESSION_QUALITY, compressionLevel: 9 })
+        .toBuffer();
+
+    case "image/jpeg":
+    case "image/jpg":
+      return await sharpInstance
+        .jpeg({ quality: COMPRESSION_QUALITY })
+        .toBuffer();
+
+    case "image/webp":
+      return await sharpInstance
+        .webp({ quality: COMPRESSION_QUALITY })
+        .toBuffer();
+
+    default:
+      // For unsupported formats, return original buffer
+      return buffer;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +59,20 @@ export async function POST(request: NextRequest) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const originalBuffer = Buffer.from(bytes);
 
-    const fileUrl = await uploadFileToS3(buffer, file.name, file.type);
+    // Check if the file is an image that should be compressed
+    const imageFormats = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+
+    let uploadBuffer: Buffer;
+    if (imageFormats.includes(file.type)) {
+      // Compress the image
+      uploadBuffer = await compressImage(originalBuffer, file.type);
+    } else {
+      uploadBuffer = originalBuffer;
+    }
+
+    const fileUrl = await uploadFileToS3(uploadBuffer, file.name, file.type);
 
     return NextResponse.json({ fileUrl });
   } catch (error) {
