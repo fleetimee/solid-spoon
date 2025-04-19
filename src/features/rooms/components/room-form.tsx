@@ -323,6 +323,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                       </FormDescription>
                       <FormControl>
                         <MultiSelect
+                          animation={1}
                           options={facilityOptions}
                           onValueChange={(values) => {
                             setSelectedFacilities(values); // update local state

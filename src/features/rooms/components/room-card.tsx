@@ -1,8 +1,53 @@
 import Image from "next/image";
-import { Users, MapPin } from "lucide-react";
+import {
+  Users,
+  MapPin,
+  Home,
+  Projector,
+  MonitorSmartphone,
+  Wifi,
+  Music2,
+  Coffee,
+  Airplay,
+  PanelTop,
+  FileText,
+  LucideIcon,
+  Thermometer,
+  Sun,
+  Currency,
+  Volume2,
+  Armchair,
+  Table2Icon,
+  Lightbulb,
+  PanelLeftClose,
+  Lightbulb as LightbulbIcon,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Room } from "../types/room";
+
+// Define facility icon mapping to match the room-form component
+const facilityIcons: Record<string, LucideIcon> = {
+  Projector: Projector,
+  Whiteboard: PanelTop,
+  "Video Conferencing": MonitorSmartphone,
+  "Wi-Fi": Wifi,
+  "Sound System": Music2,
+  Refreshments: Coffee,
+  "Screen Sharing": Airplay,
+  Teleconferencing: MonitorSmartphone,
+  Flipchart: FileText,
+  "Air Conditioning": Thermometer,
+  Heating: Thermometer,
+  "Natural Light": Sun,
+  "Blackout Curtains": Currency,
+  Soundproofing: Volume2,
+  "Ergonomic Chairs": Armchair,
+  "Standing Desks": Table2Icon,
+  "Adjustable Lighting": Lightbulb,
+  "Acoustic Panels": PanelLeftClose,
+  "Smart Lighting": LightbulbIcon,
+};
 
 interface RoomCardProps {
   room: Room;
@@ -10,8 +55,13 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ room, className }: RoomCardProps) {
+  // Parse facilities - handle both string and array formats for backward compatibility
   const facilities = room.facilities
-    ? room.facilities.split(",").map((facility) => facility.trim())
+    ? typeof room.facilities === "string"
+      ? room.facilities.startsWith("[")
+        ? JSON.parse(room.facilities)
+        : room.facilities.split(",").map((facility) => facility.trim())
+      : []
     : [];
 
   return (
@@ -57,9 +107,19 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
         {facilities.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {facilities.slice(0, 3).map((facility, index) => (
-              <Badge key={index}>{facility}</Badge>
-            ))}
+            {facilities.slice(0, 3).map((facility: string, index: number) => {
+              const IconComponent: LucideIcon = facilityIcons[facility] || Home;
+              return (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="flex items-center gap-1 py-1"
+                >
+                  <IconComponent className="h-3 w-3" />
+                  <span>{facility}</span>
+                </Badge>
+              );
+            })}
             {facilities.length > 3 && (
               <Badge variant="outline">+{facilities.length - 3} more</Badge>
             )}
