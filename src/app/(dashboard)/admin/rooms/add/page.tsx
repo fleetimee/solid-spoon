@@ -1,4 +1,6 @@
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { Card } from "@/components/ui/card";
+import { RoomForm } from "@/features/rooms/components/room-form";
 
 export default function AddRoomsPage() {
   const roomsBreadcrumb = [
@@ -10,9 +12,15 @@ export default function AddRoomsPage() {
     <>
       <BreadcrumbSetter items={roomsBreadcrumb} />
 
-      <main className="flex flex-col grow p-4">
-        <h1 className="text-2xl font-bold">Add Room</h1>
-        <p>Fill in the details below to add a new room.</p>
+      <main className="flex flex-col grow p-4 md:p-6">
+        <h1 className="text-2xl font-bold mb-2">Add Room</h1>
+        <p className="text-muted-foreground mb-6">
+          Fill in the details below to add a new room.
+        </p>
+
+        <Card className="p-4 md:p-6">
+          <RoomForm />
+        </Card>
       </main>
     </>
   );
