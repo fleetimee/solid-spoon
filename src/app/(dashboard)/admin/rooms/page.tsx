@@ -15,16 +15,17 @@ import {
 const roomsBreadcrumb = [{ label: "Rooms" }, { label: "Manage Rooms" }];
 
 interface RoomsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     location?: string;
     minCapacity?: string;
     maxCapacity?: string;
     facilities?: string | string[];
-  };
+  }>;
 }
 
-export default async function RoomsPage({ searchParams }: RoomsPageProps) {
+export default async function RoomsPage(props: RoomsPageProps) {
+  const searchParams = await props.searchParams;
   const parsedSearchParams: RoomSearchParams = {
     search: searchParams.search,
     location: searchParams.location,

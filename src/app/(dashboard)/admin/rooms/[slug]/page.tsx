@@ -12,12 +12,13 @@ import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 interface RoomDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
+export default async function RoomDetailPage(props: RoomDetailPageProps) {
+  const params = await props.params;
   const { slug } = params;
   const room = await getRoomBySlug(slug);
 
