@@ -11,6 +11,7 @@ import { AppSidebar } from "@/features/navigation/components/app-sidebar";
 import { getNavigation } from "@/features/navigation/api/getNavigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface UserData {
   name: string;
@@ -40,6 +41,14 @@ export default async function Layout({
         role: session.user.role || "user",
       }
     : null;
+
+  if (!session) {
+    return redirect("/auth/sign-in");
+  }
+
+  if (session.user.role !== "admin") {
+    return redirect("/");
+  }
 
   return (
     <SidebarProvider>
