@@ -25,6 +25,40 @@ export interface ImageValidationResult {
 }
 
 /**
+ * Deletes a file from the MinIO storage using the API endpoint
+ *
+ * @param fileUrl - The URL of the file to delete
+ * @returns A promise that resolves to the response data
+ */
+export async function deleteFile(
+  fileUrl: string
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const response = await fetch("/api/upload", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fileUrl }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to delete file");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error occurred",
+    };
+  }
+}
+
+/**
  * Hook for managing image uploads
  * @returns Image upload state and handler functions
  */
@@ -39,11 +73,9 @@ export function useImageUpload() {
    */
   const uploadFileToMinIO = async (file: File): Promise<string> => {
     try {
-      // Create a FormData object to send the file
       const formData = new FormData();
       formData.append("file", file);
 
-      // Upload through our server proxy endpoint
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
@@ -75,23 +107,19 @@ export function useImageUpload() {
       setIsUploading(true);
 
       try {
-        // Create pending images
         const pendingImages = newFiles.map((file) => ({
           file,
           preview: URL.createObjectURL(file),
-          isCover: images.length === 0, // First image is cover by default
+          isCover: images.length === 0,
           status: "pending" as const,
         }));
 
-        // Add pending images to state
         setImages((prev) => [...prev, ...pendingImages]);
 
-        // Upload each image and update its state
         for (let i = 0; i < newFiles.length; i++) {
           const file = newFiles[i];
           const index = images.length + i;
 
-          // Update status to uploading
           setImages((prev) => {
             const updated = [...prev];
             updated[index] = {
@@ -102,10 +130,8 @@ export function useImageUpload() {
           });
 
           try {
-            // Upload the file and get the URL
             const uploadUrl = await uploadFileToMinIO(file);
 
-            // Update state with success
             setImages((prev) => {
               const updated = [...prev];
               updated[index] = {
@@ -116,7 +142,6 @@ export function useImageUpload() {
               return updated;
             });
           } catch (error) {
-            // Update state with error
             setImages((prev) => {
               const updated = [...prev];
               updated[index] = {
@@ -141,12 +166,10 @@ export function useImageUpload() {
    */
   const handleRemoveImage = (index: number) => {
     setImages((prev) => {
-      // If removing the cover image, set the first remaining image as cover
       if (prev[index].isCover && prev.length > 1) {
         const newImages = [...prev];
         newImages.splice(index, 1);
 
-        // Find the first non-cover image or the first image if none has cover status
         const newCoverIndex = newImages.findIndex((img) => !img.isCover) || 0;
         newImages[newCoverIndex].isCover = true;
 
@@ -175,7 +198,6 @@ export function useImageUpload() {
    * @returns Object with validation result and error message
    */
   const validateImages = (): ImageValidationResult => {
-    // Check if there are any successful uploads
     const successfulUploads = images.filter((img) => img.status === "success");
 
     if (successfulUploads.length === 0) {
@@ -219,7 +241,6 @@ export function useImageUpload() {
    * @param formData FormData object to append image data to
    */
   const prepareImagesForSubmission = (formData: FormData) => {
-    // Append image URLs instead of files
     images.forEach((img, index) => {
       if (img.status === "success" && img.uploadUrl) {
         formData.append("imageUrls", img.uploadUrl);
