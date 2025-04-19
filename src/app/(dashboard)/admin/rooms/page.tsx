@@ -12,10 +12,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
-const roomsBreadcrumb = [
-  { label: "Rooms", href: "/admin/rooms" },
-  { label: "Manage Rooms" },
-];
+const roomsBreadcrumb = [{ label: "Rooms" }, { label: "Manage Rooms" }];
 
 interface RoomsPageProps {
   searchParams: {
@@ -28,7 +25,6 @@ interface RoomsPageProps {
 }
 
 export default async function RoomsPage({ searchParams }: RoomsPageProps) {
-  // Process search parameters
   const parsedSearchParams: RoomSearchParams = {
     search: searchParams.search,
     location: searchParams.location,
@@ -45,10 +41,8 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
         : undefined,
   };
 
-  // Check if filters are applied
   const hasFilters = Object.keys(searchParams).length > 0;
 
-  // Fetch rooms with filters
   const rooms = await getRooms(parsedSearchParams);
 
   return (
@@ -58,7 +52,7 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
       <main className="flex flex-col grow p-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold">Rooms</h1>
+            <h1 className="text-2xl font-bold">Manage Rooms</h1>
             <p className="text-muted-foreground">Manage and organize rooms</p>
           </div>
           <Button asChild>
