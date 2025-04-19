@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Users, MapPin, Calendar, User, Pencil } from "lucide-react";
 import { FacilityBadge } from "@/features/rooms/components/facility-badge";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 interface RoomDetailPageProps {
   params: {
@@ -108,55 +109,96 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
             </CardContent>
           </Card>
 
-          {/* Room Metadata */}
+          {/* Room Metadata with Invisible Table */}
           <Card>
             <CardContent className="pt-6">
               <h2 className="text-xl font-semibold mb-4">Room Information</h2>
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">Capacity:</span>
-                  <span>{room.capacity} people</span>
-                </div>
+              <Table>
+                <TableBody>
+                  {/* Capacity */}
+                  <TableRow className="border-0 hover:bg-transparent">
+                    <TableCell className="pl-0 py-2 w-1/3">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">Capacity</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2">
+                      : {room.capacity} people
+                    </TableCell>
+                  </TableRow>
 
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">Created by:</span>
-                  <span className="truncate">
-                    {room.createdBy || "Unknown"}
-                  </span>
-                </div>
+                  {/* Created by */}
+                  <TableRow className="border-0 hover:bg-transparent">
+                    <TableCell className="pl-0 py-2 w-1/3">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">Created by</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2 truncate">
+                      : {room.createdByName || "Unknown"}
+                    </TableCell>
+                  </TableRow>
 
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium">Created:</span>
-                  <span>{format(new Date(room.createdAt), "MMM d, yyyy")}</span>
-                </div>
+                  {/* Created at */}
+                  <TableRow className="border-0 hover:bg-transparent">
+                    <TableCell className="pl-0 py-2 w-1/3">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">Created</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2">
+                      : {format(new Date(room.createdAt), "MMM d, yyyy")}
+                    </TableCell>
+                  </TableRow>
 
-                {room.updatedBy && (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <Pencil className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium">Updated by:</span>
-                      <span className="truncate">{room.updatedBy}</span>
-                    </div>
+                  {/* Updated by (conditional) */}
+                  {room.updatedBy && (
+                    <>
+                      <TableRow className="border-0 hover:bg-transparent">
+                        <TableCell className="pl-0 py-2 w-1/3">
+                          <div className="flex items-center gap-2">
+                            <Pencil className="w-4 h-4 text-muted-foreground" />
+                            <span className="font-medium">Updated by</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 truncate">
+                          : {room.updatedByName || "Unknown"}
+                        </TableCell>
+                      </TableRow>
 
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium">Last updated:</span>
-                      <span>
-                        {format(new Date(room.updatedAt), "MMM d, yyyy")}
-                      </span>
-                    </div>
-                  </>
-                )}
+                      <TableRow className="border-0 hover:bg-transparent">
+                        <TableCell className="pl-0 py-2 w-1/3">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-muted-foreground" />
+                            <span className="font-medium">Last updated</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2">
+                          : {format(new Date(room.updatedAt), "MMM d, yyyy")}
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  )}
 
-                <div className="flex items-center gap-2">
-                  <Badge variant={room.isActive ? "default" : "destructive"}>
-                    {room.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-              </div>
+                  {/* Status */}
+                  <TableRow className="border-0 hover:bg-transparent">
+                    <TableCell className="pl-0 py-2 w-1/3">
+                      <span className="font-medium">Status</span>
+                    </TableCell>
+                    <TableCell className="py-2">
+                      :{" "}
+                      <Badge
+                        variant={room.isActive ? "default" : "destructive"}
+                      >
+                        {room.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

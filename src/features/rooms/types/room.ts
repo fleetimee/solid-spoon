@@ -8,6 +8,8 @@ export interface Room {
   isActive: boolean;
   createdBy: string | null;
   updatedBy: string | null;
+  createdByName?: string | null; // Added name of the creator
+  updatedByName?: string | null; // Added name of the updater
   createdAt: string;
   updatedAt: string;
   coverImage?: string | null;

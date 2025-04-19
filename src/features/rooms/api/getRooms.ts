@@ -142,7 +142,7 @@ export async function getRoomById(id: number): Promise<Room | null> {
 /**
  * Fetches a room by its slug with its cover image
  * @param slug Room slug
- * @returns Room object with cover image URL and array of all images
+ * @returns Room object with cover image URL, all images, and creator/updater names
  */
 export async function getRoomBySlug(slug: string): Promise<Room | null> {
   const roomResult = await db.query(
@@ -158,9 +158,13 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
       r.is_active as "isActive",
       r.created_by as "createdBy",
       r.updated_by as "updatedBy",
+      creator.name as "createdByName",
+      updater.name as "updatedByName",
       r.created_at as "createdAt", 
       r.updated_at as "updatedAt"
     FROM room r
+    LEFT JOIN "user" creator ON r.created_by = creator.id
+    LEFT JOIN "user" updater ON r.updated_by = updater.id
     WHERE r.slug = $1 AND r.is_active = true
   `,
     [slug]
@@ -172,6 +176,7 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
 
   const room = roomResult.rows[0];
 
+  // Fetch all images for this room
   const imagesResult = await db.query(
     `
     SELECT 
@@ -185,6 +190,7 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
     [room.id]
   );
 
+  // Set the cover image and all images array
   room.coverImage =
     imagesResult.rows.find((img) => img.isCover)?.imageUrl ||
     imagesResult.rows[0]?.imageUrl ||
