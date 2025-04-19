@@ -1,12 +1,59 @@
 import db from "@/lib/db";
 import { Room } from "../types/room";
 
+export interface RoomSearchParams {
+  search?: string;
+  location?: string;
+  minCapacity?: number;
+  maxCapacity?: number;
+  facilities?: string[];
+}
+
 /**
  * Fetches all rooms from the database with their cover images
+ * @param searchParams Filter parameters for rooms
  * @returns Array of rooms with cover image URLs
  */
-export async function getRooms(): Promise<Room[]> {
-  const roomsResult = await db.query(`
+export async function getRooms(
+  searchParams?: RoomSearchParams
+): Promise<Room[]> {
+  const params: Array<string | number> = [];
+  const queryConditions = ["r.is_active = true"];
+
+  // Build query conditions based on search params
+  if (searchParams?.search) {
+    params.push(`%${searchParams.search}%`);
+    queryConditions.push(
+      `(r.name ILIKE $${params.length} OR r.description ILIKE $${params.length})`
+    );
+  }
+
+  if (searchParams?.location) {
+    params.push(`%${searchParams.location}%`);
+    queryConditions.push(`r.location ILIKE $${params.length}`);
+  }
+
+  if (searchParams?.minCapacity) {
+    params.push(searchParams.minCapacity);
+    queryConditions.push(`r.capacity >= $${params.length}`);
+  }
+
+  if (searchParams?.maxCapacity) {
+    params.push(searchParams.maxCapacity);
+    queryConditions.push(`r.capacity <= $${params.length}`);
+  }
+
+  if (searchParams?.facilities && searchParams.facilities.length > 0) {
+    // Handle multiple facilities with OR conditions
+    const facilityConditions = searchParams.facilities.map((facility) => {
+      params.push(`%${facility}%`);
+      return `r.facilities ILIKE $${params.length}`;
+    });
+    queryConditions.push(`(${facilityConditions.join(" OR ")})`);
+  }
+
+  // Build the final query
+  const query = `
     SELECT 
       r.id, 
       r.name, 
@@ -20,12 +67,14 @@ export async function getRooms(): Promise<Room[]> {
       r.created_at as "createdAt", 
       r.updated_at as "updatedAt"
     FROM room r
-    WHERE r.is_active = true
+    WHERE ${queryConditions.join(" AND ")}
     ORDER BY r.id
-  `);
+  `;
 
+  const roomsResult = await db.query(query, params);
   const rooms = roomsResult.rows;
 
+  // Fetch cover images for each room
   for (const room of rooms) {
     const coverImageResult = await db.query(
       `
