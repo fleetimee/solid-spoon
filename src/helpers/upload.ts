@@ -13,17 +13,19 @@ import { nanoid } from "nanoid";
 const rootFolder = "uploads";
 const subFolder = "images";
 
-// Assuming you've set these environment variables in your .env.local or equivalent
+// Configure S3Client to use self-hosted MinIO
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
+  region: process.env.MINIO_REGION || "us-east-1", // MinIO typically uses a default region
+  endpoint: process.env.MINIO_ENDPOINT || "https://minio.fleetime.my.id",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.MINIO_ACCESS_KEY!,
+    secretAccessKey: process.env.MINIO_SECRET_KEY!,
   },
+  forcePathStyle: true, // Required for MinIO
 });
 
 /**
- * Uploads a file to AWS S3 with a unique filename.
+ * Uploads a file to MinIO with a unique filename.
  *
  * @param file - The file to be uploaded as a Buffer.
  * @param fileName - The original file name (to retain the file extension).
@@ -45,7 +47,7 @@ export async function uploadFileToS3(
   const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
 
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.MINIO_BUCKET_NAME,
     Key: filePath,
     Body: file,
     ContentType: contentType,
@@ -54,7 +56,7 @@ export async function uploadFileToS3(
   await s3Client.send(command);
 
   // Return the public URL of the uploaded file
-  return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${filePath}`;
+  return `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${filePath}`;
 }
 
 /**
@@ -64,7 +66,7 @@ export async function uploadFileToS3(
  * @returns The exact object key used in the S3 bucket.
  */
 export function extractKeyFromUrl(url: string): string {
-  const bucketUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/`;
+  const bucketUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/`;
 
   if (url.startsWith(bucketUrl)) {
     // Return only the relative path (S3 key) by stripping the bucket URL
@@ -76,15 +78,15 @@ export function extractKeyFromUrl(url: string): string {
 }
 
 /**
- * Deletes a file from AWS S3.
+ * Deletes a file from MinIO.
  *
  * @param key - The key of the file to be deleted.
  */
 export async function deleteFileFromS3(key: string): Promise<void> {
-  console.log("Deleting S3 file with key:", key); // Debugging log
+  console.log("Deleting MinIO file with key:", key); // Debugging log
 
   const command = new DeleteObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.MINIO_BUCKET_NAME,
     Key: key,
   });
 
@@ -92,15 +94,15 @@ export async function deleteFileFromS3(key: string): Promise<void> {
     await s3Client.send(command);
     console.log("File deleted successfully:", key);
   } catch (error) {
-    console.error("Failed to delete file from S3:", error);
+    console.error("Failed to delete file from MinIO:", error);
     throw error;
   }
 }
 
 /**
- * Generates a signed URL for uploading a file to AWS S3.
+ * Generates a signed URL for uploading a file to MinIO.
  *
- * @param fileName - The name to save the file as in S3.
+ * @param fileName - The name to save the file as in MinIO.
  * @param contentType - The MIME type of the file.
  * @param expiresIn - (Optional) The number of seconds before the URL expires. Defaults to 3600 (1 hour).
  * @returns A signed URL that can be used for uploading the file.
@@ -120,10 +122,10 @@ export async function getSignedUploadUrl(
   const filePath = `${rootFolder}/${subFolder}/${uniqueFileName}`;
 
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.MINIO_BUCKET_NAME,
     Key: filePath,
     ContentType: contentType,
-    // ACL: "public-read", // # checkout the s3 guide file.
+    // ACL: "public-read", // # checkout the MinIO guide file.
   });
 
   const signedUrl = await getSignedUrl(s3Client, command, { expiresIn });
