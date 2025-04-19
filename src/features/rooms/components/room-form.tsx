@@ -42,6 +42,15 @@ import {
   Coffee,
   Airplay,
   PanelTop,
+  Thermometer,
+  Sun,
+  Currency,
+  Volume2,
+  Armchair,
+  Table2Icon,
+  Lightbulb,
+  PanelLeftClose,
+  Lightbulb as LightbulbIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -79,18 +88,26 @@ const facilityOptions = [
   { value: "Sound System", label: "Sound System", icon: Music2 },
   { value: "Refreshments", label: "Refreshments", icon: Coffee },
   { value: "Screen Sharing", label: "Screen Sharing", icon: Airplay },
-  { value: "Teleconferencing", label: "Teleconferencing", icon: Home },
+  {
+    value: "Teleconferencing",
+    label: "Teleconferencing",
+    icon: MonitorSmartphone,
+  },
   { value: "Flipchart", label: "Flipchart", icon: FileText },
-  { value: "Air Conditioning", label: "Air Conditioning", icon: Home },
-  { value: "Heating", label: "Heating", icon: Home },
-  { value: "Natural Light", label: "Natural Light", icon: Home },
-  { value: "Blackout Curtains", label: "Blackout Curtains", icon: Home },
-  { value: "Soundproofing", label: "Soundproofing", icon: Home },
-  { value: "Ergonomic Chairs", label: "Ergonomic Chairs", icon: Home },
-  { value: "Standing Desks", label: "Standing Desks", icon: Home },
-  { value: "Adjustable Lighting", label: "Adjustable Lighting", icon: Home },
-  { value: "Acoustic Panels", label: "Acoustic Panels", icon: Home },
-  { value: "Smart Lighting", label: "Smart Lighting", icon: Home },
+  { value: "Air Conditioning", label: "Air Conditioning", icon: Thermometer },
+  { value: "Heating", label: "Heating", icon: Thermometer },
+  { value: "Natural Light", label: "Natural Light", icon: Sun },
+  { value: "Blackout Curtains", label: "Blackout Curtains", icon: Currency },
+  { value: "Soundproofing", label: "Soundproofing", icon: Volume2 },
+  { value: "Ergonomic Chairs", label: "Ergonomic Chairs", icon: Armchair },
+  { value: "Standing Desks", label: "Standing Desks", icon: Table2Icon },
+  {
+    value: "Adjustable Lighting",
+    label: "Adjustable Lighting",
+    icon: Lightbulb,
+  },
+  { value: "Acoustic Panels", label: "Acoustic Panels", icon: PanelLeftClose },
+  { value: "Smart Lighting", label: "Smart Lighting", icon: LightbulbIcon },
 ];
 
 type FormValues = z.infer<typeof formSchema>;
