@@ -19,6 +19,7 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { createRoomAction } from "../api/createRoom";
 import {
   X,
@@ -34,6 +35,13 @@ import {
   LayoutGrid,
   HelpCircle,
   Star,
+  Projector,
+  MonitorSmartphone,
+  Wifi,
+  Music2,
+  Coffee,
+  Airplay,
+  PanelTop,
 } from "lucide-react";
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -55,8 +63,35 @@ const formSchema = z.object({
     .min(1, "Capacity must be at least 1")
     .max(1000, "Capacity cannot exceed 1000"),
   description: z.string().optional(),
-  facilities: z.string().optional(),
+  facilities: z.array(z.string()).optional(),
 });
+
+// Define common room facilities with icons
+const facilityOptions = [
+  { value: "Projector", label: "Projector", icon: Projector },
+  { value: "Whiteboard", label: "Whiteboard", icon: PanelTop },
+  {
+    value: "Video Conferencing",
+    label: "Video Conferencing",
+    icon: MonitorSmartphone,
+  },
+  { value: "Wi-Fi", label: "Wi-Fi", icon: Wifi },
+  { value: "Sound System", label: "Sound System", icon: Music2 },
+  { value: "Refreshments", label: "Refreshments", icon: Coffee },
+  { value: "Screen Sharing", label: "Screen Sharing", icon: Airplay },
+  { value: "Teleconferencing", label: "Teleconferencing", icon: Home },
+  { value: "Flipchart", label: "Flipchart", icon: FileText },
+  { value: "Air Conditioning", label: "Air Conditioning", icon: Home },
+  { value: "Heating", label: "Heating", icon: Home },
+  { value: "Natural Light", label: "Natural Light", icon: Home },
+  { value: "Blackout Curtains", label: "Blackout Curtains", icon: Home },
+  { value: "Soundproofing", label: "Soundproofing", icon: Home },
+  { value: "Ergonomic Chairs", label: "Ergonomic Chairs", icon: Home },
+  { value: "Standing Desks", label: "Standing Desks", icon: Home },
+  { value: "Adjustable Lighting", label: "Adjustable Lighting", icon: Home },
+  { value: "Acoustic Panels", label: "Acoustic Panels", icon: Home },
+  { value: "Smart Lighting", label: "Smart Lighting", icon: Home },
+];
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -68,6 +103,10 @@ export function RoomForm({ initialValues }: RoomFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(
+    initialValues?.facilities ?? []
+  );
 
   // Use the image upload hook
   const {
@@ -88,7 +127,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
       location: initialValues?.location || "",
       capacity: initialValues?.capacity || 1,
       description: initialValues?.description || "",
-      facilities: initialValues?.facilities || "",
+      facilities: initialValues?.facilities || [],
     },
   });
 
@@ -106,12 +145,21 @@ export function RoomForm({ initialValues }: RoomFormProps) {
       // Prepare form data for submission
       const formData = new FormData();
 
-      // Add form values to formData
-      Object.entries(values).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
-        }
-      });
+      // Add basic form fields
+      formData.append("name", values.name);
+      formData.append("location", values.location);
+      formData.append("capacity", String(values.capacity));
+
+      if (values.description) {
+        formData.append("description", values.description);
+      }
+
+      // Process facilities - convert array to JSON string for server handling
+      if (values.facilities && values.facilities.length > 0) {
+        formData.append("facilities", JSON.stringify(values.facilities));
+      } else {
+        formData.append("facilities", "");
+      }
 
       // Add image data to formData
       prepareImagesForSubmission(formData);
@@ -271,15 +319,19 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                         Facilities
                       </FormLabel>
                       <FormDescription>
-                        List amenities separated by commas (projector,
-                        whiteboard, etc.)
+                        Select amenities available in this room
                       </FormDescription>
                       <FormControl>
-                        <Textarea
-                          placeholder="Projector, Whiteboard, Video conferencing..."
-                          rows={3}
-                          {...field}
-                          className="mt-2"
+                        <MultiSelect
+                          options={facilityOptions}
+                          onValueChange={(values) => {
+                            setSelectedFacilities(values); // update local state
+                            field.onChange(values); // update form value
+                          }}
+                          value={selectedFacilities}
+                          placeholder="Select facilities"
+                          className="min-h-10"
+                          maxCount={5}
                         />
                       </FormControl>
                       <FormMessage />
