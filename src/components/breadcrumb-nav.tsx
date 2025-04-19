@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,8 +31,8 @@ export function BreadcrumbNav() {
                 {isLastItem ? (
                   <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={crumb.href || "#"}>
-                    {crumb.label}
+                  <BreadcrumbLink asChild>
+                    <Link href={crumb.href || "#"}>{crumb.label}</Link>
                   </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
