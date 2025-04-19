@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Users,
   MapPin,
@@ -63,6 +65,11 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ room, className }: RoomCardProps) {
+  const router = useRouter();
+  const handleTitleClick = () => {
+    router.push(`/admin/rooms/${room.id}`);
+  };
+
   // Parse facilities - handle both string and array formats for backward compatibility
   const facilities = room.facilities
     ? typeof room.facilities === "string"
@@ -101,7 +108,12 @@ export function RoomCard({ room, className }: RoomCardProps) {
       <div className="p-4 space-y-3">
         <div className="space-y-1">
           <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-1">
-            {room.name}
+            <button
+              onClick={handleTitleClick}
+              className="text-left w-full hover:underline focus:outline-none cursor-pointer"
+            >
+              {room.name}
+            </button>
           </h3>
           {room.location && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -126,12 +138,12 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
         {facilities.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {facilities.slice(0, 3).map((facility: string, index: number) => (
+            {facilities.slice(0, 5).map((facility: string, index: number) => (
               <FacilityBadge key={index} facility={facility} />
             ))}
 
             {/* If there are more than 3 facilities, show a popover with the rest */}
-            {facilities.length > 3 && (
+            {facilities.length > 5 && (
               <Popover>
                 <PopoverTrigger asChild>
                   <Badge

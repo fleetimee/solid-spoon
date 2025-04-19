@@ -12,6 +12,24 @@ import {
   Loader2,
   Settings,
   ChevronRight,
+  Projector,
+  MonitorSmartphone,
+  Wifi,
+  Music2,
+  Coffee,
+  Airplay,
+  PanelTop,
+  FileText,
+  LucideIcon,
+  Thermometer,
+  Sun,
+  Currency,
+  Volume2,
+  Armchair,
+  Table2Icon,
+  Lightbulb,
+  PanelLeftClose,
+  Lightbulb as LightbulbIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,16 +54,50 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Common facilities for dropdown selection
+// Define facility icon mapping to match the room-form and room-card components
+const facilityIcons: Record<string, LucideIcon> = {
+  Projector: Projector,
+  Whiteboard: PanelTop,
+  "Video Conferencing": MonitorSmartphone,
+  "Wi-Fi": Wifi,
+  "Sound System": Music2,
+  Refreshments: Coffee,
+  "Screen Sharing": Airplay,
+  Teleconferencing: MonitorSmartphone,
+  Flipchart: FileText,
+  "Air Conditioning": Thermometer,
+  Heating: Thermometer,
+  "Natural Light": Sun,
+  "Blackout Curtains": Currency,
+  Soundproofing: Volume2,
+  "Ergonomic Chairs": Armchair,
+  "Standing Desks": Table2Icon,
+  "Adjustable Lighting": Lightbulb,
+  "Acoustic Panels": PanelLeftClose,
+  "Smart Lighting": LightbulbIcon,
+};
+
+// Common facilities for dropdown selection - matched with room-form
 const COMMON_FACILITIES = [
   "Projector",
   "Whiteboard",
-  "TV",
-  "Video Conference",
+  "Video Conferencing",
+  "Wi-Fi",
+  "Sound System",
+  "Refreshments",
+  "Screen Sharing",
+  "Teleconferencing",
+  "Flipchart",
   "Air Conditioning",
-  "Catering",
-  "WiFi",
-  "Wheelchair Access",
+  "Heating",
+  "Natural Light",
+  "Blackout Curtains",
+  "Soundproofing",
+  "Ergonomic Chairs",
+  "Standing Desks",
+  "Adjustable Lighting",
+  "Acoustic Panels",
+  "Smart Lighting",
 ];
 
 export function RoomFilters() {
@@ -180,6 +232,25 @@ export function RoomFilters() {
       default:
         break;
     }
+  };
+
+  // Create a facility badge with icon
+  const FacilityBadge = ({ facility }: { facility: string }) => {
+    const IconComponent = facilityIcons[facility] || Grid;
+    return (
+      <Badge variant="secondary" className="flex gap-1 items-center">
+        <IconComponent className="h-3 w-3 mr-1" />
+        {facility}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-4 w-4 ml-1 rounded-full"
+          onClick={() => removeFilter("facility", facility)}
+        >
+          <X className="h-2 w-2" />
+        </Button>
+      </Badge>
+    );
   };
 
   return (
@@ -323,7 +394,6 @@ export function RoomFilters() {
                         key={facility}
                         checked={selectedFacilities.includes(facility)}
                         onCheckedChange={() => toggleFacility(facility)}
-                        className="capitalize"
                       >
                         {facility}
                       </DropdownMenuCheckboxItem>
@@ -424,22 +494,7 @@ export function RoomFilters() {
           )}
 
           {selectedFacilities.map((facility) => (
-            <Badge
-              key={facility}
-              variant="secondary"
-              className="flex gap-1 items-center"
-            >
-              <Grid className="h-3 w-3 mr-1" />
-              {facility}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 ml-1 rounded-full"
-                onClick={() => removeFilter("facility", facility)}
-              >
-                <X className="h-2 w-2" />
-              </Button>
-            </Badge>
+            <FacilityBadge key={facility} facility={facility} />
           ))}
 
           {activeFilters > 1 && (

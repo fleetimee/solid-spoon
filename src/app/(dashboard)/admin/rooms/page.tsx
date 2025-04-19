@@ -147,9 +147,7 @@ export default async function RoomsPage({ searchParams }: RoomsPageProps) {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rooms.map((room) => (
-              <Link href={`/admin/rooms/${room.id}`} key={room.id}>
-                <RoomCard room={room} />
-              </Link>
+              <RoomCard room={room} key={room.id} />
             ))}
           </div>
         )}
