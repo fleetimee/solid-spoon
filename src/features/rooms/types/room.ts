@@ -11,6 +11,8 @@ export interface Room {
   createdAt: string;
   updatedAt: string;
   coverImage?: string | null;
+  slug?: string;
+  images?: string[]; // Array of all image URLs for the room
 }
 
 export interface RoomImage {

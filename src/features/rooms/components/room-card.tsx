@@ -67,7 +67,8 @@ interface RoomCardProps {
 export function RoomCard({ room, className }: RoomCardProps) {
   const router = useRouter();
   const handleTitleClick = () => {
-    router.push(`/admin/rooms/${room.id}`);
+    // Use slug instead of id for navigation
+    router.push(`/admin/rooms/${room.slug || room.id}`);
   };
 
   // Parse facilities - handle both string and array formats for backward compatibility

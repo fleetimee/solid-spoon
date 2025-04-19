@@ -54,7 +54,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Define facility icon mapping to match the room-form and room-card components
 const facilityIcons: Record<string, LucideIcon> = {
   Projector: Projector,
   Whiteboard: PanelTop,
@@ -77,7 +76,6 @@ const facilityIcons: Record<string, LucideIcon> = {
   "Smart Lighting": LightbulbIcon,
 };
 
-// Common facilities for dropdown selection - matched with room-form
 const COMMON_FACILITIES = [
   "Projector",
   "Whiteboard",
@@ -104,7 +102,6 @@ export function RoomFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Initialize state from URL search params
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [minCapacity, setMinCapacity] = useState(
@@ -118,15 +115,12 @@ export function RoomFilters() {
   );
   const [isApplying, setIsApplying] = useState(false);
 
-  // Track active filters for display
   const [activeFilters, setActiveFilters] = useState(0);
 
-  // Create a debounced search update
   const debouncedUpdateUrl = useCallback(
     (params: Record<string, string | string[] | null>) => {
       const url = new URL(window.location.href);
 
-      // Update search params
       Object.entries(params).forEach(([key, value]) => {
         if (
           value === null ||
@@ -135,7 +129,7 @@ export function RoomFilters() {
         ) {
           url.searchParams.delete(key);
         } else if (Array.isArray(value)) {
-          url.searchParams.delete(key); // Clear existing values
+          url.searchParams.delete(key);
           value.forEach((v) => url.searchParams.append(key, v));
         } else {
           url.searchParams.set(key, value);
@@ -147,7 +141,6 @@ export function RoomFilters() {
     [router]
   );
 
-  // Handle search input with debounce
   const handleSearch = (value: string) => {
     setSearch(value);
     const timeout = setTimeout(() => {
@@ -156,7 +149,6 @@ export function RoomFilters() {
     return () => clearTimeout(timeout);
   };
 
-  // Apply filters from modal
   const applyFilters = () => {
     setIsApplying(true);
     debouncedUpdateUrl({
@@ -166,11 +158,9 @@ export function RoomFilters() {
       facilities: selectedFacilities.length > 0 ? selectedFacilities : null,
     });
 
-    // Simulate a slight delay to show loading state
     setTimeout(() => setIsApplying(false), 300);
   };
 
-  // Reset all filters
   const resetFilters = () => {
     setSearch("");
     setLocation("");
@@ -186,7 +176,6 @@ export function RoomFilters() {
     });
   };
 
-  // Calculate active filters count
   useEffect(() => {
     let count = 0;
     if (location) count++;
@@ -196,7 +185,6 @@ export function RoomFilters() {
     setActiveFilters(count);
   }, [location, minCapacity, maxCapacity, selectedFacilities]);
 
-  // Toggle a facility in the selected list
   const toggleFacility = (facility: string) => {
     setSelectedFacilities((prev) =>
       prev.includes(facility)
@@ -205,7 +193,6 @@ export function RoomFilters() {
     );
   };
 
-  // Remove a single filter
   const removeFilter = (type: string, value?: string) => {
     switch (type) {
       case "location":
@@ -234,7 +221,6 @@ export function RoomFilters() {
     }
   };
 
-  // Create a facility badge with icon
   const FacilityBadge = ({ facility }: { facility: string }) => {
     const IconComponent = facilityIcons[facility] || Grid;
     return (

@@ -20,7 +20,6 @@ export async function getRooms(
   const params: Array<string | number> = [];
   const queryConditions = ["r.is_active = true"];
 
-  // Build query conditions based on search params
   if (searchParams?.search) {
     params.push(`%${searchParams.search}%`);
     queryConditions.push(
@@ -44,7 +43,6 @@ export async function getRooms(
   }
 
   if (searchParams?.facilities && searchParams.facilities.length > 0) {
-    // Handle multiple facilities with OR conditions
     const facilityConditions = searchParams.facilities.map((facility) => {
       params.push(`%${facility}%`);
       return `r.facilities ILIKE $${params.length}`;
@@ -52,7 +50,6 @@ export async function getRooms(
     queryConditions.push(`(${facilityConditions.join(" OR ")})`);
   }
 
-  // Build the final query
   const query = `
     SELECT 
       r.id, 
@@ -61,6 +58,7 @@ export async function getRooms(
       r.capacity, 
       r.description, 
       r.facilities, 
+      r.slug,
       r.is_active as "isActive",
       r.created_by as "createdBy",
       r.updated_by as "updatedBy",
@@ -74,7 +72,6 @@ export async function getRooms(
   const roomsResult = await db.query(query, params);
   const rooms = roomsResult.rows;
 
-  // Fetch cover images for each room
   for (const room of rooms) {
     const coverImageResult = await db.query(
       `
@@ -108,6 +105,7 @@ export async function getRoomById(id: number): Promise<Room | null> {
       r.capacity, 
       r.description, 
       r.facilities, 
+      r.slug,
       r.is_active as "isActive",
       r.created_by as "createdBy",
       r.updated_by as "updatedBy",
@@ -137,6 +135,61 @@ export async function getRoomById(id: number): Promise<Room | null> {
   );
 
   room.coverImage = coverImageResult.rows[0]?.imageUrl || null;
+
+  return room;
+}
+
+/**
+ * Fetches a room by its slug with its cover image
+ * @param slug Room slug
+ * @returns Room object with cover image URL and array of all images
+ */
+export async function getRoomBySlug(slug: string): Promise<Room | null> {
+  const roomResult = await db.query(
+    `
+    SELECT 
+      r.id, 
+      r.name, 
+      r.location, 
+      r.capacity, 
+      r.description, 
+      r.facilities, 
+      r.slug,
+      r.is_active as "isActive",
+      r.created_by as "createdBy",
+      r.updated_by as "updatedBy",
+      r.created_at as "createdAt", 
+      r.updated_at as "updatedAt"
+    FROM room r
+    WHERE r.slug = $1 AND r.is_active = true
+  `,
+    [slug]
+  );
+
+  if (roomResult.rows.length === 0) {
+    return null;
+  }
+
+  const room = roomResult.rows[0];
+
+  const imagesResult = await db.query(
+    `
+    SELECT 
+      image_url as "imageUrl",
+      is_cover as "isCover",
+      sort_order as "sortOrder"
+    FROM room_image
+    WHERE room_id = $1 AND is_active = true
+    ORDER BY is_cover DESC, sort_order ASC
+  `,
+    [room.id]
+  );
+
+  room.coverImage =
+    imagesResult.rows.find((img) => img.isCover)?.imageUrl ||
+    imagesResult.rows[0]?.imageUrl ||
+    null;
+  room.images = imagesResult.rows.map((row) => row.imageUrl);
 
   return room;
 }
