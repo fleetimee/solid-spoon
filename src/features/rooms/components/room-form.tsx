@@ -35,6 +35,7 @@ import {
 import Image from "next/image";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import * as z from "zod";
+import { useImageUpload } from "../helpers/image-upload";
 
 // Define validation schema for new room
 const formSchema = z.object({
@@ -54,184 +55,41 @@ interface RoomFormProps {
   initialValues?: Partial<FormValues>;
 }
 
-type ImageState = {
-  file: File;
-  preview: string;
-  isCover: boolean;
-  status: "pending" | "uploading" | "success" | "error";
-  uploadUrl?: string;
-  errorMessage?: string;
-};
-
 export function RoomForm({ initialValues }: RoomFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Image preview state with upload status
-  const [images, setImages] = useState<ImageState[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
+  // Use the image upload hook
+  const {
+    images,
+    isUploading,
+    handleImagesChange,
+    handleRemoveImage,
+    setCoverImage,
+    validateImages,
+    prepareImagesForSubmission,
+    hasSuccessfulUploads,
+  } = useImageUpload();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: initialValues?.name || "",
       location: initialValues?.location || "",
-      capacity: initialValues?.capacity || undefined,
+      capacity: initialValues?.capacity || 1,
       description: initialValues?.description || "",
       facilities: initialValues?.facilities || "",
     },
   });
 
-  // Function to upload a single file to MinIO via server proxy
-  const uploadFileToMinIO = async (file: File): Promise<string> => {
-    try {
-      // Create a FormData object to send the file
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Upload through our server proxy endpoint
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.details || "Failed to upload file");
-      }
-
-      const { fileUrl } = await response.json();
-      return fileUrl;
-    } catch (error) {
-      console.error("Upload error:", error);
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error("Unknown upload error");
-    }
-  };
-
-  const handleImagesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files);
-      setIsUploading(true);
-
-      try {
-        // Create pending images
-        const pendingImages = newFiles.map((file) => ({
-          file,
-          preview: URL.createObjectURL(file),
-          isCover: images.length === 0, // First image is cover by default
-          status: "pending" as const,
-        }));
-
-        // Add pending images to state
-        setImages((prev) => [...prev, ...pendingImages]);
-
-        // Upload each image and update its state
-        for (let i = 0; i < newFiles.length; i++) {
-          const file = newFiles[i];
-          const index = images.length + i;
-
-          // Update status to uploading
-          setImages((prev) => {
-            const updated = [...prev];
-            updated[index] = {
-              ...updated[index],
-              status: "uploading",
-            };
-            return updated;
-          });
-
-          try {
-            // Upload the file and get the URL
-            const uploadUrl = await uploadFileToMinIO(file);
-
-            // Update state with success
-            setImages((prev) => {
-              const updated = [...prev];
-              updated[index] = {
-                ...updated[index],
-                status: "success",
-                uploadUrl,
-              };
-              return updated;
-            });
-
-            toast(`Uploaded ${file.name}`, {
-              description: "File uploaded successfully",
-            });
-          } catch (error) {
-            // Update state with error
-            setImages((prev) => {
-              const updated = [...prev];
-              updated[index] = {
-                ...updated[index],
-                status: "error",
-                errorMessage:
-                  error instanceof Error ? error.message : "Upload failed",
-              };
-              return updated;
-            });
-
-            toast(`Failed to upload ${file.name}`, {
-              description:
-                error instanceof Error ? error.message : "Upload failed",
-            });
-          }
-        }
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setImages((prev) => {
-      // If removing the cover image, set the first remaining image as cover
-      if (prev[index].isCover && prev.length > 1) {
-        const newImages = [...prev];
-        newImages.splice(index, 1);
-
-        // Find the first non-cover image or the first image if none has cover status
-        const newCoverIndex = newImages.findIndex((img) => !img.isCover) || 0;
-        newImages[newCoverIndex].isCover = true;
-
-        return newImages;
-      }
-
-      return prev.filter((_, i) => i !== index);
-    });
-  };
-
-  const setCoverImage = (index: number) => {
-    setImages((prev) =>
-      prev.map((img, i) => ({
-        ...img,
-        isCover: i === index,
-      }))
-    );
-  };
-
   const onSubmit = (values: FormValues) => {
     setErrorMessage(null); // Reset error message on new submission
 
-    // Check if we have any images with upload errors
-    const hasErrorImages = images.some((img) => img.status === "error");
-    const hasUploadingImages = images.some(
-      (img) => img.status === "uploading" || img.status === "pending"
-    );
-
-    if (hasErrorImages) {
-      setErrorMessage(
-        "Please remove or re-upload failed images before submitting"
-      );
-      return;
-    }
-
-    if (hasUploadingImages) {
-      setErrorMessage("Please wait for all images to finish uploading");
+    // Validate images
+    const imageValidation = validateImages();
+    if (!imageValidation.isValid) {
+      setErrorMessage(imageValidation.error || "Image validation failed");
       return;
     }
 
@@ -246,15 +104,8 @@ export function RoomForm({ initialValues }: RoomFormProps) {
         }
       });
 
-      // Append image URLs instead of files
-      images.forEach((img, index) => {
-        if (img.status === "success" && img.uploadUrl) {
-          formData.append("imageUrls", img.uploadUrl);
-          if (img.isCover) {
-            formData.append(`cover_${index}`, "true");
-          }
-        }
-      });
+      // Add image data to formData
+      prepareImagesForSubmission(formData);
 
       // Submit the form data
       const result = await createRoomAction(formData);
@@ -393,7 +244,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
             <div className="space-y-2">
               <FormLabel htmlFor="images" className="flex items-center gap-2">
                 <Upload className="h-4 w-4" />
-                Room Images
+                Room Images <span className="text-destructive ml-1">*</span>
               </FormLabel>
               <div className="flex items-center gap-2">
                 <label
@@ -401,7 +252,8 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                   className={`flex flex-col items-center justify-center w-full h-32 
                           border-2 border-dashed rounded-md cursor-pointer 
                           border-gray-300 hover:border-gray-400 transition-colors
-                          ${isUploading ? "opacity-50 cursor-wait" : ""}`}
+                          ${isUploading ? "opacity-50 cursor-wait" : ""}
+                          ${!hasSuccessfulUploads() && !isUploading ? "border-destructive/50 hover:border-destructive" : ""}`}
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     {isUploading ? (
@@ -413,8 +265,12 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                       </>
                     ) : (
                       <>
-                        <Upload className="w-8 h-8 text-gray-500" />
-                        <p className="mt-2 text-sm text-gray-500">
+                        <Upload
+                          className={`w-8 h-8 ${!hasSuccessfulUploads() ? "text-destructive/70" : "text-gray-500"}`}
+                        />
+                        <p
+                          className={`mt-2 text-sm ${!hasSuccessfulUploads() ? "text-destructive/70" : "text-gray-500"}`}
+                        >
                           Click to upload images
                         </p>
                       </>
@@ -504,9 +360,12 @@ export function RoomForm({ initialValues }: RoomFormProps) {
               </div>
             )}
 
-            <Alert>
+            <Alert
+              variant={!hasSuccessfulUploads() ? "destructive" : "default"}
+            >
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
+                {!hasSuccessfulUploads() ? <strong>Required: </strong> : null}
                 Add at least one image to showcase the room. Images will be
                 uploaded immediately. The first successful upload will
                 automatically be set as the cover image.

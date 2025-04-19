@@ -52,6 +52,15 @@ export async function createRoomAction(
     const description = formData.get("description") as string;
     const facilities = formData.get("facilities") as string;
 
+    // Check if at least one image is provided
+    const imageUrls = formData.getAll("imageUrls") as string[];
+    if (!imageUrls || imageUrls.length === 0) {
+      return {
+        success: false,
+        message: "At least one image must be uploaded for the room",
+      };
+    }
+
     // Validate room data
     const validationResult = newRoomSchema.safeParse({
       name,
@@ -104,8 +113,6 @@ export async function createRoomAction(
 
     const newRoom = roomResult.rows[0] as Room;
 
-    // Process image URLs
-    const imageUrls = formData.getAll("imageUrls") as string[];
     let coverImageSet = false;
 
     if (imageUrls && imageUrls.length > 0) {
