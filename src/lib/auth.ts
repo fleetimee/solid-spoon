@@ -10,5 +10,7 @@ export const auth = betterAuth({
   plugins: [admin(), nextCookies()],
   emailAndPassword: {
     enabled: true,
+    disableSignUp: true,
+    autoSignIn: false,
   },
 });
