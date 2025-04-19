@@ -8,8 +8,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import sharp from "sharp";
 
-// Image compression options
-const COMPRESSION_QUALITY = 80; // 0-100, higher means better quality but larger file size
+const COMPRESSION_QUALITY = 80;
 
 /**
  * Compresses an image using Sharp based on its format
@@ -35,7 +34,6 @@ async function compressImage(buffer: Buffer, format: string): Promise<Buffer> {
         .toBuffer();
 
     default:
-      // For unsupported formats, return original buffer
       return buffer;
   }
 }
@@ -46,7 +44,7 @@ export async function POST(request: NextRequest) {
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session || session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -61,12 +59,10 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const originalBuffer = Buffer.from(bytes);
 
-    // Check if the file is an image that should be compressed
     const imageFormats = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
     let uploadBuffer: Buffer;
     if (imageFormats.includes(file.type)) {
-      // Compress the image
       uploadBuffer = await compressImage(originalBuffer, file.type);
     } else {
       uploadBuffer = originalBuffer;
