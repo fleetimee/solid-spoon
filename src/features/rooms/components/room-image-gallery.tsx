@@ -11,9 +11,10 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface RoomImageGalleryProps {
   images: string[];
@@ -140,9 +141,14 @@ export function RoomImageGallery({ images }: RoomImageGalleryProps) {
       {/* Full-size Image Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent
-          className="max-w-[90vw] max-h-[90vh] p-0 bg-black/90 border-none"
+          className="max-w-[200vw] max-h-[200vh] p-0 bg-black/90 border-none"
           onKeyDown={handleKeyDown}
         >
+          <DialogTitle>
+            <VisuallyHidden>
+              Room image {modalImageIndex + 1} of {images.length}
+            </VisuallyHidden>
+          </DialogTitle>
           <div className="relative w-full h-[80vh] flex flex-col justify-center">
             <Button
               variant="ghost"
