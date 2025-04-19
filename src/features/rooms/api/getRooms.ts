@@ -26,7 +26,6 @@ export async function getRooms(): Promise<Room[]> {
 
   const rooms = roomsResult.rows;
 
-  // Fetch cover images for each room
   for (const room of rooms) {
     const coverImageResult = await db.query(
       `
@@ -77,7 +76,6 @@ export async function getRoomById(id: number): Promise<Room | null> {
 
   const room = roomResult.rows[0];
 
-  // Fetch cover image for the room
   const coverImageResult = await db.query(
     `
     SELECT image_url as "imageUrl"
