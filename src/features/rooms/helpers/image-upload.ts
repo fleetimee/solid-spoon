@@ -3,6 +3,7 @@
  */
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 /**
  * Type definition for image state management
@@ -81,19 +82,21 @@ export function useImageUpload() {
         body: formData,
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.details || "Failed to upload file");
+        const errorMessage =
+          responseData.details || responseData.error || "Failed to upload file";
+        throw new Error(errorMessage);
       }
 
-      const { fileUrl } = await response.json();
-      return fileUrl;
+      return responseData.fileUrl;
     } catch (error) {
       console.error("Upload error:", error);
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error("Unknown upload error");
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown upload error";
+      toast.error(`Upload failed: ${errorMessage}`);
+      throw error;
     }
   };
 
@@ -141,16 +144,15 @@ export function useImageUpload() {
               };
               return updated;
             });
+
+            toast.success(`"${file.name}" uploaded successfully`);
           } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const errorMessage =
+              error instanceof Error ? error.message : "Upload failed";
+
             setImages((prev) => {
-              const updated = [...prev];
-              updated[index] = {
-                ...updated[index],
-                status: "error",
-                errorMessage:
-                  error instanceof Error ? error.message : "Upload failed",
-              };
-              return updated;
+              return prev.filter((_, idx) => idx !== index);
             });
           }
         }
@@ -165,19 +167,27 @@ export function useImageUpload() {
    * @param index Index of image to remove
    */
   const handleRemoveImage = (index: number) => {
+    const imageToRemove = images[index];
+
     setImages((prev) => {
       if (prev[index].isCover && prev.length > 1) {
         const newImages = [...prev];
         newImages.splice(index, 1);
 
-        const newCoverIndex = newImages.findIndex((img) => !img.isCover) || 0;
-        newImages[newCoverIndex].isCover = true;
+        if (newImages.length > 0) {
+          const newCoverIndex = 0;
+          newImages[newCoverIndex].isCover = true;
+        }
 
         return newImages;
       }
 
       return prev.filter((_, i) => i !== index);
     });
+
+    if (imageToRemove.status === "success" && imageToRemove.uploadUrl) {
+      toast.info("Image removed");
+    }
   };
 
   /**
@@ -207,17 +217,9 @@ export function useImageUpload() {
       };
     }
 
-    const hasErrorImages = images.some((img) => img.status === "error");
     const hasUploadingImages = images.some(
       (img) => img.status === "uploading" || img.status === "pending"
     );
-
-    if (hasErrorImages) {
-      return {
-        isValid: false,
-        error: "Please remove or re-upload failed images before submitting",
-      };
-    }
 
     if (hasUploadingImages) {
       return {
@@ -241,14 +243,21 @@ export function useImageUpload() {
    * @param formData FormData object to append image data to
    */
   const prepareImagesForSubmission = (formData: FormData) => {
-    images.forEach((img, index) => {
-      if (img.status === "success" && img.uploadUrl) {
-        formData.append("imageUrls", img.uploadUrl);
-        if (img.isCover) {
-          formData.append(`cover_${index}`, "true");
-        }
+    const successfulImages = images.filter(
+      (img) => img.status === "success" && img.uploadUrl
+    );
+
+    successfulImages.forEach((img) => {
+      formData.append("imageUrls", img.uploadUrl!);
+      if (img.isCover) {
+        formData.append("coverImage", img.uploadUrl!);
       }
     });
+
+    const hasCover = successfulImages.some((img) => img.isCover);
+    if (!hasCover && successfulImages.length > 0) {
+      formData.append("coverImage", successfulImages[0].uploadUrl!);
+    }
   };
 
   return {
