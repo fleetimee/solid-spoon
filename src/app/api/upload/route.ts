@@ -9,33 +9,10 @@ import { headers } from "next/headers";
 import sharp from "sharp";
 
 const COMPRESSION_QUALITY = 80;
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
-/**
- * Compresses an image using Sharp based on its format
- */
-async function compressImage(buffer: Buffer, format: string): Promise<Buffer> {
-  const sharpInstance = sharp(buffer);
-
-  switch (format.toLowerCase()) {
-    case "image/png":
-      return await sharpInstance
-        .png({ quality: COMPRESSION_QUALITY, compressionLevel: 9 })
-        .toBuffer();
-
-    case "image/jpeg":
-    case "image/jpg":
-      return await sharpInstance
-        .jpeg({ quality: COMPRESSION_QUALITY })
-        .toBuffer();
-
-    case "image/webp":
-      return await sharpInstance
-        .webp({ quality: COMPRESSION_QUALITY })
-        .toBuffer();
-
-    default:
-      return buffer;
-  }
+async function compressImage(buffer: Buffer): Promise<Buffer> {
+  return await sharp(buffer).webp({ quality: COMPRESSION_QUALITY }).toBuffer();
 }
 
 export async function POST(request: NextRequest) {
@@ -49,26 +26,41 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-
     const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Invalid file type. Only images allowed." },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "File size exceeds 2MB limit." },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const originalBuffer = Buffer.from(bytes);
 
-    const imageFormats = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
+    const uploadBuffer = await compressImage(originalBuffer);
 
-    let uploadBuffer: Buffer;
-    if (imageFormats.includes(file.type)) {
-      uploadBuffer = await compressImage(originalBuffer, file.type);
-    } else {
-      uploadBuffer = originalBuffer;
-    }
+    const originalFileName = file.name.split(".")[0];
+    const newFileName = `${originalFileName}.webp`;
 
-    const fileUrl = await uploadFileToS3(uploadBuffer, file.name, file.type);
+    const webpMimeType = "image/webp";
+
+    const fileUrl = await uploadFileToS3(
+      uploadBuffer,
+      newFileName,
+      webpMimeType
+    );
 
     return NextResponse.json({ fileUrl });
   } catch (error) {
