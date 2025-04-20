@@ -106,9 +106,15 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
-                <Edit className="h-4 w-4" />
-                <span>Update</span>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                asChild
+              >
+                <Link href={`/admin/rooms/${slug}/update`}>
+                  <Edit className="h-4 w-4" />
+                  <span>Edit</span>
+                </Link>
               </Button>
               <Button
                 variant="destructive"
