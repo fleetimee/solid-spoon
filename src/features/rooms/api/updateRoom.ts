@@ -174,7 +174,7 @@ export async function updateRoomAction(
       [roomId]
     );
 
-    let nextSortOrder = highestSortOrder.rows[0].max_sort_order + 1;
+    const nextSortOrder = highestSortOrder.rows[0].max_sort_order + 1;
 
     // Add new images
     if (imageUrls.length > 0) {

@@ -78,7 +78,13 @@ interface MultiSelectProps
    */
   onValueChange: (value: string[]) => void;
 
-  /** The default selected values when the component mounts. */
+  /**
+   * The currently selected values (controlled component).
+   * If provided, the component will use this instead of internal state.
+   */
+  value?: string[];
+
+  /** The default selected values when the component mounts (uncontrolled). */
   defaultValue?: string[];
 
   /**
@@ -127,6 +133,7 @@ export const MultiSelect = React.forwardRef<
     {
       options,
       onValueChange,
+      value,
       variant,
       defaultValue = [],
       placeholder = "Select options",
@@ -140,8 +147,13 @@ export const MultiSelect = React.forwardRef<
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
+    // Use internal state for uncontrolled component, or external value for controlled component
+    const [internalSelectedValues, setInternalSelectedValues] =
       React.useState<string[]>(defaultValue);
+
+    // If value prop is provided, use it; otherwise use internal state
+    const selectedValues = value !== undefined ? value : internalSelectedValues;
+
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
 
@@ -153,22 +165,27 @@ export const MultiSelect = React.forwardRef<
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
         const newSelectedValues = [...selectedValues];
         newSelectedValues.pop();
-        setSelectedValues(newSelectedValues);
-        onValueChange(newSelectedValues);
+        updateSelectedValues(newSelectedValues);
       }
+    };
+
+    // Helper function to update values in both controlled and uncontrolled modes
+    const updateSelectedValues = (newValues: string[]) => {
+      if (value === undefined) {
+        setInternalSelectedValues(newValues);
+      }
+      onValueChange(newValues);
     };
 
     const toggleOption = (option: string) => {
       const newSelectedValues = selectedValues.includes(option)
         ? selectedValues.filter((value) => value !== option)
         : [...selectedValues, option];
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      updateSelectedValues(newSelectedValues);
     };
 
     const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
+      updateSelectedValues([]);
     };
 
     const handleTogglePopover = () => {
@@ -177,8 +194,7 @@ export const MultiSelect = React.forwardRef<
 
     const clearExtraOptions = () => {
       const newSelectedValues = selectedValues.slice(0, maxCount);
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      updateSelectedValues(newSelectedValues);
     };
 
     const toggleAll = () => {
@@ -186,8 +202,7 @@ export const MultiSelect = React.forwardRef<
         handleClear();
       } else {
         const allValues = options.map((option) => option.value);
-        setSelectedValues(allValues);
-        onValueChange(allValues);
+        updateSelectedValues(allValues);
       }
     };
 

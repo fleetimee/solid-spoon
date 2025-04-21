@@ -149,9 +149,6 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
     ? parseFacilities(room.facilities)
     : [];
 
-  const [selectedFacilities, setSelectedFacilities] =
-    useState<string[]>(initialFacilities);
-
   const {
     images,
     existingImages,
@@ -431,11 +428,8 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                         <MultiSelect
                           animation={1}
                           options={facilityOptions}
-                          onValueChange={(values) => {
-                            setSelectedFacilities(values);
-                            field.onChange(values);
-                          }}
-                          value={selectedFacilities}
+                          onValueChange={field.onChange}
+                          value={field.value}
                           placeholder="Select facilities"
                           className="min-h-10"
                           maxCount={5}

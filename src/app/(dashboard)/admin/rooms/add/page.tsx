@@ -1,8 +1,6 @@
-import { Suspense } from "react";
 import { Metadata } from "next";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomForm } from "@/features/rooms/components/room-form";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "Add New Room | Room Management",
@@ -31,9 +29,7 @@ export default function AddRoomsPage() {
           Fill in the details below to add a new room.
         </p>
 
-        <Suspense fallback={<Skeleton className="h-10 w-full" />}>
-          <RoomForm />
-        </Suspense>
+        <RoomForm />
       </main>
     </>
   );

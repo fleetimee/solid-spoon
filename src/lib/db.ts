@@ -9,14 +9,6 @@ const db = new Pool({
   ),
 });
 
-db.on("error", (err) => {
-  console.error("Unexpected error on idle client", err);
-});
-
-db.on("connect", () => {
-  console.debug("New client connected to database");
-});
-
 /**
  * Helper function for handling database transactions
  * @param callback Function that performs database operations within a transaction
