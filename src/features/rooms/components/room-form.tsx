@@ -56,9 +56,9 @@ import {
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import * as z from "zod";
-import { 
-  useImageUpload, 
-  type ExistingImageState 
+import {
+  useImageUpload,
+  type ExistingImageState,
 } from "../helpers/image-upload";
 import {
   Tooltip,
@@ -127,24 +127,30 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
   const isUpdateMode = mode === "update";
 
   // Parse facilities from string to array if present (handling both JSON array and comma-separated values)
-  const parseFacilities = (facilitiesStr: string | null | undefined): string[] => {
+  const parseFacilities = (
+    facilitiesStr: string | null | undefined
+  ): string[] => {
     if (!facilitiesStr) return [];
-    
+
     try {
       if (facilitiesStr.startsWith("[")) {
         return JSON.parse(facilitiesStr);
       }
-      return facilitiesStr.split(",").map(f => f.trim()).filter(Boolean);
-    } catch (_) {
+      return facilitiesStr
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean);
+    } catch {
       return facilitiesStr ? [facilitiesStr] : [];
     }
   };
 
-  const initialFacilities = room?.facilities 
-    ? parseFacilities(room.facilities) 
+  const initialFacilities = room?.facilities
+    ? parseFacilities(room.facilities)
     : [];
 
-  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(initialFacilities);
+  const [selectedFacilities, setSelectedFacilities] =
+    useState<string[]>(initialFacilities);
 
   const {
     images,
@@ -167,7 +173,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
     if (isUpdateMode && room?.images?.length) {
       const initialImages: ExistingImageState[] = room.images.map((url) => ({
         url,
-        isCover: url === room.coverImage
+        isCover: url === room.coverImage,
       }));
       setExistingImages(initialImages);
     }
@@ -192,7 +198,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
     if (isUpdateMode) {
       imageValidation = {
         isValid: hasSuccessfulUploads() || existingImages.length > 0,
-        error: "At least one image is required for the room"
+        error: "At least one image is required for the room",
       };
     } else {
       imageValidation = validateImages();
@@ -243,7 +249,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
             description: `${values.name} has been updated.`,
           });
 
-          router.push(`/admin/rooms/${result.room?.slug || ''}`);
+          router.push(`/admin/rooms/${result.room?.slug || ""}`);
           router.refresh();
         } else {
           setErrorMessage(result.message);
@@ -296,13 +302,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <Star className="h-5 w-5" />
-                {isUpdateMode ? "Update Room Details" : "Create Your Perfect Space"}
+                {isUpdateMode
+                  ? "Update Room Details"
+                  : "Create Your Perfect Space"}
               </h2>
               <p className="text-muted-foreground mt-1">
-                {isUpdateMode 
+                {isUpdateMode
                   ? "Update the essential details about your room. A descriptive name and accurate location help users find the right space."
-                  : "Start by providing the essential details about your room. A descriptive name and accurate location help users find the right space for their needs."
-                }
+                  : "Start by providing the essential details about your room. A descriptive name and accurate location help users find the right space for their needs."}
               </p>
             </div>
 
@@ -490,10 +497,9 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                 {isUpdateMode ? "Manage Room Images" : "Show It Off"}
               </h2>
               <p className="text-muted-foreground mt-1">
-                {isUpdateMode 
+                {isUpdateMode
                   ? "Update or add new high-quality images to showcase your room's best features."
-                  : "A picture is worth a thousand words. Upload high-quality images to showcase your room's best features."
-                }
+                  : "A picture is worth a thousand words. Upload high-quality images to showcase your room's best features."}
               </p>
             </div>
 
@@ -519,9 +525,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                       <Card
                         key={`existing-${index}`}
                         className={`relative overflow-hidden group ring-offset-background transition-all hover:ring-2 hover:ring-ring hover:ring-offset-2 ${
-                          img.isCover
-                            ? "ring-2 ring-primary ring-offset-2"
-                            : ""
+                          img.isCover ? "ring-2 ring-primary ring-offset-2" : ""
                         }`}
                       >
                         <div className="aspect-[3/2] relative">
@@ -573,14 +577,15 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   className="flex items-center gap-2 text-base"
                 >
                   <Upload className="h-4 w-4" />
-                  {isUpdateMode ? "Add More Images" : "Room Images"} 
-                  {!isUpdateMode && <span className="text-destructive ml-1">*</span>}
+                  {isUpdateMode ? "Add More Images" : "Room Images"}
+                  {!isUpdateMode && (
+                    <span className="text-destructive ml-1">*</span>
+                  )}
                 </FormLabel>
                 <FormDescription>
-                  {isUpdateMode 
+                  {isUpdateMode
                     ? "Upload additional photos to showcase your room"
-                    : "Upload clear, well-lit photos showing different angles of the room"
-                  }
+                    : "Upload clear, well-lit photos showing different angles of the room"}
                 </FormDescription>
                 <div className="flex items-center gap-2 mt-3">
                   <label
@@ -590,7 +595,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                         transition-all duration-200 ease-in-out
                         ${isUploading ? "opacity-50 cursor-wait" : ""}
                         ${
-                          !isUpdateMode && !hasSuccessfulUploads() && !isUploading && existingImages.length === 0
+                          !isUpdateMode &&
+                          !hasSuccessfulUploads() &&
+                          !isUploading &&
+                          existingImages.length === 0
                             ? "border-destructive/50 hover:border-destructive bg-destructive/5 hover:bg-destructive/10"
                             : "border-primary/20 hover:border-primary/30 bg-primary/5 hover:bg-primary/10"
                         }`}
@@ -721,7 +729,9 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
 
               <Alert
                 variant={
-                  (!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
+                  !isUpdateMode &&
+                  !hasSuccessfulUploads() &&
+                  existingImages.length === 0
                     ? "destructive"
                     : "default"
                 }
@@ -729,12 +739,16 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
               >
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle className="font-medium">
-                  {(!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
-                    ? "Photos Required" 
+                  {!isUpdateMode &&
+                  !hasSuccessfulUploads() &&
+                  existingImages.length === 0
+                    ? "Photos Required"
                     : "Upload Tips"}
                 </AlertTitle>
                 <AlertDescription className="text-sm mt-1">
-                  {(!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
+                  {!isUpdateMode &&
+                  !hasSuccessfulUploads() &&
+                  existingImages.length === 0
                     ? "Please upload at least one photo to showcase the room. This helps users make informed decisions."
                     : isUpdateMode
                       ? "You can add new images or remove existing ones. At least one image must remain for the room."
@@ -763,9 +777,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => isUpdateMode && room?.slug 
-                  ? router.push(`/admin/rooms/${room.slug}`) 
-                  : router.push("/admin/rooms")
+                onClick={() =>
+                  isUpdateMode && room?.slug
+                    ? router.push(`/admin/rooms/${room.slug}`)
+                    : router.push("/admin/rooms")
                 }
                 className="min-w-[100px]"
               >
@@ -781,8 +796,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     {isUpdateMode ? "Updating..." : "Creating..."}
                   </>
+                ) : isUpdateMode ? (
+                  "Update Room"
                 ) : (
-                  isUpdateMode ? "Update Room" : "Create Room"
+                  "Create Room"
                 )}
               </Button>
             </div>

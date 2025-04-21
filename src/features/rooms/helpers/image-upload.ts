@@ -160,7 +160,11 @@ export function useImageUpload() {
             toast.success(`"${file.name}" uploaded successfully`);
           } catch (error) {
             setImages((prev) => {
-              return prev.filter((_, idx) => idx !== index);
+              const errorMessage =
+                error instanceof Error ? error.message : "Upload failed";
+              return prev.map((img, idx) =>
+                idx === index ? { ...img, status: "error", errorMessage } : img
+              );
             });
           }
         }

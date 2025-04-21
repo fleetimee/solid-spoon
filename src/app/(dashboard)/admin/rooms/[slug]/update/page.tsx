@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { getRoomBySlug } from "@/features/rooms/api/getRooms";
@@ -15,8 +15,7 @@ interface UpdateRoomPageProps {
 }
 
 export async function generateMetadata(
-  props: UpdateRoomPageProps,
-  parent: ResolvingMetadata
+  props: UpdateRoomPageProps
 ): Promise<Metadata> {
   // Resolve params
   const params = await props.params;
