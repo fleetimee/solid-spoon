@@ -12,6 +12,15 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export const metadata: Metadata = {
   title: "Room Management | Capstone Room Reservation",
@@ -34,6 +43,8 @@ interface RoomsPageProps {
     minCapacity?: string;
     maxCapacity?: string;
     facilities?: string | string[];
+    page?: string;
+    pageSize?: string;
   }>;
 }
 
@@ -53,11 +64,108 @@ export default async function RoomsPage(props: RoomsPageProps) {
       : searchParams.facilities
         ? [searchParams.facilities]
         : undefined,
+    page: searchParams.page ? Number(searchParams.page) : 1,
+    pageSize: searchParams.pageSize ? Number(searchParams.pageSize) : 9,
   };
 
-  const hasFilters = Object.keys(searchParams).length > 0;
+  const hasFilters =
+    Object.keys(searchParams).filter(
+      (key) => key !== "page" && key !== "pageSize"
+    ).length > 0;
 
-  const rooms = await getRooms(parsedSearchParams);
+  const { rooms, pagination } = await getRooms(parsedSearchParams);
+
+  const getPaginationUrl = (targetPage: number) => {
+    const params = new URLSearchParams();
+
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (key !== "page" && value) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+        } else {
+          params.set(key, value);
+        }
+      }
+    });
+
+    params.set("page", targetPage.toString());
+
+    return `/admin/rooms?${params.toString()}`;
+  };
+
+  const getPaginationItems = () => {
+    const { currentPage, totalPages } = pagination;
+
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <PaginationItem key={page}>
+          <PaginationLink
+            href={getPaginationUrl(page)}
+            isActive={page === currentPage}
+          >
+            {page}
+          </PaginationLink>
+        </PaginationItem>
+      ));
+    }
+
+    const items = [];
+
+    items.push(
+      <PaginationItem key={1}>
+        <PaginationLink href={getPaginationUrl(1)} isActive={1 === currentPage}>
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    if (currentPage > 3) {
+      items.push(
+        <PaginationItem key="ellipsis-1">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    const startPage = Math.max(2, currentPage - 1);
+    const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            href={getPaginationUrl(i)}
+            isActive={i === currentPage}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    if (currentPage < totalPages - 2) {
+      items.push(
+        <PaginationItem key="ellipsis-2">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink
+            href={getPaginationUrl(totalPages)}
+            isActive={totalPages === currentPage}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return items;
+  };
 
   return (
     <>
@@ -159,11 +267,53 @@ export default async function RoomsPage(props: RoomsPageProps) {
             </CardFooter>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {rooms.map((room) => (
-              <RoomCard room={room} key={room.id} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {rooms.map((room) => (
+                <RoomCard room={room} key={room.id} />
+              ))}
+            </div>
+
+            {pagination.totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination>
+                  <PaginationContent>
+                    {pagination.currentPage > 1 && (
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href={getPaginationUrl(pagination.currentPage - 1)}
+                        />
+                      </PaginationItem>
+                    )}
+
+                    {getPaginationItems()}
+
+                    {pagination.currentPage < pagination.totalPages && (
+                      <PaginationItem>
+                        <PaginationNext
+                          href={getPaginationUrl(pagination.currentPage + 1)}
+                        />
+                      </PaginationItem>
+                    )}
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              {pagination.totalItems > 0 && (
+                <>
+                  Showing{" "}
+                  {(pagination.currentPage - 1) * pagination.pageSize + 1} to{" "}
+                  {Math.min(
+                    pagination.currentPage * pagination.pageSize,
+                    pagination.totalItems
+                  )}{" "}
+                  of {pagination.totalItems} rooms
+                </>
+              )}
+            </div>
+          </>
         )}
       </main>
     </>

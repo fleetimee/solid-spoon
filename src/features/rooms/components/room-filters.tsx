@@ -121,6 +121,19 @@ export function RoomFilters() {
     (params: Record<string, string | string[] | null>) => {
       const url = new URL(window.location.href);
 
+      const currentPageSize = url.searchParams.get("pageSize");
+
+      if (
+        Object.values(params).every(
+          (value) =>
+            value === null ||
+            (Array.isArray(value) && value.length === 0) ||
+            value === ""
+        )
+      ) {
+        url.searchParams.delete("page");
+      }
+
       Object.entries(params).forEach(([key, value]) => {
         if (
           value === null ||
@@ -135,6 +148,16 @@ export function RoomFilters() {
           url.searchParams.set(key, value);
         }
       });
+
+      if (
+        Object.keys(params).some((key) => key !== "page" && key !== "pageSize")
+      ) {
+        url.searchParams.set("page", "1");
+      }
+
+      if (currentPageSize && !params.hasOwnProperty("pageSize")) {
+        url.searchParams.set("pageSize", currentPageSize);
+      }
 
       router.push(url.pathname + url.search);
     },

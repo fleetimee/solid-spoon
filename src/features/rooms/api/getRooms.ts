@@ -7,18 +7,34 @@ export interface RoomSearchParams {
   minCapacity?: number;
   maxCapacity?: number;
   facilities?: string[];
+  page?: number;
+  pageSize?: number;
+}
+
+export interface PaginatedRooms {
+  rooms: Room[];
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+  };
 }
 
 /**
  * Fetches all rooms from the database with their cover images
  * @param searchParams Filter parameters for rooms
- * @returns Array of rooms with cover image URLs
+ * @returns Paginated rooms with pagination metadata
  */
 export async function getRooms(
   searchParams?: RoomSearchParams
-): Promise<Room[]> {
+): Promise<PaginatedRooms> {
   const params: Array<string | number> = [];
   const queryConditions = ["r.is_active = true"];
+  
+  // Default pagination values
+  const page = searchParams?.page || 1;
+  const pageSize = searchParams?.pageSize || 9;
 
   if (searchParams?.search) {
     params.push(`%${searchParams.search}%`);
@@ -50,6 +66,24 @@ export async function getRooms(
     queryConditions.push(`(${facilityConditions.join(" OR ")})`);
   }
 
+  // Count total results for pagination
+  const countQuery = `
+    SELECT COUNT(*) as total
+    FROM room r
+    WHERE ${queryConditions.join(" AND ")}
+  `;
+  
+  const countResult = await db.query(countQuery, params);
+  const totalItems = parseInt(countResult.rows[0].total);
+  const totalPages = Math.ceil(totalItems / pageSize);
+  
+  // Clone params for the main query
+  const queryParams = [...params];
+  
+  // Add pagination parameters
+  queryParams.push((page - 1) * pageSize);
+  queryParams.push(pageSize);
+
   const query = `
     SELECT 
       r.id, 
@@ -66,10 +100,12 @@ export async function getRooms(
       r.updated_at as "updatedAt"
     FROM room r
     WHERE ${queryConditions.join(" AND ")}
-    ORDER BY r.id
+    ORDER BY r.name
+    OFFSET $${queryParams.length - 1}
+    LIMIT $${queryParams.length}
   `;
 
-  const roomsResult = await db.query(query, params);
+  const roomsResult = await db.query(query, queryParams);
   const rooms = roomsResult.rows;
 
   for (const room of rooms) {
@@ -87,7 +123,15 @@ export async function getRooms(
     room.coverImage = coverImageResult.rows[0]?.imageUrl || null;
   }
 
-  return rooms;
+  return {
+    rooms,
+    pagination: {
+      totalItems,
+      totalPages,
+      currentPage: page,
+      pageSize
+    }
+  };
 }
 
 /**
