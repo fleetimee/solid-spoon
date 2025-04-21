@@ -18,6 +18,14 @@ export type ImageState = {
 };
 
 /**
+ * Type for existing image state management
+ */
+export type ExistingImageState = {
+  url: string;
+  isCover: boolean;
+};
+
+/**
  * Type for image validation result
  */
 export interface ImageValidationResult {
@@ -65,6 +73,10 @@ export async function deleteFile(
  */
 export function useImageUpload() {
   const [images, setImages] = useState<ImageState[]>([]);
+  const [existingImages, setExistingImages] = useState<ExistingImageState[]>(
+    []
+  );
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
   /**
@@ -113,7 +125,7 @@ export function useImageUpload() {
         const pendingImages = newFiles.map((file) => ({
           file,
           preview: URL.createObjectURL(file),
-          isCover: images.length === 0,
+          isCover: images.length === 0 && existingImages.length === 0,
           status: "pending" as const,
         }));
 
@@ -147,10 +159,6 @@ export function useImageUpload() {
 
             toast.success(`"${file.name}" uploaded successfully`);
           } catch (error) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const errorMessage =
-              error instanceof Error ? error.message : "Upload failed";
-
             setImages((prev) => {
               return prev.filter((_, idx) => idx !== index);
             });
@@ -191,6 +199,33 @@ export function useImageUpload() {
   };
 
   /**
+   * Removes an existing image from the state and adds it to removedImages
+   * @param index Index of image to remove
+   */
+  const handleRemoveExistingImage = (index: number) => {
+    const imageToRemove = existingImages[index];
+
+    setExistingImages((prev) => {
+      if (prev[index].isCover && prev.length > 1) {
+        const newImages = [...prev];
+        newImages.splice(index, 1);
+
+        if (newImages.length > 0) {
+          const newCoverIndex = 0;
+          newImages[newCoverIndex].isCover = true;
+        }
+
+        return newImages;
+      }
+
+      return prev.filter((_, i) => i !== index);
+    });
+
+    setRemovedImages((prev) => [...prev, imageToRemove.url]);
+    toast.info("Existing image removed");
+  };
+
+  /**
    * Sets an image as the cover image
    * @param index Index of image to set as cover
    */
@@ -199,6 +234,35 @@ export function useImageUpload() {
       prev.map((img, i) => ({
         ...img,
         isCover: i === index,
+      }))
+    );
+
+    // Remove cover status from existing images when a new image becomes cover
+    setExistingImages((prev) =>
+      prev.map((img) => ({
+        ...img,
+        isCover: false,
+      }))
+    );
+  };
+
+  /**
+   * Sets an existing image as the cover image
+   * @param index Index of existing image to set as cover
+   */
+  const setExistingCoverImage = (index: number) => {
+    setExistingImages((prev) =>
+      prev.map((img, i) => ({
+        ...img,
+        isCover: i === index,
+      }))
+    );
+
+    // Remove cover status from new images when an existing image becomes cover
+    setImages((prev) =>
+      prev.map((img) => ({
+        ...img,
+        isCover: false,
       }))
     );
   };
@@ -210,7 +274,7 @@ export function useImageUpload() {
   const validateImages = (): ImageValidationResult => {
     const successfulUploads = images.filter((img) => img.status === "success");
 
-    if (successfulUploads.length === 0) {
+    if (successfulUploads.length === 0 && existingImages.length === 0) {
       return {
         isValid: false,
         error: "At least one image must be uploaded for the room",
@@ -247,25 +311,25 @@ export function useImageUpload() {
       (img) => img.status === "success" && img.uploadUrl
     );
 
-    successfulImages.forEach((img) => {
+    successfulImages.forEach((img, i) => {
       formData.append("imageUrls", img.uploadUrl!);
       if (img.isCover) {
-        formData.append("coverImage", img.uploadUrl!);
+        formData.append(`cover_${i}`, "true");
       }
     });
-
-    const hasCover = successfulImages.some((img) => img.isCover);
-    if (!hasCover && successfulImages.length > 0) {
-      formData.append("coverImage", successfulImages[0].uploadUrl!);
-    }
   };
 
   return {
     images,
+    existingImages,
+    setExistingImages,
+    removedImages,
     isUploading,
     handleImagesChange,
     handleRemoveImage,
+    handleRemoveExistingImage,
     setCoverImage,
+    setExistingCoverImage,
     validateImages,
     hasSuccessfulUploads,
     prepareImagesForSubmission,

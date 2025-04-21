@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/form";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { createRoomAction } from "../api/createRoom";
+import { updateRoomAction } from "../api/updateRoom";
 import {
   X,
   Check,
@@ -55,13 +56,17 @@ import {
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import * as z from "zod";
-import { useImageUpload } from "../helpers/image-upload";
+import { 
+  useImageUpload, 
+  type ExistingImageState 
+} from "../helpers/image-upload";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Room } from "../types/room";
 
 const formSchema = z.object({
   name: z.string().min(1, "Room name is required"),
@@ -111,44 +116,88 @@ const facilityOptions = [
 type FormValues = z.infer<typeof formSchema>;
 
 interface RoomFormProps {
-  initialValues?: Partial<FormValues>;
+  room?: Room;
+  mode?: "create" | "update";
 }
 
-export function RoomForm({ initialValues }: RoomFormProps) {
+export function RoomForm({ room, mode = "create" }: RoomFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const isUpdateMode = mode === "update";
 
-  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(
-    initialValues?.facilities ?? []
-  );
+  // Parse facilities from string to array if present (handling both JSON array and comma-separated values)
+  const parseFacilities = (facilitiesStr: string | null | undefined): string[] => {
+    if (!facilitiesStr) return [];
+    
+    try {
+      if (facilitiesStr.startsWith("[")) {
+        return JSON.parse(facilitiesStr);
+      }
+      return facilitiesStr.split(",").map(f => f.trim()).filter(Boolean);
+    } catch (_) {
+      return facilitiesStr ? [facilitiesStr] : [];
+    }
+  };
+
+  const initialFacilities = room?.facilities 
+    ? parseFacilities(room.facilities) 
+    : [];
+
+  const [selectedFacilities, setSelectedFacilities] = useState<string[]>(initialFacilities);
 
   const {
     images,
+    existingImages,
+    setExistingImages,
+    removedImages,
     isUploading,
     handleImagesChange,
     handleRemoveImage,
+    handleRemoveExistingImage,
     setCoverImage,
+    setExistingCoverImage,
     validateImages,
     prepareImagesForSubmission,
     hasSuccessfulUploads,
   } = useImageUpload();
 
+  // Initialize existing images if we're in update mode
+  useEffect(() => {
+    if (isUpdateMode && room?.images?.length) {
+      const initialImages: ExistingImageState[] = room.images.map((url) => ({
+        url,
+        isCover: url === room.coverImage
+      }));
+      setExistingImages(initialImages);
+    }
+  }, [isUpdateMode, room?.images, room?.coverImage, setExistingImages]);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: initialValues?.name || "",
-      location: initialValues?.location || "",
-      capacity: initialValues?.capacity || 1,
-      description: initialValues?.description || "",
-      facilities: initialValues?.facilities || [],
+      name: room?.name || "",
+      location: room?.location || "",
+      capacity: room?.capacity || 1,
+      description: room?.description || "",
+      facilities: initialFacilities,
     },
   });
 
   const onSubmit = (values: FormValues) => {
     setErrorMessage(null);
 
-    const imageValidation = validateImages();
+    // For update mode, we need at least one image (new or existing)
+    let imageValidation;
+    if (isUpdateMode) {
+      imageValidation = {
+        isValid: hasSuccessfulUploads() || existingImages.length > 0,
+        error: "At least one image is required for the room"
+      };
+    } else {
+      imageValidation = validateImages();
+    }
+
     if (!imageValidation.isValid) {
       setErrorMessage(imageValidation.error || "Image validation failed");
       return;
@@ -171,26 +220,69 @@ export function RoomForm({ initialValues }: RoomFormProps) {
         formData.append("facilities", "");
       }
 
+      // Add images for submission (different handling for create vs update)
       prepareImagesForSubmission(formData);
 
-      const result = await createRoomAction(formData);
+      // For update mode, include existing and removed images
+      if (isUpdateMode && room?.id) {
+        existingImages.forEach((image, index) => {
+          formData.append("existingImageUrls", image.url);
+          if (image.isCover) {
+            formData.append("existingCover", String(index));
+          }
+        });
 
-      if (result.success) {
-        toast("Room created successfully!", {});
+        removedImages.forEach((url) => {
+          formData.append("removedImageUrls", url);
+        });
 
-        router.push("/admin/rooms");
-      } else {
-        setErrorMessage(result.message);
+        const result = await updateRoomAction(room.id, formData);
 
-        if (result.fieldErrors) {
-          Object.entries(result.fieldErrors).forEach(([field, errors]) => {
-            if (field in form.formState.errors && errors.length > 0) {
-              form.setError(field as keyof FormValues, {
-                type: "manual",
-                message: errors[0],
-              });
-            }
+        if (result.success) {
+          toast.success("Room updated successfully", {
+            description: `${values.name} has been updated.`,
           });
+
+          router.push(`/admin/rooms/${result.room?.slug || ''}`);
+          router.refresh();
+        } else {
+          setErrorMessage(result.message);
+
+          if (result.fieldErrors) {
+            Object.entries(result.fieldErrors).forEach(([field, errors]) => {
+              if (field in form.formState.errors && errors.length > 0) {
+                form.setError(field as keyof FormValues, {
+                  type: "manual",
+                  message: errors[0],
+                });
+              }
+            });
+          }
+        }
+      } else {
+        // Handle create mode
+        const result = await createRoomAction(formData);
+
+        if (result.success) {
+          toast.success("Room created successfully", {
+            description: `${values.name} has been created.`,
+          });
+
+          router.push("/admin/rooms");
+          router.refresh();
+        } else {
+          setErrorMessage(result.message);
+
+          if (result.fieldErrors) {
+            Object.entries(result.fieldErrors).forEach(([field, errors]) => {
+              if (field in form.formState.errors && errors.length > 0) {
+                form.setError(field as keyof FormValues, {
+                  type: "manual",
+                  message: errors[0],
+                });
+              }
+            });
+          }
         }
       }
     });
@@ -204,12 +296,13 @@ export function RoomForm({ initialValues }: RoomFormProps) {
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <Star className="h-5 w-5" />
-                Create Your Perfect Space
+                {isUpdateMode ? "Update Room Details" : "Create Your Perfect Space"}
               </h2>
               <p className="text-muted-foreground mt-1">
-                Start by providing the essential details about your room. A
-                descriptive name and accurate location help users find the right
-                space for their needs.
+                {isUpdateMode 
+                  ? "Update the essential details about your room. A descriptive name and accurate location help users find the right space."
+                  : "Start by providing the essential details about your room. A descriptive name and accurate location help users find the right space for their needs."
+                }
               </p>
             </div>
 
@@ -394,26 +487,100 @@ export function RoomForm({ initialValues }: RoomFormProps) {
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <ImageIcon className="h-5 w-5" />
-                Show It Off
+                {isUpdateMode ? "Manage Room Images" : "Show It Off"}
               </h2>
               <p className="text-muted-foreground mt-1">
-                A picture is worth a thousand words. Upload high-quality images
-                to showcase your room&apos;s best features.
+                {isUpdateMode 
+                  ? "Update or add new high-quality images to showcase your room's best features."
+                  : "A picture is worth a thousand words. Upload high-quality images to showcase your room's best features."
+                }
               </p>
             </div>
 
             <div className="bg-card rounded-lg p-6 border shadow-sm space-y-6">
+              {/* Existing images section (only for update mode) */}
+              {isUpdateMode && existingImages.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-green-500" />
+                      <span>Current Images</span>
+                      <span className="bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">
+                        {existingImages.length}
+                      </span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Select an image as cover or remove unnecessary images
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {existingImages.map((img, index) => (
+                      <Card
+                        key={`existing-${index}`}
+                        className={`relative overflow-hidden group ring-offset-background transition-all hover:ring-2 hover:ring-ring hover:ring-offset-2 ${
+                          img.isCover
+                            ? "ring-2 ring-primary ring-offset-2"
+                            : ""
+                        }`}
+                      >
+                        <div className="aspect-[3/2] relative">
+                          <Image
+                            src={img.url}
+                            alt={`Room image ${index + 1}`}
+                            fill
+                            className="object-cover rounded-md"
+                          />
+                          {img.isCover && (
+                            <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
+                              <Star className="w-3 h-3" />
+                              Cover
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="destructive"
+                            className="w-8 h-8 rounded-full"
+                            onClick={() => handleRemoveExistingImage(index)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                          {!img.isCover && (
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="secondary"
+                              className="w-8 h-8 rounded-full"
+                              onClick={() => setExistingCoverImage(index)}
+                              title="Set as cover"
+                            >
+                              <Star className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <FormLabel
                   htmlFor="images"
                   className="flex items-center gap-2 text-base"
                 >
                   <Upload className="h-4 w-4" />
-                  Room Images <span className="text-destructive ml-1">*</span>
+                  {isUpdateMode ? "Add More Images" : "Room Images"} 
+                  {!isUpdateMode && <span className="text-destructive ml-1">*</span>}
                 </FormLabel>
                 <FormDescription>
-                  Upload clear, well-lit photos showing different angles of the
-                  room
+                  {isUpdateMode 
+                    ? "Upload additional photos to showcase your room"
+                    : "Upload clear, well-lit photos showing different angles of the room"
+                  }
                 </FormDescription>
                 <div className="flex items-center gap-2 mt-3">
                   <label
@@ -423,7 +590,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                         transition-all duration-200 ease-in-out
                         ${isUploading ? "opacity-50 cursor-wait" : ""}
                         ${
-                          !hasSuccessfulUploads() && !isUploading
+                          !isUpdateMode && !hasSuccessfulUploads() && !isUploading && existingImages.length === 0
                             ? "border-destructive/50 hover:border-destructive bg-destructive/5 hover:bg-destructive/10"
                             : "border-primary/20 hover:border-primary/30 bg-primary/5 hover:bg-primary/10"
                         }`}
@@ -442,10 +609,10 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                       ) : (
                         <>
                           <Upload
-                            className={`w-10 h-10 ${!hasSuccessfulUploads() ? "text-destructive/70" : "text-primary/70"}`}
+                            className={`w-10 h-10 ${!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0 ? "text-destructive/70" : "text-primary/70"}`}
                           />
                           <p
-                            className={`mt-3 text-sm font-medium ${!hasSuccessfulUploads() ? "text-destructive/70" : "text-muted-foreground"}`}
+                            className={`mt-3 text-sm font-medium ${!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0 ? "text-destructive/70" : "text-muted-foreground"}`}
                           >
                             Click to upload photos
                           </p>
@@ -474,7 +641,7 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-green-500" />
-                      <span>Uploaded Photos</span>
+                      <span>New Uploaded Photos</span>
                       <span className="bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">
                         {images.length}
                       </span>
@@ -553,17 +720,25 @@ export function RoomForm({ initialValues }: RoomFormProps) {
               )}
 
               <Alert
-                variant={!hasSuccessfulUploads() ? "destructive" : "default"}
+                variant={
+                  (!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
+                    ? "destructive"
+                    : "default"
+                }
                 className="mt-4"
               >
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle className="font-medium">
-                  {!hasSuccessfulUploads() ? "Photos Required" : "Upload Tips"}
+                  {(!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
+                    ? "Photos Required" 
+                    : "Upload Tips"}
                 </AlertTitle>
                 <AlertDescription className="text-sm mt-1">
-                  {!hasSuccessfulUploads()
+                  {(!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0)
                     ? "Please upload at least one photo to showcase the room. This helps users make informed decisions."
-                    : "Photos are uploaded immediately. You can rearrange them by setting a different cover image. Clear, bright photos help your room stand out!"}
+                    : isUpdateMode
+                      ? "You can add new images or remove existing ones. At least one image must remain for the room."
+                      : "Photos are uploaded immediately. You can rearrange them by setting a different cover image. Clear, bright photos help your room stand out!"}
                 </AlertDescription>
               </Alert>
             </div>
@@ -588,7 +763,10 @@ export function RoomForm({ initialValues }: RoomFormProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/admin/rooms")}
+                onClick={() => isUpdateMode && room?.slug 
+                  ? router.push(`/admin/rooms/${room.slug}`) 
+                  : router.push("/admin/rooms")
+                }
                 className="min-w-[100px]"
               >
                 Cancel
@@ -601,10 +779,10 @@ export function RoomForm({ initialValues }: RoomFormProps) {
                 {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
+                    {isUpdateMode ? "Updating..." : "Creating..."}
                   </>
                 ) : (
-                  "Create Room"
+                  isUpdateMode ? "Update Room" : "Create Room"
                 )}
               </Button>
             </div>
