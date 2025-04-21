@@ -1,12 +1,13 @@
-import * as React from "react"
+import * as React from "react";
+import Link from "next/link";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MoreHorizontalIcon,
-} from "lucide-react"
+} from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -17,7 +18,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
     />
-  )
+  );
 }
 
 function PaginationContent({
@@ -30,26 +31,34 @@ function PaginationContent({
       className={cn("flex flex-row items-center gap-1", className)}
       {...props}
     />
-  )
+  );
 }
 
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
-  return <li data-slot="pagination-item" {...props} />
+  return <li data-slot="pagination-item" {...props} />;
 }
 
 type PaginationLinkProps = {
-  isActive?: boolean
+  isActive?: boolean;
+  href?: string;
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  Omit<React.ComponentProps<typeof Link>, "href"> & {
+    preserveScroll?: boolean;
+  };
 
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  href,
+  preserveScroll = false,
   ...props
 }: PaginationLinkProps) {
-  return (
-    <a
+  return href ? (
+    <Link
+      href={href}
+      scroll={!preserveScroll}
+      replace={isActive} // Don't add to history if it's the current page
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}
@@ -58,11 +67,27 @@ function PaginationLink({
           variant: isActive ? "outline" : "ghost",
           size,
         }),
+        "cursor-pointer",
         className
       )}
       {...props}
     />
-  )
+  ) : (
+    <span
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? "outline" : "ghost",
+          size,
+        }),
+        "cursor-default",
+        className
+      )}
+      {...props}
+    />
+  );
 }
 
 function PaginationPrevious({
@@ -76,10 +101,10 @@ function PaginationPrevious({
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
-      <ChevronLeftIcon />
+      <ChevronLeftIcon className="size-4" />
       <span className="hidden sm:block">Previous</span>
     </PaginationLink>
-  )
+  );
 }
 
 function PaginationNext({
@@ -94,9 +119,9 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:block">Next</span>
-      <ChevronRightIcon />
+      <ChevronRightIcon className="size-4" />
     </PaginationLink>
-  )
+  );
 }
 
 function PaginationEllipsis({
@@ -113,7 +138,7 @@ function PaginationEllipsis({
       <MoreHorizontalIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
-  )
+  );
 }
 
 export {
@@ -124,4 +149,4 @@ export {
   PaginationPrevious,
   PaginationNext,
   PaginationEllipsis,
-}
+};

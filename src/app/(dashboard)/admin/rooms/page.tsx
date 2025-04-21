@@ -93,15 +93,18 @@ export default async function RoomsPage(props: RoomsPageProps) {
     return `/admin/rooms?${params.toString()}`;
   };
 
+  // Function to generate pagination items
   const getPaginationItems = () => {
     const { currentPage, totalPages } = pagination;
 
+    // For small number of pages, show all page links
     if (totalPages <= 7) {
       return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <PaginationItem key={page}>
           <PaginationLink
             href={getPaginationUrl(page)}
             isActive={page === currentPage}
+            preserveScroll={true}
           >
             {page}
           </PaginationLink>
@@ -109,16 +112,23 @@ export default async function RoomsPage(props: RoomsPageProps) {
       ));
     }
 
+    // For many pages, show a condensed pagination with ellipses
     const items = [];
 
+    // Always show first page
     items.push(
       <PaginationItem key={1}>
-        <PaginationLink href={getPaginationUrl(1)} isActive={1 === currentPage}>
+        <PaginationLink
+          href={getPaginationUrl(1)}
+          isActive={1 === currentPage}
+          preserveScroll={true}
+        >
           1
         </PaginationLink>
       </PaginationItem>
     );
 
+    // Show ellipsis if needed
     if (currentPage > 3) {
       items.push(
         <PaginationItem key="ellipsis-1">
@@ -127,6 +137,7 @@ export default async function RoomsPage(props: RoomsPageProps) {
       );
     }
 
+    // Show pages around current page
     const startPage = Math.max(2, currentPage - 1);
     const endPage = Math.min(totalPages - 1, currentPage + 1);
 
@@ -136,6 +147,7 @@ export default async function RoomsPage(props: RoomsPageProps) {
           <PaginationLink
             href={getPaginationUrl(i)}
             isActive={i === currentPage}
+            preserveScroll={true}
           >
             {i}
           </PaginationLink>
@@ -143,6 +155,7 @@ export default async function RoomsPage(props: RoomsPageProps) {
       );
     }
 
+    // Show ellipsis if needed
     if (currentPage < totalPages - 2) {
       items.push(
         <PaginationItem key="ellipsis-2">
@@ -151,12 +164,14 @@ export default async function RoomsPage(props: RoomsPageProps) {
       );
     }
 
+    // Always show last page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key={totalPages}>
           <PaginationLink
             href={getPaginationUrl(totalPages)}
             isActive={totalPages === currentPage}
+            preserveScroll={true}
           >
             {totalPages}
           </PaginationLink>
@@ -282,6 +297,7 @@ export default async function RoomsPage(props: RoomsPageProps) {
                       <PaginationItem>
                         <PaginationPrevious
                           href={getPaginationUrl(pagination.currentPage - 1)}
+                          preserveScroll={true}
                         />
                       </PaginationItem>
                     )}
@@ -292,6 +308,7 @@ export default async function RoomsPage(props: RoomsPageProps) {
                       <PaginationItem>
                         <PaginationNext
                           href={getPaginationUrl(pagination.currentPage + 1)}
+                          preserveScroll={true}
                         />
                       </PaginationItem>
                     )}
