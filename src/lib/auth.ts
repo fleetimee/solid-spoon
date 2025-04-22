@@ -7,7 +7,13 @@ export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
   }),
-  plugins: [admin(), nextCookies()],
+  plugins: [
+    admin({
+      adminRoles: ["admin", "superadmin"],
+      adminUserIds: ["ZkZ8QJRiOak401tDuWs0UUb1z9RETI8i"], // Add your admin user IDs here
+    }),
+    nextCookies(),
+  ],
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,
