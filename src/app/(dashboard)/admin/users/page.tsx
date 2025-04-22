@@ -2,8 +2,7 @@ import { authClient } from "@/lib/auth-client"; // Revert to client-side auth cl
 import { columns } from "@/features/admin/users/user-table-columns";
 import { UserDataTable } from "@/features/admin/users/user-data-table";
 import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+
 // Define a basic SearchParams type locally
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -91,12 +90,6 @@ export default async function UsersPage({
     // query.filterOperator = filterOperator;
     // query.filterValue = filterValue;
   }
-
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  }); // Get session from server-side auth client
-
-  console.log("Session:", session); // Debugging line
 
   // Fetch users and handle potential errors
   // Revert to using the client-side auth client
