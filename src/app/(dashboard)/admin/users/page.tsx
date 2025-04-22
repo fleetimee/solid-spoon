@@ -1,7 +1,9 @@
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client"; // Revert to client-side auth client
 import { columns } from "@/features/admin/users/user-table-columns";
 import { UserDataTable } from "@/features/admin/users/user-data-table";
 import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 // Define a basic SearchParams type locally
 type SearchParams = { [key: string]: string | string[] | undefined };
 
@@ -44,19 +46,21 @@ interface ListUsersQuery {
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: UserPageSearchParams;
+  searchParams: Promise<UserPageSearchParams>; // Wrap in Promise
 }) {
-  // Extract and validate query parameters
-  const limit = parseInt(searchParams.limit || "10", 10);
-  const offset = parseInt(searchParams.offset || "0", 10);
-  const searchField = searchParams.searchField;
-  const searchOperator = searchParams.searchOperator;
-  const searchValue = searchParams.searchValue;
-  const sortBy = searchParams.sortBy;
-  const sortDirection = searchParams.sortDirection;
-  const filterField = searchParams.filterField;
-  const filterOperator = searchParams.filterOperator;
-  const filterValue = searchParams.filterValue;
+  const awaitedSearchParams = await searchParams; // Await the searchParams
+
+  // Extract and validate query parameters using the awaited object
+  const limit = parseInt(awaitedSearchParams.limit || "10", 10);
+  const offset = parseInt(awaitedSearchParams.offset || "0", 10);
+  const searchField = awaitedSearchParams.searchField;
+  const searchOperator = awaitedSearchParams.searchOperator;
+  const searchValue = awaitedSearchParams.searchValue;
+  const sortBy = awaitedSearchParams.sortBy;
+  const sortDirection = awaitedSearchParams.sortDirection;
+  const filterField = awaitedSearchParams.filterField;
+  const filterOperator = awaitedSearchParams.filterOperator;
+  const filterValue = awaitedSearchParams.filterValue;
 
   // Construct query object for listUsers
   const query: ListUsersQuery = {
@@ -88,8 +92,25 @@ export default async function UsersPage({
     // query.filterValue = filterValue;
   }
 
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  }); // Get session from server-side auth client
+
+  console.log("Session:", session); // Debugging line
+
   // Fetch users and handle potential errors
-  const result = await authClient.admin.listUsers({ query });
+  // Revert to using the client-side auth client
+  const result = await authClient.admin.listUsers({
+    query: {
+      limit,
+      offset,
+      searchField,
+      searchOperator,
+      searchValue,
+      sortBy,
+      sortDirection,
+    },
+  });
 
   console.log("Fetched users:", result); // Debugging line
 
