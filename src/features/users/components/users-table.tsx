@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { Toaster } from "@/components/ui/sonner";
@@ -13,7 +13,12 @@ import {
   ListFilter,
   X,
   SlidersHorizontal,
+  Filter,
   Shield,
+  Mail,
+  Calendar,
+  Settings,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +66,7 @@ import {
   SheetClose,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import type { User } from "better-auth";
 
 import {
@@ -72,6 +78,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
+// Common roles used in the application
+const USER_ROLES = ["admin", "moderator", "user", "guest"];
 
 // Types for search parameters
 interface SearchParams {
@@ -110,6 +119,7 @@ export function UsersTable({
   // Router for URL manipulation
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   // State for table data
@@ -117,6 +127,7 @@ export function UsersTable({
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
 
   // Table state
   const [sorting, setSorting] = useState<SortingState>([
@@ -136,6 +147,11 @@ export function UsersTable({
   >(initialSearch.operator);
   const [pageIndex, setPageIndex] = useState(initialPage - 1);
   const [pageSize, setPageSize] = useState(initialPageSize);
+
+  // Track active filters separately from column filters for UI
+  const [activeFilters, setActiveFilters] = useState(0);
+  const [joinedAfter, setJoinedAfter] = useState<string>("");
+  const [joinedBefore, setJoinedBefore] = useState<string>("");
 
   // Update URL with current query parameters
   const updateUrlParams = useCallback(() => {
@@ -166,6 +182,15 @@ export function UsersTable({
       params.set("filterValue", roleFilter.value as string);
     }
 
+    // Date range filters
+    if (joinedAfter) {
+      params.set("joinedAfter", joinedAfter);
+    }
+
+    if (joinedBefore) {
+      params.set("joinedBefore", joinedBefore);
+    }
+
     // Update URL without full page refresh
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`, { scroll: false });
@@ -178,9 +203,21 @@ export function UsersTable({
     searchField,
     searchOperator,
     columnFilters,
+    joinedAfter,
+    joinedBefore,
     pathname,
     router,
   ]);
+
+  // Update active filters count when filters change
+  useEffect(() => {
+    let count = 0;
+    if (searchValue) count++;
+    if (columnFilters.some((filter) => filter.id === "role")) count++;
+    if (joinedAfter) count++;
+    if (joinedBefore) count++;
+    setActiveFilters(count);
+  }, [searchValue, columnFilters, joinedAfter, joinedBefore]);
 
   // Fetch users based on current parameters
   const fetchUsers = useCallback(async () => {
@@ -189,7 +226,7 @@ export function UsersTable({
 
     try {
       // Build query based on current state
-      const query: Record<string, string | number> = {
+      const query = {
         limit: pageSize,
         offset: pageIndex * pageSize,
         sortBy: sorting.length > 0 ? sorting[0].id : initialSort.field,
@@ -199,7 +236,7 @@ export function UsersTable({
               ? "desc"
               : "asc"
             : initialSort.direction,
-      };
+      } as Record<string, any>;
 
       // Add search parameters if present
       if (searchValue) {
@@ -214,6 +251,15 @@ export function UsersTable({
         query.filterField = "role";
         query.filterOperator = "eq";
         query.filterValue = roleFilter.value as string;
+      }
+
+      // Add date filters if set
+      if (joinedAfter) {
+        query.joinedAfter = joinedAfter;
+      }
+
+      if (joinedBefore) {
+        query.joinedBefore = joinedBefore;
       }
 
       // Fetch users from API
@@ -244,6 +290,8 @@ export function UsersTable({
     searchOperator,
     sorting,
     columnFilters,
+    joinedAfter,
+    joinedBefore,
     initialSort.field,
     initialSort.direction,
   ]);
@@ -259,6 +307,8 @@ export function UsersTable({
     searchField,
     searchOperator,
     columnFilters,
+    joinedAfter,
+    joinedBefore,
     updateUrlParams,
   ]);
 
@@ -278,12 +328,28 @@ export function UsersTable({
   const clearSearch = () => {
     setSearchValue("");
     setPageIndex(0); // Reset to first page
-    // We'll let the useEffect trigger the fetch and URL update
+  };
+
+  // Reset all filters
+  const resetFilters = () => {
+    setSearchValue("");
+    setColumnFilters([]);
+    setJoinedAfter("");
+    setJoinedBefore("");
+    setPageIndex(0);
   };
 
   // Handle page change
   const goToPage = (page: number) => {
     setPageIndex(page);
+  };
+
+  // Apply the filter changes
+  const applyFilters = () => {
+    setIsApplying(true);
+    setPageIndex(0);
+    fetchUsers();
+    setTimeout(() => setIsApplying(false), 300);
   };
 
   // Get pagination items
@@ -359,13 +425,40 @@ export function UsersTable({
   };
 
   // Handle role filter change
-  const handleRoleFilterChange = (role: string | null) => {
-    const newFilters = columnFilters.filter((f) => f.id !== "role");
-    if (role) {
+  const toggleRoleFilter = (role: string | null) => {
+    if (role === null) {
+      setColumnFilters(columnFilters.filter((f) => f.id !== "role"));
+    } else {
+      const newFilters = columnFilters.filter((f) => f.id !== "role");
       newFilters.push({ id: "role", value: role });
+      setColumnFilters(newFilters);
     }
-    setColumnFilters(newFilters);
-    setPageIndex(0); // Reset to first page
+  };
+
+  // Get selected role or null if no role filter is active
+  const getSelectedRole = (): string | null => {
+    const roleFilter = columnFilters.find((f) => f.id === "role");
+    return roleFilter ? (roleFilter.value as string) : null;
+  };
+
+  // Remove specific filter
+  const removeFilter = (type: string, value?: string) => {
+    switch (type) {
+      case "search":
+        setSearchValue("");
+        break;
+      case "role":
+        setColumnFilters(columnFilters.filter((f) => f.id !== "role"));
+        break;
+      case "joinedAfter":
+        setJoinedAfter("");
+        break;
+      case "joinedBefore":
+        setJoinedBefore("");
+        break;
+      default:
+        break;
+    }
   };
 
   // Initialize TanStack table
@@ -390,7 +483,7 @@ export function UsersTable({
     pageCount: Math.ceil(totalUsers / pageSize),
   });
 
-  // Loading state
+  // Loading state for initial load
   if (loading && users.length === 0) {
     return (
       <Card>
@@ -418,35 +511,34 @@ export function UsersTable({
     );
   }
 
-  // Active filters count
-  const activeFiltersCount = (searchValue ? 1 : 0) + columnFilters.length;
-
   return (
     <>
       <Toaster />
       <div className="space-y-4">
         {/* Search and filters */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
-          <form onSubmit={handleSearch} className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search users..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="pl-10 pr-10"
-            />
-            {searchValue && (
-              <Button
-                variant="ghost"
-                size="icon"
-                type="button"
-                onClick={clearSearch}
-                className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </form>
+          <div className="relative flex-1">
+            <form onSubmit={handleSearch}>
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search users..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="pl-10 pr-10"
+              />
+              {searchValue && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={clearSearch}
+                  className="absolute right-2 top-1/2 h-5 w-5 -translate-y-1/2"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </form>
+          </div>
 
           <div className="flex gap-2">
             <DropdownMenu>
@@ -504,9 +596,7 @@ export function UsersTable({
                   className="text-center justify-center"
                   onSelect={(e) => {
                     e.preventDefault();
-                    handleSearch({
-                      preventDefault: () => {},
-                    } as React.FormEvent);
+                    handleSearch({ preventDefault: () => {} } as React.FormEvent);
                   }}
                 >
                   Apply Search
@@ -516,120 +606,142 @@ export function UsersTable({
 
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline">
-                  <SlidersHorizontal className="mr-2 h-4 w-4" />
-                  <span>Filters</span>
-                  {activeFiltersCount > 0 && (
+                <Button variant="outline" className="relative">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filters
+                  {activeFilters > 0 && (
                     <Badge
                       variant="secondary"
-                      className="ml-2 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
+                      className="ml-2 px-1.5 min-w-5 rounded-full"
                     >
-                      {activeFiltersCount}
+                      {activeFilters}
                     </Badge>
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Filter Users</SheetTitle>
+              <SheetContent className="sm:max-w-md p-0 overflow-y-auto flex flex-col">
+                <SheetHeader className="p-6 pb-2">
+                  <SheetTitle className="flex items-center">
+                    <Filter className="mr-2 h-5 w-5" />
+                    User Filters
+                  </SheetTitle>
                   <SheetDescription>
-                    Configure filters to narrow down the user list.
+                    Refine your user list with these filter options
                   </SheetDescription>
                 </SheetHeader>
-                <div className="py-4 space-y-4">
-                  <div>
-                    <h4 className="mb-2 text-sm font-medium">User Role</h4>
+
+                <Separator />
+
+                <div className="px-6 py-5 space-y-8 flex-1 overflow-y-auto">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-muted-foreground" />
+                      <h3 className="text-sm font-medium">Role</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Filter users based on their assigned role in the system
+                    </p>
                     <div className="space-y-2">
-                      <Button
-                        variant={
-                          columnFilters.some((f) => f.id === "role")
-                            ? "outline"
-                            : "default"
-                        }
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => handleRoleFilterChange(null)}
-                      >
-                        All Roles
-                      </Button>
-                      <Button
-                        variant={
-                          columnFilters.some(
-                            (f) => f.id === "role" && f.value === "admin"
-                          )
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => handleRoleFilterChange("admin")}
-                      >
-                        Admin
-                      </Button>
-                      <Button
-                        variant={
-                          columnFilters.some(
-                            (f) => f.id === "role" && f.value === "moderator"
-                          )
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => handleRoleFilterChange("moderator")}
-                      >
-                        Moderator
-                      </Button>
-                      <Button
-                        variant={
-                          columnFilters.some(
-                            (f) => f.id === "role" && f.value === "user"
-                          )
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => handleRoleFilterChange("user")}
-                      >
-                        User
-                      </Button>
-                      <Button
-                        variant={
-                          columnFilters.some(
-                            (f) => f.id === "role" && f.value === "guest"
-                          )
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() => handleRoleFilterChange("guest")}
-                      >
-                        Guest
-                      </Button>
+                      {USER_ROLES.map((role) => (
+                        <Button
+                          key={role}
+                          variant={
+                            getSelectedRole() === role ? "default" : "outline"
+                          }
+                          size="sm"
+                          className="w-full justify-start capitalize"
+                          onClick={() =>
+                            toggleRoleFilter(
+                              getSelectedRole() === role ? null : role
+                            )
+                          }
+                        >
+                          {role}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <h3 className="text-sm font-medium">Join Date</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Filter users by when they registered in the system
+                    </p>
+                    <div className="space-y-2">
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">
+                          Joined after
+                        </span>
+                        <Input
+                          type="date"
+                          value={joinedAfter}
+                          onChange={(e) => setJoinedAfter(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-xs text-muted-foreground">
+                          Joined before
+                        </span>
+                        <Input
+                          type="date"
+                          value={joinedBefore}
+                          onChange={(e) => setJoinedBefore(e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                <SheetFooter className="absolute bottom-0 left-0 right-0 p-4 border-t">
-                  <SheetClose asChild>
-                    <Button className="w-full" onClick={() => fetchUsers()}>
-                      Apply Filters
+
+                <div className="mt-auto px-6 py-3 border-t">
+                  <div className="text-xs text-muted-foreground mb-2">
+                    {activeFilters === 0 ? (
+                      <span>No active filters</span>
+                    ) : (
+                      <span>
+                        Active filters: <strong>{activeFilters}</strong>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <SheetFooter className="px-6 pb-6 pt-2">
+                  <div className="flex w-full gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={resetFilters}
+                      className="flex-1"
+                    >
+                      Reset All
                     </Button>
-                  </SheetClose>
+                    <SheetClose asChild>
+                      <Button
+                        onClick={applyFilters}
+                        className="flex-1"
+                        disabled={isApplying}
+                      >
+                        {isApplying ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Applying...
+                          </>
+                        ) : (
+                          "Apply Filters"
+                        )}
+                      </Button>
+                    </SheetClose>
+                  </div>
                 </SheetFooter>
               </SheetContent>
             </Sheet>
 
-            {activeFiltersCount > 0 && (
+            {activeFilters > 0 && (
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => {
-                  setSearchValue("");
-                  setColumnFilters([]);
-                  setPageIndex(0);
-                }}
+                onClick={resetFilters}
                 title="Clear all filters"
               >
                 <X className="h-4 w-4" />
@@ -639,8 +751,8 @@ export function UsersTable({
         </div>
 
         {/* Active filters display */}
-        {activeFiltersCount > 0 && (
-          <div className="flex flex-wrap gap-2 items-center">
+        {activeFilters > 0 && (
+          <div className="flex flex-wrap gap-2">
             {searchValue && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Search className="h-3 w-3 mr-1" />
@@ -648,43 +760,76 @@ export function UsersTable({
                 {searchOperator === "contains"
                   ? "contains"
                   : searchOperator === "starts_with"
-                    ? "starts with"
-                    : "ends with"}
+                  ? "starts with"
+                  : "ends with"}
                 : {searchValue}
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4 ml-1 rounded-full"
-                  onClick={clearSearch}
+                  onClick={() => removeFilter("search")}
                 >
                   <X className="h-2 w-2" />
                 </Button>
               </Badge>
             )}
 
-            {columnFilters.map((filter) => (
-              <Badge
-                key={`${filter.id}-${filter.value}`}
-                variant="secondary"
-                className="flex items-center gap-1"
-              >
+            {columnFilters.some((f) => f.id === "role") && (
+              <Badge variant="secondary" className="flex items-center gap-1">
                 <Shield className="h-3 w-3 mr-1" />
-                Role: {filter.value as string}
+                Role: {getSelectedRole()}
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4 ml-1 rounded-full"
-                  onClick={() => {
-                    setColumnFilters(
-                      columnFilters.filter((f) => f.id !== filter.id)
-                    );
-                    setPageIndex(0);
-                  }}
+                  onClick={() => removeFilter("role")}
                 >
                   <X className="h-2 w-2" />
                 </Button>
               </Badge>
-            ))}
+            )}
+
+            {joinedAfter && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 mr-1" />
+                Joined after: {joinedAfter}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 ml-1 rounded-full"
+                  onClick={() => removeFilter("joinedAfter")}
+                >
+                  <X className="h-2 w-2" />
+                </Button>
+              </Badge>
+            )}
+
+            {joinedBefore && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 mr-1" />
+                Joined before: {joinedBefore}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 ml-1 rounded-full"
+                  onClick={() => removeFilter("joinedBefore")}
+                >
+                  <X className="h-2 w-2" />
+                </Button>
+              </Badge>
+            )}
+
+            {activeFilters > 1 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs font-medium"
+                onClick={resetFilters}
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear all
+              </Button>
+            )}
           </div>
         )}
 
