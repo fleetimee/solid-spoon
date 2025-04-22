@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Users } from "lucide-react";
 import { UsersTable } from "@/features/users/components/users-table";
 import { CreateUserForm } from "@/features/admin/users/create-user-form";
 
@@ -62,10 +61,6 @@ export function UserManagementClient({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          User Management
-        </h2>
         <CreateUserForm onUserCreated={handleUserCreated} />
       </div>
 

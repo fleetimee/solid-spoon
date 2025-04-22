@@ -1,5 +1,4 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
-import { Users } from "lucide-react";
 
 // Properly typed search parameters
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -85,9 +84,7 @@ export default async function UsersPage({
     <main className="flex flex-col grow p-4">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold flex items-center">
-            <Users className="mr-3 h-6 w-6" /> Users
-          </h1>
+          <h1 className="text-2xl font-bold flex items-center">Users</h1>
           <p className="text-muted-foreground">
             Manage users and their permissions here.
           </p>
