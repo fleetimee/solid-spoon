@@ -1,7 +1,5 @@
-import { authClient } from "@/lib/auth-client"; // Revert to client-side auth client
-import { columns } from "@/features/admin/users/user-table-columns";
-import { UserDataTable } from "@/features/admin/users/user-data-table";
-import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
+// Removed unused imports: authClient, columns, UserDataTable, UserTablePagination
+import { UserManagementClient } from "@/features/admin/users/user-management-client"; // Import the new client component
 
 // Define a basic SearchParams type locally
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -91,44 +89,7 @@ export default async function UsersPage({
     // query.filterValue = filterValue;
   }
 
-  // Fetch users and handle potential errors
-  // Revert to using the client-side auth client
-  const result = await authClient.admin.listUsers({
-    query: {
-      limit,
-      offset,
-      searchField,
-      searchOperator,
-      searchValue,
-      sortBy,
-      sortDirection,
-    },
-  });
-
-  console.log("Fetched users:", result); // Debugging line
-
-  if (result.error) {
-    console.error("Error fetching users:", result.error);
-    // Optionally render an error message to the user
-    return (
-      <main className="flex flex-col grow p-4">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Users</h1>
-            <p className="text-muted-foreground">
-              Manage users and their permissions here.
-            </p>
-          </div>
-        </div>
-        <div className="text-red-500">
-          Error loading users. Please try again later.
-        </div>
-      </main>
-    );
-  }
-
-  // Destructure data only if there's no error
-  const { users, total } = result.data;
+  // Data fetching logic moved to UserManagementClient
 
   return (
     <main className="flex flex-col grow p-4">
@@ -142,13 +103,8 @@ export default async function UsersPage({
         {/* Add Create User Button or other actions here if needed */}
       </div>
 
-      {/* Render the data table */}
-      <UserDataTable columns={columns} data={users || []} />
-
-      {/* Render pagination */}
-      {total > 0 && (
-        <UserTablePagination total={total} limit={limit} offset={offset} />
-      )}
+      {/* Render the client component, passing the server-calculated query */}
+      <UserManagementClient initialQuery={query} />
     </main>
   );
 }
