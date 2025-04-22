@@ -70,6 +70,7 @@ export function UserManagementClient({
         initialPageSize={pageSize}
         initialSort={initialSort}
         initialFilter={initialFilter}
+        initialSearch={initialSearch}
       />
     </div>
   );
