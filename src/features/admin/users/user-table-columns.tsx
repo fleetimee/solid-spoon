@@ -1,10 +1,8 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { User } from "better-auth"; // Import User type from the library
+import { User } from "better-auth";
 
-// Define your columns here based on the User type properties
-// Example columns:
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
@@ -19,7 +17,7 @@ export const columns: ColumnDef<User>[] = [
     header: "Name",
   },
   {
-    accessorKey: "role", // Assuming role is a property
+    accessorKey: "role",
     header: "Role",
   },
   {
@@ -27,8 +25,7 @@ export const columns: ColumnDef<User>[] = [
     header: "Created At",
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
-      return date.toLocaleDateString(); // Format date as needed
+      return date.toLocaleDateString();
     },
   },
-  // Add more columns as needed (e.g., actions)
 ];

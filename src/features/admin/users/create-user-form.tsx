@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose, // Import DialogClose
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -26,25 +26,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus, User, Mail, Lock, ShieldCheck } from "lucide-react"; // Added User, Mail, Lock, ShieldCheck
+import { Loader2, Plus, User, Mail, Lock, ShieldCheck } from "lucide-react";
 
-// Zod schema for form validation
 const createUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["user", "admin"], {
-    // Use enum for specific roles
     required_error: "Role is required",
     invalid_type_error: "Role must be 'user' or 'admin'",
   }),
-  // Add other fields like 'data' if needed
 });
 
 type CreateUserFormValues = z.infer<typeof createUserSchema>;
 
 interface CreateUserFormProps {
-  onUserCreated: () => void; // Callback to refresh user list
+  onUserCreated: () => void;
 }
 
 export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
@@ -57,7 +54,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
       name: "",
       email: "",
       password: "",
-      role: "user", // Default role
+      role: "user",
     },
   });
 
@@ -69,7 +66,6 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
         email: values.email,
         password: values.password,
         role: values.role,
-        // data: { /* Add custom data if needed */ }
       });
 
       if (result.error) {
@@ -77,9 +73,9 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
         toast.error(`Failed to create user: ${result.error.message}`);
       } else {
         toast.success(`User "${values.name}" created successfully!`);
-        form.reset(); // Reset form fields
-        onUserCreated(); // Trigger user list refresh
-        setIsOpen(false); // Close the dialog
+        form.reset();
+        onUserCreated();
+        setIsOpen(false);
       }
     } catch (error) {
       console.error("Caught error creating user:", error);
@@ -177,7 +173,6 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                     <ShieldCheck className="mr-2 h-4 w-4" /> Role
                   </FormLabel>
                   <FormControl>
-                    {/* TODO: Replace with Select component if multiple roles exist */}
                     <Input
                       placeholder="Enter 'user' or 'admin'"
                       {...field}

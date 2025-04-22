@@ -21,14 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input"; // For filtering
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"; // For column visibility
-import { Button } from "@/components/ui/button"; // For column visibility trigger
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -64,7 +64,6 @@ export function UserDataTable<TData, TValue>({
 
   return (
     <div>
-      {/* Filter Input Example (Email) */}
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
@@ -74,7 +73,6 @@ export function UserDataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {/* Column Visibility Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -102,7 +100,6 @@ export function UserDataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -153,7 +150,6 @@ export function UserDataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* Pagination will go here */}
     </div>
   );
 }

@@ -1,25 +1,21 @@
-// Removed unused imports: authClient, columns, UserDataTable, UserTablePagination
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
-import { Users } from "lucide-react"; // Import Users icon
+import { Users } from "lucide-react";
 
-// Define a basic SearchParams type locally
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-// Define expected search param types based on better-auth docs
 interface UserPageSearchParams extends SearchParams {
   limit?: string;
   offset?: string;
   searchField?: "email" | "name";
   searchOperator?: "contains" | "starts_with" | "ends_with";
   searchValue?: string;
-  sortBy?: string; // e.g., "createdAt", "email", "name"
+  sortBy?: string;
   sortDirection?: "asc" | "desc";
-  filterField?: string; // e.g., "role"
-  filterOperator?: "eq" | "neq"; // Add more as needed based on API
+  filterField?: string;
+  filterOperator?: "eq" | "neq";
   filterValue?: string;
 }
 
-// Define the structure for the listUsers query payload
 interface ListUsersQuery {
   limit: number;
   offset: number;
@@ -29,26 +25,19 @@ interface ListUsersQuery {
   sortBy?: string;
   sortDirection?: "asc" | "desc";
   filter?: Array<{
-    // Filter is an array of objects
     field: string;
-    operator: "eq" | "neq"; // Add more operators as needed
+    operator: "eq" | "neq";
     value: string;
   }>;
-  // The API docs also showed filterField, filterOperator, filterValue directly
-  // Check which format your specific better-auth version expects
-  // filterField?: string;
-  // filterOperator?: string;
-  // filterValue?: string;
 }
 
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<UserPageSearchParams>; // Wrap in Promise
+  searchParams: Promise<UserPageSearchParams>;
 }) {
-  const awaitedSearchParams = await searchParams; // Await the searchParams
+  const awaitedSearchParams = await searchParams;
 
-  // Extract and validate query parameters using the awaited object
   const limit = parseInt(awaitedSearchParams.limit || "10", 10);
   const offset = parseInt(awaitedSearchParams.offset || "0", 10);
   const searchField = awaitedSearchParams.searchField;
@@ -60,7 +49,6 @@ export default async function UsersPage({
   const filterOperator = awaitedSearchParams.filterOperator;
   const filterValue = awaitedSearchParams.filterValue;
 
-  // Construct query object for listUsers
   const query: ListUsersQuery = {
     limit,
     offset,
@@ -76,7 +64,6 @@ export default async function UsersPage({
     query.sortDirection = sortDirection || "asc";
   }
   if (filterField && filterOperator && filterValue) {
-    // Assuming filter is an array as per docs, adjust if needed
     query.filter = [
       {
         field: filterField,
@@ -84,13 +71,7 @@ export default async function UsersPage({
         value: filterValue,
       },
     ];
-    // If the API expects filterField, filterOperator, filterValue directly:
-    // query.filterField = filterField;
-    // query.filterOperator = filterOperator;
-    // query.filterValue = filterValue;
   }
-
-  // Data fetching logic moved to UserManagementClient
 
   return (
     <main className="flex flex-col grow p-4">
@@ -103,10 +84,8 @@ export default async function UsersPage({
             Manage users and their permissions here.
           </p>
         </div>
-        {/* Add Create User Button or other actions here if needed */}
       </div>
 
-      {/* Render the client component, passing the server-calculated query */}
       <UserManagementClient initialQuery={query} />
     </main>
   );

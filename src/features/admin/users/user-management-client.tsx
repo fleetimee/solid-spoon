@@ -5,12 +5,11 @@ import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { UserDataTable } from "@/features/admin/users/user-data-table";
 import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
-import { CreateUserForm } from "./create-user-form"; // Import the new form
-import { Toaster } from "@/components/ui/sonner"; // Import Toaster
+import { CreateUserForm } from "./create-user-form";
+import { Toaster } from "@/components/ui/sonner";
 import type { User } from "better-auth";
-import { Loader2, AlertTriangle, Users, ListFilter } from "lucide-react"; // Added icons
+import { Loader2, AlertTriangle, Users, ListFilter } from "lucide-react";
 
-// Define the structure for the listUsers query payload (matching page.tsx)
 interface ListUsersQuery {
   limit: number;
   offset: number;
@@ -38,15 +37,13 @@ export function UserManagementClient({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState<ListUsersQuery>(initialQuery);
-  const [refreshKey, setRefreshKey] = useState(0); // State to trigger refresh
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  // Callback to refresh users by incrementing the refreshKey
   const refreshUsers = useCallback(() => {
     setRefreshKey((prevKey) => prevKey + 1);
   }, []);
 
   useEffect(() => {
-    // Update query state if initialQuery changes (e.g., due to searchParams update)
     setQuery(initialQuery);
   }, [initialQuery]);
 
@@ -54,11 +51,10 @@ export function UserManagementClient({
     const fetchUsers = async () => {
       setLoading(true);
       setError(null);
-      console.log("Fetching users with query:", query); // Debugging line
+      console.log("Fetching users with query:", query);
       try {
-        // Use authClient here
         const result = await authClient.admin.listUsers({ query });
-        console.log("Fetched users result:", result); // Debugging line
+        console.log("Fetched users result:", result);
 
         if (result.error) {
           console.error("Error fetching users:", result.error);
@@ -69,15 +65,12 @@ export function UserManagementClient({
           setUsers(result.data.users || []);
           setTotal(result.data.total || 0);
         } else {
-          // Handle unexpected response structure
           setError("Received unexpected data structure from API.");
           setUsers([]);
           setTotal(0);
         }
       } catch (err: unknown) {
-        // Use unknown for better type safety
         console.error("Caught error fetching users:", err);
-        // Type check before accessing properties
         const errorMessage =
           err instanceof Error ? err.message : "An unexpected error occurred.";
         setError(errorMessage);
@@ -89,11 +82,9 @@ export function UserManagementClient({
     };
 
     fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, refreshKey]); // Re-fetch when query or refreshKey changes
+  }, [query, refreshKey]);
 
   if (loading) {
-    // Optional: Add a loading indicator
     return (
       <div className="flex items-center justify-center p-8 text-muted-foreground">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading users...
@@ -113,16 +104,12 @@ export function UserManagementClient({
 
   return (
     <>
-      <Toaster richColors /> {/* Add Toaster component */}
+      <Toaster richColors />
       <div className="flex justify-end mb-4">
         {" "}
-        {/* Add container for the button */}
         <CreateUserForm onUserCreated={refreshUsers} />{" "}
-        {/* Render the form/button */}
       </div>
-      {/* Render the data table */}
       <UserDataTable columns={columns} data={users} />
-      {/* Render pagination */}
       {total > 0 && (
         <UserTablePagination
           total={total}
