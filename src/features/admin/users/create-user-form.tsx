@@ -24,17 +24,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, User, Mail, Lock, ShieldCheck } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// Define valid role options
+const ROLES = ["user", "admin"] as const;
 
 const createUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["user", "admin"], {
-    required_error: "Role is required",
-    invalid_type_error: "Role must be 'user' or 'admin'",
+  role: z.enum(ROLES, {
+    required_error: "Please select a role",
   }),
 });
 
@@ -173,12 +185,29 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                     <ShieldCheck className="mr-2 h-4 w-4" /> Role
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter 'user' or 'admin'"
-                      {...field}
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
                       disabled={isSubmitting}
-                    />
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Available Roles</SelectLabel>
+                          {ROLES.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role.charAt(0).toUpperCase() + role.slice(1)}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
+                  <FormDescription>
+                    User permissions are determined by their role.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -192,11 +221,12 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Creating...
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-2 h-4 w-4" /> Save User
+                    <Plus className="mr-2 h-4 w-4" /> Create User
                   </>
                 )}
               </Button>

@@ -1,6 +1,9 @@
 "use client";
 
+import { useState, useCallback } from "react";
+import { Users } from "lucide-react";
 import { UsersTable } from "@/features/users/components/users-table";
+import { CreateUserForm } from "@/features/admin/users/create-user-form";
 
 interface ListUsersQuery {
   limit: number;
@@ -22,6 +25,8 @@ export function UserManagementClient({
 }: {
   initialQuery: ListUsersQuery;
 }) {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   const page = Math.floor(initialQuery.offset / initialQuery.limit) + 1;
   const pageSize = initialQuery.limit;
 
@@ -49,9 +54,23 @@ export function UserManagementClient({
         }
       : undefined;
 
+  // Callback for when a user is created
+  const handleUserCreated = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1);
+  }, []);
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          User Management
+        </h2>
+        <CreateUserForm onUserCreated={handleUserCreated} />
+      </div>
+
       <UsersTable
+        key={`users-table-${refreshTrigger}`}
         initialPage={page}
         initialPageSize={pageSize}
         initialSearch={initialSearch}

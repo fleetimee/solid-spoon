@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { Toaster } from "@/components/ui/sonner";
@@ -12,13 +12,9 @@ import {
   Search,
   ListFilter,
   X,
-  SlidersHorizontal,
   Filter,
   Shield,
-  Mail,
   Calendar,
-  Settings,
-  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,10 +75,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-// Common roles used in the application
 const USER_ROLES = ["admin", "moderator", "user", "guest"];
 
-// Types for search parameters
 interface SearchParams {
   field: "email" | "name";
   operator: "contains" | "starts_with" | "ends_with";
@@ -100,7 +94,6 @@ interface FilterParams {
   value: string;
 }
 
-// Props for UsersTable component
 interface UsersTableProps {
   initialPage?: number;
   initialPageSize?: number;
@@ -116,20 +109,16 @@ export function UsersTable({
   initialSort = { field: "createdAt", direction: "desc" },
   initialFilter,
 }: UsersTableProps) {
-  // Router for URL manipulation
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  // State for table data
   const [users, setUsers] = useState<User[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isApplying, setIsApplying] = useState(false);
 
-  // Table state
   const [sorting, setSorting] = useState<SortingState>([
     { id: initialSort.field, desc: initialSort.direction === "desc" },
   ]);
@@ -148,33 +137,27 @@ export function UsersTable({
   const [pageIndex, setPageIndex] = useState(initialPage - 1);
   const [pageSize, setPageSize] = useState(initialPageSize);
 
-  // Track active filters separately from column filters for UI
   const [activeFilters, setActiveFilters] = useState(0);
   const [joinedAfter, setJoinedAfter] = useState<string>("");
   const [joinedBefore, setJoinedBefore] = useState<string>("");
 
-  // Update URL with current query parameters
   const updateUrlParams = useCallback(() => {
     const params = new URLSearchParams();
 
-    // Pagination
     params.set("page", String(pageIndex + 1));
     params.set("pageSize", String(pageSize));
 
-    // Sorting
     if (sorting.length > 0) {
       params.set("sortBy", sorting[0].id);
       params.set("sortDirection", sorting[0].desc ? "desc" : "asc");
     }
 
-    // Search
     if (searchValue) {
       params.set("searchValue", searchValue);
       params.set("searchField", searchField);
       params.set("searchOperator", searchOperator);
     }
 
-    // Role filter
     const roleFilter = columnFilters.find((filter) => filter.id === "role");
     if (roleFilter) {
       params.set("filterField", "role");
@@ -182,7 +165,6 @@ export function UsersTable({
       params.set("filterValue", roleFilter.value as string);
     }
 
-    // Date range filters
     if (joinedAfter) {
       params.set("joinedAfter", joinedAfter);
     }
@@ -191,7 +173,6 @@ export function UsersTable({
       params.set("joinedBefore", joinedBefore);
     }
 
-    // Update URL without full page refresh
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`, { scroll: false });
     });
@@ -209,7 +190,6 @@ export function UsersTable({
     router,
   ]);
 
-  // Update active filters count when filters change
   useEffect(() => {
     let count = 0;
     if (searchValue) count++;
@@ -219,13 +199,11 @@ export function UsersTable({
     setActiveFilters(count);
   }, [searchValue, columnFilters, joinedAfter, joinedBefore]);
 
-  // Fetch users based on current parameters
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Build query based on current state
       const query = {
         limit: pageSize,
         offset: pageIndex * pageSize,
@@ -236,16 +214,14 @@ export function UsersTable({
               ? "desc"
               : "asc"
             : initialSort.direction,
-      } as Record<string, any>;
+      } as Record<string, string | number | boolean>;
 
-      // Add search parameters if present
       if (searchValue) {
         query.searchField = searchField;
         query.searchOperator = searchOperator;
         query.searchValue = searchValue;
       }
 
-      // Add role filter if set
       const roleFilter = columnFilters.find((filter) => filter.id === "role");
       if (roleFilter) {
         query.filterField = "role";
@@ -253,7 +229,6 @@ export function UsersTable({
         query.filterValue = roleFilter.value as string;
       }
 
-      // Add date filters if set
       if (joinedAfter) {
         query.joinedAfter = joinedAfter;
       }
@@ -262,7 +237,6 @@ export function UsersTable({
         query.joinedBefore = joinedBefore;
       }
 
-      // Fetch users from API
       const result = await authClient.admin.listUsers({ query });
 
       if (result.error) {
@@ -296,7 +270,6 @@ export function UsersTable({
     initialSort.direction,
   ]);
 
-  // Effect to update URL when table state changes
   useEffect(() => {
     updateUrlParams();
   }, [
@@ -312,25 +285,21 @@ export function UsersTable({
     updateUrlParams,
   ]);
 
-  // Effect to fetch users on initial load and when dependencies change
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Handle search submit
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setPageIndex(0); // Reset to first page on search
+    setPageIndex(0);
     fetchUsers();
   };
 
-  // Handle clearing search
   const clearSearch = () => {
     setSearchValue("");
-    setPageIndex(0); // Reset to first page
+    setPageIndex(0);
   };
 
-  // Reset all filters
   const resetFilters = () => {
     setSearchValue("");
     setColumnFilters([]);
@@ -339,12 +308,10 @@ export function UsersTable({
     setPageIndex(0);
   };
 
-  // Handle page change
   const goToPage = (page: number) => {
     setPageIndex(page);
   };
 
-  // Apply the filter changes
   const applyFilters = () => {
     setIsApplying(true);
     setPageIndex(0);
@@ -352,12 +319,10 @@ export function UsersTable({
     setTimeout(() => setIsApplying(false), 300);
   };
 
-  // Get pagination items
   const getPaginationItems = () => {
     const totalPages = Math.ceil(totalUsers / pageSize);
     const items = [];
 
-    // Always show first page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key="first">
@@ -371,7 +336,6 @@ export function UsersTable({
       );
     }
 
-    // Show ellipsis if needed
     if (pageIndex > 2) {
       items.push(
         <PaginationItem key="ellipsis-1">
@@ -380,7 +344,6 @@ export function UsersTable({
       );
     }
 
-    // Show nearby pages
     for (
       let i = Math.max(1, pageIndex - 1);
       i <= Math.min(totalPages - 2, pageIndex + 1);
@@ -398,7 +361,6 @@ export function UsersTable({
       );
     }
 
-    // Show ellipsis if needed
     if (pageIndex < totalPages - 3) {
       items.push(
         <PaginationItem key="ellipsis-2">
@@ -407,7 +369,6 @@ export function UsersTable({
       );
     }
 
-    // Show last page
     if (totalPages > 1) {
       items.push(
         <PaginationItem key="last">
@@ -424,7 +385,6 @@ export function UsersTable({
     return items;
   };
 
-  // Handle role filter change
   const toggleRoleFilter = (role: string | null) => {
     if (role === null) {
       setColumnFilters(columnFilters.filter((f) => f.id !== "role"));
@@ -435,14 +395,12 @@ export function UsersTable({
     }
   };
 
-  // Get selected role or null if no role filter is active
   const getSelectedRole = (): string | null => {
     const roleFilter = columnFilters.find((f) => f.id === "role");
     return roleFilter ? (roleFilter.value as string) : null;
   };
 
-  // Remove specific filter
-  const removeFilter = (type: string, value?: string) => {
+  const removeFilter = (type: string) => {
     switch (type) {
       case "search":
         setSearchValue("");
@@ -461,14 +419,13 @@ export function UsersTable({
     }
   };
 
-  // Initialize TanStack table
   const table = useReactTable({
     data: users,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: (updater) => {
       setSorting(updater);
-      setPageIndex(0); // Reset to first page on sort change
+      setPageIndex(0);
     },
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -483,7 +440,6 @@ export function UsersTable({
     pageCount: Math.ceil(totalUsers / pageSize),
   });
 
-  // Loading state for initial load
   if (loading && users.length === 0) {
     return (
       <Card>
@@ -496,7 +452,6 @@ export function UsersTable({
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Card>
@@ -515,7 +470,6 @@ export function UsersTable({
     <>
       <Toaster />
       <div className="space-y-4">
-        {/* Search and filters */}
         <div className="flex flex-col md:flex-row md:items-center gap-2">
           <div className="relative flex-1">
             <form onSubmit={handleSearch}>
@@ -596,7 +550,9 @@ export function UsersTable({
                   className="text-center justify-center"
                   onSelect={(e) => {
                     e.preventDefault();
-                    handleSearch({ preventDefault: () => {} } as React.FormEvent);
+                    handleSearch({
+                      preventDefault: () => {},
+                    } as React.FormEvent);
                   }}
                 >
                   Apply Search
@@ -750,7 +706,6 @@ export function UsersTable({
           </div>
         </div>
 
-        {/* Active filters display */}
         {activeFilters > 0 && (
           <div className="flex flex-wrap gap-2">
             {searchValue && (
@@ -760,8 +715,8 @@ export function UsersTable({
                 {searchOperator === "contains"
                   ? "contains"
                   : searchOperator === "starts_with"
-                  ? "starts with"
-                  : "ends with"}
+                    ? "starts with"
+                    : "ends with"}
                 : {searchValue}
                 <Button
                   variant="ghost"
@@ -833,66 +788,63 @@ export function UsersTable({
           </div>
         )}
 
-        {/* Users table */}
         <Card>
           <CardContent className="p-0">
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24">
+                      <div className="flex justify-center items-center h-full">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Loading...</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
                       ))}
                     </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className="h-24">
-                        <div className="flex justify-center items-center h-full">
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          <span>Loading...</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="h-24 text-center"
-                      >
-                        No users found.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center"
+                    >
+                      No users found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4">
             <div className="text-sm text-muted-foreground flex items-center self-start">
@@ -936,7 +888,6 @@ export function UsersTable({
           </CardFooter>
         </Card>
 
-        {/* Pagination */}
         {totalUsers > 0 && (
           <Pagination className="mt-4">
             <PaginationContent>
