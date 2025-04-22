@@ -68,7 +68,6 @@ export function UserManagementClient({
         key={`users-table-${refreshTrigger}`}
         initialPage={page}
         initialPageSize={pageSize}
-        initialSearch={initialSearch}
         initialSort={initialSort}
         initialFilter={initialFilter}
       />
