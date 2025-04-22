@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useTransition } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { Toaster } from "@/components/ui/sonner";
@@ -92,22 +93,25 @@ interface FilterParams {
 
 // Props for UsersTable component
 interface UsersTableProps {
-  initialPage: number;
-  initialPageSize: number;
-  initialSearch: SearchParams;
-  initialSort: SortParams;
+  initialPage?: number;
+  initialPageSize?: number;
+  initialSearch?: SearchParams;
+  initialSort?: SortParams;
   initialFilter?: FilterParams;
-  onParamChange: (params: Record<string, string | null>) => void;
 }
 
 export function UsersTable({
-  initialPage,
-  initialPageSize,
-  initialSearch,
-  initialSort,
+  initialPage = 1,
+  initialPageSize = 10,
+  initialSearch = { field: "email", operator: "contains", value: "" },
+  initialSort = { field: "createdAt", direction: "desc" },
   initialFilter,
-  onParamChange,
 }: UsersTableProps) {
+  // Router for URL manipulation
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
+
   // State for table data
   const [users, setUsers] = useState<User[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -118,7 +122,11 @@ export function UsersTable({
   const [sorting, setSorting] = useState<SortingState>([
     { id: initialSort.field, desc: initialSort.direction === "desc" },
   ]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    initialFilter?.field === "role"
+      ? [{ id: "role", value: initialFilter.value }]
+      : []
+  );
   const [searchValue, setSearchValue] = useState(initialSearch.value);
   const [searchField, setSearchField] = useState<"email" | "name">(
     initialSearch.field
@@ -128,14 +136,51 @@ export function UsersTable({
   >(initialSearch.operator);
   const [pageIndex, setPageIndex] = useState(initialPage - 1);
   const [pageSize, setPageSize] = useState(initialPageSize);
-  const [isFiltering, setIsFiltering] = useState(false);
 
-  // Initialize role filter if provided
-  useEffect(() => {
-    if (initialFilter && initialFilter.field === "role") {
-      setColumnFilters([{ id: "role", value: initialFilter.value }]);
+  // Update URL with current query parameters
+  const updateUrlParams = useCallback(() => {
+    const params = new URLSearchParams();
+
+    // Pagination
+    params.set("page", String(pageIndex + 1));
+    params.set("pageSize", String(pageSize));
+
+    // Sorting
+    if (sorting.length > 0) {
+      params.set("sortBy", sorting[0].id);
+      params.set("sortDirection", sorting[0].desc ? "desc" : "asc");
     }
-  }, [initialFilter]);
+
+    // Search
+    if (searchValue) {
+      params.set("searchValue", searchValue);
+      params.set("searchField", searchField);
+      params.set("searchOperator", searchOperator);
+    }
+
+    // Role filter
+    const roleFilter = columnFilters.find((filter) => filter.id === "role");
+    if (roleFilter) {
+      params.set("filterField", "role");
+      params.set("filterOperator", "eq");
+      params.set("filterValue", roleFilter.value as string);
+    }
+
+    // Update URL without full page refresh
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    });
+  }, [
+    pageIndex,
+    pageSize,
+    sorting,
+    searchValue,
+    searchField,
+    searchOperator,
+    columnFilters,
+    pathname,
+    router,
+  ]);
 
   // Fetch users based on current parameters
   const fetchUsers = useCallback(async () => {
@@ -144,12 +189,9 @@ export function UsersTable({
 
     try {
       // Build query based on current state
-      const query = {
+      const query: Record<string, string | number> = {
         limit: pageSize,
         offset: pageIndex * pageSize,
-        searchField: searchValue ? searchField : undefined,
-        searchOperator: searchValue ? searchOperator : undefined,
-        searchValue: searchValue || undefined,
         sortBy: sorting.length > 0 ? sorting[0].id : initialSort.field,
         sortDirection:
           sorting.length > 0
@@ -158,6 +200,13 @@ export function UsersTable({
               : "asc"
             : initialSort.direction,
       };
+
+      // Add search parameters if present
+      if (searchValue) {
+        query.searchField = searchField;
+        query.searchOperator = searchOperator;
+        query.searchValue = searchValue;
+      }
 
       // Add role filter if set
       const roleFilter = columnFilters.find((filter) => filter.id === "role");
@@ -169,8 +218,6 @@ export function UsersTable({
 
       // Fetch users from API
       const result = await authClient.admin.listUsers({ query });
-
-      console.log("Fetched users result:", result);
 
       if (result.error) {
         setError(result.error.message || "Failed to fetch users.");
@@ -201,40 +248,9 @@ export function UsersTable({
     initialSort.direction,
   ]);
 
-  // Update URL parameters when table state changes
-  const updateUrlParams = useCallback(() => {
-    const params: Record<string, string | null> = {
-      page: String(pageIndex + 1),
-      pageSize: String(pageSize),
-      sortBy: sorting.length > 0 ? sorting[0].id : null,
-      sortDirection:
-        sorting.length > 0 ? (sorting[0].desc ? "desc" : "asc") : null,
-    };
-
-    // Add search params if search is active
-    if (searchValue) {
-      params.search = searchValue;
-      params.searchField = searchField;
-      params.searchOperator = searchOperator;
-    } else {
-      params.search = null;
-      params.searchField = null;
-      params.searchOperator = null;
-    }
-
-    // Add role filter if active
-    const roleFilter = columnFilters.find((filter) => filter.id === "role");
-    if (roleFilter) {
-      params.filterField = "role";
-      params.filterOperator = "eq";
-      params.filterValue = roleFilter.value as string;
-    } else {
-      params.filterField = null;
-      params.filterOperator = null;
-      params.filterValue = null;
-    }
-
-    onParamChange(params);
+  // Effect to update URL when table state changes
+  useEffect(() => {
+    updateUrlParams();
   }, [
     pageIndex,
     pageSize,
@@ -243,28 +259,26 @@ export function UsersTable({
     searchField,
     searchOperator,
     columnFilters,
-    onParamChange,
+    updateUrlParams,
   ]);
 
-  // Effect to fetch users when dependencies change
+  // Effect to fetch users on initial load and when dependencies change
   useEffect(() => {
     fetchUsers();
-    updateUrlParams();
-  }, [fetchUsers, updateUrlParams]);
+  }, [fetchUsers]);
 
   // Handle search submit
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Just trigger a fetch - the search value is already in state
+    setPageIndex(0); // Reset to first page on search
     fetchUsers();
-    updateUrlParams();
   };
 
   // Handle clearing search
   const clearSearch = () => {
     setSearchValue("");
-    fetchUsers();
-    updateUrlParams();
+    setPageIndex(0); // Reset to first page
+    // We'll let the useEffect trigger the fetch and URL update
   };
 
   // Handle page change
@@ -344,12 +358,25 @@ export function UsersTable({
     return items;
   };
 
+  // Handle role filter change
+  const handleRoleFilterChange = (role: string | null) => {
+    const newFilters = columnFilters.filter((f) => f.id !== "role");
+    if (role) {
+      newFilters.push({ id: "role", value: role });
+    }
+    setColumnFilters(newFilters);
+    setPageIndex(0); // Reset to first page
+  };
+
   // Initialize TanStack table
   const table = useReactTable({
     data: users,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: (updater) => {
+      setSorting(updater);
+      setPageIndex(0); // Reset to first page on sort change
+    },
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
@@ -358,6 +385,8 @@ export function UsersTable({
       columnFilters,
     },
     manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     pageCount: Math.ceil(totalUsers / pageSize),
   });
 
@@ -397,7 +426,7 @@ export function UsersTable({
       <Toaster />
       <div className="space-y-4">
         {/* Search and filters */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-2">
           <form onSubmit={handleSearch} className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -419,219 +448,194 @@ export function UsersTable({
             )}
           </form>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Search className="mr-2 h-4 w-4" />
-                Search Options
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Search configuration</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+          <div className="flex gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Search className="mr-2 h-4 w-4" />
+                  Search Options
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Search configuration</DropdownMenuLabel>
+                <DropdownMenuSeparator />
 
-              <div className="p-2">
-                <p className="mb-2 text-sm font-medium">Search by:</p>
-                <Select
-                  value={searchField}
-                  onValueChange={(value) =>
-                    setSearchField(value as "email" | "name")
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Field" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="email">Email</SelectItem>
-                    <SelectItem value="name">Name</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="p-2">
-                <p className="mb-2 text-sm font-medium">Operator:</p>
-                <Select
-                  value={searchOperator}
-                  onValueChange={(value) =>
-                    setSearchOperator(
-                      value as "contains" | "starts_with" | "ends_with"
-                    )
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Operator" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="contains">Contains</SelectItem>
-                    <SelectItem value="starts_with">Starts with</SelectItem>
-                    <SelectItem value="ends_with">Ends with</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-center justify-center"
-                onSelect={() =>
-                  handleSearch({ preventDefault: () => {} } as React.FormEvent)
-                }
-              >
-                Apply Search
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                <span>Filters</span>
-                {activeFiltersCount > 0 && (
-                  <Badge
-                    variant="secondary"
-                    className="ml-2 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
+                <div className="p-2">
+                  <p className="mb-2 text-sm font-medium">Search by:</p>
+                  <Select
+                    value={searchField}
+                    onValueChange={(value) =>
+                      setSearchField(value as "email" | "name")
+                    }
                   >
-                    {activeFiltersCount}
-                  </Badge>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Filter Users</SheetTitle>
-                <SheetDescription>
-                  Configure filters to narrow down the user list.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="py-4 space-y-4">
-                <div>
-                  <h4 className="mb-2 text-sm font-medium">User Role</h4>
-                  <div className="space-y-2">
-                    <Button
-                      variant={
-                        columnFilters.some((f) => f.id === "role")
-                          ? "outline"
-                          : "default"
-                      }
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        const newFilters = columnFilters.filter(
-                          (f) => f.id !== "role"
-                        );
-                        setColumnFilters(newFilters);
-                      }}
+                    <SelectTrigger>
+                      <SelectValue placeholder="Field" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="name">Name</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="p-2">
+                  <p className="mb-2 text-sm font-medium">Operator:</p>
+                  <Select
+                    value={searchOperator}
+                    onValueChange={(value) =>
+                      setSearchOperator(
+                        value as "contains" | "starts_with" | "ends_with"
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Operator" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="contains">Contains</SelectItem>
+                      <SelectItem value="starts_with">Starts with</SelectItem>
+                      <SelectItem value="ends_with">Ends with</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-center justify-center"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSearch({
+                      preventDefault: () => {},
+                    } as React.FormEvent);
+                  }}
+                >
+                  Apply Search
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline">
+                  <SlidersHorizontal className="mr-2 h-4 w-4" />
+                  <span>Filters</span>
+                  {activeFiltersCount > 0 && (
+                    <Badge
+                      variant="secondary"
+                      className="ml-2 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
                     >
-                      All Roles
-                    </Button>
-                    <Button
-                      variant={
-                        columnFilters.some(
-                          (f) => f.id === "role" && f.value === "admin"
-                        )
-                          ? "default"
-                          : "outline"
-                      }
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        const newFilters = columnFilters.filter(
-                          (f) => f.id !== "role"
-                        );
-                        newFilters.push({ id: "role", value: "admin" });
-                        setColumnFilters(newFilters);
-                      }}
-                    >
-                      Admin
-                    </Button>
-                    <Button
-                      variant={
-                        columnFilters.some(
-                          (f) => f.id === "role" && f.value === "moderator"
-                        )
-                          ? "default"
-                          : "outline"
-                      }
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        const newFilters = columnFilters.filter(
-                          (f) => f.id !== "role"
-                        );
-                        newFilters.push({ id: "role", value: "moderator" });
-                        setColumnFilters(newFilters);
-                      }}
-                    >
-                      Moderator
-                    </Button>
-                    <Button
-                      variant={
-                        columnFilters.some(
-                          (f) => f.id === "role" && f.value === "user"
-                        )
-                          ? "default"
-                          : "outline"
-                      }
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        const newFilters = columnFilters.filter(
-                          (f) => f.id !== "role"
-                        );
-                        newFilters.push({ id: "role", value: "user" });
-                        setColumnFilters(newFilters);
-                      }}
-                    >
-                      User
-                    </Button>
-                    <Button
-                      variant={
-                        columnFilters.some(
-                          (f) => f.id === "role" && f.value === "guest"
-                        )
-                          ? "default"
-                          : "outline"
-                      }
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        const newFilters = columnFilters.filter(
-                          (f) => f.id !== "role"
-                        );
-                        newFilters.push({ id: "role", value: "guest" });
-                        setColumnFilters(newFilters);
-                      }}
-                    >
-                      Guest
-                    </Button>
+                      {activeFiltersCount}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Filter Users</SheetTitle>
+                  <SheetDescription>
+                    Configure filters to narrow down the user list.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="py-4 space-y-4">
+                  <div>
+                    <h4 className="mb-2 text-sm font-medium">User Role</h4>
+                    <div className="space-y-2">
+                      <Button
+                        variant={
+                          columnFilters.some((f) => f.id === "role")
+                            ? "outline"
+                            : "default"
+                        }
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => handleRoleFilterChange(null)}
+                      >
+                        All Roles
+                      </Button>
+                      <Button
+                        variant={
+                          columnFilters.some(
+                            (f) => f.id === "role" && f.value === "admin"
+                          )
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => handleRoleFilterChange("admin")}
+                      >
+                        Admin
+                      </Button>
+                      <Button
+                        variant={
+                          columnFilters.some(
+                            (f) => f.id === "role" && f.value === "moderator"
+                          )
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => handleRoleFilterChange("moderator")}
+                      >
+                        Moderator
+                      </Button>
+                      <Button
+                        variant={
+                          columnFilters.some(
+                            (f) => f.id === "role" && f.value === "user"
+                          )
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => handleRoleFilterChange("user")}
+                      >
+                        User
+                      </Button>
+                      <Button
+                        variant={
+                          columnFilters.some(
+                            (f) => f.id === "role" && f.value === "guest"
+                          )
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        className="w-full justify-start"
+                        onClick={() => handleRoleFilterChange("guest")}
+                      >
+                        Guest
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <SheetFooter className="absolute bottom-0 left-0 right-0 p-4 border-t">
-                <SheetClose asChild>
-                  <Button className="w-full" onClick={() => fetchUsers()}>
-                    Apply Filters
-                  </Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+                <SheetFooter className="absolute bottom-0 left-0 right-0 p-4 border-t">
+                  <SheetClose asChild>
+                    <Button className="w-full" onClick={() => fetchUsers()}>
+                      Apply Filters
+                    </Button>
+                  </SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
 
-          {activeFiltersCount > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setSearchValue("");
-                setColumnFilters([]);
-                fetchUsers();
-                updateUrlParams();
-              }}
-              title="Clear all filters"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+            {activeFiltersCount > 0 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setSearchValue("");
+                  setColumnFilters([]);
+                  setPageIndex(0);
+                }}
+                title="Clear all filters"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Active filters display */}
@@ -674,6 +678,7 @@ export function UsersTable({
                     setColumnFilters(
                       columnFilters.filter((f) => f.id !== filter.id)
                     );
+                    setPageIndex(0);
                   }}
                 >
                   <X className="h-2 w-2" />
@@ -705,7 +710,16 @@ export function UsersTable({
                   ))}
                 </TableHeader>
                 <TableBody>
-                  {table.getRowModel().rows?.length ? (
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24">
+                        <div className="flex justify-center items-center h-full">
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <span>Loading...</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
                       <TableRow
                         key={row.id}
@@ -735,8 +749,8 @@ export function UsersTable({
               </Table>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between items-center py-4">
-            <div className="text-sm text-muted-foreground flex items-center">
+          <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-4 py-4">
+            <div className="text-sm text-muted-foreground flex items-center self-start">
               {totalUsers > 0 ? (
                 <>
                   <Users className="mr-2 h-4 w-4" />
@@ -751,7 +765,7 @@ export function UsersTable({
                 </>
               )}
             </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex items-center space-x-6 lg:space-x-8 self-end">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium">Rows per page</p>
                 <Select
@@ -783,7 +797,10 @@ export function UsersTable({
             <PaginationContent>
               {pageIndex > 0 && (
                 <PaginationItem>
-                  <PaginationPrevious onClick={() => goToPage(pageIndex - 1)} />
+                  <PaginationPrevious
+                    onClick={() => goToPage(pageIndex - 1)}
+                    aria-disabled={isPending}
+                  />
                 </PaginationItem>
               )}
 
@@ -791,7 +808,10 @@ export function UsersTable({
 
               {pageIndex < Math.ceil(totalUsers / pageSize) - 1 && (
                 <PaginationItem>
-                  <PaginationNext onClick={() => goToPage(pageIndex + 1)} />
+                  <PaginationNext
+                    onClick={() => goToPage(pageIndex + 1)}
+                    aria-disabled={isPending}
+                  />
                 </PaginationItem>
               )}
             </PaginationContent>

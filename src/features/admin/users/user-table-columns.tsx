@@ -23,7 +23,6 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 
-// Helper function to get initials from a name
 function getInitials(name?: string): string {
   if (!name) return "??";
   return name
@@ -34,11 +33,10 @@ function getInitials(name?: string): string {
     .slice(0, 2);
 }
 
-// Map for role badge styling
 const roleBadgeVariants: Record<
   string,
   {
-    variant: "default" | "outline" | "secondary" | "destructive" | "success";
+    variant: "default" | "outline" | "secondary" | "destructive";
     label: string;
   }
 > = {

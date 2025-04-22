@@ -1,11 +1,12 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
 import { Users } from "lucide-react";
 
+// Properly typed search parameters
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface UserPageSearchParams extends SearchParams {
-  limit?: string;
-  offset?: string;
+  page?: string;
+  pageSize?: string;
   searchField?: "email" | "name";
   searchOperator?: "contains" | "starts_with" | "ends_with";
   searchValue?: string;
@@ -36,39 +37,46 @@ export default async function UsersPage({
 }: {
   searchParams: Promise<UserPageSearchParams>;
 }) {
-  const awaitedSearchParams = await searchParams;
+  const params = await searchParams;
 
-  const limit = parseInt(awaitedSearchParams.limit || "10", 10);
-  const offset = parseInt(awaitedSearchParams.offset || "0", 10);
-  const searchField = awaitedSearchParams.searchField;
-  const searchOperator = awaitedSearchParams.searchOperator;
-  const searchValue = awaitedSearchParams.searchValue;
-  const sortBy = awaitedSearchParams.sortBy;
-  const sortDirection = awaitedSearchParams.sortDirection;
-  const filterField = awaitedSearchParams.filterField;
-  const filterOperator = awaitedSearchParams.filterOperator;
-  const filterValue = awaitedSearchParams.filterValue;
+  // Parse pagination params
+  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const pageSize = Math.min(
+    50,
+    Math.max(5, parseInt(params.pageSize || "10", 10))
+  );
+  const offset = (page - 1) * pageSize;
 
+  // Build query object
   const query: ListUsersQuery = {
-    limit,
+    limit: pageSize,
     offset,
   };
 
-  if (searchField && searchOperator && searchValue) {
-    query.searchField = searchField;
-    query.searchOperator = searchOperator;
-    query.searchValue = searchValue;
+  // Add search params if present
+  if (params.searchValue) {
+    query.searchValue = params.searchValue;
+    query.searchField = params.searchField || "email";
+    query.searchOperator = params.searchOperator || "contains";
   }
-  if (sortBy) {
-    query.sortBy = sortBy;
-    query.sortDirection = sortDirection || "asc";
+
+  // Add sorting if present
+  if (params.sortBy) {
+    query.sortBy = params.sortBy;
+    query.sortDirection = params.sortDirection || "asc";
+  } else {
+    // Default sorting by createdAt descending
+    query.sortBy = "createdAt";
+    query.sortDirection = "desc";
   }
-  if (filterField && filterOperator && filterValue) {
+
+  // Add filtering if present
+  if (params.filterField && params.filterOperator && params.filterValue) {
     query.filter = [
       {
-        field: filterField,
-        operator: filterOperator,
-        value: filterValue,
+        field: params.filterField,
+        operator: params.filterOperator as "eq" | "neq",
+        value: params.filterValue,
       },
     ];
   }
