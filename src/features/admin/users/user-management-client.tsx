@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
 import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { UserDataTable } from "@/features/admin/users/user-data-table";
 import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
+import { CreateUserForm } from "./create-user-form"; // Import the new form
+import { Toaster } from "@/components/ui/sonner"; // Import Toaster
 import type { User } from "better-auth"; // Import User type from better-auth
 
 // Define the structure for the listUsers query payload (matching page.tsx)
@@ -35,6 +37,12 @@ export function UserManagementClient({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState<ListUsersQuery>(initialQuery);
+  const [refreshKey, setRefreshKey] = useState(0); // State to trigger refresh
+
+  // Callback to refresh users by incrementing the refreshKey
+  const refreshUsers = useCallback(() => {
+    setRefreshKey((prevKey) => prevKey + 1);
+  }, []);
 
   useEffect(() => {
     // Update query state if initialQuery changes (e.g., due to searchParams update)
@@ -80,7 +88,8 @@ export function UserManagementClient({
     };
 
     fetchUsers();
-  }, [query]); // Re-fetch when query changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, refreshKey]); // Re-fetch when query or refreshKey changes
 
   if (loading) {
     // Optional: Add a loading indicator
@@ -93,9 +102,15 @@ export function UserManagementClient({
 
   return (
     <>
+      <Toaster richColors /> {/* Add Toaster component */}
+      <div className="flex justify-end mb-4">
+        {" "}
+        {/* Add container for the button */}
+        <CreateUserForm onUserCreated={refreshUsers} />{" "}
+        {/* Render the form/button */}
+      </div>
       {/* Render the data table */}
       <UserDataTable columns={columns} data={users} />
-
       {/* Render pagination */}
       {total > 0 && (
         <UserTablePagination
