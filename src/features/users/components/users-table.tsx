@@ -170,6 +170,8 @@ export function UsersTable({
       // Fetch users from API
       const result = await authClient.admin.listUsers({ query });
 
+      console.log("Fetched users result:", result);
+
       if (result.error) {
         setError(result.error.message || "Failed to fetch users.");
         setUsers([]);
