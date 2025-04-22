@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, User, Mail, Lock, ShieldCheck } from "lucide-react"; // Added User, Mail, Lock, ShieldCheck
 
 // Zod schema for form validation
 const createUserSchema = z.object({
@@ -114,10 +114,12 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <User className="mr-2 h-4 w-4" /> Name
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="John Doe"
+                      placeholder="e.g., John Doe"
                       {...field}
                       disabled={isSubmitting}
                     />
@@ -131,11 +133,13 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <Mail className="mr-2 h-4 w-4" /> Email
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="john.doe@example.com"
+                      placeholder="e.g., john.doe@example.com"
                       {...field}
                       disabled={isSubmitting}
                     />
@@ -149,11 +153,13 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <Lock className="mr-2 h-4 w-4" /> Password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="********"
+                      placeholder="Must be at least 8 characters"
                       {...field}
                       disabled={isSubmitting}
                     />
@@ -167,11 +173,13 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Role</FormLabel>
+                  <FormLabel className="flex items-center">
+                    <ShieldCheck className="mr-2 h-4 w-4" /> Role
+                  </FormLabel>
                   <FormControl>
                     {/* TODO: Replace with Select component if multiple roles exist */}
                     <Input
-                      placeholder="user"
+                      placeholder="Enter 'user' or 'admin'"
                       {...field}
                       disabled={isSubmitting}
                     />
@@ -192,7 +200,9 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
                   </>
                 ) : (
-                  "Save User"
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Save User
+                  </>
                 )}
               </Button>
             </DialogFooter>

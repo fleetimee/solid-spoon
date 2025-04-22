@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
+import React, { useState, useEffect, useCallback } from "react";
 import { authClient } from "@/lib/auth-client";
 import { columns } from "@/features/admin/users/user-table-columns";
 import { UserDataTable } from "@/features/admin/users/user-data-table";
 import { UserTablePagination } from "@/features/admin/users/user-table-pagination";
 import { CreateUserForm } from "./create-user-form"; // Import the new form
 import { Toaster } from "@/components/ui/sonner"; // Import Toaster
-import type { User } from "better-auth"; // Import User type from better-auth
+import type { User } from "better-auth";
+import { Loader2, AlertTriangle, Users, ListFilter } from "lucide-react"; // Added icons
 
 // Define the structure for the listUsers query payload (matching page.tsx)
 interface ListUsersQuery {
@@ -93,11 +94,21 @@ export function UserManagementClient({
 
   if (loading) {
     // Optional: Add a loading indicator
-    return <div className="p-4 text-center">Loading users...</div>;
+    return (
+      <div className="flex items-center justify-center p-8 text-muted-foreground">
+        <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading users...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-4 text-center text-red-500">Error: {error}</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-destructive">
+        <AlertTriangle className="mb-2 h-8 w-8" />
+        <p className="font-semibold">Error loading users</p>
+        <p className="text-sm">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -119,14 +130,18 @@ export function UserManagementClient({
           offset={query.offset}
         />
       )}
-      <div className="mt-4 text-center text-sm text-muted-foreground">
+      <div className="mt-4 flex items-center justify-center text-sm text-muted-foreground">
         {total > 0 ? (
           <>
+            <Users className="mr-2 h-4 w-4" />
             Showing {query.offset + 1} to{" "}
             {Math.min(query.offset + query.limit, total)} of {total} users
           </>
         ) : (
-          "No users found."
+          <>
+            <ListFilter className="mr-2 h-4 w-4" /> No users found matching your
+            criteria.
+          </>
         )}
       </div>
     </>
