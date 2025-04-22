@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers/better-auth-ui-providers";
 import { Toaster } from "sonner";
 import BProgressProviders from "@/components/providers/bprogress-providers";
+import TanstackProviders from "@/components/providers/tanstack-query-providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <BProgressProviders>
-          <Providers>{children}</Providers>
+          <Providers>
+            <TanstackProviders>{children}</TanstackProviders>
+          </Providers>
         </BProgressProviders>
         <Toaster />
       </body>

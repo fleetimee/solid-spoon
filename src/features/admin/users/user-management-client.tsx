@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { UsersTable } from "@/features/users/components/users-table";
+import { UsersTable } from "@/features/admin/users/users-table";
 import { CreateUserForm } from "@/features/admin/users/create-user-form";
 
 interface ListUsersQuery {
