@@ -36,11 +36,12 @@ interface ListUsersQuery {
   }>;
 }
 
-export default async function UsersPage({
-  searchParams,
-}: {
-  searchParams: UserPageSearchParams;
-}) {
+export default async function UsersPage(
+  props: {
+    searchParams: Promise<UserPageSearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const page = Math.max(1, parseInt(searchParams.page || "1", 10));
   const pageSize = Math.min(
     50,
