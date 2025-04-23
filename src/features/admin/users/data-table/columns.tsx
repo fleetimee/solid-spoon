@@ -10,6 +10,7 @@ import {
   Ban,
   Clock,
   MoreHorizontal,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -27,6 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BanUserForm } from "../ban-user-form";
@@ -159,6 +161,23 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const user = row.original;
       const isBanned = user.banned === true;
       const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
+      const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] =
+        useState(false);
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+      const handleMenuOpenChange = (open: boolean) => {
+        setIsMenuOpen(open);
+      };
+
+      const handleChangeRole = () => {
+        setIsMenuOpen(false);
+        setIsChangeRoleDialogOpen(true);
+      };
+
+      const handleBanUser = () => {
+        setIsMenuOpen(false);
+        setIsBanDialogOpen(true);
+      };
 
       return (
         <div className="flex justify-end">
@@ -171,22 +190,37 @@ export const columns: ColumnDef<ExtendedUser>[] = [
               window.location.reload();
             }}
           />
-          <DropdownMenu>
+
+          <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0"
+                aria-label="Open menu"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" sideOffset={5} className="w-48">
+              <DropdownMenuItem
+                onSelect={handleChangeRole}
+                className="cursor-pointer"
+              >
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Change Role
+              </DropdownMenuItem>
+
               {!isBanned && (
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
-                  onClick={() => setIsBanDialogOpen(true)}
-                >
-                  <Ban className="mr-2 h-4 w-4" />
-                  Ban User
-                </DropdownMenuItem>
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={handleBanUser}
+                    className="text-destructive focus:text-destructive cursor-pointer"
+                  >
+                    <Ban className="mr-2 h-4 w-4" />
+                    Ban User
+                  </DropdownMenuItem>
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
