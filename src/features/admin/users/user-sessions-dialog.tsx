@@ -23,8 +23,27 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { ExtendedUser } from "./types/user";
-import { Laptop, Clock, Globe, Info, AlertCircle, Loader2 } from "lucide-react";
+import {
+  Laptop,
+  Clock,
+  Globe,
+  Info,
+  AlertCircle,
+  Loader2,
+  Trash2,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -32,12 +51,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Define the session interface based on the schema
 interface UserSession {
   id: string;
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
+  token: string;
   ipAddress?: string | null;
   userAgent?: string | null;
   userId: string;
@@ -62,12 +81,21 @@ export function UserSessionsDialog({
   const [revokingSessionId, setRevokingSessionId] = useState<string | null>(
     null
   );
+  const [isRevokingAllSessions, setIsRevokingAllSessions] = useState(false);
+  const [activeSessions, setActiveSessions] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       loadSessions();
     }
   }, [isOpen, user.id]);
+
+  useEffect(() => {
+    const activeCount = sessions.filter(
+      (session) => !isSessionExpired(session.expiresAt)
+    ).length;
+    setActiveSessions(activeCount);
+  }, [sessions]);
 
   const loadSessions = async () => {
     setIsLoading(true);
@@ -84,7 +112,6 @@ export function UserSessionsDialog({
           `Failed to load sessions: ${result.error.message ?? "Unknown error"}`
         );
       } else {
-        // Display sessions exactly as returned from the API
         setSessions(
           result.data.sessions.map((s: any) => ({
             ...s,
@@ -115,7 +142,6 @@ export function UserSessionsDialog({
         );
       } else {
         toast.success("Session revoked successfully");
-        // Remove the revoked session from the list
         setSessions(sessions.filter((session) => session.id !== sessionId));
       }
     } catch (error) {
@@ -126,15 +152,41 @@ export function UserSessionsDialog({
     }
   };
 
-  // Format user agent string to extract browser and OS information
+  const revokeAllSessions = async () => {
+    setIsRevokingAllSessions(true);
+
+    try {
+      const result = await authClient.admin.revokeUserSessions({
+        userId: user.id,
+      });
+
+      if (result.error) {
+        toast.error(
+          `Failed to revoke all sessions: ${result.error.message ?? "Unknown error"}`
+        );
+      } else {
+        toast.success("All sessions revoked successfully");
+        setSessions(
+          sessions.map((session) => ({
+            ...session,
+            expiresAt: new Date().toISOString(),
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error revoking all sessions:", error);
+      toast.error("An unexpected error occurred while revoking all sessions");
+    } finally {
+      setIsRevokingAllSessions(false);
+    }
+  };
+
   const formatUserAgent = (userAgent: string | null) => {
     if (!userAgent) return "Unknown";
 
-    // This is a simple extraction - could be enhanced with a proper user-agent parser
     let browser = "Unknown browser";
     let os = "Unknown OS";
 
-    // Extract browser info
     if (userAgent.includes("Chrome")) browser = "Chrome";
     else if (userAgent.includes("Firefox")) browser = "Firefox";
     else if (userAgent.includes("Safari") && !userAgent.includes("Chrome"))
@@ -143,7 +195,6 @@ export function UserSessionsDialog({
     else if (userAgent.includes("MSIE") || userAgent.includes("Trident/"))
       browser = "Internet Explorer";
 
-    // Extract OS info
     if (userAgent.includes("Windows")) os = "Windows";
     else if (userAgent.includes("Mac OS")) os = "macOS";
     else if (userAgent.includes("Linux")) os = "Linux";
@@ -171,9 +222,50 @@ export function UserSessionsDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-1 mb-4 p-2 bg-muted rounded-md">
-          <div className="text-sm font-medium">User: {user.name || "N/A"}</div>
+          <div className="text-sm font-medium">{user.name || "N/A"}</div>
           <div className="text-xs text-muted-foreground">{user.email}</div>
         </div>
+
+        {activeSessions > 0 && !isLoading && !error && (
+          <div className="flex justify-end mb-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-500 hover:bg-red-50 hover:text-red-600 gap-1"
+                  disabled={isRevokingAllSessions}
+                >
+                  {isRevokingAllSessions ? (
+                    <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                  ) : (
+                    <Trash2 className="h-3 w-3 mr-1" />
+                  )}
+                  Revoke All Sessions
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Revoke All Sessions</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action will log out the user from all devices and
+                    applications. They will need to sign in again. This action
+                    cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                    onClick={revokeAllSessions}
+                  >
+                    Revoke All
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="space-y-2">
@@ -278,11 +370,11 @@ export function UserSessionsDialog({
                           className="text-red-500 hover:bg-red-50 hover:text-red-600"
                           disabled={
                             isSessionExpired(session.expiresAt) ||
-                            revokingSessionId === session.id
+                            revokingSessionId === session.token
                           }
-                          onClick={() => revokeSession(session.id)}
+                          onClick={() => revokeSession(session.token)}
                         >
-                          {revokingSessionId === session.id ? (
+                          {revokingSessionId === session.token ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
                           ) : (
                             "Revoke"
