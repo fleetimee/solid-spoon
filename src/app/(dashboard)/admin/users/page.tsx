@@ -1,6 +1,6 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
 
-type SearchParams = { [key: string]: string | string[] | undefined };
+type SearchParams = Record<string, string | string[] | undefined>;
 
 interface UserPageSearchParams extends SearchParams {
   page?: string;
@@ -36,12 +36,11 @@ interface ListUsersQuery {
   }>;
 }
 
-export default async function UsersPage(
-  props: {
-    searchParams: Promise<UserPageSearchParams>;
-  }
-) {
-  const searchParams = await props.searchParams;
+interface PageProps {
+  searchParams: UserPageSearchParams;
+}
+
+export default async function UsersPage({ searchParams }: PageProps) {
   const page = Math.max(1, parseInt(searchParams.page || "1", 10));
   const pageSize = Math.min(
     50,

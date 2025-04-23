@@ -37,11 +37,11 @@ interface UserSession {
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
-  ipAddress: string | null;
-  userAgent: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   userId: string;
-  impersonatedBy: string | null;
-  current?: boolean; // Optional flag to identify current session
+  impersonatedBy?: string | null;
+  current?: boolean;
 }
 
 interface UserSessionsDialogProps {
@@ -81,7 +81,12 @@ export function UserSessionsDialog({
         );
       } else {
         // Display sessions exactly as returned from the API
-        setSessions(result.data.sessions);
+        setSessions(
+          result.data.sessions.map((s: any) => ({
+            ...s,
+            impersonatedBy: s.impersonatedBy ?? null,
+          }))
+        );
       }
     } catch (error) {
       console.error("Error loading user sessions:", error);
