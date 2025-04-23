@@ -12,6 +12,7 @@ import {
   MoreHorizontal,
   ShieldCheck,
   Laptop,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -37,6 +38,7 @@ import { BanUserForm } from "../ban-user-form";
 import { ChangeRoleForm } from "../change-role-form";
 import { UnbanUserForm } from "../unban-user-form";
 import { UserSessionsDialog } from "../user-sessions-dialog";
+import { DeleteUserForm } from "../delete-user-form";
 
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
@@ -235,6 +237,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] =
         useState(false);
       const [isSessionsDialogOpen, setIsSessionsDialogOpen] = useState(false);
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
       const [isMenuOpen, setIsMenuOpen] = useState(false);
 
       const handleMenuOpenChange = (open: boolean) => {
@@ -259,6 +262,11 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const handleUnbanUser = () => {
         setIsMenuOpen(false);
         setIsUnbanDialogOpen(true);
+      };
+
+      const handleDeleteUser = () => {
+        setIsMenuOpen(false);
+        setIsDeleteDialogOpen(true);
       };
 
       const handleUserUpdated = () => {
@@ -292,6 +300,13 @@ export const columns: ColumnDef<ExtendedUser>[] = [
             user={user}
             isOpen={isSessionsDialogOpen}
             onOpenChange={setIsSessionsDialogOpen}
+          />
+
+          <DeleteUserForm
+            user={user}
+            isOpen={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+            onUserDeleted={handleUserUpdated}
           />
 
           <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
@@ -344,6 +359,14 @@ export const columns: ColumnDef<ExtendedUser>[] = [
                   </DropdownMenuItem>
                 </>
               )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={handleDeleteUser}
+                className="text-destructive focus:text-destructive cursor-pointer"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete User
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
