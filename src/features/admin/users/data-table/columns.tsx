@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BanUserForm } from "../ban-user-form";
+import { ChangeRoleForm } from "../change-role-form";
 
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
@@ -92,9 +93,54 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     ),
     cell: ({ row }) => {
       const role = row.getValue("role") as string;
+
+      // Define badge variants and styles based on role
+      const roleConfig: Record<
+        string,
+        {
+          variant: "default" | "outline" | "secondary" | "destructive";
+          className: string;
+        }
+      > = {
+        admin: {
+          variant: "default",
+          className: "bg-primary text-primary-foreground hover:bg-primary/80",
+        },
+        moderator: {
+          variant: "secondary",
+          className:
+            "bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+        },
+        user: {
+          variant: "outline",
+          className:
+            "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+        },
+        guest: {
+          variant: "outline",
+          className:
+            "bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-800/50 dark:text-gray-400 dark:border-gray-700",
+        },
+      };
+
+      // Get the config for this role, fallback to user styling
+      const config = roleConfig[role] || roleConfig.user;
+
       return (
-        <Badge variant="secondary">
-          {role.charAt(0).toUpperCase() + role.slice(1)}
+        <Badge
+          variant={config.variant}
+          className={`${config.className} ${
+            role === "admin" ? "font-medium" : ""
+          }`}
+        >
+          {role === "admin" ? (
+            <div className="flex items-center gap-1">
+              <ShieldCheck className="h-3 w-3 mr-1" />
+              {role.charAt(0).toUpperCase() + role.slice(1)}
+            </div>
+          ) : (
+            role.charAt(0).toUpperCase() + role.slice(1)
+          )}
         </Badge>
       );
     },
@@ -204,16 +250,25 @@ export const columns: ColumnDef<ExtendedUser>[] = [
         setIsBanDialogOpen(true);
       };
 
+      const handleUserUpdated = () => {
+        // Force a refresh of the data
+        window.location.reload();
+      };
+
       return (
         <div className="flex justify-end">
           <BanUserForm
             user={user}
             isOpen={isBanDialogOpen}
             onOpenChange={setIsBanDialogOpen}
-            onUserBanned={() => {
-              // Force a refresh of the data
-              window.location.reload();
-            }}
+            onUserBanned={handleUserUpdated}
+          />
+
+          <ChangeRoleForm
+            user={user}
+            isOpen={isChangeRoleDialogOpen}
+            onOpenChange={setIsChangeRoleDialogOpen}
+            onRoleChanged={handleUserUpdated}
           />
 
           <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
