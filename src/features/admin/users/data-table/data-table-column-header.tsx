@@ -15,16 +15,24 @@ interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
+  icon?: React.ReactNode;
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
+  icon,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return (
-      <div className={cn("py-3.5 px-4 text-sm font-medium", className)}>
+      <div
+        className={cn(
+          "flex items-center py-3.5 px-4 text-sm font-medium",
+          className
+        )}
+      >
+        {icon && icon}
         {title}
       </div>
     );
@@ -47,7 +55,10 @@ export function DataTableColumnHeader<TData, TValue>({
             size="sm"
             className="h-auto px-4 py-3.5 data-[state=open]:bg-accent -ml-4"
           >
-            <span className="mr-2">{title}</span>{" "}
+            <span className="mr-2 flex items-center">
+              {icon && icon}
+              {title}
+            </span>{" "}
             <SortIcon className="h-4 w-4 text-muted-foreground/70" />{" "}
           </Button>
         </DropdownMenuTrigger>
