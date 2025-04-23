@@ -22,8 +22,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { ExtendedUser } from "./types/user";
-import { Laptop, Clock, Globe, Info, AlertCircle } from "lucide-react";
+import { Laptop, Clock, Globe, Info, AlertCircle, Loader2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -58,6 +59,9 @@ export function UserSessionsDialog({
   const [sessions, setSessions] = useState<UserSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [revokingSessionId, setRevokingSessionId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -94,6 +98,31 @@ export function UserSessionsDialog({
       toast.error("Failed to load user sessions");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const revokeSession = async (sessionId: string) => {
+    setRevokingSessionId(sessionId);
+
+    try {
+      const result = await authClient.admin.revokeUserSession({
+        sessionToken: sessionId,
+      });
+
+      if (result.error) {
+        toast.error(
+          `Failed to revoke session: ${result.error.message ?? "Unknown error"}`
+        );
+      } else {
+        toast.success("Session revoked successfully");
+        // Remove the revoked session from the list
+        setSessions(sessions.filter((session) => session.id !== sessionId));
+      }
+    } catch (error) {
+      console.error("Error revoking session:", error);
+      toast.error("An unexpected error occurred while revoking the session");
+    } finally {
+      setRevokingSessionId(null);
     }
   };
 
@@ -169,6 +198,7 @@ export function UserSessionsDialog({
                   <TableHead>Created</TableHead>
                   <TableHead>Expires</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -239,6 +269,26 @@ export function UserSessionsDialog({
                           Active
                         </Badge>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                          disabled={
+                            isSessionExpired(session.expiresAt) ||
+                            revokingSessionId === session.id
+                          }
+                          onClick={() => revokeSession(session.id)}
+                        >
+                          {revokingSessionId === session.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            "Revoke"
+                          )}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
