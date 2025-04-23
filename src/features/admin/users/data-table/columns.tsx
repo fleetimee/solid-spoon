@@ -1,14 +1,27 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import type { User } from "better-auth";
 import { format } from "date-fns";
-import { Mail, User as UserIcon, Shield, Calendar } from "lucide-react";
+import {
+  Mail,
+  User as UserIcon,
+  Shield,
+  Calendar,
+  Ban,
+  Clock,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "./data-table-column-header";
+import { ExtendedUser } from "../types/user";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<ExtendedUser>[] = [
   {
     accessorKey: "email",
     header: ({ column }) => (
@@ -18,12 +31,7 @@ export const columns: ColumnDef<User>[] = [
         icon={<Mail className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <Mail className="mr-2 h-4 w-4 text-muted-foreground" />
-        <span>{row.getValue("email")}</span>
-      </div>
-    ),
+    cell: ({ row }) => <span>{row.getValue("email")}</span>,
   },
   {
     accessorKey: "name",
@@ -34,13 +42,7 @@ export const columns: ColumnDef<User>[] = [
         icon={<UserIcon className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),
-    cell: ({ row }) => (
-      <div className="flex items-center">
-        <UserIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-        <span>{row.getValue("name")}</span>
-      </div>
-    ),
-    enableSorting: false, // Assuming name is not sortable based on initial code
+    cell: ({ row }) => <span>{row.getValue("name")}</span>,
   },
   {
     accessorKey: "role",
@@ -54,16 +56,76 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const role = row.getValue("role") as string;
       return (
-        <div className="flex items-center">
-          <Shield className="mr-2 h-4 w-4 text-muted-foreground" />
-          <Badge variant="secondary">
-            {role.charAt(0).toUpperCase() + role.slice(1)}
-          </Badge>
-        </div>
+        <Badge variant="secondary">
+          {role.charAt(0).toUpperCase() + role.slice(1)}
+        </Badge>
       );
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "banned",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Status"
+        icon={<Ban className="mr-2 h-4 w-4 text-muted-foreground" />}
+      />
+    ),
+    filterFn: (row, id, filterValue) => {
+      const banned = row.getValue(id);
+      if (filterValue === false) {
+        return banned === false || banned === null;
+      }
+      return banned === filterValue;
+    },
+    cell: ({ row }) => {
+      const banned = row.getValue("banned") as boolean | null;
+      const banReason = row.original.banReason;
+      const banExpires = row.original.banExpires
+        ? new Date(row.original.banExpires)
+        : null;
+
+      if (!banned) {
+        return (
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
+            Active
+          </Badge>
+        );
+      }
+
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-2">
+                <Badge variant="destructive">Banned</Badge>
+                {banExpires && (
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {format(banExpires, "MMM d, yyyy")}
+                  </Badge>
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-xs">
+              <p className="font-medium">
+                Reason: {banReason || "No reason provided"}
+              </p>
+              {banExpires && (
+                <p className="text-sm text-white mt-1">
+                  Expires: {format(banExpires, "PPP")}
+                </p>
+              )}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
   },
   {
@@ -77,13 +139,7 @@ export const columns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
-      return (
-        <div className="flex items-center">
-          <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-          <span>{format(date, "PPP")}</span>
-        </div>
-      );
+      return <span>{format(date, "PPP")}</span>;
     },
   },
-  // Add more columns as needed, e.g., for actions
 ];

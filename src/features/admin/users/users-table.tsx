@@ -6,11 +6,11 @@ import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@/components/ui/sonner";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import type { User } from "better-auth";
+import { ExtendedUser } from "./types/user";
 
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 
-import { columns } from "@/features/admin/users/data-table/columns"; // Import from new columns file
+import { columns } from "@/features/admin/users/data-table/columns";
 import useDebounce from "@/hooks/useDebounce";
 import { DataTable } from "./data-table/data-table";
 
@@ -39,6 +39,7 @@ interface UsersTableProps {
   initialSearch?: SearchParams;
   initialSort?: SortParams;
   initialFilter?: FilterParams;
+  initialBannedStatus?: "banned" | "active";
 }
 
 export function UsersTable({
@@ -47,27 +48,39 @@ export function UsersTable({
   initialSearch = { field: "email", operator: "contains", value: "" },
   initialSort = { field: "createdAt", direction: "desc" },
   initialFilter,
+  initialBannedStatus,
 }: UsersTableProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition(); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isPending, startTransition] = useTransition();
 
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<ExtendedUser[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
+  const initialColumnFilters: ColumnFiltersState = [];
+
+  if (initialFilter?.field === "role") {
+    initialColumnFilters.push({ id: "role", value: initialFilter.value });
+  }
+
+  if (initialBannedStatus) {
+    initialColumnFilters.push({
+      id: "banned",
+      value: initialBannedStatus === "banned",
+    });
+  }
+
   const [sorting, setSorting] = useState<SortingState>([
     { id: initialSort.field, desc: initialSort.direction === "desc" },
   ]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    initialFilter?.field === "role"
-      ? [{ id: "role", value: initialFilter.value }]
-      : []
-  );
+
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>(initialColumnFilters);
   const [searchValue, setSearchValue] = useState(initialSearch.value);
-  const debouncedSearchValue = useDebounce(searchValue, 500); // Debounce search value with 500ms delay
+  const debouncedSearchValue = useDebounce(searchValue, 500);
   /**
    * Field to search by - used in:
    * @remarks
@@ -93,8 +106,6 @@ export function UsersTable({
   const [pageSize, setPageSize] = useState(initialPageSize);
 
   const [activeFilters, setActiveFilters] = useState(0);
-  const [joinedAfter, setJoinedAfter] = useState<string>("");
-  const [joinedBefore, setJoinedBefore] = useState<string>("");
 
   const updateUrlParams = useCallback(() => {
     const params = new URLSearchParams();
@@ -108,7 +119,6 @@ export function UsersTable({
     }
 
     if (debouncedSearchValue) {
-      // Use debounced value for URL params
       params.set("searchValue", debouncedSearchValue);
       params.set("searchField", searchField);
       params.set("searchOperator", searchOperator);
@@ -121,12 +131,12 @@ export function UsersTable({
       params.set("filterValue", roleFilter.value as string);
     }
 
-    if (joinedAfter) {
-      params.set("joinedAfter", joinedAfter);
-    }
-
-    if (joinedBefore) {
-      params.set("joinedBefore", joinedBefore);
+    const bannedFilter = columnFilters.find((filter) => filter.id === "banned");
+    if (bannedFilter !== undefined) {
+      params.set(
+        "bannedStatus",
+        bannedFilter.value === true ? "banned" : "active"
+      );
     }
 
     startTransition(() => {
@@ -136,24 +146,21 @@ export function UsersTable({
     pageIndex,
     pageSize,
     sorting,
-    debouncedSearchValue, // Depend on debounced value
+    debouncedSearchValue,
     searchField,
     searchOperator,
     columnFilters,
-    joinedAfter,
-    joinedBefore,
     pathname,
     router,
   ]);
 
   useEffect(() => {
     let count = 0;
-    if (searchValue) count++; // Use immediate searchValue for active filters count
+    if (searchValue) count++;
     if (columnFilters.some((filter) => filter.id === "role")) count++;
-    if (joinedAfter) count++;
-    if (joinedBefore) count++;
+    if (columnFilters.some((filter) => filter.id === "banned")) count++;
     setActiveFilters(count);
-  }, [searchValue, columnFilters, joinedAfter, joinedBefore]); // Depend on immediate searchValue
+  }, [searchValue, columnFilters]);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -170,10 +177,9 @@ export function UsersTable({
               ? "desc"
               : "asc"
             : initialSort.direction,
-      } as Record<string, string | number | boolean>;
+      } as Record<string, string | number | boolean | object>;
 
       if (debouncedSearchValue) {
-        // Use debounced value for API call
         query.searchField = searchField;
         query.searchOperator = searchOperator;
         query.searchValue = debouncedSearchValue;
@@ -186,12 +192,40 @@ export function UsersTable({
         query.filterValue = roleFilter.value as string;
       }
 
-      if (joinedAfter) {
-        query.joinedAfter = joinedAfter;
-      }
+      const bannedFilter = columnFilters.find(
+        (filter) => filter.id === "banned"
+      );
 
-      if (joinedBefore) {
-        query.joinedBefore = joinedBefore;
+      if (bannedFilter !== undefined) {
+        if (bannedFilter.value === true) {
+          if (roleFilter) {
+            query.filterAnd = [
+              {
+                field: "banned",
+                operator: "eq",
+                value: true,
+              },
+            ];
+          } else {
+            query.filterField = "banned";
+            query.filterOperator = "eq";
+            query.filterValue = true;
+          }
+        } else {
+          if (roleFilter) {
+            query.filterAnd = [
+              {
+                field: "banned",
+                operator: "eq",
+                value: false,
+              },
+            ];
+          } else {
+            query.filterField = "banned";
+            query.filterOperator = "eq";
+            query.filterValue = false;
+          }
+        }
       }
 
       const result = await authClient.admin.listUsers({ query });
@@ -201,7 +235,12 @@ export function UsersTable({
         setUsers([]);
         setTotalUsers(0);
       } else if (result.data) {
-        setUsers(result.data.users || []);
+        const typedUsers = (result.data.users || []).map((user) => ({
+          ...user,
+          banned: user.banned === undefined ? null : user.banned,
+        })) as ExtendedUser[];
+
+        setUsers(typedUsers);
         setTotalUsers(result.data.total || 0);
       } else {
         setError("Received unexpected data structure from API.");
@@ -216,33 +255,25 @@ export function UsersTable({
   }, [
     pageSize,
     pageIndex,
-    debouncedSearchValue, // Depend on debounced value
+    debouncedSearchValue,
     searchField,
     searchOperator,
     sorting,
     columnFilters,
-    joinedAfter,
-    joinedBefore,
     initialSort.field,
     initialSort.direction,
   ]);
 
   useEffect(() => {
-    // Fetch users when debouncedSearchValue, pagination, sorting, or filters change
     fetchUsers();
-  }, [fetchUsers]); // fetchUsers has debouncedSearchValue as a dependency
+  }, [fetchUsers]);
 
   useEffect(() => {
-    // Update URL params when debouncedSearchValue, pagination, sorting, or filters change
     updateUrlParams();
-  }, [updateUrlParams]); // updateUrlParams has debouncedSearchValue as a dependency
+  }, [updateUrlParams]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Reset all search parameters to defaults
-    setSearchValue(searchValue);
-    setSearchField("email");
-    setSearchOperator("contains");
     setPageIndex(0);
   };
 
@@ -251,14 +282,23 @@ export function UsersTable({
     setPageIndex(0);
   };
 
+  const handleSearchFieldChange = (field: "email" | "name") => {
+    setSearchField(field);
+    setPageIndex(0);
+  };
+
+  const handleSearchOperatorChange = (
+    operator: "contains" | "starts_with" | "ends_with"
+  ) => {
+    setSearchOperator(operator);
+    setPageIndex(0);
+  };
+
   const handleResetFilters = () => {
-    // Reset all search and filter parameters to defaults
     setSearchValue("");
     setSearchField("email");
     setSearchOperator("contains");
     setColumnFilters([]);
-    setJoinedAfter("");
-    setJoinedBefore("");
     setPageIndex(0);
   };
 
@@ -320,19 +360,17 @@ export function UsersTable({
         columnFilters={columnFilters}
         pageIndex={pageIndex}
         pageSize={pageSize}
-        searchValue={searchValue} // Pass the immediate searchValue to the input
-        onSearchChange={setSearchValue} // Update the immediate searchValue on input change
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
         searchField={searchField}
+        onSearchFieldChange={handleSearchFieldChange}
         searchOperator={searchOperator}
+        onSearchOperatorChange={handleSearchOperatorChange}
         onSearchSubmit={handleSearchSubmit}
         clearSearch={handleClearSearch}
         activeFilters={activeFilters}
         resetFilters={handleResetFilters}
         userRoles={USER_ROLES}
-        joinedAfter={joinedAfter}
-        setJoinedAfter={setJoinedAfter}
-        joinedBefore={joinedBefore}
-        setJoinedBefore={setJoinedBefore}
         applyFilters={handleApplyFilters}
         isApplyingFilters={isApplyingFilters}
       />

@@ -15,7 +15,9 @@ import {
   Mail,
   Clock,
   CalendarDays,
+  Ban,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DatePicker } from "./date-picker";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -54,17 +57,19 @@ interface DataTableToolbarProps<TData> {
   onSearchChange: (value: string) => void;
   /** Field to search by (used in constructing the search query) */
   searchField: "email" | "name";
+  /** Handler for when search field changes */
+  onSearchFieldChange: (field: "email" | "name") => void;
   /** Search operator to use (used in constructing the search query) */
   searchOperator: "contains" | "starts_with" | "ends_with";
+  /** Handler for when search operator changes */
+  onSearchOperatorChange: (
+    operator: "contains" | "starts_with" | "ends_with"
+  ) => void;
   onSearchSubmit: (e: React.FormEvent) => void;
   clearSearch: () => void;
   activeFilters: number;
   resetFilters: () => void;
   userRoles: string[];
-  joinedAfter: string;
-  setJoinedAfter: (date: string) => void;
-  joinedBefore: string;
-  setJoinedBefore: (date: string) => void;
   applyFilters: () => void;
   isApplyingFilters: boolean;
 }
@@ -74,24 +79,32 @@ export function DataTableToolbar<TData>({
   searchValue,
   onSearchChange,
   searchField,
+  onSearchFieldChange,
   searchOperator,
+  onSearchOperatorChange,
   onSearchSubmit,
   clearSearch,
   activeFilters,
   resetFilters,
   userRoles,
-  joinedAfter,
-  setJoinedAfter,
-  joinedBefore,
-  setJoinedBefore,
   applyFilters,
   isApplyingFilters,
 }: DataTableToolbarProps<TData>) {
-  const isFiltered =
-    table.getState().columnFilters.length > 0 ||
-    searchValue ||
-    joinedAfter ||
-    joinedBefore;
+  const [pendingRoleFilter, setPendingRoleFilter] = useState<string | null>(
+    () => {
+      const currentRole = table.getColumn("role")?.getFilterValue();
+      return currentRole === undefined ? null : (currentRole as string);
+    }
+  );
+
+  const [pendingBannedFilter, setPendingBannedFilter] = useState<string | null>(
+    () => {
+      const currentBanned = table.getColumn("banned")?.getFilterValue();
+      return currentBanned === undefined ? null : (currentBanned as string);
+    }
+  );
+
+  const isFiltered = table.getState().columnFilters.length > 0 || searchValue;
 
   const toggleRoleFilter = (value: string) => {
     if (value === "all") {
@@ -108,6 +121,22 @@ export function DataTableToolbar<TData>({
       : (filterValue as string);
   };
 
+  const toggleBannedFilter = (value: string) => {
+    if (value === "all") {
+      table.getColumn("banned")?.setFilterValue(undefined);
+    } else if (value === "active") {
+      table.getColumn("banned")?.setFilterValue(false);
+    } else if (value === "banned") {
+      table.getColumn("banned")?.setFilterValue(true);
+    }
+  };
+
+  const getSelectedBannedStatus = (): string | null => {
+    const filterValue = table.getColumn("banned")?.getFilterValue();
+    if (filterValue === undefined) return null;
+    return filterValue === true ? "banned" : "active";
+  };
+
   const removeFilter = (type: string) => {
     switch (type) {
       case "search":
@@ -116,11 +145,8 @@ export function DataTableToolbar<TData>({
       case "role":
         table.getColumn("role")?.setFilterValue(undefined);
         break;
-      case "joinedAfter":
-        setJoinedAfter("");
-        break;
-      case "joinedBefore":
-        setJoinedBefore("");
+      case "banned":
+        table.getColumn("banned")?.setFilterValue(undefined);
         break;
       default:
         break;
@@ -182,6 +208,37 @@ export function DataTableToolbar<TData>({
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex gap-2">
+                <Ban className="h-4 w-4" />
+                Status
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={!getSelectedBannedStatus()}
+                onCheckedChange={() => toggleBannedFilter("all")}
+              >
+                All Users
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={getSelectedBannedStatus() === "active"}
+                onCheckedChange={() => toggleBannedFilter("active")}
+              >
+                Active Users
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={getSelectedBannedStatus() === "banned"}
+                onCheckedChange={() => toggleBannedFilter("banned")}
+              >
+                Banned Users
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" className="relative">
@@ -221,10 +278,9 @@ export function DataTableToolbar<TData>({
                   </p>
                   <Select
                     value={searchField}
-                    onValueChange={(value) => {
-                      // This would need to be implemented in the parent component
-                      // setSearchField(value as "email" | "name")
-                    }}
+                    onValueChange={(value) =>
+                      onSearchFieldChange(value as "email" | "name")
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select field to search" />
@@ -253,11 +309,9 @@ export function DataTableToolbar<TData>({
                         <span className="flex items-center">
                           <Settings className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>
-                            {getSelectedRole()
-                              ? (getSelectedRole() as string)
-                                  .charAt(0)
-                                  .toUpperCase() +
-                                (getSelectedRole() as string).slice(1)
+                            {pendingRoleFilter
+                              ? pendingRoleFilter.charAt(0).toUpperCase() +
+                                pendingRoleFilter.slice(1)
                               : "All roles"}
                           </span>
                         </span>
@@ -268,19 +322,19 @@ export function DataTableToolbar<TData>({
                       <DropdownMenuLabel>Available Roles</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuCheckboxItem
-                        checked={!getSelectedRole()}
-                        onCheckedChange={() => toggleRoleFilter("all")}
+                        checked={!pendingRoleFilter}
+                        onCheckedChange={() => setPendingRoleFilter(null)}
                       >
                         All Roles
                       </DropdownMenuCheckboxItem>
                       {userRoles.map((role) => (
                         <DropdownMenuCheckboxItem
                           key={role}
-                          checked={getSelectedRole() === role}
+                          checked={pendingRoleFilter === role}
                           onCheckedChange={() =>
-                            getSelectedRole() === role
-                              ? toggleRoleFilter("all")
-                              : toggleRoleFilter(role)
+                            pendingRoleFilter === role
+                              ? setPendingRoleFilter(null)
+                              : setPendingRoleFilter(role)
                           }
                         >
                           {role.charAt(0).toUpperCase() + role.slice(1)}
@@ -292,40 +346,27 @@ export function DataTableToolbar<TData>({
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-medium">Join Date Range</h3>
+                    <Ban className="h-4 w-4 text-muted-foreground" />
+                    <h3 className="text-sm font-medium">User Status</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Filter users by when they joined the platform
+                    Filter users by their account status
                   </p>
-                  <div className="flex flex-col gap-3">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          From
-                        </span>
-                      </div>
-                      <Input
-                        type="date"
-                        value={joinedAfter}
-                        onChange={(e) => setJoinedAfter(e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">
-                          To
-                        </span>
-                      </div>
-                      <Input
-                        type="date"
-                        value={joinedBefore}
-                        onChange={(e) => setJoinedBefore(e.target.value)}
-                      />
-                    </div>
-                  </div>
+                  <Select
+                    value={pendingBannedFilter || "all"}
+                    onValueChange={(value) =>
+                      setPendingBannedFilter(value === "all" ? null : value)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select account status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Users</SelectItem>
+                      <SelectItem value="active">Active Users</SelectItem>
+                      <SelectItem value="banned">Banned Users</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -345,14 +386,36 @@ export function DataTableToolbar<TData>({
                 <div className="flex w-full gap-3">
                   <Button
                     variant="outline"
-                    onClick={resetFilters}
+                    onClick={() => {
+                      setPendingRoleFilter(null);
+                      setPendingBannedFilter(null);
+                      resetFilters();
+                    }}
                     className="flex-1"
                   >
                     Reset All
                   </Button>
                   <SheetClose asChild>
                     <Button
-                      onClick={applyFilters}
+                      onClick={() => {
+                        if (pendingRoleFilter) {
+                          table
+                            .getColumn("role")
+                            ?.setFilterValue(pendingRoleFilter);
+                        } else {
+                          table.getColumn("role")?.setFilterValue(undefined);
+                        }
+
+                        if (pendingBannedFilter === "active") {
+                          table.getColumn("banned")?.setFilterValue(false);
+                        } else if (pendingBannedFilter === "banned") {
+                          table.getColumn("banned")?.setFilterValue(true);
+                        } else {
+                          table.getColumn("banned")?.setFilterValue(undefined);
+                        }
+
+                        applyFilters();
+                      }}
                       className="flex-1"
                       disabled={isApplyingFilters}
                     >
@@ -426,34 +489,21 @@ export function DataTableToolbar<TData>({
             </Badge>
           )}
 
-          {joinedAfter && (
+          {getSelectedBannedStatus() && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 mr-1" />
-              From: <span className="font-semibold">{joinedAfter}</span>
+              <Ban className="h-3 w-3 mr-1" />
+              Status:{" "}
+              <span className="font-semibold capitalize">
+                {getSelectedBannedStatus() === "banned" ? "Banned" : "Active"}
+              </span>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => removeFilter("joinedAfter")}
+                onClick={() => removeFilter("banned")}
                 className="h-4 w-4 ml-1 rounded-full"
               >
                 <X className="h-2 w-2" />
-                <span className="sr-only">Remove joined after filter</span>
-              </Button>
-            </Badge>
-          )}
-
-          {joinedBefore && (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 mr-1" />
-              To: <span className="font-semibold">{joinedBefore}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => removeFilter("joinedBefore")}
-                className="h-4 w-4 ml-1 rounded-full"
-              >
-                <X className="h-2 w-2" />
-                <span className="sr-only">Remove joined before filter</span>
+                <span className="sr-only">Remove status filter</span>
               </Button>
             </Badge>
           )}

@@ -1,6 +1,5 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
 
-// Properly typed search parameters
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface UserPageSearchParams extends SearchParams {
@@ -14,6 +13,7 @@ interface UserPageSearchParams extends SearchParams {
   filterField?: string;
   filterOperator?: "eq" | "neq";
   filterValue?: string;
+  bannedStatus?: "banned" | "active";
 }
 
 interface ListUsersQuery {
@@ -27,57 +27,80 @@ interface ListUsersQuery {
   filter?: Array<{
     field: string;
     operator: "eq" | "neq";
-    value: string;
+    value: string | boolean;
+  }>;
+  filterAnd?: Array<{
+    field: string;
+    operator: "eq" | "neq";
+    value: string | boolean;
   }>;
 }
 
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: Promise<UserPageSearchParams>;
+  searchParams: UserPageSearchParams;
 }) {
-  const params = await searchParams;
-
-  // Parse pagination params
-  const page = Math.max(1, parseInt(params.page || "1", 10));
+  const page = Math.max(1, parseInt(searchParams.page || "1", 10));
   const pageSize = Math.min(
     50,
-    Math.max(5, parseInt(params.pageSize || "10", 10))
+    Math.max(5, parseInt(searchParams.pageSize || "10", 10))
   );
   const offset = (page - 1) * pageSize;
 
-  // Build query object
   const query: ListUsersQuery = {
     limit: pageSize,
     offset,
   };
 
-  // Add search params if present
-  if (params.searchValue) {
-    query.searchValue = params.searchValue;
-    query.searchField = params.searchField || "email";
-    query.searchOperator = params.searchOperator || "contains";
+  if (searchParams.searchValue) {
+    query.searchValue = searchParams.searchValue;
+    query.searchField = searchParams.searchField || "email";
+    query.searchOperator = searchParams.searchOperator || "contains";
   }
 
-  // Add sorting if present
-  if (params.sortBy) {
-    query.sortBy = params.sortBy;
-    query.sortDirection = params.sortDirection || "asc";
+  if (searchParams.sortBy) {
+    query.sortBy = searchParams.sortBy;
+    query.sortDirection = searchParams.sortDirection || "asc";
   } else {
-    // Default sorting by createdAt descending
     query.sortBy = "createdAt";
     query.sortDirection = "desc";
   }
 
-  // Add filtering if present
-  if (params.filterField && params.filterOperator && params.filterValue) {
+  if (
+    searchParams.filterField &&
+    searchParams.filterOperator &&
+    searchParams.filterValue
+  ) {
     query.filter = [
       {
-        field: params.filterField,
-        operator: params.filterOperator as "eq" | "neq",
-        value: params.filterValue,
+        field: searchParams.filterField,
+        operator: searchParams.filterOperator as "eq" | "neq",
+        value: searchParams.filterValue,
       },
     ];
+  }
+
+  if (searchParams.bannedStatus) {
+    const isBanned = searchParams.bannedStatus === "banned";
+
+    if (query.filter) {
+      query.filterAnd = [
+        {
+          field: "banned",
+          operator: "eq",
+          value: isBanned,
+        },
+      ];
+    } else {
+      query.filter = [
+        {
+          field: "banned",
+          operator: "eq",
+          value: isBanned,
+        },
+      ];
+    }
   }
 
   return (

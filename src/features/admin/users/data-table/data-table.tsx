@@ -43,16 +43,16 @@ interface DataTableProps<TData, TValue> {
   searchValue: string;
   onSearchChange: (value: string) => void;
   searchField: "email" | "name";
+  onSearchFieldChange: (field: "email" | "name") => void;
   searchOperator: "contains" | "starts_with" | "ends_with";
+  onSearchOperatorChange: (
+    operator: "contains" | "starts_with" | "ends_with"
+  ) => void;
   onSearchSubmit: (e: React.FormEvent) => void;
   clearSearch: () => void;
   activeFilters: number;
   resetFilters: () => void;
   userRoles: string[];
-  joinedAfter: string;
-  setJoinedAfter: (date: string) => void;
-  joinedBefore: string;
-  setJoinedBefore: (date: string) => void;
   applyFilters: () => void;
   isApplyingFilters: boolean;
 }
@@ -71,16 +71,14 @@ export function DataTable<TData, TValue>({
   searchValue,
   onSearchChange,
   searchField,
+  onSearchFieldChange,
   searchOperator,
+  onSearchOperatorChange,
   onSearchSubmit,
   clearSearch,
   activeFilters,
   resetFilters,
   userRoles,
-  joinedAfter,
-  setJoinedAfter,
-  joinedBefore,
-  setJoinedBefore,
   applyFilters,
   isApplyingFilters,
 }: DataTableProps<TData, TValue>) {
@@ -122,16 +120,14 @@ export function DataTable<TData, TValue>({
         searchValue={searchValue}
         onSearchChange={onSearchChange}
         searchField={searchField}
+        onSearchFieldChange={onSearchFieldChange}
         searchOperator={searchOperator}
+        onSearchOperatorChange={onSearchOperatorChange}
         onSearchSubmit={onSearchSubmit}
         clearSearch={clearSearch}
         activeFilters={activeFilters}
         resetFilters={resetFilters}
         userRoles={userRoles}
-        joinedAfter={joinedAfter}
-        setJoinedAfter={setJoinedAfter}
-        joinedBefore={joinedBefore}
-        setJoinedBefore={setJoinedBefore}
         applyFilters={applyFilters}
         isApplyingFilters={isApplyingFilters}
       />

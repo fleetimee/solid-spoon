@@ -15,7 +15,12 @@ interface ListUsersQuery {
   filter?: Array<{
     field: string;
     operator: "eq" | "neq";
-    value: string;
+    value: string | boolean;
+  }>;
+  filterAnd?: Array<{
+    field: string;
+    operator: "eq" | "neq";
+    value: string | boolean;
   }>;
 }
 
@@ -44,16 +49,28 @@ export function UserManagementClient({
       }
     : undefined;
 
-  const initialFilter =
-    initialQuery.filter && initialQuery.filter.length > 0
-      ? {
-          field: initialQuery.filter[0].field,
-          operator: initialQuery.filter[0].operator,
-          value: initialQuery.filter[0].value,
-        }
-      : undefined;
+  const roleFilter = initialQuery.filter?.find(
+    (filter) => filter.field === "role"
+  );
 
-  // Callback for when a user is created
+  const bannedFilter =
+    initialQuery.filter?.find((filter) => filter.field === "banned") ||
+    initialQuery.filterAnd?.find((filter) => filter.field === "banned");
+
+  const initialFilter = roleFilter
+    ? {
+        field: roleFilter.field,
+        operator: roleFilter.operator,
+        value: roleFilter.value as string,
+      }
+    : undefined;
+
+  const initialBannedStatus = bannedFilter
+    ? bannedFilter.value === true
+      ? "banned"
+      : "active"
+    : undefined;
+
   const handleUserCreated = useCallback(() => {
     setRefreshTrigger((prev) => prev + 1);
   }, []);
@@ -70,6 +87,7 @@ export function UserManagementClient({
         initialPageSize={pageSize}
         initialSort={initialSort}
         initialFilter={initialFilter}
+        initialBannedStatus={initialBannedStatus}
         initialSearch={initialSearch}
       />
     </div>
