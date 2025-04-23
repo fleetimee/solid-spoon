@@ -9,7 +9,9 @@ import {
   Calendar,
   Ban,
   Clock,
+  MoreHorizontal,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader } from "./data-table-column-header";
@@ -20,6 +22,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { BanUserForm } from "../ban-user-form";
 
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
@@ -140,6 +150,48 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
       return <span>{format(date, "PPP")}</span>;
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const user = row.original;
+      const isBanned = user.banned === true;
+      const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
+
+      return (
+        <div className="flex justify-end">
+          <BanUserForm
+            user={user}
+            isOpen={isBanDialogOpen}
+            onOpenChange={setIsBanDialogOpen}
+            onUserBanned={() => {
+              // Force a refresh of the data
+              window.location.reload();
+            }}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {!isBanned && (
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setIsBanDialogOpen(true)}
+                >
+                  <Ban className="mr-2 h-4 w-4" />
+                  Ban User
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      );
     },
   },
 ];
