@@ -11,6 +11,7 @@ import {
   Clock,
   MoreHorizontal,
   ShieldCheck,
+  Laptop,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -35,6 +36,7 @@ import {
 import { BanUserForm } from "../ban-user-form";
 import { ChangeRoleForm } from "../change-role-form";
 import { UnbanUserForm } from "../unban-user-form";
+import { UserSessionsDialog } from "../user-sessions-dialog";
 
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
@@ -59,7 +61,6 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     ),
     cell: ({ row }) => {
       const name = row.getValue("name") as string;
-      // Get initials from name (up to 2 characters)
       const initials = name
         .split(" ")
         .map((part) => part.charAt(0))
@@ -67,7 +68,6 @@ export const columns: ColumnDef<ExtendedUser>[] = [
         .join("")
         .toUpperCase();
 
-      // Get image from user object if available
       const userImage = row.original.image;
 
       return (
@@ -95,7 +95,6 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     cell: ({ row }) => {
       const role = row.getValue("role") as string;
 
-      // Define badge variants and styles based on role
       const roleConfig: Record<
         string,
         {
@@ -124,7 +123,6 @@ export const columns: ColumnDef<ExtendedUser>[] = [
         },
       };
 
-      // Get the config for this role, fallback to user styling
       const config = roleConfig[role] || roleConfig.user;
 
       return (
@@ -236,6 +234,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const [isUnbanDialogOpen, setIsUnbanDialogOpen] = useState(false);
       const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] =
         useState(false);
+      const [isSessionsDialogOpen, setIsSessionsDialogOpen] = useState(false);
       const [isMenuOpen, setIsMenuOpen] = useState(false);
 
       const handleMenuOpenChange = (open: boolean) => {
@@ -245,6 +244,11 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const handleChangeRole = () => {
         setIsMenuOpen(false);
         setIsChangeRoleDialogOpen(true);
+      };
+
+      const handleViewSessions = () => {
+        setIsMenuOpen(false);
+        setIsSessionsDialogOpen(true);
       };
 
       const handleBanUser = () => {
@@ -258,7 +262,6 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       };
 
       const handleUserUpdated = () => {
-        // Force a refresh of the data
         window.location.reload();
       };
 
@@ -285,6 +288,12 @@ export const columns: ColumnDef<ExtendedUser>[] = [
             onRoleChanged={handleUserUpdated}
           />
 
+          <UserSessionsDialog
+            user={user}
+            isOpen={isSessionsDialogOpen}
+            onOpenChange={setIsSessionsDialogOpen}
+          />
+
           <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
             <DropdownMenuTrigger asChild>
               <Button
@@ -302,6 +311,14 @@ export const columns: ColumnDef<ExtendedUser>[] = [
               >
                 <ShieldCheck className="mr-2 h-4 w-4" />
                 Change Role
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onSelect={handleViewSessions}
+                className="cursor-pointer"
+              >
+                <Laptop className="mr-2 h-4 w-4" />
+                View Sessions
               </DropdownMenuItem>
 
               {isBanned ? (
