@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition } from "react";
+import { useState, useEffect, useCallback, useTransition, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@/components/ui/sonner";
@@ -42,6 +42,20 @@ interface UsersTableProps {
   initialBannedStatus?: "banned" | "active";
 }
 
+/**
+ * Loading overlay component that displays on top of content during data fetching
+ */
+function LoadingOverlay() {
+  return (
+    <div className="absolute inset-0 bg-background/80 backdrop-blur-[1px] flex items-center justify-center z-10">
+      <div className="flex items-center justify-center p-4 rounded-md bg-background shadow-md border">
+        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+        <span className="text-sm font-medium">Updating...</span>
+      </div>
+    </div>
+  );
+}
+
 export function UsersTable({
   initialPage = 1,
   initialPageSize = 10,
@@ -56,7 +70,8 @@ export function UsersTable({
 
   const [users, setUsers] = useState<ExtendedUser[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [refreshLoading, setRefreshLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
@@ -163,7 +178,14 @@ export function UsersTable({
   }, [searchValue, columnFilters]);
 
   const fetchUsers = useCallback(async () => {
-    setLoading(true);
+    // For initial load, show full loading state
+    // For filter/search/sort changes, show overlay with existing data
+    if (users.length === 0) {
+      setInitialLoading(true);
+    } else {
+      setRefreshLoading(true);
+    }
+    
     setError(null);
 
     try {
@@ -250,7 +272,8 @@ export function UsersTable({
         err instanceof Error ? err.message : "An unexpected error occurred.";
       setError(errorMessage);
     } finally {
-      setLoading(false);
+      setInitialLoading(false);
+      setRefreshLoading(false);
     }
   }, [
     pageSize,
@@ -262,6 +285,7 @@ export function UsersTable({
     columnFilters,
     initialSort.field,
     initialSort.direction,
+    users.length,
   ]);
 
   useEffect(() => {
@@ -320,7 +344,50 @@ export function UsersTable({
     setPageSize(pageSize);
   };
 
-  if (loading && users.length === 0) {
+  // Memoize the table content to preserve it during refreshes
+  const tableContent = useMemo(() => (
+    <DataTable
+      columns={columns}
+      data={users}
+      pageCount={Math.ceil(totalUsers / pageSize)}
+      onPaginationChange={handlePaginationChange}
+      onSortingChange={setSorting}
+      onColumnFiltersChange={setColumnFilters}
+      sorting={sorting}
+      columnFilters={columnFilters}
+      pageIndex={pageIndex}
+      pageSize={pageSize}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      searchField={searchField}
+      onSearchFieldChange={handleSearchFieldChange}
+      searchOperator={searchOperator}
+      onSearchOperatorChange={handleSearchOperatorChange}
+      onSearchSubmit={handleSearchSubmit}
+      clearSearch={handleClearSearch}
+      activeFilters={activeFilters}
+      resetFilters={handleResetFilters}
+      userRoles={USER_ROLES}
+      applyFilters={handleApplyFilters}
+      isApplyingFilters={isApplyingFilters}
+    />
+  ), [
+    columns,
+    users,
+    totalUsers,
+    pageSize,
+    handlePaginationChange,
+    sorting,
+    columnFilters,
+    pageIndex,
+    searchValue,
+    searchField,
+    searchOperator,
+    activeFilters,
+    isApplyingFilters,
+  ]);
+
+  if (initialLoading && users.length === 0) {
     return (
       <Card>
         <CardContent className="pt-6">
@@ -349,31 +416,10 @@ export function UsersTable({
   return (
     <>
       <Toaster />
-      <DataTable
-        columns={columns}
-        data={users}
-        pageCount={Math.ceil(totalUsers / pageSize)}
-        onPaginationChange={handlePaginationChange}
-        onSortingChange={setSorting}
-        onColumnFiltersChange={setColumnFilters}
-        sorting={sorting}
-        columnFilters={columnFilters}
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-        searchField={searchField}
-        onSearchFieldChange={handleSearchFieldChange}
-        searchOperator={searchOperator}
-        onSearchOperatorChange={handleSearchOperatorChange}
-        onSearchSubmit={handleSearchSubmit}
-        clearSearch={handleClearSearch}
-        activeFilters={activeFilters}
-        resetFilters={handleResetFilters}
-        userRoles={USER_ROLES}
-        applyFilters={handleApplyFilters}
-        isApplyingFilters={isApplyingFilters}
-      />
+      <div className="relative">
+        {refreshLoading && <LoadingOverlay />}
+        {tableContent}
+      </div>
     </>
   );
 }
