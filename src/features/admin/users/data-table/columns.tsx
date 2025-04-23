@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { ExtendedUser } from "../types/user";
 import {
@@ -54,7 +55,31 @@ export const columns: ColumnDef<ExtendedUser>[] = [
         icon={<UserIcon className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),
-    cell: ({ row }) => <span>{row.getValue("name")}</span>,
+    cell: ({ row }) => {
+      const name = row.getValue("name") as string;
+      // Get initials from name (up to 2 characters)
+      const initials = name
+        .split(" ")
+        .map((part) => part.charAt(0))
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+
+      // Get image from user object if available
+      const userImage = row.original.image;
+
+      return (
+        <div className="flex items-center gap-2">
+          <Avatar className="size-7">
+            {userImage ? <AvatarImage src={userImage} alt={name} /> : null}
+            <AvatarFallback className="text-xs bg-primary/10 text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{name}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "role",
