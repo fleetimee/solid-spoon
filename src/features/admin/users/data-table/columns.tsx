@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BanUserForm } from "../ban-user-form";
 import { ChangeRoleForm } from "../change-role-form";
+import { UnbanUserForm } from "../unban-user-form";
 
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
@@ -232,6 +233,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
       const user = row.original;
       const isBanned = user.banned === true;
       const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
+      const [isUnbanDialogOpen, setIsUnbanDialogOpen] = useState(false);
       const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] =
         useState(false);
       const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -250,6 +252,11 @@ export const columns: ColumnDef<ExtendedUser>[] = [
         setIsBanDialogOpen(true);
       };
 
+      const handleUnbanUser = () => {
+        setIsMenuOpen(false);
+        setIsUnbanDialogOpen(true);
+      };
+
       const handleUserUpdated = () => {
         // Force a refresh of the data
         window.location.reload();
@@ -262,6 +269,13 @@ export const columns: ColumnDef<ExtendedUser>[] = [
             isOpen={isBanDialogOpen}
             onOpenChange={setIsBanDialogOpen}
             onUserBanned={handleUserUpdated}
+          />
+
+          <UnbanUserForm
+            user={user}
+            isOpen={isUnbanDialogOpen}
+            onOpenChange={setIsUnbanDialogOpen}
+            onUserUnbanned={handleUserUpdated}
           />
 
           <ChangeRoleForm
@@ -290,7 +304,18 @@ export const columns: ColumnDef<ExtendedUser>[] = [
                 Change Role
               </DropdownMenuItem>
 
-              {!isBanned && (
+              {isBanned ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={handleUnbanUser}
+                    className="text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 cursor-pointer"
+                  >
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                    Unban User
+                  </DropdownMenuItem>
+                </>
+              ) : (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
