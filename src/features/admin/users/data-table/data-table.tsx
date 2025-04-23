@@ -40,7 +40,6 @@ interface DataTableProps<TData, TValue> {
   columnFilters: ColumnFiltersState;
   pageIndex: number;
   pageSize: number;
-  // Add other props needed for toolbar and pagination
   searchValue: string;
   onSearchChange: (value: string) => void;
   searchField: "email" | "name";
@@ -140,19 +139,20 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow
+                key={headerGroup.id}
+                className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+              >
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="h-12 px-4 align-middle">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -162,9 +162,13 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="px-4 py-3 align-middle [&:has([role=checkbox])]:pr-0"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -177,9 +181,9 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-32 text-center text-muted-foreground"
                 >
-                  No results.
+                  No results found.
                 </TableCell>
               </TableRow>
             )}
