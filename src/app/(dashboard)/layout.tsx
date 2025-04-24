@@ -21,15 +21,6 @@ interface UserData {
   role: string;
 }
 
-export const metadata: Metadata = {
-  title: "Admin Dashboard",
-  description: "Administrative dashboard for room reservation management",
-  openGraph: {
-    title: "Admin Dashboard | Capstone Room Reservation",
-    description: "Administrative dashboard for managing room reservations",
-  },
-};
-
 export default async function Layout({
   children,
 }: {

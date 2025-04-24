@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTableSkeleton } from "@/features/admin/users/users-table";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { Typography } from "@/components/ui/typography";
 
 const usersBreadcrumb = [{ label: "Users" }, { label: "Manage Users" }];
 
@@ -16,13 +17,11 @@ export default function UsersPageLoading() {
       <BreadcrumbSetter items={usersBreadcrumb} />
 
       <main className="flex flex-col grow p-4 md:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center">Users</h1>
-            <p className="text-muted-foreground">
-              Manage users and their permissions here.
-            </p>
-          </div>
+        <div className="flex flex-col gap-2 mb-6">
+          <Typography variant="h1">User Management</Typography>
+          <Typography variant="muted">
+            Manage users and their permissions here.
+          </Typography>
         </div>
 
         <div className="space-y-6">

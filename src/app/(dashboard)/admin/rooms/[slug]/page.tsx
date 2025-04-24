@@ -47,16 +47,15 @@ export async function generateMetadata(
     };
   }
 
-  // Get parent metadata
+  // Get parent metadata for images
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
-    title: `${room.name} | Room Management`,
+    title: room.name,
     description:
       room.description ||
       `Details for ${room.name} with capacity of ${room.capacity} people`,
     openGraph: {
-      title: `${room.name} | Room Details`,
       description: room.description || `View details for ${room.name}`,
       images: room.coverImage
         ? [room.coverImage, ...previousImages]
