@@ -75,7 +75,7 @@ function LoadingOverlay() {
  * DataTableSkeleton component that precisely matches the structure of your actual DataTable
  * for a seamless loading experience
  */
-function DataTableSkeleton() {
+export function DataTableSkeleton() {
   return (
     <div className="space-y-4">
       {/* Toolbar skeleton */}
