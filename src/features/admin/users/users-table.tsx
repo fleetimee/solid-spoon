@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useTransition,
+  useMemo,
+} from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@/components/ui/sonner";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedUser } from "./types/user";
@@ -14,6 +20,14 @@ import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import { columns } from "@/features/admin/users/data-table/columns";
 import useDebounce from "@/hooks/useDebounce";
 import { DataTable } from "./data-table/data-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const USER_ROLES = ["admin", "moderator", "user", "guest"];
 
@@ -58,68 +72,136 @@ function LoadingOverlay() {
 }
 
 /**
- * Table skeleton component that displays a skeleton version of the users table
- * during initial loading states
+ * DataTableSkeleton component that precisely matches the structure of your actual DataTable
+ * for a seamless loading experience
  */
-function UsersTableSkeleton() {
+function DataTableSkeleton() {
   return (
-    <Card>
-      <CardContent className="p-0 sm:p-6">
-        {/* Search and filter toolbar skeleton */}
-        <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Skeleton className="h-9 w-full sm:w-[280px] rounded-md" />
-            <Skeleton className="h-9 w-24 rounded-md hidden sm:block" />
-          </div>
-          <div className="flex gap-2">
-            <Skeleton className="h-9 w-28 rounded-md" />
-            <Skeleton className="h-9 w-24 rounded-md" />
-          </div>
-        </div>
-
-        {/* Table header skeleton */}
-        <div className="border-b px-4 py-3">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-32 rounded" />
-            <Skeleton className="h-4 w-40 rounded" />
-            <Skeleton className="h-4 w-24 rounded hidden md:block" />
-            <Skeleton className="h-4 w-32 rounded hidden lg:block" />
-            <Skeleton className="h-4 w-20 rounded hidden xl:block" />
-          </div>
-        </div>
-
-        {/* Table rows skeleton */}
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="border-b px-4 py-4">
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-4 w-4 rounded" />
-              <div className="flex items-center gap-3 w-32">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <Skeleton className="h-4 w-20 rounded" />
-              </div>
-              <Skeleton className="h-4 w-40 rounded" />
-              <Skeleton className="h-4 w-24 rounded hidden md:block" />
-              <Skeleton className="h-4 w-32 rounded hidden lg:block" />
-              <div className="hidden xl:flex gap-2 w-20">
-                <Skeleton className="h-8 w-8 rounded-full" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
+    <div className="space-y-4">
+      {/* Toolbar skeleton */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row md:items-center gap-2">
+          {/* Search input skeleton */}
+          <div className="relative flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Skeleton className="h-9 w-full rounded-md" />
             </div>
           </div>
-        ))}
 
-        {/* Pagination skeleton */}
-        <div className="p-4 flex items-center justify-between">
-          <Skeleton className="h-4 w-40 rounded" />
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-8 rounded" />
+          {/* Filter buttons skeleton */}
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-[90px] rounded-md" /> {/* Role filter */}
+            <Skeleton className="h-9 w-[100px] rounded-md" />{" "}
+            {/* Status filter */}
+            <Skeleton className="h-9 w-[100px] rounded-md" />{" "}
+            {/* Filters button */}
+          </div>
+        </div>
+
+        {/* Active filters skeleton - shown with 50% probability to simulate different states */}
+        {Math.random() > 0.5 && (
+          <div className="flex min-h-[2.25rem] flex-wrap items-center gap-2">
+            <Skeleton className="h-4 w-4 rounded-full" />
+            <Skeleton className="h-5 w-32 rounded-md" />
+            <Skeleton className="h-7 w-[120px] rounded-full" />
+            <Skeleton className="h-7 w-[100px] rounded-full" />
+          </div>
+        )}
+      </div>
+
+      {/* Table skeleton */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[40px]">
+                <Skeleton className="h-4 w-4 rounded" />
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-4 w-[120px] rounded" />
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-4 w-[150px] rounded" />
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                </div>
+              </TableHead>
+              <TableHead className="hidden md:table-cell">
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-4 w-[80px] rounded" />
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                </div>
+              </TableHead>
+              <TableHead className="hidden lg:table-cell">
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-4 w-[100px] rounded" />
+                  <Skeleton className="h-4 w-4 rounded-full" />
+                </div>
+              </TableHead>
+              <TableHead className="hidden xl:table-cell">
+                <Skeleton className="h-4 w-[60px] rounded" />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell>
+                  <Skeleton className="h-4 w-4 rounded" />
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-24 rounded" />
+                      <Skeleton className="h-3 w-16 rounded" />
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[180px] rounded" />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  <Skeleton className="h-4 w-28 rounded" />
+                </TableCell>
+                <TableCell className="hidden xl:table-cell">
+                  <div className="flex space-x-1">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination skeleton */}
+      <div className="flex items-center justify-between">
+        <div className="flex-1 text-sm">
+          <Skeleton className="h-5 w-[180px] rounded" />
+        </div>
+        <div className="flex items-center space-x-6 lg:space-x-8">
+          <div className="flex items-center space-x-2">
+            <Skeleton className="h-8 w-24 rounded" />
+          </div>
+          <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+            <Skeleton className="h-8 w-[100px] rounded" />
+          </div>
+          <div className="flex items-center space-x-2">
             <Skeleton className="h-8 w-8 rounded" />
             <Skeleton className="h-8 w-8 rounded" />
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 
@@ -252,7 +334,7 @@ export function UsersTable({
     } else {
       setRefreshLoading(true);
     }
-    
+
     setError(null);
 
     try {
@@ -412,50 +494,59 @@ export function UsersTable({
   };
 
   // Memoize the table content to preserve it during refreshes
-  const tableContent = useMemo(() => (
-    <DataTable
-      columns={columns}
-      data={users}
-      pageCount={Math.ceil(totalUsers / pageSize)}
-      onPaginationChange={handlePaginationChange}
-      onSortingChange={setSorting}
-      onColumnFiltersChange={setColumnFilters}
-      sorting={sorting}
-      columnFilters={columnFilters}
-      pageIndex={pageIndex}
-      pageSize={pageSize}
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      searchField={searchField}
-      onSearchFieldChange={handleSearchFieldChange}
-      searchOperator={searchOperator}
-      onSearchOperatorChange={handleSearchOperatorChange}
-      onSearchSubmit={handleSearchSubmit}
-      clearSearch={handleClearSearch}
-      activeFilters={activeFilters}
-      resetFilters={handleResetFilters}
-      userRoles={USER_ROLES}
-      applyFilters={handleApplyFilters}
-      isApplyingFilters={isApplyingFilters}
-    />
-  ), [
-    columns,
-    users,
-    totalUsers,
-    pageSize,
-    handlePaginationChange,
-    sorting,
-    columnFilters,
-    pageIndex,
-    searchValue,
-    searchField,
-    searchOperator,
-    activeFilters,
-    isApplyingFilters,
-  ]);
+  const tableContent = useMemo(
+    () => (
+      <DataTable
+        columns={columns}
+        data={users}
+        pageCount={Math.ceil(totalUsers / pageSize)}
+        onPaginationChange={handlePaginationChange}
+        onSortingChange={setSorting}
+        onColumnFiltersChange={setColumnFilters}
+        sorting={sorting}
+        columnFilters={columnFilters}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        searchField={searchField}
+        onSearchFieldChange={handleSearchFieldChange}
+        searchOperator={searchOperator}
+        onSearchOperatorChange={handleSearchOperatorChange}
+        onSearchSubmit={handleSearchSubmit}
+        clearSearch={handleClearSearch}
+        activeFilters={activeFilters}
+        resetFilters={handleResetFilters}
+        userRoles={USER_ROLES}
+        applyFilters={handleApplyFilters}
+        isApplyingFilters={isApplyingFilters}
+      />
+    ),
+    [
+      columns,
+      users,
+      totalUsers,
+      pageSize,
+      handlePaginationChange,
+      sorting,
+      columnFilters,
+      pageIndex,
+      searchValue,
+      searchField,
+      searchOperator,
+      activeFilters,
+      isApplyingFilters,
+    ]
+  );
 
   if (initialLoading && users.length === 0) {
-    return <UsersTableSkeleton />;
+    return (
+      <Card>
+        <CardContent className="p-0 sm:p-6">
+          <DataTableSkeleton />
+        </CardContent>
+      </Card>
+    );
   }
 
   if (error) {
