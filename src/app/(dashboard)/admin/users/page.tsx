@@ -1,5 +1,16 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "User Management | Capstone Room Reservation",
+  description: "View and manage all users in the reservation system",
+  openGraph: {
+    title: "User Management System",
+    description: "Browse and manage all users in the reservation system",
+    type: "website",
+  },
+};
 
 const usersBreadcrumb = [{ label: "Users" }, { label: "Manage Users" }];
 
