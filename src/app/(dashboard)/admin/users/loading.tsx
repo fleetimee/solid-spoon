@@ -14,7 +14,7 @@ export default function UsersPageLoading() {
   return (
     <>
       <BreadcrumbSetter items={usersBreadcrumb} />
-    
+
       <main className="flex flex-col grow p-4 md:p-8">
         <div className="flex items-center justify-between mb-6">
           <div>

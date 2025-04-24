@@ -12,6 +12,7 @@ import { getNavigation } from "@/features/navigation/api/getNavigation";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 interface UserData {
   name: string;
@@ -19,6 +20,15 @@ interface UserData {
   image: string | null | undefined;
   role: string;
 }
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "Administrative dashboard for room reservation management",
+  openGraph: {
+    title: "Admin Dashboard | Capstone Room Reservation",
+    description: "Administrative dashboard for managing room reservations",
+  },
+};
 
 export default async function Layout({
   children,

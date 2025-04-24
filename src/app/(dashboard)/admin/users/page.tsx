@@ -3,12 +3,10 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "User Management | Capstone Room Reservation",
+  title: "User Management",
   description: "View and manage all users in the reservation system",
   openGraph: {
-    title: "User Management System",
     description: "Browse and manage all users in the reservation system",
-    type: "website",
   },
 };
 

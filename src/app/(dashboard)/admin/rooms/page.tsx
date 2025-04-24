@@ -23,12 +23,10 @@ import {
 } from "@/components/ui/pagination";
 
 export const metadata: Metadata = {
-  title: "Room Management | Capstone Room Reservation",
+  title: "Room Management",
   description: "View and manage all available rooms in the reservation system",
   openGraph: {
-    title: "Room Management System",
     description: "Browse and manage all rooms in the reservation system",
-    type: "website",
   },
 };
 
