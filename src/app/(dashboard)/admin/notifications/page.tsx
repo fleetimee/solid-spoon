@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function NotificationsPage() {
   return (
-    <div className="container py-6 space-y-6">
-      <div className="flex flex-col gap-2">
+    <main className="flex flex-col grow p-4 md:p-8">
+      <div className="flex flex-col gap-2 mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Notifications</h1>
         <p className="text-muted-foreground">
           View and manage system notifications
@@ -20,6 +20,6 @@ export default function NotificationsPage() {
       <NotificationProvider>
         <NotificationsContainer />
       </NotificationProvider>
-    </div>
+    </main>
   );
 }

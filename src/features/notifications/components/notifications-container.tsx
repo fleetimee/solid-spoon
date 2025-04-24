@@ -35,7 +35,7 @@ export function NotificationsContainer() {
         onValueChange={handleFilterChange}
         className="w-full"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <TabsList>
             <TabsTrigger value="all">
               All
@@ -70,15 +70,15 @@ export function NotificationsContainer() {
           </div>
         </div>
 
-        <TabsContent value="all" className="pt-4">
+        <TabsContent value="all" className="pt-6">
           <NotificationsList filter="all" />
         </TabsContent>
 
-        <TabsContent value="unread" className="pt-4">
+        <TabsContent value="unread" className="pt-6">
           <NotificationsList filter="unread" />
         </TabsContent>
 
-        <TabsContent value="read" className="pt-4">
+        <TabsContent value="read" className="pt-6">
           <NotificationsList filter="read" />
         </TabsContent>
       </Tabs>
