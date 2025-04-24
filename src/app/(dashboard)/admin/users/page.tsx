@@ -1,4 +1,7 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+
+const usersBreadcrumb = [{ label: "Users" }, { label: "Manage Users" }];
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -105,15 +108,19 @@ export default async function UsersPage(props: PageProps) {
   }
 
   return (
-    <main className="flex flex-col grow p-4 md:p-8">
-      <div className="flex flex-col gap-2 mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
-        <p className="text-muted-foreground">
-          Manage users and their permissions here.
-        </p>
-      </div>
+    <>
+      <BreadcrumbSetter items={usersBreadcrumb} />
 
-      <UserManagementClient initialQuery={query} />
-    </main>
+      <main className="flex flex-col grow p-4 md:p-8">
+        <div className="flex flex-col gap-2 mb-6">
+          <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
+          <p className="text-muted-foreground">
+            Manage users and their permissions here.
+          </p>
+        </div>
+
+        <UserManagementClient initialQuery={query} />
+      </main>
+    </>
   );
 }
