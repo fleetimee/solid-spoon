@@ -186,18 +186,20 @@ export default async function RoomsPage(props: RoomsPageProps) {
     <>
       <BreadcrumbSetter items={roomsBreadcrumb} />
 
-      <main className="flex flex-col grow p-4">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Manage Rooms</h1>
-            <p className="text-muted-foreground">Manage and organize rooms</p>
+      <main className="flex flex-col grow p-4 md:p-8">
+        <div className="flex flex-col gap-2 mb-6">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Manage Rooms
+          </h1>
+          <p className="text-muted-foreground">Manage and organize rooms</p>
+          <div className="flex justify-end">
+            <Button asChild>
+              <Link href="/admin/rooms/add">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Room
+              </Link>
+            </Button>
           </div>
-          <Button asChild>
-            <Link href="/admin/rooms/add">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Room
-            </Link>
-          </Button>
         </div>
 
         <div className="mb-6">

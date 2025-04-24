@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Card } from "@/components/ui/card";
 import { Users, Calendar, Building2, ActivitySquare } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { Typography } from "@/components/ui/typography";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -54,11 +55,11 @@ export default async function AdminPage() {
 
       <div className="flex flex-col p-6 md:p-8 gap-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">
+          <Typography variant="h1">Admin Dashboard</Typography>
+          <Typography variant="muted">
             Welcome back {session?.user.name}. Here&apos;s what&apos;s happening
             today.
-          </p>
+          </Typography>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -79,8 +80,14 @@ export default async function AdminPage() {
                 </span>
               </div>
               <div className="mt-4">
-                <h3 className="text-xl font-semibold">{stat.value}</h3>
-                <p className="text-sm text-muted-foreground">{stat.title}</p>
+                <Typography
+                  as="h3"
+                  variant="h3"
+                  className="text-xl font-semibold"
+                >
+                  {stat.value}
+                </Typography>
+                <Typography variant="muted">{stat.title}</Typography>
               </div>
             </Card>
           ))}
@@ -88,12 +95,16 @@ export default async function AdminPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Recent Bookings</h2>
-            <p className="text-muted-foreground">Coming soon...</p>
+            <Typography as="h2" variant="h2" className="mb-4">
+              Recent Bookings
+            </Typography>
+            <Typography variant="muted">Coming soon...</Typography>
           </Card>
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Room Status</h2>
-            <p className="text-muted-foreground">Coming soon...</p>
+            <Typography as="h2" variant="h2" className="mb-4">
+              Room Status
+            </Typography>
+            <Typography variant="muted">Coming soon...</Typography>
           </Card>
         </div>
       </div>

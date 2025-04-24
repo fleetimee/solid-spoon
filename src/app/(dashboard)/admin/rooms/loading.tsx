@@ -3,6 +3,7 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Typography } from "@/components/ui/typography";
 
 const roomsBreadcrumb = [{ label: "Rooms" }, { label: "Manage Rooms" }];
 
@@ -11,16 +12,16 @@ export default function RoomsLoading() {
     <>
       <BreadcrumbSetter items={roomsBreadcrumb} />
 
-      <main className="flex flex-col grow p-4">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Manage Rooms</h1>
-            <p className="text-muted-foreground">Manage and organize rooms</p>
+      <main className="flex flex-col grow p-4 md:p-8">
+        <div className="flex flex-col gap-2 mb-6">
+          <Typography variant="h1">Manage Rooms</Typography>
+          <Typography variant="muted">Manage and organize rooms</Typography>
+          <div className="flex justify-end">
+            <Button disabled>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Room
+            </Button>
           </div>
-          <Button disabled>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Room
-          </Button>
         </div>
 
         <div className="mb-6">

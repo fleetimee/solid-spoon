@@ -105,14 +105,12 @@ export default async function UsersPage(props: PageProps) {
   }
 
   return (
-    <main className="flex flex-col grow p-4">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center">Users</h1>
-          <p className="text-muted-foreground">
-            Manage users and their permissions here.
-          </p>
-        </div>
+    <main className="flex flex-col grow p-4 md:p-8">
+      <div className="flex flex-col gap-2 mb-6">
+        <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
+        <p className="text-muted-foreground">
+          Manage users and their permissions here.
+        </p>
       </div>
 
       <UserManagementClient initialQuery={query} />
