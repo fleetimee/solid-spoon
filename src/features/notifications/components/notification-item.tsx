@@ -5,30 +5,23 @@ import { AlertCircle, Bell, Check, Info } from "lucide-react";
 import { useState } from "react";
 
 import { Separator } from "@/components/ui/separator";
+import { Notification } from "../types/notification";
+import { useNotifications } from "../context/notification-context";
 import { NotificationActions } from "./notification-actions";
-
-interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  timestamp: Date;
-  type: string;
-  priority: string;
-}
 
 interface NotificationItemProps {
   notification: Notification;
   isLast: boolean;
-  isRead: boolean;
 }
 
 export function NotificationItem({
   notification,
   isLast,
-  isRead,
 }: NotificationItemProps) {
-  const { id, title, message, timestamp, type, priority } = notification;
+  const { id, title, message, timestamp, type, priority, isRead } =
+    notification;
   const [isDeleted, setIsDeleted] = useState(false);
+  const { markAsRead, markAsUnread, deleteNotification } = useNotifications();
 
   if (isDeleted) {
     return null;
@@ -61,18 +54,17 @@ export function NotificationItem({
 
   const config = typeConfig[type] || typeConfig.system;
 
-  const handleStatusChange = (id: string, newIsRead: boolean) => {
-    // In a real application, this would make an API call to update the notification status
-    console.log(
-      `Changing notification ${id} to ${newIsRead ? "read" : "unread"}`
-    );
-    // Normally we'd trigger a refresh or update the state here
+  const handleStatusChange = async (id: string, newIsRead: boolean) => {
+    if (newIsRead) {
+      await markAsRead(id);
+    } else {
+      await markAsUnread(id);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    // In a real application, this would make an API call to delete the notification
-    console.log(`Deleting notification ${id}`);
+  const handleDelete = async (id: string) => {
     setIsDeleted(true);
+    await deleteNotification(id);
   };
 
   return (

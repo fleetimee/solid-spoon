@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from "sonner";
 
 interface NotificationActionsProps {
   notificationId: string;
@@ -31,19 +30,16 @@ export function NotificationActions({
   const handleMarkAsRead = () => {
     setIsMenuOpen(false);
     onStatusChange?.(notificationId, true);
-    toast.success("Notification marked as read");
   };
 
   const handleMarkAsUnread = () => {
     setIsMenuOpen(false);
     onStatusChange?.(notificationId, false);
-    toast.success("Notification marked as unread");
   };
 
   const handleDelete = () => {
     setIsMenuOpen(false);
     onDelete?.(notificationId);
-    toast.success("Notification deleted");
   };
 
   return (
