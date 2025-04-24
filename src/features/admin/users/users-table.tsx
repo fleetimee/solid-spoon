@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Toaster } from "@/components/ui/sonner";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ExtendedUser } from "./types/user";
 
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
@@ -53,6 +54,72 @@ function LoadingOverlay() {
         <span className="text-sm font-medium">Updating...</span>
       </div>
     </div>
+  );
+}
+
+/**
+ * Table skeleton component that displays a skeleton version of the users table
+ * during initial loading states
+ */
+function UsersTableSkeleton() {
+  return (
+    <Card>
+      <CardContent className="p-0 sm:p-6">
+        {/* Search and filter toolbar skeleton */}
+        <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Skeleton className="h-9 w-full sm:w-[280px] rounded-md" />
+            <Skeleton className="h-9 w-24 rounded-md hidden sm:block" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-28 rounded-md" />
+            <Skeleton className="h-9 w-24 rounded-md" />
+          </div>
+        </div>
+
+        {/* Table header skeleton */}
+        <div className="border-b px-4 py-3">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-4 w-4 rounded" />
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-4 w-40 rounded" />
+            <Skeleton className="h-4 w-24 rounded hidden md:block" />
+            <Skeleton className="h-4 w-32 rounded hidden lg:block" />
+            <Skeleton className="h-4 w-20 rounded hidden xl:block" />
+          </div>
+        </div>
+
+        {/* Table rows skeleton */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="border-b px-4 py-4">
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-4 w-4 rounded" />
+              <div className="flex items-center gap-3 w-32">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-4 w-20 rounded" />
+              </div>
+              <Skeleton className="h-4 w-40 rounded" />
+              <Skeleton className="h-4 w-24 rounded hidden md:block" />
+              <Skeleton className="h-4 w-32 rounded hidden lg:block" />
+              <div className="hidden xl:flex gap-2 w-20">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Pagination skeleton */}
+        <div className="p-4 flex items-center justify-between">
+          <Skeleton className="h-4 w-40 rounded" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8 rounded" />
+            <Skeleton className="h-8 w-8 rounded" />
+            <Skeleton className="h-8 w-8 rounded" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -388,15 +455,7 @@ export function UsersTable({
   ]);
 
   if (initialLoading && users.length === 0) {
-    return (
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center justify-center p-8 text-muted-foreground">
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading users...
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <UsersTableSkeleton />;
   }
 
   if (error) {
