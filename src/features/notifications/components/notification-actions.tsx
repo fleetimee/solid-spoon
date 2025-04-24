@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, MoreHorizontal, Trash2 } from "lucide-react";
+import { Check, EyeOff, MoreHorizontal, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface NotificationActionsProps {
   notificationId: string;
@@ -43,43 +48,52 @@ export function NotificationActions({
   };
 
   return (
-    <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          aria-label="Open notification actions menu"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {isRead ? (
+    <Tooltip>
+      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 rounded-full opacity-70 hover:opacity-100 hover:bg-muted"
+              aria-label="Open notification actions menu"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="left" align="center">
+          Actions
+        </TooltipContent>
+
+        <DropdownMenuContent align="end" className="w-48">
+          {isRead ? (
+            <DropdownMenuItem
+              onClick={handleMarkAsUnread}
+              className="cursor-pointer flex items-center gap-2 text-sm"
+            >
+              <EyeOff className="h-4 w-4" />
+              <span>Mark as unread</span>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onClick={handleMarkAsRead}
+              className="cursor-pointer flex items-center gap-2 text-sm"
+            >
+              <Check className="h-4 w-4" />
+              <span>Mark as read</span>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={handleMarkAsUnread}
-            className="cursor-pointer"
+            onClick={handleDelete}
+            className="text-destructive focus:text-destructive cursor-pointer flex items-center gap-2 text-sm"
           >
-            Mark as unread
+            <Trash2 className="h-4 w-4" />
+            <span>Delete</span>
           </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem
-            onClick={handleMarkAsRead}
-            className="cursor-pointer"
-          >
-            <Check className="mr-2 h-4 w-4" />
-            Mark as read
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleDelete}
-          className="text-destructive focus:text-destructive cursor-pointer"
-        >
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </Tooltip>
   );
 }

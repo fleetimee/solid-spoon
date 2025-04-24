@@ -17,9 +17,11 @@ export default function NotificationsPage() {
         </p>
       </div>
 
-      <NotificationProvider>
-        <NotificationsContainer />
-      </NotificationProvider>
+      <div className="w-full">
+        <NotificationProvider>
+          <NotificationsContainer />
+        </NotificationProvider>
+      </div>
     </main>
   );
 }
