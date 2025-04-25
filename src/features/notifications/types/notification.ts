@@ -7,12 +7,15 @@
  */
 export interface Notification {
   id: string;
+  recipient_id: string; // Added recipient_id property
   title: string;
   message: string;
   timestamp: Date;
+  created_at: Date; // Added created_at property
   type: NotificationType;
   priority: NotificationPriority;
   isRead: boolean;
+  link?: string; // Added optional link property
 }
 
 /**
