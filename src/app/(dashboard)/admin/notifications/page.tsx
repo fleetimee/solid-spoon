@@ -1,5 +1,3 @@
-import { NotificationsContainer } from "@/features/notifications/components/notifications-container";
-import { NotificationProvider } from "@/features/notifications/context/notification-context";
 import { auth } from "@/lib/auth";
 import { Metadata } from "next";
 import { headers } from "next/headers";
@@ -9,10 +7,31 @@ export const metadata: Metadata = {
   description: "View and manage system notifications",
 };
 
-export default async function NotificationsPage() {
+interface NotificationsPageProps {
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+    isAlreadyRead?: boolean;
+  }>;
+}
+
+interface NotificationSearchParams {
+  page?: number;
+  pageSize?: number;
+  isAlreadyRead?: boolean;
+}
+
+export default async function NotificationsPage(props: NotificationsPageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+  const searchParams = await props.searchParams;
+  const parsedSearchParams: NotificationSearchParams = {
+    page: searchParams.page ? parseInt(searchParams.page) : undefined,
+    pageSize: searchParams.pageSize
+      ? parseInt(searchParams.pageSize)
+      : undefined,
+  };
 
   const currentLoggedInUser = session?.user.id;
 
@@ -23,12 +42,6 @@ export default async function NotificationsPage() {
         <p className="text-muted-foreground">
           View and manage system notifications
         </p>
-      </div>
-
-      <div className="w-full">
-        <NotificationProvider>
-          <NotificationsContainer />
-        </NotificationProvider>
       </div>
     </main>
   );
