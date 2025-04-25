@@ -1,19 +1,19 @@
 import { Metadata } from "next";
 import { headers } from "next/headers";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getNotifications } from "@/features/notifications/api/getNotifications";
 import { NotificationFilter } from "@/features/notifications/types/notification";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NotificationFilters } from "@/features/notifications/components/NotificationFilters";
-import { NotificationsList } from "@/features/notifications/components/NotificationsList";
-import { NotificationPagination } from "@/features/notifications/components/NotificationPagination";
+import { NotificationFilters } from "@/features/notifications/components/notification-filters";
+import { NotificationsList } from "@/features/notifications/components/notifications-list";
+import { NotificationPagination } from "@/features/notifications/components/notification-pagination";
 import {
   NotificationJsonToggle,
   NotificationJsonView,
-} from "@/features/notifications/components/NotificationJsonToggle";
-import Link from "next/link";
+} from "@/features/notifications/components/notification-json-toggle";
 
 export const metadata: Metadata = {
   title: "Notifications | Room Reservation System",

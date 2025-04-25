@@ -1,6 +1,6 @@
 import { Bell } from "lucide-react";
 import { Notification, NotificationFilter } from "../types/notification";
-import { NotificationCard } from "./NotificationCard";
+import { NotificationCard } from "./notification-card";
 
 interface NotificationsListProps {
   notifications: Notification[];
