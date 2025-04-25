@@ -1,130 +1,204 @@
-import { Notification } from "../types/notification";
+import db from "@/lib/db";
+import { Notification, NotificationFilter } from "../types/notification";
 
-/**
- * Fetches all notifications from the API
- * @returns Object containing unread and read notifications
- */
-export async function getNotifications(): Promise<{
-  unread: Notification[];
-  read: Notification[];
-}> {
-  // Simulated API response delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+export interface NotificationSearchParams {
+  filter?: NotificationFilter;
+  page?: number;
+  pageSize?: number;
+}
 
-  // This would be replaced by a real API call in production
-  return {
-    unread: [
-      {
-        id: "n1",
-        title: "New room booking request",
-        message: "John Doe has requested to book Room 101 for tomorrow",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 mins ago
-        type: "booking",
-        priority: "high",
-        isRead: false,
-      },
-      {
-        id: "n2",
-        title: "System update scheduled",
-        message: "System maintenance scheduled for tonight at 2 AM",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        type: "system",
-        priority: "medium",
-        isRead: false,
-      },
-      {
-        id: "n3",
-        title: "New user registered",
-        message: "Jane Smith has created a new account",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
-        type: "user",
-        priority: "low",
-        isRead: false,
-      },
-    ],
-    read: [
-      {
-        id: "n4",
-        title: "Room maintenance completed",
-        message: "Scheduled maintenance for Conference Room A is now complete",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        type: "maintenance",
-        priority: "medium",
-        isRead: true,
-      },
-      {
-        id: "n5",
-        title: "Booking canceled",
-        message: "Mike Johnson canceled their booking for Room 203",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
-        type: "booking",
-        priority: "low",
-        isRead: true,
-      },
-    ],
+export interface PaginatedNotifications {
+  notifications: Notification[];
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
   };
 }
 
 /**
- * Updates a notification's read status (would call API in real implementation)
- * @param id Notification ID
- * @param isRead New read status
+ * Fetches notifications from the database for a specific user
+ * @param userId The ID of the user to fetch notifications for
+ * @param searchParams Filter and pagination parameters
+ * @returns Paginated notifications with pagination metadata
  */
-export async function updateNotificationStatus(
-  id: string,
-  isRead: boolean
-): Promise<{ success: boolean }> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+export async function getNotifications(
+  userId: string,
+  searchParams?: NotificationSearchParams
+): Promise<PaginatedNotifications> {
+  // Default pagination values
+  const page = searchParams?.page || 1;
+  const pageSize = searchParams?.pageSize || 10;
+  const filter = searchParams?.filter || "all";
 
-  console.log(
-    `API call: Update notification ${id} status to ${isRead ? "read" : "unread"}`
+  // Base condition - filter by recipient_id
+  const params: Array<string | number> = [userId];
+  let filterCondition = "recipient_id = $1";
+
+  // Add condition for read/unread filter
+  if (filter === "read") {
+    filterCondition += " AND is_read = true";
+  } else if (filter === "unread") {
+    filterCondition += " AND is_read = false";
+  }
+
+  // Get total count for pagination
+  const countResult = await db.query(
+    `SELECT COUNT(*) as total FROM notification WHERE ${filterCondition}`,
+    params
+  );
+  const totalItems = parseInt(countResult.rows[0].total, 10);
+  const totalPages = Math.ceil(totalItems / pageSize);
+
+  // Add pagination parameters
+  params.push((page - 1) * pageSize);
+  params.push(pageSize);
+
+  // Fetch the paginated notifications
+  const result = await db.query(
+    `
+    SELECT 
+      id, 
+      recipient_id, 
+      title, 
+      message, 
+      is_read, 
+      type, 
+      link, 
+      created_at
+    FROM notification
+    WHERE ${filterCondition}
+    ORDER BY created_at DESC
+    OFFSET $2
+    LIMIT $3
+    `,
+    params
   );
 
-  // Simulate successful response
-  return { success: true };
+  // Parse data from database into strongly typed objects
+  const notifications: Notification[] = result.rows.map((row) => ({
+    id: row.id,
+    recipient_id: row.recipient_id,
+    title: row.title,
+    message: row.message,
+    isRead: row.is_read, // Renamed from is_read to isRead
+    type: row.type || "system", // Default to system if type is null
+    link: row.link,
+    timestamp: new Date(row.created_at), // Using created_at as timestamp
+    priority: row.priority || "normal", // Default priority if not present
+    created_at: new Date(row.created_at),
+  }));
+
+  return {
+    notifications,
+    pagination: {
+      totalItems,
+      totalPages,
+      currentPage: page,
+      pageSize,
+    },
+  };
 }
 
 /**
- * Deletes a notification (would call API in real implementation)
+ * Updates a notification's read status
  * @param id Notification ID
+ * @param isRead New read status
+ * @returns Success status
+ */
+export async function updateNotificationStatus(
+  id: string | number,
+  isRead: boolean
+): Promise<{ success: boolean }> {
+  try {
+    const result = await db.query(
+      `
+      UPDATE notification
+      SET is_read = $1
+      WHERE id = $2
+      RETURNING id
+      `,
+      [isRead, id]
+    );
+
+    return { success: result?.rowCount ? result.rowCount > 0 : false };
+  } catch (err) {
+    console.error(`Failed to update notification ${id} status:`, err);
+    return { success: false };
+  }
+}
+
+/**
+ * Marks all notifications as read for a specific user
+ * @param userId User ID
+ * @returns Success status
+ */
+export async function markAllNotificationsAsRead(
+  userId: string
+): Promise<{ success: boolean }> {
+  try {
+    await db.query(
+      `
+      UPDATE notification
+      SET is_read = true
+      WHERE recipient_id = $1 AND is_read = false
+      `,
+      [userId]
+    );
+
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to mark all notifications as read:", err);
+    return { success: false };
+  }
+}
+
+/**
+ * Deletes a notification
+ * @param id Notification ID
+ * @returns Success status
  */
 export async function deleteNotification(
-  id: string
+  id: string | number
 ): Promise<{ success: boolean }> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  try {
+    const result = await db.query(
+      `
+      DELETE FROM notification
+      WHERE id = $1
+      RETURNING id
+      `,
+      [id]
+    );
 
-  console.log(`API call: Delete notification ${id}`);
-
-  // Simulate successful response
-  return { success: true };
+    return { success: result?.rowCount ? result.rowCount > 0 : false };
+  } catch (err) {
+    console.error(`Failed to delete notification ${id}:`, err);
+    return { success: false };
+  }
 }
 
 /**
- * Marks all notifications as read (would call API in real implementation)
+ * Deletes all notifications for a specific user
+ * @param userId User ID
+ * @returns Success status
  */
-export async function markAllNotificationsAsRead(): Promise<{
-  success: boolean;
-}> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 700));
+export async function deleteAllNotifications(
+  userId: string
+): Promise<{ success: boolean }> {
+  try {
+    await db.query(
+      `
+      DELETE FROM notification
+      WHERE recipient_id = $1
+      `,
+      [userId]
+    );
 
-  console.log("API call: Mark all notifications as read");
-
-  // Simulate successful response
-  return { success: true };
-}
-
-/**
- * Deletes all notifications (would call API in real implementation)
- */
-export async function deleteAllNotifications(): Promise<{ success: boolean }> {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 700));
-
-  console.log("API call: Delete all notifications");
-
-  // Simulate successful response
-  return { success: true };
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to delete all notifications:", err);
+    return { success: false };
+  }
 }

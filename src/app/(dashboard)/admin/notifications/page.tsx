@@ -14,6 +14,8 @@ export default async function NotificationsPage() {
     headers: await headers(),
   });
 
+  const currentLoggedInUser = session?.user.id;
+
   return (
     <main className="flex flex-col grow p-4 md:p-8">
       <div className="flex flex-col gap-2 mb-8">
