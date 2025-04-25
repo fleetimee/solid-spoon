@@ -1,13 +1,19 @@
 import { NotificationsContainer } from "@/features/notifications/components/notifications-container";
 import { NotificationProvider } from "@/features/notifications/context/notification-context";
+import { auth } from "@/lib/auth";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Admin Notifications | Room Reservation System",
   description: "View and manage system notifications",
 };
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <main className="flex flex-col grow p-4 md:p-8">
       <div className="flex flex-col gap-2 mb-8">
