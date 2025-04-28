@@ -52,6 +52,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
     ? parseInt(searchParams.pageSize)
     : 5;
   const showJson = searchParams.showJson === "true";
+  const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true";
 
   const currentLoggedInUser = session?.user.id;
 
@@ -161,12 +162,15 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
             <h1 className="text-3xl font-semibold tracking-tight">
               Notifications
             </h1>
-            <NotificationJsonToggle
-              showJson={showJson}
-              filter={searchParams.filter}
-              page={searchParams.page}
-              pageSize={searchParams.pageSize}
-            />
+            {/* Conditionally render JSON Toggle */}
+            {isDevMode && (
+              <NotificationJsonToggle
+                showJson={showJson}
+                filter={searchParams.filter}
+                page={searchParams.page}
+                pageSize={searchParams.pageSize}
+              />
+            )}
           </div>
           <p className="text-muted-foreground">
             View and manage system notifications
@@ -218,7 +222,10 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
           </div>
         </div>
 
-        {showJson && <NotificationJsonView data={notificationsData} />}
+        {/* Conditionally render JSON View */}
+        {isDevMode && showJson && (
+          <NotificationJsonView data={notificationsData} />
+        )}
 
         <NotificationsList
           notifications={notificationsData.notifications}
