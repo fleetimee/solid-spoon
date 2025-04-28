@@ -81,6 +81,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   } | null;
   appName: string;
   appDescription: string;
+  unreadNotificationsCount: number; // Add the new prop
 }
 
 export function AppSidebar({
@@ -88,6 +89,7 @@ export function AppSidebar({
   userData,
   appName,
   appDescription,
+  unreadNotificationsCount, // Destructure the new prop
   ...props
 }: AppSidebarProps) {
   const processedNavMain = processNavItems(navMain);
@@ -113,7 +115,10 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={processedNavMain} />
+        <NavMain
+          items={processedNavMain}
+          unreadNotificationsCount={unreadNotificationsCount}
+        />
         {/* <NavProjects projects={staticData.projects} /> */}
         <NavSecondary items={staticData.navSecondary} className="mt-auto" />
       </SidebarContent>

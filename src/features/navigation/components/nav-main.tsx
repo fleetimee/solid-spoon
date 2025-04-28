@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Collapsible,
@@ -20,9 +21,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-export function NavMain({
-  items,
-}: {
+interface NavMainProps {
   items: {
     title: string;
     url: string;
@@ -33,7 +32,10 @@ export function NavMain({
       url: string;
     }[];
   }[];
-}) {
+  unreadNotificationsCount: number;
+}
+
+export function NavMain({ items, unreadNotificationsCount }: NavMainProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -44,7 +46,16 @@ export function NavMain({
               <SidebarMenuButton asChild tooltip={item.title}>
                 <Link href={item.url}>
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span className="flex-1">{item.title}</span>
+                  {item.title === "Notifications" &&
+                    unreadNotificationsCount > 0 && (
+                      <Badge
+                        variant="destructive"
+                        className="ml-auto h-5 px-1.5 text-xs"
+                      >
+                        {unreadNotificationsCount}
+                      </Badge>
+                    )}
                 </Link>
               </SidebarMenuButton>
               {item.items?.length ? (

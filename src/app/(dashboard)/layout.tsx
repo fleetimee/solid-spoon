@@ -10,6 +10,7 @@ import { getAppSettings } from "@/features/application/api/getAppSettings";
 import { AppSidebar } from "@/features/navigation/components/app-sidebar";
 import { getNavigation } from "@/features/navigation/api/getNavigation";
 import { auth } from "@/lib/auth";
+import db from "@/lib/db"; // Import db (default import)
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
@@ -33,6 +34,24 @@ export default async function Layout({
     }),
     getAppSettings(),
   ]);
+
+  let unreadNotificationsCount = 0;
+  const userId = session?.user?.id;
+
+  if (userId) {
+    try {
+      // Fetch unread notification count
+      const result = await db.query<{ total: string }>( // Assuming count returns as string from db
+        `SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false`,
+        [userId]
+      );
+      // Parse count to integer, default to 0 if parsing fails or no rows returned
+      unreadNotificationsCount = parseInt(result.rows[0]?.total || "0", 10);
+    } catch (error) {
+      console.error("Failed to fetch unread notification count:", error);
+      // Keep count as 0 on error
+    }
+  }
 
   const userData: UserData | null = session?.user
     ? {
@@ -61,6 +80,7 @@ export default async function Layout({
           userData={userData}
           appName={appSettings.appName}
           appDescription={appSettings.appDescription}
+          unreadNotificationsCount={unreadNotificationsCount} // Pass the count
         />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center gap-2 border-b">
