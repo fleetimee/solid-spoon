@@ -4,11 +4,12 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Notification } from "../types/notification";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink, Check } from "lucide-react"; // Combined icon imports
+import { ExternalLink, Check, Trash2 } from "lucide-react"; // Combined icon imports
 import { cn } from "@/lib/utils";
 import { useTransition } from "react"; // Added useTransition import
 import { toast } from "sonner"; // Added toast import
 import { markNotificationAsRead } from "../actions/markNotificationAsRead"; // Added server action import
+import { deleteNotification } from "../actions/deleteNotification"; // Added delete action import
 
 interface NotificationCardProps {
   notification: Notification;
@@ -42,7 +43,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
             <div className="flex items-center gap-2">
               {!notification.isRead && (
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   size="sm"
                   onClick={() => {
                     // Added onClick handler
@@ -70,11 +71,10 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                     });
                   }}
                   disabled={isPending} // Added disabled prop
+                  className="cursor-pointer" // Added cursor class
                 >
-                  <span className="flex items-center gap-1">
-                    <Check className="h-3 w-3" />
-                    Mark as Read
-                  </span>
+                  <Check className="h-3 w-3 mr-1.5" /> {/* Added margin */}
+                  Mark as Read
                 </Button>
               )}
               {notification.link && (
@@ -89,6 +89,42 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                     <ExternalLink className="h-3 w-3" />
                   </span>
                 </Link>
+              )}
+              {/* Delete Button */}
+              {notification.isRead && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="h-8 w-8 p-0" // Icon size adjustment
+                  aria-label="Delete notification"
+                  onClick={() => {
+                    startTransition(() => {
+                      deleteNotification(Number(notification.id))
+                        .then((result) => {
+                          if (result.success) {
+                            toast.success("Notification deleted.");
+                            // UI updates via revalidation
+                          } else {
+                            toast.error(
+                              result.error || "Failed to delete notification."
+                            );
+                          }
+                        })
+                        .catch((error) => {
+                          console.error(
+                            "Delete notification transition error:",
+                            error
+                          );
+                          toast.error(
+                            "An unexpected error occurred during deletion."
+                          );
+                        });
+                    });
+                  }}
+                  disabled={isPending}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               )}
             </div>
           </div>
