@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers/better-auth-ui-providers";
 import { Toaster } from "sonner";
 import BProgressProviders from "@/components/providers/bprogress-providers";
 import TanstackProviders from "@/components/providers/tanstack-query-providers";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,15 +37,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <BProgressProviders>
           <Providers>
-            <TanstackProviders>{children}</TanstackProviders>
+            <TanstackProviders>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+              >
+                {children}
+              </ThemeProvider>
+            </TanstackProviders>
           </Providers>
         </BProgressProviders>
+
         <Toaster />
       </body>
     </html>
