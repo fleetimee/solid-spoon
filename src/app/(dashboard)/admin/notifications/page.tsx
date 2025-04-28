@@ -16,6 +16,7 @@ import {
   NotificationJsonView,
 } from "@/features/notifications/components/notification-json-toggle";
 import { ClearNotificationsButton } from "@/features/notifications/components/clear-notifications-button"; // Import ClearNotificationsButton
+import { MarkAllAsReadButton } from "@/features/notifications/components/mark-all-as-read-button";
 
 export const metadata: Metadata = {
   title: "Notifications | Room Reservation System",
@@ -87,6 +88,22 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
   }
   const hasReadNotifications = readNotificationCount > 0;
 
+  // Fetch count of unread notifications for the button state
+  let unreadNotificationCount = 0;
+  if (currentLoggedInUser) {
+    try {
+      const countResult = await db.query(
+        "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false", // Query for is_read = false
+        [currentLoggedInUser]
+      );
+      unreadNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
+    } catch (error) {
+      console.error("Failed to fetch unread notification count:", error);
+      // Handle error appropriately
+    }
+  }
+  const hasUnreadNotifications = unreadNotificationCount > 0;
+
   // Helper function to get page number for quick navigation
   const getQuickNavPageNumbers = () => {
     const { currentPage, totalPages } = notificationsData.pagination;
@@ -157,36 +174,47 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
         </div>
 
         <div className="flex justify-between items-center gap-4 mb-6">
-          {" "}
-          {/* Added gap-4 */}
           <NotificationFilters
             currentFilter={parsedFilter}
             pageSize={searchParams.pageSize}
             showJson={searchParams.showJson}
           />
-          {/* Add the Clear button here */}
-          {currentLoggedInUser && (
-            <ClearNotificationsButton
-              userId={currentLoggedInUser}
-              hasReadNotifications={hasReadNotifications}
-            />
-          )}
-          {/* Quick pagination navigation */}
-          <div className="hidden md:flex space-x-2">
-            {getQuickNavPageNumbers().map((nav) => (
-              <Button
-                key={nav.label}
-                variant="outline"
-                size="sm"
-                asChild
-                className="h-8 px-2"
-              >
-                <Link href={getPaginationUrl(nav.page)}>
-                  {nav.icon}
-                  <span className="ml-1 sr-only">{nav.label}</span>
-                </Link>
-              </Button>
-            ))}
+
+          {/* Group for action buttons & quick nav */}
+          <div className="flex items-center gap-2">
+            {/* Mark All Read Button */}
+            {currentLoggedInUser && (
+              <MarkAllAsReadButton
+                userId={currentLoggedInUser}
+                hasUnreadNotifications={hasUnreadNotifications}
+              />
+            )}
+
+            {/* Clear Read Button */}
+            {currentLoggedInUser && (
+              <ClearNotificationsButton
+                userId={currentLoggedInUser}
+                hasReadNotifications={hasReadNotifications}
+              />
+            )}
+
+            {/* Quick pagination navigation */}
+            <div className="hidden md:flex space-x-2">
+              {getQuickNavPageNumbers().map((nav) => (
+                <Button
+                  key={nav.label}
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="h-8 px-2"
+                >
+                  <Link href={getPaginationUrl(nav.page)}>
+                    {nav.icon}
+                    <span className="ml-1 sr-only">{nav.label}</span>
+                  </Link>
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
