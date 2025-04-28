@@ -1,16 +1,21 @@
-import { Button, buttonVariants } from "@/components/ui/button"; // Added buttonVariants
+"use client"; // Added client directive
+
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Notification } from "../types/notification";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink } from "lucide-react"; // Import the icon
-import { Check } from "lucide-react"; // Added Check icon
-import { cn } from "@/lib/utils"; // Added cn
+import { ExternalLink, Check } from "lucide-react"; // Combined icon imports
+import { cn } from "@/lib/utils";
+import { useTransition } from "react"; // Added useTransition import
+import { toast } from "sonner"; // Added toast import
+import { markNotificationAsRead } from "../actions/markNotificationAsRead"; // Added server action import
 
 interface NotificationCardProps {
   notification: Notification;
 }
 
 export function NotificationCard({ notification }: NotificationCardProps) {
+  const [isPending, startTransition] = useTransition(); // Initialized transition
   // Format the timestamp to a relative time (e.g., "3 hours ago")
   const formattedTime = formatDistanceToNow(new Date(notification.created_at), {
     addSuffix: true,
@@ -36,7 +41,36 @@ export function NotificationCard({ notification }: NotificationCardProps) {
             {/* Container for buttons */}
             <div className="flex items-center gap-2">
               {!notification.isRead && (
-                <Button variant="secondary" size="sm">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    // Added onClick handler
+                    startTransition(() => {
+                      markNotificationAsRead(Number(notification.id)) // Convert id to number
+                        .then((result) => {
+                          if (result.success) {
+                            toast.success("Notification marked as read.");
+                            // UI updates via revalidation
+                          } else {
+                            toast.error(
+                              result.error ||
+                                "Failed to mark notification as read."
+                            );
+                          }
+                        })
+                        .catch((error) => {
+                          // Catch unexpected errors during the action call itself
+                          console.error(
+                            "Mark as read transition error:",
+                            error
+                          );
+                          toast.error("An unexpected error occurred.");
+                        });
+                    });
+                  }}
+                  disabled={isPending} // Added disabled prop
+                >
                   <span className="flex items-center gap-1">
                     <Check className="h-3 w-3" />
                     Mark as Read
@@ -48,12 +82,9 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                   href={notification.link}
                   className={cn(
                     buttonVariants({ variant: "outline", size: "sm" })
-                    // Removed explicit flex classes here
                   )}
                 >
                   <span className="flex items-center gap-1">
-                    {" "}
-                    {/* Added flex here */}
                     View
                     <ExternalLink className="h-3 w-3" />
                   </span>

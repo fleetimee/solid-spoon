@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react"; // Added useState
 import { useRouter, useSearchParams } from "next/navigation";
 import { NotificationFilter } from "../types/notification";
+import { Input } from "@/components/ui/input"; // Added Input
 import {
   Pagination,
   PaginationContent,
@@ -37,6 +39,7 @@ export function NotificationPagination({
 }: NotificationPaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [customSizeInput, setCustomSizeInput] = useState(""); // Added state for custom input
 
   // Read filter and showJson from searchParams if needed elsewhere,
   // otherwise they can be removed from props if only used for URL building.
@@ -132,28 +135,26 @@ export function NotificationPagination({
     return items;
   };
 
+  const currentSize = searchParams.get("pageSize") || pageSize || "5";
+  const isPresetSize = ["3", "5", "10"].includes(currentSize);
+
   return (
     <div className="mt-8 flex items-center justify-between">
-      {" "}
-      {/* Changed layout */}
-      {/* Page size selector using Select */}
-      <div className="flex items-center gap-2">
+      {/* Page size selector with custom input */}
+      <div className="flex items-center gap-2 min-w-[280px]">
         <span className="text-sm text-muted-foreground">Per page:</span>
         <Select
-          // Read pageSize from searchParams for consistency, fallback to prop or default
-          defaultValue={searchParams.get("pageSize") || pageSize || "5"}
+          value={isPresetSize ? currentSize : undefined} // Use value, show preset only if active
           onValueChange={(value) => {
-            const params = new URLSearchParams(searchParams); // Use current params
-            params.set("page", "1"); // Reset page
+            const params = new URLSearchParams(searchParams);
+            params.set("page", "1");
             params.set("pageSize", value);
-
-            // filter and showJson are already carried over by new URLSearchParams(searchParams)
-
             router.push(`/admin/notifications?${params.toString()}`);
+            setCustomSizeInput(""); // Clear custom input state
           }}
         >
           <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder="Select size" />
+            <SelectValue placeholder="Size" /> {/* Changed placeholder */}
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="3">3</SelectItem>
@@ -161,6 +162,31 @@ export function NotificationPagination({
             <SelectItem value="10">10</SelectItem>
           </SelectContent>
         </Select>
+        <Input
+          type="number"
+          min="1"
+          max="50" // Added a max limit
+          className="h-8 w-[80px]"
+          placeholder="Custom"
+          value={customSizeInput}
+          onChange={(e) => setCustomSizeInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const customSize = parseInt(customSizeInput);
+              if (isNaN(customSize) || customSize <= 0 || customSize > 50) {
+                // Added max check
+                // Handle invalid input
+                setCustomSizeInput("");
+                return;
+              }
+
+              const params = new URLSearchParams(searchParams);
+              params.set("page", "1");
+              params.set("pageSize", customSize.toString());
+              router.push(`/admin/notifications?${params.toString()}`);
+            }
+          }}
+        />
       </div>
       <Pagination>
         <PaginationContent>
