@@ -123,7 +123,10 @@ export function AppSidebar({
         <NavSecondary items={staticData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userForNav} />
+        <NavUser
+          user={userForNav}
+          unreadNotificationsCount={unreadNotificationsCount}
+        />
       </SidebarFooter>
     </Sidebar>
   );

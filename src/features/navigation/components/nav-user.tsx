@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -34,6 +35,11 @@ interface UserData {
   role?: string;
 }
 
+interface NavUserProps {
+  user: UserData;
+  unreadNotificationsCount: number;
+}
+
 function getInitials(name: string): string {
   return name
     .split(" ")
@@ -43,7 +49,7 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function NavUser({ user }: { user: UserData }) {
+export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
   const { isMobile } = useSidebar();
   const userInitials = getInitials(user.name);
   const avatarUrl = user.image || "";
@@ -119,9 +125,19 @@ export function NavUser({ user }: { user: UserData }) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/notifications">
-                  <Bell />
-                  Notifications
+                <Link
+                  href="/admin/notifications"
+                  className="flex w-full items-center justify-between"
+                >
+                  <div className="flex items-center">
+                    <Bell className="mr-2 h-4 w-4" /> {/* Added margin */}
+                    <span>Notifications</span>
+                  </div>
+                  {unreadNotificationsCount > 0 && (
+                    <Badge variant="destructive" className="h-5 px-1.5 text-xs">
+                      {unreadNotificationsCount}
+                    </Badge>
+                  )}
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
