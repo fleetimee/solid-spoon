@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
+import db from "@/lib/db"; // Import db
 import { getNotifications } from "@/features/notifications/api/getNotifications";
 import { NotificationFilter } from "@/features/notifications/types/notification";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
@@ -14,6 +15,7 @@ import {
   NotificationJsonToggle,
   NotificationJsonView,
 } from "@/features/notifications/components/notification-json-toggle";
+import { ClearNotificationsButton } from "@/features/notifications/components/clear-notifications-button"; // Import ClearNotificationsButton
 
 export const metadata: Metadata = {
   title: "Notifications | Room Reservation System",
@@ -68,6 +70,22 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
           pageSize: 5,
         },
       };
+
+  // Fetch count of read notifications specifically for the button state
+  let readNotificationCount = 0;
+  if (currentLoggedInUser) {
+    try {
+      const countResult = await db.query(
+        "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = true",
+        [currentLoggedInUser]
+      );
+      readNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
+    } catch (error) {
+      console.error("Failed to fetch read notification count:", error);
+      // Handle error appropriately, maybe disable button
+    }
+  }
+  const hasReadNotifications = readNotificationCount > 0;
 
   // Helper function to get page number for quick navigation
   const getQuickNavPageNumbers = () => {
@@ -138,13 +156,21 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
           </p>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center gap-4 mb-6">
+          {" "}
+          {/* Added gap-4 */}
           <NotificationFilters
             currentFilter={parsedFilter}
             pageSize={searchParams.pageSize}
             showJson={searchParams.showJson}
           />
-
+          {/* Add the Clear button here */}
+          {currentLoggedInUser && (
+            <ClearNotificationsButton
+              userId={currentLoggedInUser}
+              hasReadNotifications={hasReadNotifications}
+            />
+          )}
           {/* Quick pagination navigation */}
           <div className="hidden md:flex space-x-2">
             {getQuickNavPageNumbers().map((nav) => (
