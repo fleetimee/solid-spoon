@@ -1,7 +1,10 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button"; // Added buttonVariants
 import { Notification } from "../types/notification";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { ExternalLink } from "lucide-react"; // Import the icon
+import { Check } from "lucide-react"; // Added Check icon
+import { cn } from "@/lib/utils"; // Added cn
 
 interface NotificationCardProps {
   notification: Notification;
@@ -30,11 +33,33 @@ export function NotificationCard({ notification }: NotificationCardProps) {
             <span className="text-xs text-muted-foreground">
               {formattedTime}
             </span>
-            {notification.link && (
-              <Button asChild size="sm" variant="ghost">
-                <Link href={notification.link}>View</Link>
-              </Button>
-            )}
+            {/* Container for buttons */}
+            <div className="flex items-center gap-2">
+              {!notification.isRead && (
+                <Button variant="secondary" size="sm">
+                  <span className="flex items-center gap-1">
+                    <Check className="h-3 w-3" />
+                    Mark as Read
+                  </span>
+                </Button>
+              )}
+              {notification.link && (
+                <Link
+                  href={notification.link}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" })
+                    // Removed explicit flex classes here
+                  )}
+                >
+                  <span className="flex items-center gap-1">
+                    {" "}
+                    {/* Added flex here */}
+                    View
+                    <ExternalLink className="h-3 w-3" />
+                  </span>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
