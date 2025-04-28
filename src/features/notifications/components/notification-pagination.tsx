@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { NotificationFilter } from "../types/notification";
 import {
   Pagination,
@@ -9,53 +12,50 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"; // Added Select imports
 
 interface NotificationPaginationProps {
   currentPage: number;
   totalPages: number;
-  filter?: NotificationFilter;
-  pageSize?: string;
-  showJson?: string;
+  filter?: NotificationFilter; // Kept for potential future use or clarity, though URL construction uses searchParams
+  pageSize?: string; // Kept for Select defaultValue
+  showJson?: string; // Kept for potential future use or clarity
 }
 
 export function NotificationPagination({
   currentPage,
   totalPages,
-  filter,
+  // filter, // No longer directly used for URL construction here
   pageSize,
-  showJson,
+  // showJson, // No longer directly used for URL construction here
 }: NotificationPaginationProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read filter and showJson from searchParams if needed elsewhere,
+  // otherwise they can be removed from props if only used for URL building.
+  const filter = searchParams.get("filter") as NotificationFilter | null;
+  const showJson = searchParams.get("showJson");
+
   if (totalPages <= 1) return null;
 
   const getPaginationUrl = (targetPage: number) => {
-    const params = new URLSearchParams();
-
-    if (filter) {
-      params.set("filter", filter);
-    }
+    const params = new URLSearchParams(searchParams); // Use current params as base
 
     params.set("page", targetPage.toString());
 
-    if (pageSize) {
-      params.set("pageSize", pageSize);
-    }
-
-    if (showJson) {
-      params.set("showJson", showJson);
-    }
+    // pageSize, filter, showJson are already in searchParams if set
 
     return `/admin/notifications?${params.toString()}`;
   };
 
-  const getPageSizeUrl = (size: number) => {
-    const params = new URLSearchParams();
-    if (filter) params.set("filter", filter);
-    params.set("page", "1"); // Reset to first page when changing page size
-    params.set("pageSize", size.toString());
-    if (showJson) params.set("showJson", showJson);
-    return `/admin/notifications?${params.toString()}`;
-  };
+  // Removed getPageSizeUrl function
 
   const getPaginationItems = () => {
     if (totalPages <= 5) {
@@ -133,7 +133,35 @@ export function NotificationPagination({
   };
 
   return (
-    <div className="mt-8 flex flex-col items-center gap-2">
+    <div className="mt-8 flex items-center justify-between">
+      {" "}
+      {/* Changed layout */}
+      {/* Page size selector using Select */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Per page:</span>
+        <Select
+          // Read pageSize from searchParams for consistency, fallback to prop or default
+          defaultValue={searchParams.get("pageSize") || pageSize || "5"}
+          onValueChange={(value) => {
+            const params = new URLSearchParams(searchParams); // Use current params
+            params.set("page", "1"); // Reset page
+            params.set("pageSize", value);
+
+            // filter and showJson are already carried over by new URLSearchParams(searchParams)
+
+            router.push(`/admin/notifications?${params.toString()}`);
+          }}
+        >
+          <SelectTrigger className="h-8 w-[70px]">
+            <SelectValue placeholder="Select size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="3">3</SelectItem>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Pagination>
         <PaginationContent>
           {currentPage > 1 && (
@@ -151,26 +179,7 @@ export function NotificationPagination({
           )}
         </PaginationContent>
       </Pagination>
-
-      {/* Page size selector */}
-      <div className="flex items-center gap-2 mt-1">
-        <span className="text-sm text-muted-foreground">Items per page:</span>
-        <div className="flex gap-1">
-          {[3, 5, 10].map((size) => (
-            <Button
-              key={size}
-              variant={
-                parseInt(pageSize || "5") === size ? "secondary" : "outline"
-              }
-              size="sm"
-              className="h-7 px-2 text-xs"
-              asChild
-            >
-              <Link href={getPageSizeUrl(size)}>{size}</Link>
-            </Button>
-          ))}
-        </div>
-      </div>
+      {/* Removed old page size selector buttons */}
     </div>
   );
 }
