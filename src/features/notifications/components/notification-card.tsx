@@ -4,11 +4,12 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Notification } from "../types/notification";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink, Check, Trash2 } from "lucide-react"; // Combined icon imports
+import { ExternalLink, Check, Trash2, Undo2 } from "lucide-react"; // Combined icon imports + Undo2
 import { cn } from "@/lib/utils";
 import { useTransition } from "react"; // Added useTransition import
 import { toast } from "sonner"; // Added toast import
 import { markNotificationAsRead } from "../actions/markNotificationAsRead"; // Added server action import
+import { markNotificationAsUnread } from "../actions/markNotificationAsUnread"; // Added server action import
 import { deleteNotification } from "../actions/deleteNotification"; // Added delete action import
 
 interface NotificationCardProps {
@@ -75,6 +76,41 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                 >
                   <Check className="h-3 w-3 mr-1.5" /> {/* Added margin */}
                   Mark as Read
+                </Button>
+              )}
+              {/* NEW Mark as Unread button */}
+              {notification.isRead && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    startTransition(() => {
+                      markNotificationAsUnread(Number(notification.id))
+                        .then((result) => {
+                          if (result.success) {
+                            toast.success("Notification marked as unread.");
+                            // UI updates via revalidation
+                          } else {
+                            toast.error(
+                              result.error ||
+                                "Failed to mark notification as unread."
+                            );
+                          }
+                        })
+                        .catch((error) => {
+                          console.error(
+                            "Mark as unread transition error:",
+                            error
+                          );
+                          toast.error("An unexpected error occurred.");
+                        });
+                    });
+                  }}
+                  disabled={isPending} // Use existing pending state
+                  className="cursor-pointer"
+                >
+                  <Undo2 className="h-3 w-3 mr-1.5" />
+                  Mark as Unread
                 </Button>
               )}
               {notification.link && (
