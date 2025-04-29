@@ -28,10 +28,12 @@ export default function ProfilePage() {
               <AvatarFallback className="text-xl">JD</AvatarFallback>
             </Avatar>
             <div className="pb-2 hidden sm:block">
-              <h1 className="text-2xl font-bold text-white drop-shadow-md">
-                John Doeeeeeeeeeeeeeee
-              </h1>
-              <p className="text-sm text-white/90 drop-shadow-md">@johndoe</p>
+              <div className="bg-black/50 px-3 py-1 rounded-md">
+                <h1 className="text-2xl font-bold text-white drop-shadow-md">
+                  John Doeeeeeeeeeeeeeee
+                </h1>
+                <p className="text-sm text-white/90 drop-shadow-md">@johndoe</p>
+              </div>
             </div>
           </div>
           <div className="absolute right-6 bottom-4">
