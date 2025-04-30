@@ -79,6 +79,10 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
                 ))}
               </div>
             )}
+            {/* See More Button */}
+            <div className="mt-8 text-center">
+              <Button variant="outline">See More</Button>
+            </div>
           </>
         )}
       </div>
