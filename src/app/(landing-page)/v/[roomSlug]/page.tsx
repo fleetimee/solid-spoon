@@ -102,18 +102,11 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                 </div>
               </div>
               {/* Replace ReservationFormDialog with a Link to the new page */}
+              {/* Book Now button moved below */}
+              {/* Booking Protection Card removed */}
               <Link href={`/v/${roomSlug}/reservations/new`} passHref>
                 <Button className="w-full">Book Now</Button>
               </Link>
-              <Card className="p-4 bg-muted/50">
-                <Typography variant="h4" as="h4" className="font-medium mb-2">
-                  Booking Protection
-                </Typography>
-                <Typography variant="small" className="text-muted-foreground">
-                  Free cancellation up to 24 hours before check-in{" "}
-                  {/* Keep or make dynamic */}
-                </Typography>
-              </Card>
             </div>
           </div>
         </div>
