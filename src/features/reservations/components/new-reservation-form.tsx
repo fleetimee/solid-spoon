@@ -76,17 +76,12 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
     },
   });
 
+  // Watch the start_time field to disable dates in the end_time calendar
+  const startTime = form.watch("start_time");
+
   async function onSubmit(values: ReservationFormValues) {
     // Handle form submission (e.g., API call)
     console.log("Reservation Submitted:", values);
-    // Here you would typically call a mutation or API endpoint
-    // Example: createReservationMutation.mutate(values);
-    // TODO: Implement actual submission logic (e.g., using a server action)
-    toast.success("Reservation submitted (simulation).", {
-      description: `Room ID: ${values.roomId}, Title: ${values.title}`,
-    });
-    // Optionally reset form or redirect
-    // form.reset();
   }
 
   return (
@@ -285,6 +280,13 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
                           newDate.setHours(currentHours, currentMinutes);
                         }
                         field.onChange(newDate);
+                      }}
+                      disabled={(date) => {
+                        if (!startTime) return false; // Don't disable if start_time isn't set
+                        // Compare date part only
+                        const startOfDay = new Date(startTime);
+                        startOfDay.setHours(0, 0, 0, 0);
+                        return date < startOfDay;
                       }}
                       initialFocus
                     />
