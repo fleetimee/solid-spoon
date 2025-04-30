@@ -117,38 +117,34 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
         </div>
 
         {/* Additional Information Section */}
-        <div className="space-y-8 mt-8">
-          {" "}
-          {/* Added a wrapper div for spacing */}
-          {/* Details & Amenities Section */}
+        {/* Apply grid layout here to place Amenities and Location side-by-side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+          {/* Amenities Section */}
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <Typography variant="h3" as="h3" className="font-medium">
-                  Room Amenities
-                </Typography>
-                {/* Use fetched facilities */}
-                {facilities.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {facilities.map((facility: string, index: number) => (
-                      <FacilityBadge key={index} name={facility} />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No specific amenities listed.
-                  </p>
-                )}
-                {/* Keep or remove placeholder list */}
-                {/* <ul className="space-y-2 text-muted-foreground">
+            <Typography variant="h3" as="h3" className="font-medium">
+              Room Amenities
+            </Typography>
+            {/* Use fetched facilities */}
+            {facilities.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {facilities.map((facility: string, index: number) => (
+                  <FacilityBadge key={index} name={facility} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">
+                No specific amenities listed.
+              </p>
+            )}
+            {/* Keep or remove placeholder list */}
+            {/* <ul className="space-y-2 text-muted-foreground">
                   <li>• Feature 1 Placeholder</li>
                   <li>• Feature 2 Placeholder</li>
                   <li>• Amenity A Placeholder</li>
                   <li>• Amenity B Placeholder</li>
                 </ul> */}
-              </div>
-            </div>
           </div>
+
           {/* Location Section */}
           <div className="space-y-4">
             <Typography variant="h3" as="h3" className="font-medium mb-4">
