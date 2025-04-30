@@ -1,27 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
@@ -35,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner"; // Import toast for feedback
 
 // Define Zod schema for form validation
 const reservationFormSchema = z
@@ -43,6 +24,7 @@ const reservationFormSchema = z
     description: z.string().optional(),
     start_time: z.string().min(1, "Start time is required"),
     end_time: z.string().min(1, "End time is required"),
+    roomId: z.number(), // Add roomId to the schema
   })
   .refine(
     (data) => {
@@ -61,8 +43,12 @@ const reservationFormSchema = z
 // Define the type for form values based on the schema
 type ReservationFormValues = z.infer<typeof reservationFormSchema>;
 
+interface NewReservationFormProps {
+  roomId: number; // Accept roomId as a prop
+}
+
 // Define the ReservationForm component using react-hook-form
-function ReservationForm() {
+export function NewReservationForm({ roomId }: NewReservationFormProps) {
   const form = useForm<ReservationFormValues>({
     resolver: zodResolver(reservationFormSchema),
     defaultValues: {
@@ -70,14 +56,21 @@ function ReservationForm() {
       description: "",
       start_time: "",
       end_time: "",
+      roomId: roomId, // Set default roomId from props
     },
   });
 
-  function onSubmit(values: ReservationFormValues) {
+  async function onSubmit(values: ReservationFormValues) {
     // Handle form submission (e.g., API call)
     console.log("Reservation Submitted:", values);
     // Here you would typically call a mutation or API endpoint
     // Example: createReservationMutation.mutate(values);
+    // TODO: Implement actual submission logic (e.g., using a server action)
+    toast.success("Reservation submitted (simulation).", {
+      description: `Room ID: ${values.roomId}, Title: ${values.title}`,
+    });
+    // Optionally reset form or redirect
+    // form.reset();
   }
 
   return (
@@ -86,6 +79,9 @@ function ReservationForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="grid items-start gap-4"
       >
+        {/* Hidden input for roomId - not strictly necessary if passed in onSubmit */}
+        <input type="hidden" {...form.register("roomId")} />
+
         <FormField
           control={form.control}
           name="title"
@@ -141,75 +137,10 @@ function ReservationForm() {
             </FormItem>
           )}
         />
-        {/* Submit button is now part of the form */}
-        <Button type="submit">Submit Reservation</Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Submitting..." : "Submit Reservation"}
+        </Button>
       </form>
     </Form>
-  );
-}
-
-// Define props for the main dialog/drawer component
-interface ReservationFormDialogProps {
-  roomId: number | string; // Room ID is required
-  userId?: string; // User ID is optional
-  // Allow passing custom trigger element if needed, defaults to Button
-  trigger?: React.ReactNode;
-}
-
-// Define the main exported component
-export function ReservationFormDialog({
-  roomId,
-  userId,
-  trigger,
-}: ReservationFormDialogProps) {
-  const [open, setOpen] = React.useState(false);
-  // Use the mobile hook to determine screen size
-  const isMobile = useIsMobile();
-
-  const title = "Book Room Reservation";
-  const description = "Fill in the details below to book your reservation.";
-
-  // Default trigger button if none is provided
-  const triggerButton = trigger ?? <Button variant="outline">Book Now</Button>;
-
-  // Render Dialog for desktop view (when not mobile)
-  if (!isMobile) {
-    return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>{triggerButton}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {/* Render the form inside the dialog */}
-          <ReservationForm />
-          {/* Footer is removed as submit is inside the form */}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  // Render Drawer for mobile view
-  return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>{triggerButton}</DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>{title}</DrawerTitle>
-          <DrawerDescription>{description}</DrawerDescription>
-        </DrawerHeader>
-        {/* Add padding for the form in the drawer view */}
-        <div className="px-4">
-          <ReservationForm />
-        </div>
-        <DrawerFooter className="pt-2">
-          {/* Submit button moved inside ReservationForm */}
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
   );
 }
