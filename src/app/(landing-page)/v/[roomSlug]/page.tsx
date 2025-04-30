@@ -147,30 +147,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                   <li>• Amenity B Placeholder</li>
                 </ul> */}
               </div>
-              <div className="space-y-4">
-                <Typography variant="h3" as="h3" className="font-medium">
-                  Services {/* Keep or make dynamic */}
-                </Typography>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li>• Daily Housekeeping</li>
-                  <li>• 24/7 Front Desk</li>
-                  <li>• Room Service</li>
-                  <li>• Laundry Service</li>
-                </ul>
-              </div>
             </div>
-          </div>
-          {/* House Rules Section */}
-          <div className="space-y-4">
-            <Typography variant="h3" as="h3" className="font-medium mb-4">
-              House Rules {/* Keep or make dynamic */}
-            </Typography>
-            <ul className="space-y-2 text-muted-foreground">
-              <li>• Check-in: 2:00 PM - 12:00 AM</li>
-              <li>• Checkout: 11:00 AM</li>
-              <li>• No smoking</li>
-              <li>• No pets</li>
-            </ul>
           </div>
           {/* Location Section */}
           <div className="space-y-4">
@@ -180,10 +157,6 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
             <Typography variant="default" className="text-muted-foreground">
               {room.location || "Location details not available."}
             </Typography>
-            {/* Replace placeholder map with actual map component if needed */}
-            <div className="aspect-[16/9] bg-muted rounded-lg flex items-center justify-center">
-              <span className="text-muted-foreground">Map Placeholder</span>
-            </div>
           </div>
         </div>
       </div>
