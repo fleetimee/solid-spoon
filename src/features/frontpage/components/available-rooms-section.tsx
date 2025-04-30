@@ -7,7 +7,7 @@ import { RoomCard } from "@/features/rooms/components/room-card";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, List } from "lucide-react";
 import { Typography } from "@/components/ui/typography";
-import { RoomListItem } from "./RoomListItem";
+import { RoomListItem } from "../../rooms/components/room-list-item";
 
 type ViewMode = "grid" | "list";
 
