@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// Removed Tabs import
 import React from "react";
 import { notFound } from "next/navigation"; // Import notFound
 import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import data fetching function
@@ -90,7 +90,7 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                   </Typography>
                   <ul className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
                     {/* Use fetched capacity */}
-                    <li>• {room.capacity} Guests</li>
+                    <li>• {room.capacity} Room Capacity</li>
                     {/* Add other relevant highlights if available in room data */}
                     {/* Example: <li>• 1 Bedroom</li> */}
                     {/* Example: <li>• 1 Bathroom</li> */}
@@ -116,15 +116,12 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
           </div>
         </div>
 
-        {/* Additional Information Tabs */}
-        <Tabs defaultValue="details" className="w-full">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="details">Details & Amenities</TabsTrigger>
-            <TabsTrigger value="rules">House Rules</TabsTrigger>
-            <TabsTrigger value="location">Location</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="details" className="space-y-4 mt-6">
+        {/* Additional Information Section */}
+        <div className="space-y-8 mt-8">
+          {" "}
+          {/* Added a wrapper div for spacing */}
+          {/* Details & Amenities Section */}
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <Typography variant="h3" as="h3" className="font-medium">
@@ -162,9 +159,9 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                 </ul>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="rules" className="space-y-4 mt-6">
+          </div>
+          {/* House Rules Section */}
+          <div className="space-y-4">
             <Typography variant="h3" as="h3" className="font-medium mb-4">
               House Rules {/* Keep or make dynamic */}
             </Typography>
@@ -174,9 +171,9 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
               <li>• No smoking</li>
               <li>• No pets</li>
             </ul>
-          </TabsContent>
-
-          <TabsContent value="location" className="space-y-4 mt-6">
+          </div>
+          {/* Location Section */}
+          <div className="space-y-4">
             <Typography variant="h3" as="h3" className="font-medium mb-4">
               Location Information {/* Use fetched location */}
             </Typography>
@@ -187,8 +184,8 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
             <div className="aspect-[16/9] bg-muted rounded-lg flex items-center justify-center">
               <span className="text-muted-foreground">Map Placeholder</span>
             </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
       </div>
     </div>
   );
