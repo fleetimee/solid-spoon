@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { cn } from "@/lib/utils"; // Added import
 import { Room } from "@/features/rooms/types/room";
 import { RoomCard } from "@/features/rooms/components/room-card";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,9 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
           </Typography>
 
           {/* View mode toggles */}
-          <div className="flex items-center gap-2 mt-2">
+          <div className="hidden sm:flex items-center gap-2 mt-2">
+            {" "}
+            {/* Hide on mobile */}
             <Button
               variant={viewMode === "grid" ? "default" : "outline"}
               size="icon"
@@ -65,20 +68,27 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
 
         {rooms.length > 0 && (
           <>
-            {viewMode === "grid" && (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {rooms.map((room) => (
-                  <RoomCard key={room.id} room={room} />
-                ))}
-              </div>
-            )}
+            {/* Grid View Container - Always rendered, hidden on sm+ if viewMode is list */}
+            <div
+              className={cn(
+                "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3", // Base grid styles (mobile first)
+                viewMode === "list" ? "sm:hidden" : "sm:grid" // Hide on sm+ if list view, ensure grid otherwise
+              )}
+            >
+              {rooms.map((room) => (
+                <RoomCard key={room.id} room={room} />
+              ))}
+            </div>
+            {/* List View Container - Only rendered if viewMode is list, hidden below sm */}
             {viewMode === "list" && (
-              <div className="space-y-4">
+              <div className="hidden sm:block space-y-4">
+                {" "}
+                {/* Hidden on mobile, block on sm+ */}
                 {rooms.map((room) => (
                   <RoomListItem key={room.id} room={room} />
                 ))}
               </div>
-            )}
+            )}{" "}
             {/* See More Button */}
             <div className="mt-8 text-center">
               <Button variant="outline">See More</Button>

@@ -80,7 +80,8 @@ export function RoomListItem({ room }: RoomListItemProps) {
       <div className="flex flex-col md:flex-row">
         {/* Modified image container with custom rounded corners */}
         <div className="relative md:w-1/3 lg:w-1/4 flex-shrink-0 overflow-hidden">
-          <div className="w-full h-56 md:h-full relative">
+          {/* Mobile: Reduced height */}
+          <div className="w-full h-48 md:h-full relative">
             <Image
               src={image}
               alt={room.name}
@@ -92,66 +93,103 @@ export function RoomListItem({ room }: RoomListItemProps) {
           </div>
         </div>
 
-        <div className="flex flex-col justify-between p-5 w-full md:w-2/3 lg:w-3/4">
-          <div className="space-y-3">
-            <div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                {room.name}
-              </h3>
+        {/* Content Area: Adjusted padding and layout for mobile */}
+        <div className="flex flex-1 flex-col justify-between p-3 md:p-5 w-full md:w-2/3 lg:w-3/4">
+          {/* Top section: Info + Facilities */}
+          <div>
+            {/* Room Name */}
+            <h3 className="text-base font-semibold text-foreground mb-1 md:text-xl md:mb-2">
+              {room.name}
+            </h3>
 
-              <div className="flex items-center text-sm text-muted-foreground mb-2">
-                <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+            {/* Location & Capacity Row */}
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-muted-foreground mb-2 md:text-sm md:mb-3">
+              <div className="flex items-center">
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0 md:h-4 md:w-4 md:mr-1.5" />
                 <span>{room.location}</span>
               </div>
-
               {room.capacity > 0 && (
-                <div className="flex items-center text-sm text-muted-foreground mb-3">
-                  <Users className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <span>Capacity: {room.capacity}</span>
+                <div className="flex items-center">
+                  <Users className="h-3 w-3 mr-1 flex-shrink-0 md:h-4 md:w-4 md:mr-1.5" />
+                  <span>{room.capacity} pax</span>
                 </div>
               )}
             </div>
 
+            {/* Description (Optional) */}
             {room.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+              <p className="text-xs text-muted-foreground line-clamp-2 mb-2 md:text-sm md:mb-3">
                 {room.description}
               </p>
             )}
 
+            {/* Facilities Row - Responsive */}
             {facilities.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {facilities
-                  .slice(0, 3)
-                  .map((facility: string, index: number) => {
-                    const IconComponent = facilityIcons[facility] || Home;
-                    return (
-                      <Badge
-                        key={index}
-                        variant="secondary"
-                        className="flex items-center gap-1 py-1"
-                      >
-                        <IconComponent className="h-3 w-3" />
-                        <span>{facility}</span>
-                      </Badge>
-                    );
-                  })}
-
-                {facilities.length > 3 && (
-                  <Badge variant="outline">+{facilities.length - 3} more</Badge>
-                )}
+              <div className="flex flex-wrap items-center gap-1 mb-3 md:gap-1.5 md:pt-1 md:mb-0">
+                {/* Mobile View (Max 2) */}
+                <div className="flex flex-wrap items-center gap-1 md:hidden">
+                  {facilities
+                    .slice(0, 2)
+                    .map((facility: string, index: number) => {
+                      const IconComponent = facilityIcons[facility] || Home;
+                      return (
+                        <Badge
+                          key={`mob-${index}`}
+                          variant="secondary"
+                          className="flex items-center gap-1 px-1.5 py-0.5 text-xs"
+                          title={facility}
+                        >
+                          <IconComponent className="h-3 w-3" />
+                          <span className="hidden sm:inline">{facility}</span>
+                        </Badge>
+                      );
+                    })}
+                  {facilities.length > 2 && (
+                    <Badge variant="outline" className="px-1.5 py-0.5 text-xs">
+                      +{facilities.length - 2} more
+                    </Badge>
+                  )}
+                </div>
+                {/* Desktop View (Max 3) */}
+                <div className="hidden flex-wrap items-center gap-1.5 md:flex">
+                  {facilities
+                    .slice(0, 3)
+                    .map((facility: string, index: number) => {
+                      const IconComponent = facilityIcons[facility] || Home;
+                      return (
+                        <Badge
+                          key={`desk-${index}`}
+                          variant="secondary"
+                          className="flex items-center gap-1 px-2 py-1 text-sm"
+                          title={facility}
+                        >
+                          <IconComponent className="h-3.5 w-3.5" />
+                          <span>{facility}</span>
+                        </Badge>
+                      );
+                    })}
+                  {facilities.length > 3 && (
+                    <Badge variant="outline" className="px-2 py-0.5 text-sm">
+                      +{facilities.length - 3} more
+                    </Badge>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
-          <div className="flex justify-end mt-4">
+          {/* Bottom section: Button */}
+          <div className="flex justify-end mt-auto pt-2">
+            {" "}
+            {/* mt-auto pushes to bottom, pt-2 adds space */}
             <Button
               onClick={handleViewDetails}
               variant="outline"
-              size="sm"
-              className="group"
+              size="sm" // Use 'sm' size, but custom classes make it visually smaller on mobile
+              className="group text-xs h-8 px-3 md:text-sm md:h-9 md:px-4 md:py-2" // Adjust size classes for responsiveness
             >
-              View Details
-              <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              Details
+              <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5 md:h-4 md:w-4" />
             </Button>
           </div>
         </div>
