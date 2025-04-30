@@ -7,12 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 
 interface RoomDetailPageProps {
-  params: {
+  params: Promise<{
     roomSlug: string;
-  };
+  }>;
 }
 
-export default function RoomDetailPage({ params }: RoomDetailPageProps) {
+export default async function RoomDetailPage(props: RoomDetailPageProps) {
+  const params = await props.params;
   const { roomSlug } = params;
   const breadcrumbItems = [
     { label: "Home", href: "/" },
