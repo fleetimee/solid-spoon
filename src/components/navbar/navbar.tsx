@@ -122,7 +122,7 @@ export function Navbar({ session }: NavbarProps) {
                 className="hidden sm:inline-flex"
                 asChild
               >
-                <Link href="/auth/signin">Sign In</Link>
+                <Link href="/auth/sign-in">Sign In</Link>
               </Button>
               <Button className="hidden xs:inline-flex" asChild>
                 <Link href="/auth/signup">Get Started</Link>
