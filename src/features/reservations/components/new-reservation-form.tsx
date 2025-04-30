@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CheckIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Added
 // Removed incorrect DateTimePicker import
@@ -359,8 +360,22 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Submitting..." : "Submit Reservation"}
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
+        >
+          {form.formState.isSubmitting ? (
+            <>
+              <ReloadIcon className="h-4 w-4 animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            <>
+              <CheckIcon className="h-4 w-4" />
+              Submit Reservation
+            </>
+          )}
         </Button>
       </form>
     </Form>

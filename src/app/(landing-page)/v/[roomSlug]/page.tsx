@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { Card } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
@@ -105,7 +106,10 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               {/* Book Now button moved below */}
               {/* Booking Protection Card removed */}
               <Link href={`/v/${roomSlug}/reservations/new`} passHref>
-                <Button className="w-full">Book Now</Button>
+                <Button className="w-full flex items-center justify-center gap-2 transition-all hover:scale-[1.02]">
+                  <CalendarIcon className="h-5 w-5" />
+                  Book Now
+                </Button>
               </Link>
             </div>
           </div>
