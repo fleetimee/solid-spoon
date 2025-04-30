@@ -105,7 +105,7 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href="/upgrade">
-                  <Sparkles />
+                  <Sparkles className="mr-2 h-4 w-4" />
                   Upgrade to Pro
                 </Link>
               </DropdownMenuItem>
@@ -114,13 +114,13 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href="/account">
-                  <BadgeCheck />
+                  <BadgeCheck className="mr-2 h-4 w-4" />
                   Account
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/billing">
-                  <CreditCard />
+                  <CreditCard className="mr-2 h-4 w-4" />
                   Billing
                 </Link>
               </DropdownMenuItem>
@@ -144,7 +144,7 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/auth/logout">
-                <LogOut />
+                <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </Link>
             </DropdownMenuItem>

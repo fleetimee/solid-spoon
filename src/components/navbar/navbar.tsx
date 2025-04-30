@@ -35,7 +35,7 @@ export function Navbar({ session }: NavbarProps) {
   // Removed: client-side session fetching hook
 
   return (
-    <nav className="h-16 bg-background border-b border-accent">
+    <nav className="sticky top-0 z-50 h-16 bg-background border-b border-accent">
       <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6">
         <Logo />
 

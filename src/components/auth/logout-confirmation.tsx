@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 interface LogoutConfirmationProps {
   children: React.ReactNode;
@@ -28,11 +29,25 @@ export function LogoutConfirmation(props: LogoutConfirmationProps) {
     setIsLoggingOut(true);
     try {
       await authClient.signOut();
-      router.refresh();
+
+      // Show success toast notification
+      toast.success("Logged out successfully", {
+        description: "You have been successfully logged out of your account",
+        duration: 3000, // 3 seconds
+      });
+
+      // Add a small delay to allow toast to be seen before redirect
+      setTimeout(() => {
+        // Perform a full page reload instead of just refreshing the router cache
+        // This ensures all auth state is completely cleared from memory
+        window.location.href = "/";
+      }, 300);
     } catch (error) {
       console.error("Logout failed:", error);
-      // Optionally show an error message to the user
-    } finally {
+      // Show error toast
+      toast.error("Logout failed", {
+        description: "There was an error logging you out. Please try again.",
+      });
       setIsLoggingOut(false);
     }
   };
