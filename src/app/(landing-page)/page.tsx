@@ -14,11 +14,11 @@ export default async function LandingPage() {
   return (
     <>
       <Hero />
-      <Features />
+      {/* <Features /> */}
       {/* Pass fetched rooms data as a prop */}
       <AvailableRoomsSection rooms={rooms} />
-      <FAQ />
-      <Testimonial />
+      {/* <FAQ /> */}
+      {/* <Testimonial /> */}
     </>
   );
 }

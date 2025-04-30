@@ -69,7 +69,9 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
 
           {/* Product Details Section */}
           <div className="lg:col-span-5 xl:col-span-4">
-            <div className="sticky top-8 space-y-6">
+            <div className="sticky top-20 space-y-6">
+              {" "}
+              {/* Adjusted top value for sticky navbar */}
               <div className="space-y-4">
                 <Typography variant="h1" as="h1" className="text-3xl font-bold">
                   {/* Use fetched room name */}
@@ -77,7 +79,6 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                 </Typography>
                 {/* Removed price display as 'price' field doesn't exist on Room type */}
               </div>
-
               <div className="space-y-4">
                 <Typography variant="default" className="text-muted-foreground">
                   {/* Use fetched room description */}
@@ -98,11 +99,9 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                   </ul>
                 </div>
               </div>
-
               <Button size="lg" className="w-full">
                 Book Now {/* Add booking functionality later */}
               </Button>
-
               <Card className="p-4 bg-muted/50">
                 <Typography variant="h4" as="h4" className="font-medium mb-2">
                   Booking Protection
