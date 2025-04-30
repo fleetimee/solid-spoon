@@ -72,7 +72,7 @@ export function RoomListItem({ room }: RoomListItemProps) {
     : [];
 
   const handleViewDetails = () => {
-    router.push(`/rooms/${room.slug || room.id}`);
+    router.push(`/v/${room.slug || room.id}`);
   };
 
   return (
