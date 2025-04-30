@@ -1,6 +1,8 @@
 "use client";
+import Link from "next/link"; // Added import
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// Removed useRouter import as it's no longer needed for card navigation
+// import { useRouter } from "next/navigation";
 import {
   Users,
   MapPin,
@@ -62,14 +64,16 @@ const facilityIcons: Record<string, LucideIcon> = {
 interface RoomCardProps {
   room: Room;
   className?: string;
+  link?: string; // Added optional link prop
 }
 
-export function RoomCard({ room, className }: RoomCardProps) {
-  const router = useRouter();
-  const handleTitleClick = () => {
-    // Use slug instead of id for navigation
-    router.push(`/admin/rooms/${room.slug || room.id}`);
-  };
+export function RoomCard({ room, className, link }: RoomCardProps) {
+  // Removed useRouter and handleTitleClick as navigation is handled by Link
+  // const router = useRouter();
+  // const handleTitleClick = () => {
+  //   // Use slug instead of id for navigation
+  //   router.push(`/admin/rooms/${room.slug || room.id}`);
+  // };
 
   // Parse facilities - handle both string and array formats for backward compatibility
   const facilities = room.facilities
@@ -77,7 +81,7 @@ export function RoomCard({ room, className }: RoomCardProps) {
       ? room.facilities.startsWith("[")
         ? JSON.parse(room.facilities)
         : room.facilities.split(",").map((facility) => facility.trim())
-      : []
+      : [] // Assuming if it's not a string, it might be an array already or empty
     : [];
 
   // Create a facility badge with icon
@@ -91,9 +95,13 @@ export function RoomCard({ room, className }: RoomCardProps) {
     );
   };
 
-  return (
+  const CardContent = (
     <Card
-      className={`overflow-hidden w-full transition-all duration-200 hover:shadow-md p-0 ${className || ""}`}
+      className={cn(
+        "overflow-hidden w-full transition-all duration-200 p-0",
+        link ? "hover:shadow-md" : "", // Apply hover only if it's a link
+        className
+      )}
     >
       <div className="relative aspect-[16/9] w-full">
         <Image
@@ -108,14 +116,17 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
       <div className="p-4 space-y-3">
         <div className="space-y-1">
-          <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-1">
-            <button
-              onClick={handleTitleClick}
-              className="text-left w-full hover:underline focus:outline-none cursor-pointer"
-            >
+          {link ? (
+            <Link href={link} className="block hover:underline">
+              <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-1">
+                {room.name}
+              </h3>
+            </Link>
+          ) : (
+            <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-1">
               {room.name}
-            </button>
-          </h3>
+            </h3>
+          )}
           {room.location && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -139,12 +150,17 @@ export function RoomCard({ room, className }: RoomCardProps) {
 
         {facilities.length > 0 && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {facilities.slice(0, 5).map((facility: string, index: number) => (
-              <FacilityBadge key={index} facility={facility} />
-            ))}
+            {facilities.slice(0, 3).map(
+              (
+                facility: string,
+                index: number // Show only 3 initially
+              ) => (
+                <FacilityBadge key={index} facility={facility} />
+              )
+            )}
 
             {/* If there are more than 3 facilities, show a popover with the rest */}
-            {facilities.length > 5 && (
+            {facilities.length > 3 && ( // Adjusted condition to > 3
               <Popover>
                 <PopoverTrigger asChild>
                   <Badge
@@ -181,4 +197,6 @@ export function RoomCard({ room, className }: RoomCardProps) {
       </div>
     </Card>
   );
+
+  return CardContent;
 }

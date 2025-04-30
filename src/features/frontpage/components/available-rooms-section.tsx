@@ -76,7 +76,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
               )}
             >
               {rooms.map((room) => (
-                <RoomCard key={room.id} room={room} />
+                <RoomCard key={room.id} room={room} link={`/v/${room.slug}`} />
               ))}
             </div>
             {/* List View Container - Only rendered if viewMode is list, hidden below sm */}
