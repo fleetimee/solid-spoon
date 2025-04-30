@@ -9,6 +9,7 @@ import { notFound } from "next/navigation"; // Import notFound
 import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import data fetching function
 import { FacilityBadge } from "@/features/rooms/components/facility-badge"; // Import FacilityBadge
 // Removed formatCurrency import as price field doesn't exist
+import { ReservationFormDialog } from "@/features/reservations/components/reservation-form-dialog"; // Import the dialog
 
 interface RoomDetailPageProps {
   params: {
@@ -99,9 +100,8 @@ export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
                   </ul>
                 </div>
               </div>
-              <Button size="lg" className="w-full">
-                Book Now {/* Add booking functionality later */}
-              </Button>
+              {/* Replace Button with ReservationFormDialog */}
+              <ReservationFormDialog roomId={room.id} />
               <Card className="p-4 bg-muted/50">
                 <Typography variant="h4" as="h4" className="font-medium mb-2">
                   Booking Protection
