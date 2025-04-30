@@ -18,7 +18,12 @@ export default async function LandingPageLayout({
     <div className="flex min-h-screen flex-col">
       <Navbar session={session} /> {/* Pass session as prop */}
       <BreadcrumbProvider>
-        <main className="flex-grow">{children}</main>
+        <main className="container mx-auto max-w-7xl flex-grow px-4 py-8">
+          {" "}
+          {/* Added container, max-width, padding, margin */}
+          <BreadcrumbNav />
+          {children}
+        </main>
       </BreadcrumbProvider>
       <Footer />
     </div>

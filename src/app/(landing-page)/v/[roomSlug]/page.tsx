@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import React from "react";
 
 interface RoomDetailPageProps {
@@ -11,10 +12,16 @@ interface RoomDetailPageProps {
 
 export default function RoomDetailPage({ params }: RoomDetailPageProps) {
   const { roomSlug } = params;
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Rooms" }, // Assuming no /rooms page for now
+    { label: roomSlug }, // Using slug as placeholder for room name
+  ];
 
   return (
     <div className="max-w-screen-xl mx-auto px-6 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <BreadcrumbSetter items={breadcrumbItems} />
         {/* Image Carousel Placeholder */}
         <Card className="flex items-center justify-center h-96 bg-muted">
           <CardContent className="text-center">
