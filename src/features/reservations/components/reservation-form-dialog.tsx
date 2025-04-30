@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Drawer,
@@ -24,41 +23,128 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
-// Define props for the form component, extending standard form attributes
-interface ReservationFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+// Define Zod schema for form validation
+const reservationFormSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().optional(),
+    start_time: z.string().min(1, "Start time is required"),
+    end_time: z.string().min(1, "End time is required"),
+  })
+  .refine(
+    (data) => {
+      // Ensure end_time is after start_time if both are provided
+      if (data.start_time && data.end_time) {
+        return new Date(data.end_time) > new Date(data.start_time);
+      }
+      return true; // Pass if one or both are missing (handled by required checks)
+    },
+    {
+      message: "End time must be after start time",
+      path: ["end_time"], // Attach error to end_time field
+    }
+  );
 
-// Define the ReservationForm component
-function ReservationForm({ className, ...props }: ReservationFormProps) {
+// Define the type for form values based on the schema
+type ReservationFormValues = z.infer<typeof reservationFormSchema>;
+
+// Define the ReservationForm component using react-hook-form
+function ReservationForm() {
+  const form = useForm<ReservationFormValues>({
+    resolver: zodResolver(reservationFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      start_time: "",
+      end_time: "",
+    },
+  });
+
+  function onSubmit(values: ReservationFormValues) {
+    // Handle form submission (e.g., API call)
+    console.log("Reservation Submitted:", values);
+    // Here you would typically call a mutation or API endpoint
+    // Example: createReservationMutation.mutate(values);
+  }
+
   return (
-    // Assign an ID to the form so footer buttons can submit it
-    <form
-      id="reservation-form-in-dialog"
-      className={cn("grid items-start gap-4", className)}
-      {...props}
-    >
-      <div className="grid gap-2">
-        <Label htmlFor="title">Title</Label>
-        <Input type="text" id="title" placeholder="Reservation Title" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          placeholder="Optional description or notes"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid items-start gap-4"
+      >
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Reservation Title" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="start_time">Start Time</Label>
-        <Input type="datetime-local" id="start_time" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="end_time">End Time</Label>
-        <Input type="datetime-local" id="end_time" />
-      </div>
-    </form>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Optional description or notes"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="start_time"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Time</FormLabel>
+              <FormControl>
+                <Input type="datetime-local" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="end_time"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>End Time</FormLabel>
+              <FormControl>
+                <Input type="datetime-local" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Submit button is now part of the form */}
+        <Button type="submit">Submit Reservation</Button>
+      </form>
+    </Form>
   );
 }
 
@@ -98,12 +184,7 @@ export function ReservationFormDialog({
           </DialogHeader>
           {/* Render the form inside the dialog */}
           <ReservationForm />
-          <DialogFooter>
-            {/* Submit button linked to the form via its ID */}
-            <Button type="submit" form="reservation-form-in-dialog">
-              Submit Reservation
-            </Button>
-          </DialogFooter>
+          {/* Footer is removed as submit is inside the form */}
         </DialogContent>
       </Dialog>
     );
@@ -123,10 +204,7 @@ export function ReservationFormDialog({
           <ReservationForm />
         </div>
         <DrawerFooter className="pt-2">
-          {/* Submit button linked to the form via its ID */}
-          <Button type="submit" form="reservation-form-in-dialog">
-            Submit Reservation
-          </Button>
+          {/* Submit button moved inside ReservationForm */}
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>
