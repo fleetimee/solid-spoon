@@ -12,13 +12,14 @@ import { FacilityBadge } from "@/features/rooms/components/facility-badge"; // I
 import { ReservationFormDialog } from "@/features/reservations/components/reservation-form-dialog"; // Import the dialog
 
 interface RoomDetailPageProps {
-  params: {
+  params: Promise<{
     // Updated params type
     roomSlug: string;
-  };
+  }>;
 }
 
-export default async function RoomDetailPage({ params }: RoomDetailPageProps) {
+export default async function RoomDetailPage(props: RoomDetailPageProps) {
+  const params = await props.params;
   // Destructure params directly
   const { roomSlug } = params;
 
