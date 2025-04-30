@@ -1,14 +1,15 @@
-// src/features/frontpage/components/RoomListItem.tsx
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Users, 
-  MapPin, 
-  ArrowRight, 
+import {
+  Users,
+  MapPin,
+  ArrowRight,
   Home,
   Projector,
   MonitorSmartphone,
@@ -26,7 +27,7 @@ import {
   Armchair,
   Table2Icon,
   Lightbulb,
-  PanelLeftClose
+  PanelLeftClose,
 } from "lucide-react";
 import type { Room } from "@/features/rooms/types/room";
 
@@ -60,7 +61,7 @@ interface RoomListItemProps {
 export function RoomListItem({ room }: RoomListItemProps) {
   const router = useRouter();
   const image = room.coverImage || room.images?.[0] || "/placeholder.svg";
-  
+
   // Parse facilities - handle both string and array formats
   const facilities = room.facilities
     ? typeof room.facilities === "string"
@@ -77,27 +78,32 @@ export function RoomListItem({ room }: RoomListItemProps) {
   return (
     <Card className="overflow-hidden transition-shadow duration-200 hover:shadow-lg">
       <div className="flex flex-col md:flex-row">
-        <div className="relative h-48 w-full md:w-64 md:h-auto flex-shrink-0">
-          <Image
-            src={image}
-            alt={room.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-            priority={false}
-          />
+        {/* Modified image container with custom rounded corners */}
+        <div className="relative md:w-1/3 lg:w-1/4 flex-shrink-0 overflow-hidden">
+          <div className="w-full h-56 md:h-full relative">
+            <Image
+              src={image}
+              alt={room.name}
+              fill
+              className="object-cover md:rounded-tr-lg md:rounded-br-lg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+              priority={false}
+            />
+          </div>
         </div>
-        
-        <div className="flex flex-col justify-between p-5 w-full">
+
+        <div className="flex flex-col justify-between p-5 w-full md:w-2/3 lg:w-3/4">
           <div className="space-y-3">
             <div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">{room.name}</h3>
-              
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {room.name}
+              </h3>
+
               <div className="flex items-center text-sm text-muted-foreground mb-2">
                 <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span>{room.location}</span>
               </div>
-              
+
               {room.capacity > 0 && (
                 <div className="flex items-center text-sm text-muted-foreground mb-3">
                   <Users className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -105,38 +111,42 @@ export function RoomListItem({ room }: RoomListItemProps) {
                 </div>
               )}
             </div>
-            
+
             {room.description && (
               <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                 {room.description}
               </p>
             )}
-            
+
             {facilities.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {facilities.slice(0, 3).map((facility: string, index: number) => {
-                  const IconComponent = facilityIcons[facility] || Home;
-                  return (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1 py-1">
-                      <IconComponent className="h-3 w-3" />
-                      <span>{facility}</span>
-                    </Badge>
-                  );
-                })}
-                
+                {facilities
+                  .slice(0, 3)
+                  .map((facility: string, index: number) => {
+                    const IconComponent = facilityIcons[facility] || Home;
+                    return (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="flex items-center gap-1 py-1"
+                      >
+                        <IconComponent className="h-3 w-3" />
+                        <span>{facility}</span>
+                      </Badge>
+                    );
+                  })}
+
                 {facilities.length > 3 && (
-                  <Badge variant="outline">
-                    +{facilities.length - 3} more
-                  </Badge>
+                  <Badge variant="outline">+{facilities.length - 3} more</Badge>
                 )}
               </div>
             )}
           </div>
-          
+
           <div className="flex justify-end mt-4">
-            <Button 
-              onClick={handleViewDetails} 
-              variant="outline" 
+            <Button
+              onClick={handleViewDetails}
+              variant="outline"
               size="sm"
               className="group"
             >
