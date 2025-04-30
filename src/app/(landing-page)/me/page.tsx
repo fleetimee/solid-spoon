@@ -16,8 +16,14 @@ import { Icon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "My Profile" }, // Current page, no href
+  ];
+
   return (
     <>
+      <BreadcrumbSetter items={breadcrumbItems} />
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 pb-16 pt-8">
         {/* Profile cover and header */}
         <div className="relative mb-20">

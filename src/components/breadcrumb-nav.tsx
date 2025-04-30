@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // Import usePathname
+// Removed usePathname import
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,16 +14,14 @@ import {
 import { useBreadcrumb } from "@/components/providers/breadcrumb-provider";
 
 export function BreadcrumbNav() {
+  // Renaming this later conceptually to AdminBreadcrumbNav
   const { breadcrumbs } = useBreadcrumb();
-  const pathname = usePathname(); // Get the current path
-
-  // Determine if we are in the admin section
-  const isAdminPath = pathname.startsWith("/admin");
 
   // Don't render anything if there are no breadcrumbs
   if (!breadcrumbs.length) return null;
 
-  const breadcrumbContent = (
+  // Directly return the breadcrumb structure without path checking or container
+  return (
     <Breadcrumb>
       <BreadcrumbList>
         {breadcrumbs.map((crumb, index) => {
@@ -51,14 +49,5 @@ export function BreadcrumbNav() {
         })}
       </BreadcrumbList>
     </Breadcrumb>
-  );
-
-  // Conditionally wrap with the container div
-  return isAdminPath ? (
-    breadcrumbContent
-  ) : (
-    <div className="w-full max-w-screen-xl mx-auto px-6">
-      {breadcrumbContent}
-    </div>
   );
 }

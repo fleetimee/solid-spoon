@@ -2,7 +2,7 @@ import { Navbar } from "@/components/navbar/navbar";
 import { Footer } from "@/features/frontpage/components/footer-section";
 import React from "react";
 import { BreadcrumbProvider } from "@/components/providers/breadcrumb-provider";
-import { BreadcrumbNav } from "@/components/breadcrumb-nav";
+import { FrontendBreadcrumbNav } from "@/components/frontend-breadcrumb-nav"; // Import the new component
 import { auth } from "@/lib/auth"; // Added import
 import { headers } from "next/headers"; // Added import
 
@@ -21,7 +21,7 @@ export default async function LandingPageLayout({
         <main className="container mx-auto max-w-7xl flex-grow px-4 py-8">
           {" "}
           {/* Added container, max-width, padding, margin */}
-          <BreadcrumbNav />
+          <FrontendBreadcrumbNav /> {/* Use the new frontend breadcrumb */}
           {children}
         </main>
       </BreadcrumbProvider>
