@@ -47,6 +47,14 @@ import {
   UserRoomReservation,
 } from "@/features/reservations/api/getUserRoomReservations"; // Import user reservations
 
+// Import approved reservations function and type
+import {
+  getApprovedRoomReservations,
+  ApprovedReservationTime,
+} from "@/features/reservations/api/getApprovedRoomReservations";
+// Import the calendar component
+import { RoomAvailabilityCalendar } from "@/features/rooms/components/room-availability-calendar";
+
 // Import getReservationLimit
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 
@@ -89,6 +97,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   let myReservations: UserRoomReservation[] = [];
   if (session?.user?.id && room?.id) {
     myReservations = await getUserRoomReservations(session.user.id, room.id);
+  }
+
+  // Fetch approved reservations for the calendar
+  let approvedReservations: ApprovedReservationTime[] = [];
+  if (room?.id) {
+    approvedReservations = await getApprovedRoomReservations(room.id);
   }
 
   // Parse facilities (similar to admin page)
@@ -184,6 +198,10 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                   </ul>
                 </div>
               </div>
+              {/* Add RoomAvailabilityCalendar component */}
+              <RoomAvailabilityCalendar
+                approvedReservations={approvedReservations}
+              />
               {/* Replace ReservationFormDialog with a Link to the new page */}
               {/* Book Now button moved below */}
               {/* Display pending reservation count */}
