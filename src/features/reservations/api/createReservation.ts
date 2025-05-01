@@ -164,7 +164,7 @@ export async function createReservationAction(
 
     const notificationQuery = `
       INSERT INTO notification (recipient_id, title, message, type, link)
-      VALUES (NULL, $1, $2, $3, $4)
+      VALUES ('admin', $1, $2, $3, $4)
     `; // recipient_id NULL targets admins implicitly based on type='admin'
     const notificationParams = [
       notificationTitle,
