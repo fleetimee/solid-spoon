@@ -6,6 +6,8 @@ import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import functio
 import { NewReservationForm } from "@/features/reservations/components/new-reservation-form"; // Import the client form component
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount";
+import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 
 interface NewReservationPageProps {
   params: Promise<{
@@ -51,6 +53,18 @@ export default async function NewReservationPage(
   // Handle room not found
   if (!room) {
     notFound();
+  }
+
+  // ADDED: Check reservation limit
+  const userId = session.user.id; // Assuming session.user.id exists based on prior check
+  const roomId = room.id;
+  const [pendingCount, reservationLimit] = await Promise.all([
+    getPendingReservationCount(userId, roomId),
+    getReservationLimit(),
+  ]);
+
+  if (pendingCount >= reservationLimit) {
+    redirect("/");
   }
 
   // Set breadcrumbs dynamically

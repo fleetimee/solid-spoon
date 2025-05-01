@@ -1,16 +1,26 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"; // Import cn
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Card } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
+// Import AlertTitle and AlertTriangle
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info, AlertTriangle } from "lucide-react"; // Import AlertTriangle
 // Removed Tabs import
 import React from "react";
 import { notFound } from "next/navigation"; // Import notFound
+import { headers } from "next/headers"; // Import headers for session
 import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import data fetching function
 import { FacilityBadge } from "@/features/rooms/components/facility-badge"; // Import FacilityBadge
 // Removed formatCurrency import as price field doesn't exist
 import Link from "next/link"; // Import Link for navigation
+import { auth } from "@/lib/auth"; // Import auth config
+import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount"; // Import count function
+
+// Import getReservationLimit
+import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 
 interface RoomDetailPageProps {
   params: Promise<{
@@ -24,12 +34,22 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   // Destructure params directly
   const { roomSlug } = params;
 
-  // Fetch room data
-  const room = await getRoomBySlug(roomSlug);
+  // Fetch room data, user session, and reservation limit concurrently
+  const [room, session, reservationLimit] = await Promise.all([
+    getRoomBySlug(roomSlug),
+    auth.api.getSession({ headers: await headers() }), // Fetch user session correctly
+    getReservationLimit(), // Fetch reservation limit
+  ]);
 
   // Handle room not found
   if (!room) {
     notFound();
+  }
+
+  // Fetch pending reservation count if user is logged in
+  let pendingCount = 0;
+  if (session?.user?.id && room.id) {
+    pendingCount = await getPendingReservationCount(session.user.id, room.id);
   }
 
   // Parse facilities (similar to admin page)
@@ -55,11 +75,30 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
         ? [room.coverImage]
         : ["/placeholder.svg"]; // Use room images or cover, fallback to placeholder
 
+  // Calculate if the reservation limit is reached
+  const isLimitReached =
+    !!session?.user?.id && pendingCount >= reservationLimit;
+
   return (
     <div className="min-h-screen bg-background">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        {session?.user?.id && pendingCount >= reservationLimit && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Reservation Limit Reached</AlertTitle>
+            <AlertDescription>
+              You have reached the maximum limit of {reservationLimit} pending
+              reservations for this room. You cannot create new reservations
+              until existing ones are processed.
+            </AlertDescription>
+          </Alert>
+        )}
+      </div>
       <BreadcrumbSetter items={breadcrumbItems} />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Reservation Limit Alert */}
+
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           {/* Gallery Section */}
@@ -104,9 +143,31 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               </div>
               {/* Replace ReservationFormDialog with a Link to the new page */}
               {/* Book Now button moved below */}
-              {/* Booking Protection Card removed */}
-              <Link href={`/v/${roomSlug}/reservations/new`} passHref>
-                <Button className="w-full flex items-center justify-center gap-2 transition-all hover:scale-[1.02]">
+              {/* Display pending reservation count */}
+              {pendingCount > 0 && (
+                <Alert variant="default">
+                  <Info className="h-4 w-4" />
+                  {/* Optional: <AlertTitle>Heads up!</AlertTitle> */}
+                  <AlertDescription>
+                    You have {pendingCount} pending reservation(s) for this
+                    room.
+                  </AlertDescription>
+                </Alert>
+              )}
+              {/* Book Now Button */}
+              <Link
+                href={`/v/${roomSlug}/reservations/new`}
+                passHref
+                className={cn(
+                  isLimitReached &&
+                    "pointer-events-none cursor-not-allowed opacity-50"
+                )} // Apply conditional styles
+                aria-disabled={isLimitReached} // Add aria-disabled
+              >
+                <Button
+                  className="w-full flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
+                  disabled={isLimitReached} // Disable button if limit is reached
+                >
                   <CalendarIcon className="h-5 w-5" />
                   Book Now
                 </Button>
