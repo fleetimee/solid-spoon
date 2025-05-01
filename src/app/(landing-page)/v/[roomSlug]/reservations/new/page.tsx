@@ -6,15 +6,14 @@ import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import functio
 import { NewReservationForm } from "@/features/reservations/components/new-reservation-form"; // Import the client form component
 
 interface NewReservationPageProps {
-  params: {
+  params: Promise<{
     roomSlug: string;
-  };
+  }>;
 }
 
 // Generate metadata dynamically based on the room
-export async function generateMetadata({
-  params,
-}: NewReservationPageProps): Promise<Metadata> {
+export async function generateMetadata(props: NewReservationPageProps): Promise<Metadata> {
+  const params = await props.params;
   const room = await getRoomBySlug(params.roomSlug);
   if (!room) {
     return {
@@ -27,9 +26,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function NewReservationPage({
-  params,
-}: NewReservationPageProps) {
+export default async function NewReservationPage(props: NewReservationPageProps) {
+  const params = await props.params;
   const { roomSlug } = params;
 
   // Fetch room data on the server
