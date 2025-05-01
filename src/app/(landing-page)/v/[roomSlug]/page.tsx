@@ -137,7 +137,6 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Reservation Limit Alert */}
-
         {/* Main Product Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           {/* Gallery Section */}
@@ -219,174 +218,174 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
             </div>
           </div>
         </div>
-
-        {/* Additional Information Section */}
-        {/* Apply grid layout here to place Amenities and Location side-by-side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          {/* Amenities Section */}
-          <div className="space-y-4">
-            <Typography
-              variant="h3"
-              as="h3"
-              className="flex items-center font-medium"
-            >
-              <Sparkles className="h-5 w-5 mr-2" />
-              Room Amenities
-            </Typography>
-            {/* Use fetched facilities */}
-            {facilities.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {facilities.map((facility: string, index: number) => (
-                  <FacilityBadge key={index} name={facility} />
-                ))}
+        {/* Additional Information Sections Wrapped in Card */}
+        <Card>
+          <div
+            className="p-4 md:p-6 space-y-12"
+            style={{
+              backgroundColor: "hsl(var(--card))",
+              backgroundImage: `linear-gradient(45deg, hsl(var(--border)) 25%, transparent 25%), linear-gradient(-45deg, hsl(var(--border)) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, hsl(var(--border)) 75%), linear-gradient(-45deg, transparent 75%, hsl(var(--border)) 75%)`,
+              backgroundSize: "10px 10px",
+            }}
+          >
+            {/* Amenities and Location Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Amenities Section */}
+              <div className="space-y-4">
+                <Typography
+                  variant="h3"
+                  as="h3"
+                  className="flex items-center font-medium"
+                >
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Room Amenities
+                </Typography>
+                {/* Use fetched facilities */}
+                {facilities.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {facilities.map((facility: string, index: number) => (
+                      <FacilityBadge key={index} name={facility} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">
+                    No specific amenities listed.
+                  </p>
+                )}
               </div>
-            ) : (
-              <p className="text-muted-foreground">
-                No specific amenities listed.
-              </p>
-            )}
-            {/* Keep or remove placeholder list */}
-            {/* <ul className="space-y-2 text-muted-foreground">
-                  <li>• Feature 1 Placeholder</li>
-                  <li>• Feature 2 Placeholder</li>
-                  <li>• Amenity A Placeholder</li>
-                  <li>• Amenity B Placeholder</li>
-                </ul> */}
-          </div>
 
-          {/* Location Section */}
-          <div className="space-y-4">
-            <Typography
-              variant="h3"
-              as="h3"
-              className="flex items-center font-medium mb-4"
-            >
-              <MapPin className="h-5 w-5 mr-2" />
-              Location Information {/* Use fetched location */}
-            </Typography>
-            <Typography variant="default" className="text-muted-foreground">
-              {room.location || "Location details not available."}
-            </Typography>
-          </div>
-        </div>
+              {/* Location Section */}
+              <div className="space-y-4">
+                <Typography
+                  variant="h3"
+                  as="h3"
+                  className="flex items-center font-medium mb-4"
+                >
+                  <MapPin className="h-5 w-5 mr-2" />
+                  Location Information {/* Use fetched location */}
+                </Typography>
+                <Typography variant="default" className="text-muted-foreground">
+                  {room.location || "Location details not available."}
+                </Typography>
+              </div>
+            </div>
 
-        {/* My Reservations Section (Conditional) */}
-        {session?.user?.id && (
-          <div className="mt-8 md:col-span-2 space-y-4">
-            <Typography
-              variant="h3"
-              as="h3"
-              className="flex items-center font-medium"
-            >
-              <UserCheck className="h-5 w-5 mr-2" />
-              My Reservations
-            </Typography>
-            <Table>
-              <TableBody>
-                {myReservations && myReservations.length > 0 ? (
-                  myReservations.map((reservation) => (
-                    <TableRow key={reservation.id}>
-                      <TableCell className="font-medium">
-                        {reservation.title}
-                      </TableCell>
-                      <TableCell>
-                        {format(new Date(reservation.startTime), "PPp")}
-                      </TableCell>
-                      <TableCell>
-                        {format(new Date(reservation.endTime), "PPp")}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            reservation.statusValue === "Approved"
-                              ? "default"
-                              : reservation.statusValue === "Pending"
-                                ? "secondary"
-                                : reservation.statusValue === "Rejected"
-                                  ? "destructive"
-                                  : "default"
-                          }
+            {/* My Reservations Section (Conditional) */}
+            {session?.user?.id && (
+              <div className="md:col-span-2 space-y-4">
+                <Typography
+                  variant="h3"
+                  as="h3"
+                  className="flex items-center font-medium"
+                >
+                  <UserCheck className="h-5 w-5 mr-2" />
+                  My Reservations
+                </Typography>
+                <Table>
+                  <TableBody>
+                    {myReservations && myReservations.length > 0 ? (
+                      myReservations.map((reservation) => (
+                        <TableRow key={reservation.id}>
+                          <TableCell className="font-medium">
+                            {reservation.title}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(reservation.startTime), "PPp")}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(reservation.endTime), "PPp")}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                reservation.statusValue === "Approved"
+                                  ? "default"
+                                  : reservation.statusValue === "Pending"
+                                    ? "secondary"
+                                    : reservation.statusValue === "Rejected"
+                                      ? "destructive"
+                                      : "default"
+                              }
+                            >
+                              {reservation.statusValue}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4} // Title, Start, End, Status
+                          className="h-24 text-center text-muted-foreground"
                         >
-                          {reservation.statusValue}
-                        </Badge>
+                          You have no active reservations for this room.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+
+            {/* Recent Reservations Section */}
+            <div className="md:col-span-2 space-y-4">
+              <Typography
+                variant="h3"
+                as="h3"
+                className="flex items-center font-medium" // Use same styling as other titles
+              >
+                <History className="h-5 w-5 mr-2" />
+                Recent Reservations
+              </Typography>
+              <Table>
+                <TableBody>
+                  {recentReservations && recentReservations.length > 0 ? (
+                    recentReservations.map((reservation) => (
+                      <TableRow key={reservation.id}>
+                        <TableCell className="font-medium">
+                          {reservation.title}
+                        </TableCell>
+                        <TableCell>{reservation.userName}</TableCell>
+                        <TableCell>
+                          {format(new Date(reservation.startTime), "PPp")}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(reservation.endTime), "PPp")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              reservation.statusValue === "Approved"
+                                ? "default" // Use default for Approved
+                                : reservation.statusValue === "Pending"
+                                  ? "secondary" // Use secondary for Pending
+                                  : reservation.statusValue === "Rejected"
+                                    ? "destructive" // Use destructive for Rejected
+                                    : "default" // Fallback
+                            }
+                          >
+                            {reservation.statusValue}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={5} // Keep colspan as 5 (Title, Booked By, Start, End, Status)
+                        className="h-24 text-center text-muted-foreground"
+                      >
+                        No recent reservations for this room.
                       </TableCell>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4} // Title, Start, End, Status
-                      className="h-24 text-center text-muted-foreground"
-                    >
-                      You have no active reservations for this room.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-
-        {/* Recent Reservations Section */}
-        <div className="mt-8 md:col-span-2 space-y-4">
-          {" "}
-          {/* Span across both columns and add spacing */}
-          <Typography
-            variant="h3"
-            as="h3"
-            className="flex items-center font-medium" // Use same styling as other titles
-          >
-            <History className="h-5 w-5 mr-2" />
-            Recent Reservations
-          </Typography>
-          {/* Removed Card and CardHeader, moved title above */}
-          {/* Removed CardContent wrapper */}
-          <Table>
-            {/* Removed TableHeader */}
-            <TableBody>
-              {recentReservations && recentReservations.length > 0 ? (
-                recentReservations.map((reservation) => (
-                  <TableRow key={reservation.id}>
-                    <TableCell className="font-medium">
-                      {reservation.title}
-                    </TableCell>
-                    <TableCell>{reservation.userName}</TableCell>
-                    <TableCell>
-                      {format(new Date(reservation.startTime), "PPp")}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(reservation.endTime), "PPp")}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          reservation.statusValue === "Approved"
-                            ? "default" // Use default for Approved
-                            : reservation.statusValue === "Pending"
-                              ? "secondary" // Use secondary for Pending
-                              : reservation.statusValue === "Rejected"
-                                ? "destructive" // Use destructive for Rejected
-                                : "default" // Fallback
-                        }
-                      >
-                        {reservation.statusValue}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={5} // Keep colspan as 5 (Title, Booked By, Start, End, Status)
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    No recent reservations for this room.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>{" "}
+          {/* Close striped background div */}
+        </Card>{" "}
+        {/* Close Card */}
       </div>
     </div>
   );
