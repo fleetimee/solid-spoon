@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import { Search, Info, RefreshCw, Building2 } from "lucide-react"; // Removed Plus
+import { cn } from "@/lib/utils"; // Added cn import
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Button } from "@/components/ui/button";
 import { RoomCard } from "@/features/rooms/components/room-card";
@@ -271,15 +272,34 @@ export default async function RoomsPage(props: RoomsPageProps) {
           </Card>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {rooms.map((room) => (
-                <RoomCard
-                  room={room}
-                  key={room.id}
-                  // Updated link to public detail page
-                  link={`/v/${room.slug}`}
-                />
-              ))}
+            {/* Updated grid for Bento layout */}
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6">
+              {rooms.map((room, index) => {
+                // Define span classes based on index for a repeating Bento pattern
+                let spanClasses = "md:col-span-2"; // Default span
+                const patternIndex = index % 6; // Get position within the 6-item pattern
+
+                if (patternIndex === 0) {
+                  spanClasses = "md:col-span-4 md:row-span-2"; // Large item
+                } else if (patternIndex === 1 || patternIndex === 2) {
+                  spanClasses = "md:col-span-2"; // Small items next to large
+                } else if (patternIndex === 3 || patternIndex === 4) {
+                  spanClasses = "md:col-span-3"; // Medium items below
+                } else if (patternIndex === 5) {
+                  spanClasses = "md:col-span-6"; // Full width item
+                }
+
+                return (
+                  <div key={room.id} className={cn(spanClasses)}>
+                    <RoomCard
+                      room={room}
+                      // Updated link to public detail page
+                      link={`/v/${room.slug}`}
+                      className="h-full" // Ensure card fills the grid area
+                    />
+                  </div>
+                );
+              })}
             </div>
 
             {pagination.totalPages > 1 && (
