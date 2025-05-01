@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link"; // Import Link
 import { cn } from "@/lib/utils"; // Added import
 import { Room } from "@/features/rooms/types/room";
 import { RoomCard } from "@/features/rooms/components/room-card";
@@ -91,7 +92,11 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
             )}{" "}
             {/* See More Button */}
             <div className="mt-8 text-center">
-              <Button variant="outline">See More</Button>
+              <Link href="/rooms" className="block">
+                <Button variant="outline" size="lg" asChild>
+                  View All Rooms
+                </Button>
+              </Link>
             </div>
           </>
         )}
