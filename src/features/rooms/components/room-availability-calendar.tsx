@@ -54,8 +54,8 @@ export function RoomAvailabilityCalendar({
   };
 
   return (
-    // Add w-fit to constrain the container width
-    <div className="w-fit rounded-md border bg-card p-4">
+    // Remove w-fit, add flex and centering classes
+    <div className="flex flex-col items-center justify-center rounded-md border bg-card p-4">
       <Calendar
         mode="single" // Display a single month
         modifiers={modifiers}
@@ -73,9 +73,19 @@ export function RoomAvailabilityCalendar({
         className="p-0" // Remove default padding if needed
         // Add other props as needed, e.g., showOutsideDays
       />
-      <p className="mt-2 text-center text-xs text-muted-foreground">
-        Unavailable dates are marked.
-      </p>
+      {/* Add Legend */}
+      <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+        <span
+          className="inline-block h-3 w-3 rounded-sm"
+          style={{
+            // Match the booked style (adjust if needed)
+            backgroundColor: "hsl(var(--muted-foreground) / 0.2)", // Example background
+            textDecoration: "line-through", // Add strikethrough if used in modifier
+            border: "1px solid hsl(var(--muted-foreground) / 0.4)",
+          }}
+        ></span>
+        <span>Unavailable / Booked</span>
+      </div>
     </div>
   );
 }
