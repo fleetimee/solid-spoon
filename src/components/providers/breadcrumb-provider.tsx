@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface BreadcrumbItem {
-  label: string;
+  label: React.ReactNode; // Allow JSX elements for labels
   href?: string;
 }
 
