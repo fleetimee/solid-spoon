@@ -28,6 +28,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner"; // Import toast for feedback
+import {
+  createReservationAction,
+  type CreateReservationFormState,
+} from "../api/createReservation";
+import { useRouter } from "next/navigation";
 
 // Define Zod schema for form validation
 const reservationFormSchema = z
@@ -66,6 +71,8 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const minutes = Array.from({ length: 12 }, (_, i) => i * 5); // 0, 5, ..., 55
 
+  const router = useRouter(); // Add router hook
+
   const form = useForm<ReservationFormValues>({
     resolver: zodResolver(reservationFormSchema),
     defaultValues: {
@@ -77,12 +84,77 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
     },
   });
 
+  // Define initial state for the server action
+  const initialState: CreateReservationFormState = {
+    success: false,
+    message: "",
+    fieldErrors: undefined,
+    reservationId: undefined,
+  };
+
   // Watch the start_time field to disable dates in the end_time calendar
   const startTime = form.watch("start_time");
 
   async function onSubmit(values: ReservationFormValues) {
-    // Handle form submission (e.g., API call)
-    console.log("Reservation Submitted:", values);
+    const formData = new FormData();
+    formData.append("title", values.title);
+    if (values.description) {
+      formData.append("description", values.description);
+    }
+    // Convert dates to ISO strings for the server action
+    formData.append("start_time", values.start_time.toISOString());
+    formData.append("end_time", values.end_time.toISOString());
+    formData.append("roomId", values.roomId.toString()); // Ensure roomId is a string
+
+    try {
+      // Note: We don't need useFormState here as we manually handle the action call
+      // Pass the initial state as the first argument
+      const result: CreateReservationFormState = await createReservationAction(
+        initialState, // Pass the defined initial state
+        formData
+      );
+
+      if (result.success) {
+        toast.success(result.message);
+        form.reset(); // Reset form on success
+        // Redirect after successful submission
+        // TODO: Determine a more specific redirect path if needed, e.g., based on roomSlug if available
+        router.push("/");
+      } else {
+        toast.error(result.message);
+        // Set field-specific errors
+        if (result.fieldErrors) {
+          for (const field in result.fieldErrors) {
+            if (
+              Object.prototype.hasOwnProperty.call(result.fieldErrors, field)
+            ) {
+              const messages =
+                result.fieldErrors[field as keyof typeof result.fieldErrors];
+              // Ensure the field exists in ReservationFormValues before setting error
+              if (
+                messages &&
+                messages.length > 0 &&
+                field in form.getValues()
+              ) {
+                form.setError(field as keyof ReservationFormValues, {
+                  type: "server",
+                  message: messages.join(", "), // Join multiple messages if any
+                });
+              } else if (messages && messages.length > 0) {
+                // Handle general errors not tied to a specific field if needed
+                console.warn(
+                  `Server returned error for unknown field: ${field}`
+                );
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // Catch unexpected errors during the action call
+      console.error("Failed to create reservation:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    }
   }
 
   return (
