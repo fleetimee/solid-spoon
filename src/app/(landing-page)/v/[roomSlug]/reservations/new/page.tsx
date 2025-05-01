@@ -72,8 +72,8 @@ export default async function NewReservationPage(
           details below.
         </Typography>
         <div className="max-w-2xl">
-          {/* Render the client component, passing the roomId */}
-          <NewReservationForm roomId={room.id} />
+          {/* Render the client component, passing the roomId and roomSlug */}
+          <NewReservationForm roomId={room.id} roomSlug={roomSlug} />
         </div>
       </main>
     </>

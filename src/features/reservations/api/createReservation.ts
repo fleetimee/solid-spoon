@@ -121,11 +121,39 @@ export async function createReservationAction(
 
     const newReservationId = insertResult.rows[0].id;
 
+    // Fetch the room slug to revalidate the specific room page
+    let roomSlug: string | null = null;
+    try {
+      const roomQuery = `SELECT slug FROM room WHERE id = $1`;
+      const roomResult = await client.query<{ slug: string }>(roomQuery, [
+        validatedData.roomId,
+      ]);
+      if (roomResult.rows.length > 0) {
+        roomSlug = roomResult.rows[0].slug;
+      } else {
+        console.warn(
+          `Could not find room with ID ${validatedData.roomId} to revalidate path, though reservation ${newReservationId} was created.`
+        );
+      }
+    } catch (slugError) {
+      console.error(
+        `Error fetching room slug for ID ${validatedData.roomId}:`,
+        slugError
+      );
+      // Proceed without specific revalidation if slug fetch fails
+    }
+
     // Revalidate relevant paths
-    revalidatePath("/"); // Revalidate homepage (might show room availability)
-    revalidatePath("/me"); // Revalidate user's own reservation page
-    // Consider revalidating the specific room page if applicable
-    // revalidatePath(`/v/${roomSlug}`); // Need roomSlug for this
+    if (roomSlug) {
+      revalidatePath(`/v/${roomSlug}`); // Revalidate the specific room page
+      revalidatePath("/me"); // Revalidate user's own reservation page
+      // Optionally keep revalidating the homepage if it lists availability
+      // revalidatePath("/");
+    } else {
+      // Fallback to generic revalidation if slug wasn't found
+      revalidatePath("/");
+      revalidatePath("/me");
+    }
 
     return {
       success: true,

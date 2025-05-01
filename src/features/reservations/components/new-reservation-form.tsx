@@ -63,10 +63,14 @@ type ReservationFormValues = z.infer<typeof reservationFormSchema>;
 
 interface NewReservationFormProps {
   roomId: number; // Accept roomId as a prop
+  roomSlug: string; // Add roomSlug prop
 }
 
 // Define the ReservationForm component using react-hook-form
-export function NewReservationForm({ roomId }: NewReservationFormProps) {
+export function NewReservationForm({
+  roomId,
+  roomSlug,
+}: NewReservationFormProps) {
   // Define hours and minutes arrays for time selection
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const minutes = Array.from({ length: 12 }, (_, i) => i * 5); // 0, 5, ..., 55
@@ -117,9 +121,8 @@ export function NewReservationForm({ roomId }: NewReservationFormProps) {
       if (result.success) {
         toast.success(result.message);
         form.reset(); // Reset form on success
-        // Redirect after successful submission
-        // TODO: Determine a more specific redirect path if needed, e.g., based on roomSlug if available
-        router.push("/");
+        // Redirect after successful submission to the specific room page
+        router.push(`/v/${roomSlug}`);
       } else {
         toast.error(result.message);
         // Set field-specific errors
