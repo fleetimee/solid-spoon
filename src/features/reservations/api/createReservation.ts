@@ -93,6 +93,8 @@ export async function createReservationAction(
       throw new Error("Failed to acquire database client.");
     }
 
+    await client.query("BEGIN"); // Start transaction
+
     // Use validatedData for insertion
     // Postgres handles ISO 8601 strings directly for timestamp/timestamptz columns
     const insertQuery = `
@@ -121,7 +123,7 @@ export async function createReservationAction(
 
     const newReservationId = insertResult.rows[0].id;
 
-    // Fetch the room slug to revalidate the specific room page
+    // Fetch the room slug *before* notification insert
     let roomSlug: string | null = null;
     try {
       const roomQuery = `SELECT slug FROM room WHERE id = $1`;
@@ -132,7 +134,7 @@ export async function createReservationAction(
         roomSlug = roomResult.rows[0].slug;
       } else {
         console.warn(
-          `Could not find room with ID ${validatedData.roomId} to revalidate path, though reservation ${newReservationId} was created.`
+          `Could not find room with ID ${validatedData.roomId} for notification/revalidation.`
         );
       }
     } catch (slugError) {
@@ -140,10 +142,38 @@ export async function createReservationAction(
         `Error fetching room slug for ID ${validatedData.roomId}:`,
         slugError
       );
-      // Proceed without specific revalidation if slug fetch fails
+      // Continue without slug if fetch fails
     }
 
-    // Revalidate relevant paths
+    // Insert notification for admins within the transaction
+    const notificationTitle = "New Reservation Pending";
+    const notificationMessage = `User ${
+      session.user?.name || userId
+    } requested reservation for room ${
+      roomSlug || `ID: ${validatedData.roomId}` // Fallback if slug not found
+    }.`;
+    const notificationType = "admin";
+    const notificationLink = roomSlug
+      ? `/admin/rooms/${roomSlug}`
+      : "/admin/reservations"; // Fallback link
+
+    const notificationQuery = `
+      INSERT INTO notification (recipient_id, title, message, type, link)
+      VALUES (NULL, $1, $2, $3, $4)
+    `; // recipient_id NULL targets admins implicitly based on type='admin'
+    const notificationParams = [
+      notificationTitle,
+      notificationMessage,
+      notificationType,
+      notificationLink,
+    ];
+
+    await client.query(notificationQuery, notificationParams);
+
+    // Commit the transaction
+    await client.query("COMMIT");
+
+    // Revalidate relevant paths (after successful commit)
     if (roomSlug) {
       revalidatePath(`/v/${roomSlug}`); // Revalidate the specific room page
       revalidatePath("/me"); // Revalidate user's own reservation page
@@ -161,7 +191,16 @@ export async function createReservationAction(
       reservationId: newReservationId,
     };
   } catch (error: any) {
-    console.error("Database Error:", error);
+    if (client) {
+      try {
+        await client.query("ROLLBACK"); // Rollback transaction on error
+        console.log("Transaction rolled back due to error.");
+      } catch (rollbackError) {
+        console.error("Failed to rollback transaction:", rollbackError);
+        // Log rollback error but proceed with original error handling
+      }
+    }
+    console.error("Database/Action Error:", error);
     // Check for specific known constraint errors if necessary
     // Example: if (error.code === '23505' && error.constraint === 'unique_room_time') { ... }
     return {
