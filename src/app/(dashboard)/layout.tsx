@@ -42,7 +42,7 @@ export default async function Layout({
     try {
       const result = await db.query<{ total: string }>(
         `SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false`,
-        [userId]
+        ["admin"]
       );
       unreadNotificationsCount = parseInt(result.rows[0]?.total || "0", 10);
     } catch (error) {
