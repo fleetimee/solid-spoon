@@ -23,6 +23,7 @@ import {
   Sparkles,
   MapPin,
   History,
+  UserCheck, // Import UserCheck icon
 } from "lucide-react"; // Import AlertTriangle and section icons
 // Removed Tabs import
 import React from "react";
@@ -41,6 +42,10 @@ import {
   getRecentReservations,
   RecentReservation,
 } from "@/features/reservations/api/getRecentReservations"; // Import recent reservations
+import {
+  getUserRoomReservations,
+  UserRoomReservation,
+} from "@/features/reservations/api/getUserRoomReservations"; // Import user reservations
 
 // Import getReservationLimit
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
@@ -78,6 +83,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   let pendingCount = 0;
   if (session?.user?.id && room.id) {
     pendingCount = await getPendingReservationCount(session.user.id, room.id);
+  }
+
+  // Fetch user's reservations for this room if logged in
+  let myReservations: UserRoomReservation[] = [];
+  if (session?.user?.id && room?.id) {
+    myReservations = await getUserRoomReservations(session.user.id, room.id);
   }
 
   // Parse facilities (similar to admin page)
@@ -258,6 +269,63 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
             </Typography>
           </div>
         </div>
+
+        {/* My Reservations Section (Conditional) */}
+        {session?.user?.id && (
+          <div className="mt-8 md:col-span-2 space-y-4">
+            <Typography
+              variant="h3"
+              as="h3"
+              className="flex items-center font-medium"
+            >
+              <UserCheck className="h-5 w-5 mr-2" />
+              My Reservations
+            </Typography>
+            <Table>
+              <TableBody>
+                {myReservations && myReservations.length > 0 ? (
+                  myReservations.map((reservation) => (
+                    <TableRow key={reservation.id}>
+                      <TableCell className="font-medium">
+                        {reservation.title}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(reservation.startTime), "PPp")}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(reservation.endTime), "PPp")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            reservation.statusValue === "Approved"
+                              ? "default"
+                              : reservation.statusValue === "Pending"
+                                ? "secondary"
+                                : reservation.statusValue === "Rejected"
+                                  ? "destructive"
+                                  : "default"
+                          }
+                        >
+                          {reservation.statusValue}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4} // Title, Start, End, Status
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      You have no active reservations for this room.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
 
         {/* Recent Reservations Section */}
         <div className="mt-8 md:col-span-2 space-y-4">
