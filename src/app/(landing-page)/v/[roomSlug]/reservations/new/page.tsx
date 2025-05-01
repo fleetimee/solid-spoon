@@ -70,7 +70,7 @@ export default async function NewReservationPage(
   // Set breadcrumbs dynamically
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Rooms" }, // Consider linking to a rooms overview page
+    { label: "Rooms", href: "/rooms" }, // Link to the rooms overview page
     { label: room.name, href: `/v/${roomSlug}` }, // Link back to the room detail page
     { label: "New Reservation" },
   ];

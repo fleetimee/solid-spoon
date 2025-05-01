@@ -93,7 +93,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
             {/* See More Button */}
             <div className="mt-8 text-center">
               <Link href="/rooms" className="block">
-                <Button variant="outline" size="lg" asChild>
+                <Button variant="outline" size="lg">
                   View All Rooms
                 </Button>
               </Link>

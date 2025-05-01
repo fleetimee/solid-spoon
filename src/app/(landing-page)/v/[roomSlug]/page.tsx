@@ -102,7 +102,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   // Update breadcrumbs with fetched room name
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Rooms" }, // Consider adding a link to a general rooms page if it exists
+    { label: "Rooms", href: "/rooms" }, // Link to the general rooms page
     { label: room.name }, // Use fetched room name
   ];
 
