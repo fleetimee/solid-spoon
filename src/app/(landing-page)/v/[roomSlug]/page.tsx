@@ -1,7 +1,16 @@
+import { Badge } from "@/components/ui/badge"; // Import Badge
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils"; // Import cn
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"; // Import Table components
 import { Typography } from "@/components/ui/typography";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
@@ -10,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info, AlertTriangle } from "lucide-react"; // Import AlertTriangle
 // Removed Tabs import
 import React from "react";
+import { format } from "date-fns"; // Import date formatting
 import { notFound } from "next/navigation"; // Import notFound
 import { headers } from "next/headers"; // Import headers for session
 import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import data fetching function
@@ -18,6 +28,12 @@ import { FacilityBadge } from "@/features/rooms/components/facility-badge"; // I
 import Link from "next/link"; // Import Link for navigation
 import { auth } from "@/lib/auth"; // Import auth config
 import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount"; // Import count function
+
+// Removed Separator import as it's no longer needed for the table
+import {
+  getRecentReservations,
+  RecentReservation,
+} from "@/features/reservations/api/getRecentReservations"; // Import recent reservations
 
 // Import getReservationLimit
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
@@ -45,6 +61,11 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   if (!room) {
     notFound();
   }
+
+  // Fetch recent reservations only if room exists
+  const recentReservations: RecentReservation[] = room.id
+    ? await getRecentReservations(room.id)
+    : [];
 
   // Fetch pending reservation count if user is logged in
   let pendingCount = 0;
@@ -214,6 +235,72 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               {room.location || "Location details not available."}
             </Typography>
           </div>
+        </div>
+
+        {/* Recent Reservations Section */}
+        <div className="mt-8 md:col-span-2">
+          {" "}
+          {/* Span across both columns on medium screens */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Reservations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Booked By</TableHead>
+                    <TableHead>Start Time</TableHead>
+                    <TableHead>End Time</TableHead>
+                    <TableHead>Status</TableHead> {/* Add Status header */}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentReservations && recentReservations.length > 0 ? (
+                    recentReservations.map((reservation) => (
+                      <TableRow key={reservation.id}>
+                        <TableCell className="font-medium">
+                          {reservation.title}
+                        </TableCell>
+                        <TableCell>{reservation.userName}</TableCell>
+                        <TableCell>
+                          {format(new Date(reservation.startTime), "PPp")}
+                        </TableCell>
+                        <TableCell>
+                          {format(new Date(reservation.endTime), "PPp")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              reservation.statusValue === "Approved"
+                                ? "default" // Use default for Approved
+                                : reservation.statusValue === "Pending"
+                                  ? "secondary" // Use secondary for Pending
+                                  : reservation.statusValue === "Rejected"
+                                    ? "destructive" // Use destructive for Rejected
+                                    : "default" // Fallback
+                            }
+                          >
+                            {reservation.statusValue}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={5} // Update colspan for the empty state
+                        className="h-24 text-center text-muted-foreground"
+                      >
+                        No recent reservations for this room.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
