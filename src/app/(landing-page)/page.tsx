@@ -18,7 +18,7 @@ export default async function LandingPage() {
       {/* Pass fetched rooms data as a prop */}
       <AvailableRoomsSection rooms={rooms} />
       <FAQ />
-      {/* <Testimonial /> */}
+      <Testimonial />
     </>
   );
 }

@@ -5,6 +5,7 @@ import {
   MousePointer,
   Bell,
   CheckCircle,
+  Info,
 } from "lucide-react";
 
 const features = [
@@ -37,6 +38,12 @@ const features = [
     title: "Secure & Reliable",
     description:
       "Book with peace of mind. Our platform uses secure payment processing and ensures your reservation details are protected.",
+  },
+  {
+    icon: Info,
+    title: "Detailed Room Info",
+    description:
+      "Make informed decisions. View high-quality photos, check amenities, capacity, and layout details for every room before booking.",
   },
 ];
 

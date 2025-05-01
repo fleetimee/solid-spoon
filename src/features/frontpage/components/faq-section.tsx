@@ -9,34 +9,34 @@ import { PlusIcon } from "lucide-react";
 
 const faq = [
   {
-    question: "What is your return policy?",
+    question: "How do I book a room?",
     answer:
-      "You can return unused items in their original packaging within 30 days for a refund or exchange. Contact support for assistance.",
+      "Find the room you're interested in using the search or browsing the available rooms section. Click 'Book Now', fill in the required details (title, description, start/end times), and submit your request. You'll be notified once an administrator approves it.",
   },
   {
-    question: "How do I track my order?",
+    question: "Can I see if a room is available before booking?",
     answer:
-      "Track your order using the link provided in your confirmation email, or log into your account to view tracking details.",
+      "Yes, our platform shows real-time availability. You can browse rooms and check their calendars to see open time slots before initiating a booking request.",
   },
   {
-    question: "Do you ship internationally?",
+    question: "Is there a limit to how many reservations I can request?",
     answer:
-      "Yes, we ship worldwide. Shipping fees and delivery times vary by location, and customs duties may apply for some countries.",
+      "Yes, there is a limit on the number of pending reservations you can have per room to ensure fair usage. You will see a notification if you reach this limit.",
   },
   {
-    question: "What payment methods do you accept?",
+    question: "How will I know if my reservation is approved?",
     answer:
-      "We accept Visa, MasterCard, American Express, PayPal, Apple Pay, and Google Pay, ensuring secure payment options for all customers.",
+      "Once an administrator reviews and approves your reservation request, you will receive a notification confirming your booking details.",
   },
   {
-    question: "What if I receive a damaged item?",
+    question: "Can I modify or cancel my reservation request?",
     answer:
-      "Please contact our support team within 48 hours of delivery with photos of the damaged item. We’ll arrange a replacement or refund.",
+      "Currently, modification or cancellation after submission needs to be handled by contacting an administrator. Functionality to manage requests directly may be added in the future.",
   },
   {
-    question: "How can I contact customer support?",
+    question: "What information do I need to provide?",
     answer:
-      "You can reach our support team via email at support@example.com or through the live chat on our website. We're available 24/7 to assist you.",
+      "You'll need to provide a title for your meeting/event, an optional description, and the specific start and end date/time for your reservation.",
   },
 ];
 
@@ -47,7 +47,7 @@ export function FAQ() {
         Frequently Asked Questions
       </h2>
       <p className="mt-1.5 md:text-center xs:text-lg text-muted-foreground">
-        Quick answers to common questions about our products and services.
+        Quick answers to common questions about booking rooms.
       </p>
 
       <div className="min-h-[550px] md:min-h-[320px] xl:min-h-[300px]">

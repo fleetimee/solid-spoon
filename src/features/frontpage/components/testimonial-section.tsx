@@ -15,64 +15,57 @@ import { useEffect, useState } from "react";
 const testimonials = [
   {
     id: 1,
-    name: "John Doe",
-    designation: "Software Engineer",
-    company: "TechCorp",
+    name: "Sarah Chen",
+    designation: "Office Manager",
+    company: "Acme Corp",
     testimonial:
-      "This product has completely transformed the way we work. The efficiency and ease of use are unmatched! " +
-      "We were struggling with productivity before, but this tool has streamlined our entire process. ",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+      "Booking meeting rooms used to be a nightmare! This platform makes it incredibly simple and fast. Finding an available space takes seconds.",
+    avatar: "https://randomuser.me/api/portraits/women/1.jpg", // Kept original avatar style
   },
   {
     id: 2,
-    name: "Jane Smith",
-    designation: "Product Manager",
-    company: "InnovateX",
+    name: "David Rodriguez",
+    designation: "Team Lead",
+    company: "Innovate Solutions",
     testimonial:
-      "An amazing tool that simplifies complex tasks. Highly recommended for professionals in the industry. " +
-      "The intuitive interface makes it easy to onboard new team members, and the automation features save us countless hours every week. ",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+      "Finally, a reservation system that just works. The real-time availability is a lifesaver, and the instant confirmations give peace of mind.",
+    avatar: "https://randomuser.me/api/portraits/men/2.jpg", // Kept original avatar style
   },
   {
     id: 3,
-    name: "Michael Johnson",
-    designation: "UX Designer",
-    company: "DesignPro",
+    name: "Emily White",
+    designation: "Event Coordinator",
+    company: "Global Events Inc.",
     testimonial:
-      "The user experience is top-notch! The interface is clean, intuitive, and easy to navigate. " +
-      "As a designer, I appreciate the attention to detail and well-thought-out UI components. " +
-      "It makes designing and prototyping so much more efficient.",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+      "So easy to use! I love being able to see photos and amenities before booking. It's saved our team so much time coordinating meetings.",
+    avatar: "https://randomuser.me/api/portraits/women/3.jpg", // Kept original avatar style
   },
   {
     id: 4,
-    name: "Emily Davis",
-    designation: "Marketing Specialist",
-    company: "BrandBoost",
+    name: "Michael Brown",
+    designation: "Project Manager",
+    company: "Synergy Systems",
     testimonial:
-      "I've seen a significant improvement in our team's productivity since we started using this service. " +
-      "The ability to track performance, analyze data, and collaborate across teams has been a game-changer.",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
+      "Reliable and efficient. We haven't had a double-booking issue since we started using this platform. Highly recommended for any organization.",
+    avatar: "https://randomuser.me/api/portraits/men/4.jpg", // Kept original avatar style
   },
+  // Keeping remaining testimonials generic for variety, but could be updated too
   {
     id: 5,
     name: "Daniel Martinez",
-    designation: "Full-Stack Developer",
+    designation: "Operations Specialist",
     company: "CodeCrafters",
     testimonial:
-      "The best investment we've made! The support team is also super responsive and helpful. " +
-      "As a developer, I appreciate the well-documented API, the flexibility of integrations, and the robust security features.",
+      "The best investment we've made for managing our shared spaces! The support team is also super responsive and helpful when we had questions.",
     avatar: "https://randomuser.me/api/portraits/men/5.jpg",
   },
   {
     id: 6,
     name: "Sophia Lee",
-    designation: "Data Analyst",
+    designation: "HR Manager",
     company: "InsightTech",
     testimonial:
-      "This tool has saved me hours of work! The analytics and reporting features are incredibly powerful. " +
-      "I can now generate detailed reports in minutes, which previously took days to compile. " +
-      "helping us make smarter, data-backed decisions.",
+      "This tool has saved me hours of work coordinating room bookings! The interface is intuitive and makes scheduling effortless.",
     avatar: "https://randomuser.me/api/portraits/women/6.jpg",
   },
 ];
