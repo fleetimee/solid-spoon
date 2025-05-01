@@ -1,9 +1,11 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
 import { getRoomBySlug } from "@/features/rooms/api/getRooms"; // Import function to get room data
 import { NewReservationForm } from "@/features/reservations/components/new-reservation-form"; // Import the client form component
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 interface NewReservationPageProps {
   params: Promise<{
@@ -12,7 +14,9 @@ interface NewReservationPageProps {
 }
 
 // Generate metadata dynamically based on the room
-export async function generateMetadata(props: NewReservationPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: NewReservationPageProps
+): Promise<Metadata> {
   const params = await props.params;
   const room = await getRoomBySlug(params.roomSlug);
   if (!room) {
@@ -26,9 +30,20 @@ export async function generateMetadata(props: NewReservationPageProps): Promise<
   };
 }
 
-export default async function NewReservationPage(props: NewReservationPageProps) {
+export default async function NewReservationPage(
+  props: NewReservationPageProps
+) {
   const params = await props.params;
   const { roomSlug } = params;
+
+  // Check if there's a session and user
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/auth/sign-in");
+  }
 
   // Fetch room data on the server
   const room = await getRoomBySlug(roomSlug);
