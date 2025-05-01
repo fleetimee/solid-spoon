@@ -230,3 +230,16 @@
     animation: glow-effect 1.5s infinite ease-in-out;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset for fixed header during smooth scroll */
+#features,
+#faq,
+#testimonials,
+#rooms {
+  /* Adjust this value to match your navbar height */
+  scroll-margin-top: 5rem; /* Example: 80px */
+}

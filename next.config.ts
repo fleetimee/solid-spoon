@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "asset-minio.fleetime.my.id",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        pathname: "/**",
+      },
     ],
   },
 };

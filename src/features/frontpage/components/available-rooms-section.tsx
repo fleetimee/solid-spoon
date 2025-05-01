@@ -19,7 +19,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   return (
-    <section className="py-12 sm:py-16 md:py-20">
+    <section id="rooms" className="py-12 sm:py-16 md:py-20">
       <div className="w-full max-w-screen-xl mx-auto px-6">
         {/* Enhanced header section with marketing copy */}
         <div className="flex flex-col items-center text-center mb-12">
