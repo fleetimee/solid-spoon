@@ -1,50 +1,149 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  BookCheck,
-  ChartPie,
-  FolderSync,
-  Goal,
-  Users,
-  Zap,
+  Search,
+  CalendarCheck2,
+  MousePointer,
+  Bell,
+  CheckCircle,
 } from "lucide-react";
 
 const features = [
   {
-    icon: Goal,
-    title: "Identify Opportunities",
+    icon: Search,
+    title: "Effortless Search",
     description:
-      "Easily uncover untapped areas to explore and expand your reach effortlessly.",
+      "Find your ideal room in seconds. Our powerful search filters make it easy to narrow down options by location, date, price, and amenities.",
   },
   {
-    icon: BookCheck,
-    title: "Build Authority",
+    icon: CalendarCheck2,
+    title: "Real-Time Availability",
     description:
-      "Create valuable content that resonates, inspires trust, and positions you as an expert.",
+      "No more guessing games. See up-to-the-minute room availability and book with confidence, knowing your chosen dates are secure.",
   },
   {
-    icon: ChartPie,
-    title: "Instant Insights",
+    icon: MousePointer,
+    title: "Simple & Fast Booking",
     description:
-      "Gain immediate, actionable insights with a quick glance, enabling fast decision-making.",
+      "Reserve your room in just a few clicks. Our streamlined booking process saves you time and hassle, getting you confirmed faster.",
   },
   {
-    icon: Users,
-    title: "Engage with Your Audience",
+    icon: Bell,
+    title: "Instant Notifications",
     description:
-      "Boost audience engagement with interactive features like polls, quizzes, and forms.",
+      "Stay informed every step of the way. Receive immediate booking confirmations and timely reminders directly to your device.",
   },
   {
-    icon: FolderSync,
-    title: "Automate Your Workflow",
+    icon: CheckCircle,
+    title: "Secure & Reliable",
     description:
-      "Streamline your processes by automating repetitive tasks, saving time and reducing effort.",
+      "Book with peace of mind. Our platform uses secure payment processing and ensures your reservation details are protected.",
   },
-  {
-    icon: Zap,
-    title: "Accelerate Growth",
-    description:
-      "Supercharge your growth by implementing strategies that drive results quickly and efficiently.",
-  },
+];
+
+// Simple SVG patterns to cycle through
+const svgPatterns = [
+  <svg
+    key="pattern1"
+    viewBox="0 0 100 50"
+    className="w-full h-32 text-primary"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="10"
+      y="10"
+      width="30"
+      height="30"
+      fill="currentColor"
+      opacity="0.3"
+      rx="3"
+    />
+    <rect
+      x="50"
+      y="10"
+      width="40"
+      height="15"
+      fill="currentColor"
+      opacity="0.6"
+      rx="3"
+    />
+    <rect
+      x="50"
+      y="30"
+      width="40"
+      height="10"
+      fill="currentColor"
+      opacity="0.1"
+      rx="3"
+    />
+  </svg>,
+  <svg
+    key="pattern2"
+    viewBox="0 0 100 50"
+    className="w-full h-32 text-secondary"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="25" cy="25" r="15" fill="currentColor" opacity="0.4" />
+    <line
+      x1="50"
+      y1="10"
+      x2="90"
+      y2="40"
+      stroke="currentColor"
+      strokeWidth="2"
+      opacity="0.7"
+    />
+    <line
+      x1="50"
+      y1="40"
+      x2="90"
+      y2="10"
+      stroke="currentColor"
+      strokeWidth="2"
+      opacity="0.2"
+    />
+  </svg>,
+  <svg
+    key="pattern3"
+    viewBox="0 0 100 50"
+    className="w-full h-32 text-accent-foreground"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M 10 10 L 50 40 L 90 10 Z" fill="currentColor" opacity="0.5" />
+    <rect
+      x="30"
+      y="25"
+      width="40"
+      height="15"
+      fill="currentColor"
+      opacity="0.2"
+      rx="5"
+    />
+  </svg>,
+  <svg
+    key="pattern4"
+    viewBox="0 0 100 50"
+    className="w-full h-32 text-muted-foreground"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect
+      x="15"
+      y="15"
+      width="20"
+      height="20"
+      fill="currentColor"
+      opacity="0.6"
+      transform="rotate(15 25 25)"
+    />
+    <rect
+      x="60"
+      y="10"
+      width="25"
+      height="30"
+      fill="currentColor"
+      opacity="0.3"
+      rx="4"
+    />
+  </svg>,
 ];
 
 export function Features() {
@@ -54,10 +153,10 @@ export function Features() {
       className="max-w-screen-xl mx-auto w-full py-12 xs:py-20 px-6"
     >
       <h2 className="text-3xl xs:text-4xl md:text-5xl md:leading-[3.5rem] font-bold tracking-tight sm:max-w-xl sm:text-center sm:mx-auto">
-        Boost Your Strategy with Smart Features
+        Everything You Need to Book with Confidence
       </h2>
       <div className="mt-8 xs:mt-14 w-full mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
-        {features.map((feature) => (
+        {features.map((feature, index) => (
           <Card
             key={feature.title}
             className="flex flex-col border rounded-xl overflow-hidden shadow-none"
@@ -71,8 +170,9 @@ export function Features() {
                 {feature.description}
               </p>
             </CardHeader>
-            <CardContent className="mt-auto px-0 pb-0">
-              <div className="bg-muted h-52 ml-6 rounded-tl-xl" />
+            <CardContent className="mt-auto p-6">
+              {/* Insert inline SVG, cycling through patterns */}
+              {svgPatterns[index % svgPatterns.length]}
             </CardContent>
           </Card>
         ))}

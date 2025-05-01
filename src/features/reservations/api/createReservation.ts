@@ -123,39 +123,44 @@ export async function createReservationAction(
 
     const newReservationId = insertResult.rows[0].id;
 
-    // Fetch the room slug *before* notification insert
+    // Fetch the room slug and name *before* notification insert
     let roomSlug: string | null = null;
+    let roomName: string | null = null;
     try {
-      const roomQuery = `SELECT slug FROM room WHERE id = $1`;
-      const roomResult = await client.query<{ slug: string }>(roomQuery, [
-        validatedData.roomId,
-      ]);
+      const roomQuery = `SELECT slug, name FROM room WHERE id = $1`; // Select name as well
+      const roomResult = await client.query<{ slug: string; name: string }>( // Update type
+        roomQuery,
+        [validatedData.roomId]
+      );
       if (roomResult.rows.length > 0) {
         roomSlug = roomResult.rows[0].slug;
+        roomName = roomResult.rows[0].name; // Store the name
       } else {
         console.warn(
           `Could not find room with ID ${validatedData.roomId} for notification/revalidation.`
         );
       }
-    } catch (slugError) {
+    } catch (roomInfoError) {
       console.error(
-        `Error fetching room slug for ID ${validatedData.roomId}:`,
-        slugError
+        `Error fetching room info for ID ${validatedData.roomId}:`,
+        roomInfoError
       );
-      // Continue without slug if fetch fails
+      // Continue without slug/name if fetch fails
     }
 
     // Insert notification for admins within the transaction
     const notificationTitle = "New Reservation Pending";
+    // Use roomName in the message, fallback to ID
     const notificationMessage = `User ${
       session.user?.name || userId
-    } requested reservation for room ${
-      roomSlug || `ID: ${validatedData.roomId}` // Fallback if slug not found
-    }.`;
+    } requested reservation for room "${
+      roomName || `ID: ${validatedData.roomId}` // Use name, fallback to ID
+    }".`;
     const notificationType = "admin";
+    // Link still uses slug if available, otherwise generic fallback
     const notificationLink = roomSlug
       ? `/admin/rooms/${roomSlug}`
-      : "/admin/reservations"; // Fallback link
+      : "/admin/reservations";
 
     const notificationQuery = `
       INSERT INTO notification (recipient_id, title, message, type, link)
