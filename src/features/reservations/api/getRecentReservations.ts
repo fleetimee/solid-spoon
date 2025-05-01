@@ -1,5 +1,4 @@
 import db from "@/lib/db";
-import { PoolClient } from "pg";
 
 export interface RecentReservation {
   id: number;

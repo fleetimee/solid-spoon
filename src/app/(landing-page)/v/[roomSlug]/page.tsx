@@ -16,7 +16,14 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
 // Import AlertTitle and AlertTriangle
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info, AlertTriangle } from "lucide-react"; // Import AlertTriangle
+import {
+  Info,
+  AlertTriangle,
+  ListChecks,
+  Sparkles,
+  MapPin,
+  History,
+} from "lucide-react"; // Import AlertTriangle and section icons
 // Removed Tabs import
 import React from "react";
 import { format } from "date-fns"; // Import date formatting
@@ -149,7 +156,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                 </Typography>
 
                 <div className="space-y-2">
-                  <Typography variant="h3" as="h3" className="font-medium">
+                  <Typography
+                    variant="h3"
+                    as="h3"
+                    className="flex items-center font-medium"
+                  >
+                    <ListChecks className="h-5 w-5 mr-2" />
                     Quick Highlights
                   </Typography>
                   <ul className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
@@ -202,7 +214,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
           {/* Amenities Section */}
           <div className="space-y-4">
-            <Typography variant="h3" as="h3" className="font-medium">
+            <Typography
+              variant="h3"
+              as="h3"
+              className="flex items-center font-medium"
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
               Room Amenities
             </Typography>
             {/* Use fetched facilities */}
@@ -228,7 +245,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
 
           {/* Location Section */}
           <div className="space-y-4">
-            <Typography variant="h3" as="h3" className="font-medium mb-4">
+            <Typography
+              variant="h3"
+              as="h3"
+              className="flex items-center font-medium mb-4"
+            >
+              <MapPin className="h-5 w-5 mr-2" />
               Location Information {/* Use fetched location */}
             </Typography>
             <Typography variant="default" className="text-muted-foreground">
@@ -238,69 +260,64 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
         </div>
 
         {/* Recent Reservations Section */}
-        <div className="mt-8 md:col-span-2">
+        <div className="mt-8 md:col-span-2 space-y-4">
           {" "}
-          {/* Span across both columns on medium screens */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Reservations</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Booked By</TableHead>
-                    <TableHead>Start Time</TableHead>
-                    <TableHead>End Time</TableHead>
-                    <TableHead>Status</TableHead> {/* Add Status header */}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentReservations && recentReservations.length > 0 ? (
-                    recentReservations.map((reservation) => (
-                      <TableRow key={reservation.id}>
-                        <TableCell className="font-medium">
-                          {reservation.title}
-                        </TableCell>
-                        <TableCell>{reservation.userName}</TableCell>
-                        <TableCell>
-                          {format(new Date(reservation.startTime), "PPp")}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(reservation.endTime), "PPp")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              reservation.statusValue === "Approved"
-                                ? "default" // Use default for Approved
-                                : reservation.statusValue === "Pending"
-                                  ? "secondary" // Use secondary for Pending
-                                  : reservation.statusValue === "Rejected"
-                                    ? "destructive" // Use destructive for Rejected
-                                    : "default" // Fallback
-                            }
-                          >
-                            {reservation.statusValue}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={5} // Update colspan for the empty state
-                        className="h-24 text-center text-muted-foreground"
+          {/* Span across both columns and add spacing */}
+          <Typography
+            variant="h3"
+            as="h3"
+            className="flex items-center font-medium" // Use same styling as other titles
+          >
+            <History className="h-5 w-5 mr-2" />
+            Recent Reservations
+          </Typography>
+          {/* Removed Card and CardHeader, moved title above */}
+          {/* Removed CardContent wrapper */}
+          <Table>
+            {/* Removed TableHeader */}
+            <TableBody>
+              {recentReservations && recentReservations.length > 0 ? (
+                recentReservations.map((reservation) => (
+                  <TableRow key={reservation.id}>
+                    <TableCell className="font-medium">
+                      {reservation.title}
+                    </TableCell>
+                    <TableCell>{reservation.userName}</TableCell>
+                    <TableCell>
+                      {format(new Date(reservation.startTime), "PPp")}
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(reservation.endTime), "PPp")}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          reservation.statusValue === "Approved"
+                            ? "default" // Use default for Approved
+                            : reservation.statusValue === "Pending"
+                              ? "secondary" // Use secondary for Pending
+                              : reservation.statusValue === "Rejected"
+                                ? "destructive" // Use destructive for Rejected
+                                : "default" // Fallback
+                        }
                       >
-                        No recent reservations for this room.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                        {reservation.statusValue}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={5} // Keep colspan as 5 (Title, Booked By, Start, End, Status)
+                    className="h-24 text-center text-muted-foreground"
+                  >
+                    No recent reservations for this room.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
