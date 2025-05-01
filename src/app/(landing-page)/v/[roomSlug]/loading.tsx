@@ -1,6 +1,7 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert"; // Import Alert for structure
+import { Card } from "@/components/ui/card"; // Added import
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 
 export default function LoadingRoomDetail() {
@@ -73,34 +74,58 @@ export default function LoadingRoomDetail() {
           </div>
         </div>
 
-        {/* Additional Information Section Grid */}
-        {/* Match grid layout and spacing from page.tsx */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          {/* Amenities Section Skeleton */}
-          <div className="space-y-4">
-            {/* Amenities Title (matches h3 size) */}
-            <Skeleton className="h-6 w-1/3" />
-            {/* Amenities Badges (matches flex wrap layout) */}
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-24 rounded-full" />
-              <Skeleton className="h-6 w-18 rounded-full" />
+        {/* New Card Skeleton for Lower Sections */}
+        <Card className="mt-8">
+          {" "}
+          {/* Add margin top to separate from upper section */}
+          <div className="p-6 md:p-8 space-y-12">
+            {" "}
+            {/* Mimic inner div padding and spacing */}
+            {/* Amenities Skeleton */}
+            <div>
+              <Skeleton className="h-6 w-1/3 mb-4" /> {/* Title */}
+              <div className="flex flex-wrap gap-2">
+                {" "}
+                {/* Match flex wrap */}
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-12 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+            </div>
+            {/* Location Skeleton */}
+            <div>
+              <Skeleton className="h-6 w-1/4 mb-4" /> {/* Title */}
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+              </div>
+            </div>
+            {/* My Reservations Skeleton */}
+            <div>
+              <Skeleton className="h-6 w-1/3 mb-4" /> {/* Title */}
+              <div className="space-y-2">
+                {" "}
+                {/* Table approx */}
+                <Skeleton className="h-4 w-full" /> {/* Header approx */}
+                <Skeleton className="h-4 w-full" /> {/* Row 1 */}
+                <Skeleton className="h-4 w-3/4" /> {/* Row 2 */}
+              </div>
+            </div>
+            {/* Recent Reservations Skeleton */}
+            <div>
+              <Skeleton className="h-6 w-1/3 mb-4" /> {/* Title */}
+              <div className="space-y-2">
+                {" "}
+                {/* Table approx */}
+                <Skeleton className="h-4 w-full" /> {/* Header approx */}
+                <Skeleton className="h-4 w-full" /> {/* Row 1 */}
+                <Skeleton className="h-4 w-full" /> {/* Row 2 */}
+                <Skeleton className="h-4 w-5/6" /> {/* Row 3 */}
+              </div>
             </div>
           </div>
-
-          {/* Location Section Skeleton */}
-          <div className="space-y-4">
-            {/* Location Title (matches h3 size and margin) */}
-            <Skeleton className="h-6 w-1/3 mb-4" />
-            {/* Location Text */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-            </div>
-          </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
