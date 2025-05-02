@@ -202,6 +202,34 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               <RoomAvailabilityCalendar
                 approvedReservations={approvedReservations}
               />
+              {/* Approved Reservations List */}
+              <div className="mt-6 space-y-4">
+                <Typography
+                  variant="h3"
+                  as="h3"
+                  className="flex items-center font-medium"
+                >
+                  <ListChecks className="h-5 w-5 mr-2" />
+                  Current Bookings
+                </Typography>
+                {approvedReservations.length > 0 ? (
+                  <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-5">
+                    {approvedReservations.map((res) => (
+                      <li key={`${res.startTime}-${res.endTime}`}>
+                        {format(new Date(res.startTime), "PPp")} -{" "}
+                        {format(new Date(res.endTime), "PPp")}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Typography
+                    variant="default"
+                    className="text-muted-foreground"
+                  >
+                    No current bookings for this period.
+                  </Typography>
+                )}
+              </div>
               {/* Replace ReservationFormDialog with a Link to the new page */}
               {/* Book Now button moved below */}
               {/* Display pending reservation count */}

@@ -86,6 +86,22 @@ export async function createReservationAction(
 
   const validatedData = result.data;
 
+  // Add duration validation (Backend)
+  const startTime = new Date(validatedData.start_time);
+  const endTime = new Date(validatedData.end_time);
+  const durationMs = endTime.getTime() - startTime.getTime();
+  const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
+
+  if (durationMs > twentyFourHoursInMs) {
+    return {
+      success: false,
+      message: "Reservation duration cannot exceed 24 hours.",
+      fieldErrors: {
+        end_time: ["Reservation duration cannot exceed 24 hours."],
+      },
+    };
+  }
+
   let client: PoolClient | null = null;
   try {
     client = await db.connect(); // Get a client from the pool

@@ -56,6 +56,21 @@ const reservationFormSchema = z
       message: "End time must be after start time",
       path: ["end_time"], // Attach error to end_time field
     }
+  )
+  .refine(
+    (data) => {
+      // Ensure duration does not exceed 24 hours
+      if (data.start_time && data.end_time) {
+        const duration = data.end_time.getTime() - data.start_time.getTime();
+        const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
+        return duration <= twentyFourHoursInMs;
+      }
+      return true; // Pass if one or both dates are missing
+    },
+    {
+      message: "Reservation duration cannot exceed 24 hours",
+      path: ["end_time"], // Attach error to end_time field
+    }
   );
 
 // Define the type for form values based on the schema
@@ -359,10 +374,27 @@ export function NewReservationForm({
                       }}
                       disabled={(date) => {
                         if (!startTime) return false; // Don't disable if start_time isn't set
-                        // Compare date part only
+
+                        // Calculate the maximum allowed end date (start time + 24 hours)
+                        const maxEndTime = new Date(
+                          startTime.getTime() + 24 * 60 * 60 * 1000
+                        );
+
+                        // Disable dates before the start time (day level)
                         const startOfDay = new Date(startTime);
                         startOfDay.setHours(0, 0, 0, 0);
-                        return date < startOfDay;
+                        if (date < startOfDay) {
+                          return true;
+                        }
+
+                        // Disable dates strictly after the max end time (day level)
+                        const maxEndOfDay = new Date(maxEndTime);
+                        maxEndOfDay.setHours(0, 0, 0, 0); // Compare day part only
+                        if (date > maxEndOfDay) {
+                          return true;
+                        }
+
+                        return false; // Otherwise, enable the date
                       }}
                       initialFocus
                     />
