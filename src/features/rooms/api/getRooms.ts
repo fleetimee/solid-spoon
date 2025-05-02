@@ -31,7 +31,7 @@ export async function getRooms(
 ): Promise<PaginatedRooms> {
   const params: Array<string | number> = [];
   const queryConditions = ["r.is_active = true"];
-  
+
   // Default pagination values
   const page = searchParams?.page || 1;
   const pageSize = searchParams?.pageSize || 9;
@@ -72,14 +72,14 @@ export async function getRooms(
     FROM room r
     WHERE ${queryConditions.join(" AND ")}
   `;
-  
+
   const countResult = await db.query(countQuery, params);
   const totalItems = parseInt(countResult.rows[0].total);
   const totalPages = Math.ceil(totalItems / pageSize);
-  
+
   // Clone params for the main query
   const queryParams = [...params];
-  
+
   // Add pagination parameters
   queryParams.push((page - 1) * pageSize);
   queryParams.push(pageSize);
@@ -129,8 +129,8 @@ export async function getRooms(
       totalItems,
       totalPages,
       currentPage: page,
-      pageSize
-    }
+      pageSize,
+    },
   };
 }
 
@@ -261,4 +261,23 @@ export async function getRoomImages(roomId: number): Promise<string[]> {
   );
 
   return imagesResult.rows.map((row) => row.imageUrl);
+}
+
+/**
+ * Fetches a list of active rooms with only their ID and name.
+ * @returns Array of room objects containing id and name.
+ */
+export async function getActiveRoomsList(): Promise<
+  { id: number; name: string }[]
+> {
+  const result = await db.query(`
+    SELECT 
+      id, 
+      name
+    FROM room
+    WHERE is_active = true
+    ORDER BY name
+  `);
+
+  return result.rows;
 }

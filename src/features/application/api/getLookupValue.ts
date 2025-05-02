@@ -27,3 +27,39 @@ export async function getLookupValue(code: string): Promise<string | null> {
     return null;
   }
 }
+
+/**
+ * Fetches all active lookup values for a given category.
+ * @param category The category to fetch lookup values for.
+ * @returns Array of lookup objects containing id and value.
+ */
+export async function getLookupsByCategory(
+  category: string
+): Promise<{ id: number; value: string }[]> {
+  try {
+    const result = await db.query<{ id: number; value: string }>(
+      `SELECT id, value 
+       FROM lookup 
+       WHERE category = $1 AND is_active = TRUE 
+       ORDER BY sort_order, value`, // Added ordering
+      [category]
+    );
+    return result.rows;
+  } catch (error) {
+    console.error(
+      `Error fetching lookup values for category "${category}":`,
+      error
+    );
+    return []; // Return empty array on error
+  }
+}
+
+/**
+ * Fetches all active reservation statuses.
+ * @returns Array of reservation status objects containing id and value.
+ */
+export async function getReservationStatuses(): Promise<
+  { id: number; value: string }[]
+> {
+  return getLookupsByCategory("RESERVATION_STATUS");
+}
