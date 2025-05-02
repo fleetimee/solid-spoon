@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Users, Calendar, Building2, ActivitySquare } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
@@ -95,9 +97,14 @@ export default async function AdminPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
-            <Typography as="h2" variant="h2" className="mb-4">
-              Recent Bookings
-            </Typography>
+            <div className="flex justify-between items-center mb-4">
+              <Typography as="h2" variant="h2">
+                Recent Bookings
+              </Typography>
+              <Button asChild>
+                <Link href="/reservations">Manage Reservation</Link>
+              </Button>
+            </div>
             <Typography variant="muted">Coming soon...</Typography>
           </Card>
           <Card className="p-6">

@@ -274,11 +274,9 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                   Facilities
                 </h3>
                 {facilities.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {facilities.map((facility: string, index: number) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <FacilityBadge name={facility} />
-                      </div>
+                      <FacilityBadge key={index} name={facility} />
                     ))}
                   </div>
                 ) : (
@@ -293,11 +291,14 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
 
         {/* Recent Reservations Card - Full Width */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="flex items-center gap-2 text-base font-medium">
               <History className="w-5 h-5" />
               Recent Reservations (Last 10)
             </CardTitle>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/reservations">Manage Reservation</Link>
+            </Button>
           </CardHeader>
           <CardContent className="pt-6">
             <Table>
