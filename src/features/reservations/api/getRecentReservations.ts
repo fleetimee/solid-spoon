@@ -29,7 +29,7 @@ export async function getRecentReservations(
     LEFT JOIN -- Join with lookup table for status description
       lookup l ON rr.status_id = l.id AND l.category = 'reservation_status'
     WHERE
-      rr.room_id = $1 AND rr.is_active = true
+      rr.room_id = $1 AND rr.is_active = true AND rr.status_id IN (3, 6)
     ORDER BY
       rr.created_at DESC
     LIMIT 5;
