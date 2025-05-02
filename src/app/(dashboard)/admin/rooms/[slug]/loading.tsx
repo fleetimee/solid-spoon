@@ -1,9 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Users, MapPin, Calendar, User, Pencil } from "lucide-react";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator"; // Added Separator
 
 export default function RoomDetailLoading() {
   const roomBreadcrumb = [
@@ -15,133 +13,78 @@ export default function RoomDetailLoading() {
     <>
       <BreadcrumbSetter items={roomBreadcrumb} />
 
+      {/* Adjusted main container gap to match page.tsx */}
       <main className="flex flex-col grow p-4 max-w-7xl mx-auto w-full gap-8">
+        {/* Added Header Skeleton */}
         <div className="flex flex-col gap-2">
-          <Skeleton className="h-10 w-2/3 max-w-md" />
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <Skeleton className="h-5 w-40" />
-            <span className="mx-2">•</span>
-            <Users className="h-4 w-4" />
-            <Skeleton className="h-5 w-24" />
+          <div className="flex justify-between items-start">
+            <div>
+              <Skeleton className="h-8 w-48 mb-1" /> {/* Title */}
+              <Skeleton className="h-4 w-64" />{" "}
+              {/* Subtitle (Location/Capacity) */}
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-24" /> {/* Edit Button */}
+              <Skeleton className="h-10 w-24" /> {/* Delete Button */}
+            </div>
           </div>
         </div>
 
-        <div className="w-full">
-          <Skeleton className="w-full h-[400px] rounded-lg" />
+        {/* Added Image Gallery Skeleton */}
+        <Skeleton className="w-full h-[400px] rounded-lg" />
+
+        {/* Adjusted Description Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5" /> {/* Icon */}
+            <Skeleton className="h-5 w-1/4" /> {/* Description Title */}
+          </div>
+          {/* Adjusted blockquote skeleton */}
+          <Skeleton className="h-16 w-full pl-4 py-2 rounded-r-md" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="md:col-span-2">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                <div>
-                  <Skeleton className="h-7 w-40 mb-3" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <Skeleton className="h-7 w-40 mb-3" />
-                  <div className="flex flex-wrap gap-2">
-                    {Array(5)
-                      .fill(0)
-                      .map((_, index) => (
-                        <Skeleton
-                          key={index}
-                          className="h-8 w-24 rounded-full"
-                        />
-                      ))}
-                  </div>
+        {/* Adjusted Room Information Section (Single Card) */}
+        <div className="grid grid-cols-1 gap-8">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/3" /> {/* Card Title */}
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              {/* Info Items Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full p-3 rounded-lg" /> // Info Item
+                ))}
+              </div>
+              <Skeleton className="h-px w-full" /> {/* Separator */}
+              {/* Facilities Section */}
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-1/4" /> {/* Facilities Title */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {[...Array(3)].map((_, i) => (
+                    <Skeleton key={i} className="h-8 w-20 rounded-md" /> // Facility Badge
+                  ))}
                 </div>
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <Skeleton className="h-7 w-52 mb-4" />
-              <Table>
-                <TableBody>
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Capacity</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      : <Skeleton className="h-4 w-20 inline-block" />
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Created by</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 truncate">
-                      : <Skeleton className="h-4 w-28 inline-block" />
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Created</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      : <Skeleton className="h-4 w-24 inline-block" />
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Pencil className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Updated by</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 truncate">
-                      : <Skeleton className="h-4 w-28 inline-block" />
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Last updated</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      : <Skeleton className="h-4 w-24 inline-block" />
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <span className="font-medium">Status</span>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      :{" "}
-                      <Skeleton className="h-5 w-16 rounded-full inline-block" />
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Adjusted Full-Width Reservations Card */}
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-1/3" /> {/* Card Title */}
+          </CardHeader>
+          {/* Added pt-6 and Table structure */}
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-full" /> {/* Table Header */}
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" /> // Table Row
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </>
   );

@@ -2,11 +2,24 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
+import {
+  getRecentReservations,
+  RecentReservation,
+} from "@/features/reservations/api/getRecentReservations";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHead,
+  TableHeader,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { History } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { getRoomBySlug } from "@/features/rooms/api/getRooms";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   Users,
@@ -16,10 +29,11 @@ import {
   Pencil,
   Trash2,
   Edit,
+  Building,
+  Quote, // Added Quote icon
 } from "lucide-react";
 import { FacilityBadge } from "@/features/rooms/components/facility-badge";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
 interface RoomDetailPageProps {
@@ -32,14 +46,11 @@ export async function generateMetadata(
   props: RoomDetailPageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // Resolve params
   const params = await props.params;
   const { slug } = params;
 
-  // Fetch room data
   const room = await getRoomBySlug(slug);
 
-  // If room not found, return basic metadata
   if (!room) {
     return {
       title: "Room Not Found",
@@ -47,7 +58,6 @@ export async function generateMetadata(
     };
   }
 
-  // Get parent metadata for images
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
@@ -73,6 +83,10 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
     notFound();
   }
 
+  const recentReservations: RecentReservation[] = await getRecentReservations(
+    room.id,
+    10
+  );
   const facilities =
     typeof room.facilities === "string" && room.facilities.startsWith("[")
       ? JSON.parse(room.facilities)
@@ -150,124 +164,197 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="md:col-span-2">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">Description</h2>
-                  <p className="text-muted-foreground">
-                    {room.description || "No description available"}
-                  </p>
-                </div>
+        {/* Description Section */}
+        {/* Description Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Quote className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold">Description</h3>
+          </div>
+          <blockquote className="border-l-4 border-primary pl-4 py-2 italic text-muted-foreground bg-muted/50 rounded-r-md">
+            {room.description || "No description available"}
+          </blockquote>
+        </div>
 
-                <Separator />
-
-                <div>
-                  <h2 className="text-xl font-semibold mb-3">Facilities</h2>
-                  {facilities.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {facilities.map((facility: string, index: number) => (
-                        <FacilityBadge key={index} name={facility} />
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      No facilities listed
+        {/* Room Information Card */}
+        <div className="grid grid-cols-1 gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="w-5 h-5" />
+                Room Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              {/* Main Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                  <Users className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Capacity
                     </p>
-                  )}
+                    <p className="font-semibold">{room.capacity} people</p>
+                  </div>
                 </div>
+
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                  <User className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Created by
+                    </p>
+                    <p className="font-semibold truncate">
+                      {room.createdByName || "Unknown"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Created
+                    </p>
+                    <p className="font-semibold">
+                      {format(new Date(room.createdAt), "MMM d, yyyy")}
+                    </p>
+                  </div>
+                </div>
+
+                {room.updatedBy && (
+                  <>
+                    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                      <Pencil className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Updated by
+                        </p>
+                        <p className="font-semibold truncate">
+                          {room.updatedByName || "Unknown"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Last updated
+                        </p>
+                        <p className="font-semibold">
+                          {format(new Date(room.updatedAt), "MMM d, yyyy")}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full bg-current" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Status
+                    </p>
+                    <Badge variant={room.isActive ? "default" : "destructive"}>
+                      {room.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Facilities Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  Facilities
+                </h3>
+                {facilities.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {facilities.map((facility: string, index: number) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <FacilityBadge name={facility} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground rounded-md bg-muted/50 px-4 py-3">
+                    No facilities listed
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <h2 className="text-xl font-semibold mb-4">Room Information</h2>
-              <Table>
-                <TableBody>
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Capacity</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      : {room.capacity} people
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Created by</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2 truncate">
-                      : {room.createdByName || "Unknown"}
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Created</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      : {format(new Date(room.createdAt), "MMM d, yyyy")}
-                    </TableCell>
-                  </TableRow>
-
-                  {room.updatedBy && (
-                    <>
-                      <TableRow className="border-0 hover:bg-transparent">
-                        <TableCell className="pl-0 py-2 w-1/3">
-                          <div className="flex items-center gap-2">
-                            <Pencil className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-medium">Updated by</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2 truncate">
-                          : {room.updatedByName || "Unknown"}
-                        </TableCell>
-                      </TableRow>
-
-                      <TableRow className="border-0 hover:bg-transparent">
-                        <TableCell className="pl-0 py-2 w-1/3">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-medium">Last updated</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2">
-                          : {format(new Date(room.updatedAt), "MMM d, yyyy")}
-                        </TableCell>
-                      </TableRow>
-                    </>
-                  )}
-
-                  <TableRow className="border-0 hover:bg-transparent">
-                    <TableCell className="pl-0 py-2 w-1/3">
-                      <span className="font-medium">Status</span>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      :{" "}
-                      <Badge
-                        variant={room.isActive ? "default" : "destructive"}
-                      >
-                        {room.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
         </div>
+
+        {/* Recent Reservations Card - Full Width */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <History className="w-5 h-5" />
+              Recent Reservations (Last 10)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <Table>
+              <TableHeader className="bg-muted/50">
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Booked By</TableHead>
+                  <TableHead>Start Time</TableHead>
+                  <TableHead>End Time</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentReservations && recentReservations.length > 0 ? (
+                  recentReservations.map((reservation) => (
+                    <TableRow key={reservation.id}>
+                      <TableCell className="font-medium">
+                        {reservation.title}
+                      </TableCell>
+                      <TableCell>{reservation.userName}</TableCell>
+                      <TableCell>
+                        {format(new Date(reservation.startTime), "PPp")}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(reservation.endTime), "PPp")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            reservation.statusValue === "Approved"
+                              ? "default"
+                              : reservation.statusValue === "Pending"
+                                ? "secondary"
+                                : reservation.statusValue === "Rejected"
+                                  ? "destructive"
+                                  : "default"
+                          }
+                        >
+                          {reservation.statusValue}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-32 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <History className="w-8 h-8 opacity-50" />
+                        <p>No recent reservations for this room</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </main>
     </>
   );

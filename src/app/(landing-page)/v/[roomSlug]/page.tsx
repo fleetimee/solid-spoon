@@ -84,7 +84,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
 
   // Fetch recent reservations only if room exists
   const recentReservations: RecentReservation[] = room.id
-    ? await getRecentReservations(room.id)
+    ? await getRecentReservations(room.id) // Use default limit
     : [];
 
   // Fetch pending reservation count if user is logged in

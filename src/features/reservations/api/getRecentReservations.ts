@@ -11,7 +11,8 @@ export interface RecentReservation {
 }
 
 export async function getRecentReservations(
-  roomId: number
+  roomId: number,
+  limit: number = 20 // Add limit parameter with default value
 ): Promise<RecentReservation[]> {
   const query = `
     SELECT
@@ -32,12 +33,13 @@ export async function getRecentReservations(
       rr.room_id = $1 AND rr.is_active = true AND rr.status_id IN (3, 6)
     ORDER BY
       rr.created_at DESC
-    LIMIT 5;
+    LIMIT $2; -- Use the limit parameter
   `;
 
   try {
     // Use db.query() for a single query, it handles client acquisition/release
-    const result = await db.query<RecentReservation>(query, [roomId]);
+    // Pass both roomId and limit as parameters
+    const result = await db.query<RecentReservation>(query, [roomId, limit]);
     // pg library typically returns results in result.rows
     // The aliases in the SELECT statement should make the row objects match the interface
     return result.rows;
