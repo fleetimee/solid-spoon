@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { auth } from "@/lib/auth";
-import db from "@/lib/db"; // Import db
+import db from "@/lib/db";
 import { getNotifications } from "@/features/notifications/api/getNotifications";
 import { NotificationFilter } from "@/features/notifications/types/notification";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
@@ -15,7 +15,7 @@ import {
   NotificationJsonToggle,
   NotificationJsonView,
 } from "@/features/notifications/components/notification-json-toggle";
-import { ClearNotificationsButton } from "@/features/notifications/components/clear-notifications-button"; // Import ClearNotificationsButton
+import { ClearNotificationsButton } from "@/features/notifications/components/clear-notifications-button";
 import { MarkAllAsReadButton } from "@/features/notifications/components/mark-all-as-read-button";
 
 export const metadata: Metadata = {
@@ -45,7 +45,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
   });
   const searchParams = await props.searchParams;
 
-  // Parse and provide defaults for search parameters
   const parsedFilter = (searchParams.filter as NotificationFilter) || "all";
   const parsedPage = searchParams.page ? parseInt(searchParams.page) : 1;
   const parsedPageSize = searchParams.pageSize
@@ -56,7 +55,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
 
   const currentLoggedInUser = session?.user.id;
 
-  // Only fetch notifications if user is authenticated
   const notificationsData = currentLoggedInUser
     ? await getNotifications(currentLoggedInUser, {
         filter: parsedFilter,
@@ -73,7 +71,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
         },
       };
 
-  // Fetch count of read notifications specifically for the button state
   let readNotificationCount = 0;
   if (currentLoggedInUser) {
     try {
@@ -84,33 +81,28 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
       readNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
     } catch (error) {
       console.error("Failed to fetch read notification count:", error);
-      // Handle error appropriately, maybe disable button
     }
   }
   const hasReadNotifications = readNotificationCount > 0;
 
-  // Fetch count of unread notifications for the button state
   let unreadNotificationCount = 0;
   if (currentLoggedInUser) {
     try {
       const countResult = await db.query(
-        "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false", // Query for is_read = false
+        "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false",
         [currentLoggedInUser]
       );
       unreadNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
     } catch (error) {
       console.error("Failed to fetch unread notification count:", error);
-      // Handle error appropriately
     }
   }
   const hasUnreadNotifications = unreadNotificationCount > 0;
 
-  // Helper function to get page number for quick navigation
   const getQuickNavPageNumbers = () => {
     const { currentPage, totalPages } = notificationsData.pagination;
     const result = [];
 
-    // Previous page in quick nav
     if (currentPage > 1) {
       result.push({
         label: "Previous Page",
@@ -119,7 +111,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
       });
     }
 
-    // Next page in quick nav
     if (currentPage < totalPages) {
       result.push({
         label: "Next Page",
@@ -131,7 +122,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
     return result;
   };
 
-  // Generate URL for quick navigation
   const getPaginationUrl = (targetPage: number) => {
     const params = new URLSearchParams();
 
@@ -162,7 +152,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
             <h1 className="text-3xl font-semibold tracking-tight">
               Notifications
             </h1>
-            {/* Conditionally render JSON Toggle */}
             {isDevMode && (
               <NotificationJsonToggle
                 showJson={showJson}
@@ -184,9 +173,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
             showJson={searchParams.showJson}
           />
 
-          {/* Group for action buttons & quick nav */}
           <div className="flex items-center gap-2">
-            {/* Mark All Read Button */}
             {currentLoggedInUser && (
               <MarkAllAsReadButton
                 userId={currentLoggedInUser}
@@ -194,7 +181,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
               />
             )}
 
-            {/* Clear Read Button */}
             {currentLoggedInUser && (
               <ClearNotificationsButton
                 userId={currentLoggedInUser}
@@ -202,7 +188,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
               />
             )}
 
-            {/* Quick pagination navigation */}
             <div className="hidden md:flex space-x-2">
               {getQuickNavPageNumbers().map((nav) => (
                 <Button
@@ -222,7 +207,6 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
           </div>
         </div>
 
-        {/* Conditionally render JSON View */}
         {isDevMode && showJson && (
           <NotificationJsonView data={notificationsData} />
         )}

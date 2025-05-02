@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Notification } from "../types/notification";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, addHours } from "date-fns";
 import { ExternalLink, Check, Trash2, Undo2 } from "lucide-react"; // Combined icon imports + Undo2
 import { cn } from "@/lib/utils";
 import { useTransition } from "react"; // Added useTransition import
@@ -19,9 +19,12 @@ interface NotificationCardProps {
 export function NotificationCard({ notification }: NotificationCardProps) {
   const [isPending, startTransition] = useTransition(); // Initialized transition
   // Format the timestamp to a relative time (e.g., "3 hours ago")
-  const formattedTime = formatDistanceToNow(new Date(notification.created_at), {
-    addSuffix: true,
-  });
+  const formattedTime = formatDistanceToNow(
+    addHours(new Date(notification.created_at), 7),
+    {
+      addSuffix: true,
+    }
+  );
 
   return (
     <div className="p-4 hover:bg-muted/50 transition-colors">
