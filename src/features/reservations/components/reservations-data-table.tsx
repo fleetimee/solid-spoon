@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation"; // Added
 import {
   ColumnDef,
   // Removed ColumnFiltersState
-  SortingState,
+  // Removed SortingState
   flexRender,
   getCoreRowModel,
   // Removed getFilteredRowModel
-  getSortedRowModel,
+  // Removed getSortedRowModel
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -45,7 +45,7 @@ export function ReservationsDataTable<TData, TValue>({
 }: ReservationsDataTableProps<TData, TValue>) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  // Removed sorting state
   // Removed columnFilters state
 
   // Debounce state
@@ -58,15 +58,13 @@ export function ReservationsDataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
+    // Removed getSortedRowModel
+    // Removed onSortingChange
     // Removed onColumnFiltersChange
     // Removed getFilteredRowModel
-    state: {
-      sorting,
-      // Removed columnFilters
-    },
+    // Removed state object as sorting and filtering are manual
     manualFiltering: true, // Indicate filtering is handled externally
+    manualSorting: true, // Indicate sorting is handled externally
   });
 
   // Effect to update URL when debounced value changes

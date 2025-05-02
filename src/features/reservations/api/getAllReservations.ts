@@ -10,15 +10,30 @@ export type ReservationWithDetails = {
   createdAt: Date; // Added createdAt field
 };
 
+// Define a mapping from sortBy keys to database column expressions
+const sortColumnMap: Record<string, string> = {
+  userName: "u.name",
+  roomName: "r.name",
+  startTime: "rr.start_time",
+  status: "l.value",
+  createdAt: "rr.created_at",
+};
+
 /**
  * Fetches all reservations with details from related tables using raw SQL.
- * Orders by room name, then start time.
+ * Orders by specified column or defaults to room name, then start time.
  */
-export async function getAllReservations(filters?: {
-  search?: string; // Generic search for user name or reservation ID
-  roomId?: number; // Added roomId filter
-  statusId?: number; // Added statusId filter
-}): Promise<ReservationWithDetails[]> {
+export async function getAllReservations(
+  filters?: {
+    search?: string; // Generic search for user name or reservation ID
+    roomId?: number; // Added roomId filter
+    statusId?: number; // Added statusId filter
+  },
+  sorting?: {
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }
+): Promise<ReservationWithDetails[]> {
   let query = `
     SELECT
       rr.id,
@@ -56,11 +71,25 @@ export async function getAllReservations(filters?: {
     query += ` AND rr.status_id = $${params.length}`;
   }
 
-  query += `
-    ORDER BY
-      r.name ASC,
-      rr.start_time ASC;
-  `;
+  // Add sorting
+  const sortBy = sorting?.sortBy;
+  const sortOrder = sorting?.sortOrder === "desc" ? "DESC" : "ASC"; // Default to ASC
+  const sortColumn =
+    sortBy && sortColumnMap[sortBy] ? sortColumnMap[sortBy] : null;
+
+  if (sortColumn) {
+    // Use the mapped column name directly - safe due to the mapping check
+    query += ` ORDER BY ${sortColumn} ${sortOrder}`;
+    // Add secondary sort for stability if not sorting by start time already
+    if (sortBy !== "startTime") {
+      query += `, rr.start_time ASC`;
+    }
+  } else {
+    // Default sort order
+    query += ` ORDER BY r.name ASC, rr.start_time ASC`;
+  }
+
+  query += `;`; // Add semicolon at the end
 
   try {
     // Pass the type argument and params to db.query for type safety
