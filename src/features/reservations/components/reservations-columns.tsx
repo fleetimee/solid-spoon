@@ -14,6 +14,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation"; // Import hooks
 import Link from "next/link";
 
+import { Badge } from "@/components/ui/badge"; // Added Badge import
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReservationWithDetails } from "@/features/reservations/api/getAllReservations";
+import { formatDateToJakarta } from "@/lib/utils/formatDate"; // Import the helper
 
 // Helper function to create sortable headers
 const createSortableHeader = (
@@ -94,6 +96,9 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
     accessorKey: "id",
     header: "ID",
     enableSorting: false, // ID is usually not sortable
+    cell: ({ row }) => {
+      return <Badge variant="secondary">{row.original.id}</Badge>;
+    },
   },
   {
     accessorKey: "userName",
@@ -107,8 +112,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
     accessorKey: "startTime",
     header: createSortableHeader("startTime", "Start Time"),
     cell: ({ row }) => {
-      const startTime = row.getValue("startTime") as Date;
-      return <div>{startTime.toLocaleString()}</div>;
+      return <span>{formatDateToJakarta(row.original.startTime)}</span>;
     },
   },
   {
@@ -116,21 +120,44 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
     header: "End Time",
     enableSorting: false, // End time might not need sorting if start time is sortable
     cell: ({ row }) => {
-      const endTime = row.getValue("endTime") as Date;
-      return <div>{endTime.toLocaleString()}</div>;
+      return <span>{formatDateToJakarta(row.original.endTime)}</span>;
     },
   },
   {
     accessorKey: "createdAt",
     header: createSortableHeader("createdAt", "Created At"),
     cell: ({ row }) => {
-      const createdAt = row.getValue("createdAt") as Date;
-      return <div>{createdAt.toLocaleString()}</div>;
+      // Use the helper function for consistent formatting
+      return <span>{formatDateToJakarta(row.original.createdAt)}</span>;
     },
   },
   {
     accessorKey: "status",
     header: createSortableHeader("status", "Status"),
+    cell: ({ row }) => {
+      const status = row.original.status;
+      let variant: "default" | "secondary" | "destructive" | "outline" =
+        "secondary"; // Default to secondary
+
+      switch (status) {
+        case "Approved":
+          variant = "default"; // Or 'success' if available
+          break;
+        case "Completed":
+          variant = "outline"; // Or 'success'
+          break;
+        case "Rejected":
+        case "Cancelled":
+          variant = "destructive";
+          break;
+        case "Pending":
+        default:
+          variant = "secondary"; // Or 'warning'
+          break;
+      }
+
+      return <Badge variant={variant}>{status}</Badge>;
+    },
   },
   {
     id: "actions",
