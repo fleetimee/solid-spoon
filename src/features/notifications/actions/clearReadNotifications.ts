@@ -28,7 +28,7 @@ export async function clearReadNotifications(
     // Delete all notifications for the user where is_read is true
     const result = await db.query(
       "DELETE FROM notification WHERE recipient_id = $1 AND is_read = true",
-      [validatedUserId]
+      ["admin"]
     );
 
     const deletedCount = result.rowCount ?? 0; // Default to 0 if rowCount is null/undefined

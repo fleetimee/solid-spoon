@@ -28,7 +28,7 @@ export async function markAllNotificationsAsRead(
     // Update all unread notifications for the user
     const result = await db.query(
       "UPDATE notification SET is_read = true WHERE recipient_id = $1 AND is_read = false",
-      [validatedUserId]
+      ["admin"]
     );
 
     const updatedCount = result.rowCount ?? 0; // Handle potential null value

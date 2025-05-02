@@ -76,7 +76,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
     try {
       const countResult = await db.query(
         "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = true",
-        [currentLoggedInUser]
+        ["admin"]
       );
       readNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
     } catch (error) {
@@ -90,7 +90,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
     try {
       const countResult = await db.query(
         "SELECT COUNT(*) as total FROM notification WHERE recipient_id = $1 AND is_read = false",
-        [currentLoggedInUser]
+        ["admin"]
       );
       unreadNotificationCount = parseInt(countResult.rows[0]?.total || "0", 10);
     } catch (error) {
