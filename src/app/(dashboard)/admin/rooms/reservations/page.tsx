@@ -9,7 +9,7 @@ import { ReservationsDataTable } from "@/features/reservations/components/reserv
 import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import room fetcher
 
 interface ReservationsPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     search?: string; // Generic search filter
     roomId?: string; // Room ID from search params (string)
     statusId?: string; // Status ID from search params (string)
@@ -17,14 +17,13 @@ interface ReservationsPageProps {
     sortOrder?: string; // Sort direction ('asc' or 'desc')
     page?: string; // Page number for pagination
     pageSize?: string; // Items per page
-  };
+  }>;
 }
 
 const DEFAULT_PAGE_SIZE = 10; // Define default page size here as well
 
-export default async function ReservationsPage({
-  searchParams,
-}: ReservationsPageProps) {
+export default async function ReservationsPage(props: ReservationsPageProps) {
+  const searchParams = await props.searchParams;
   // Read filters from searchParams
   const searchFilter = searchParams?.search as string | undefined;
   const roomIdParam = searchParams?.roomId;
