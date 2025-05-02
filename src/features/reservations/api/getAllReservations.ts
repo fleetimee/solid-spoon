@@ -15,7 +15,7 @@ export type ReservationWithDetails = {
  * Orders by room name, then start time.
  */
 export async function getAllReservations(filters?: {
-  userNameFilter?: string;
+  search?: string; // Generic search for user name or reservation ID
   roomId?: number; // Added roomId filter
   statusId?: number; // Added statusId filter
 }): Promise<ReservationWithDetails[]> {
@@ -36,9 +36,12 @@ export async function getAllReservations(filters?: {
   `;
   const params: any[] = [];
 
-  if (filters?.userNameFilter) {
-    params.push(filters.userNameFilter);
-    query += ` AND u.name ILIKE '%' || $${params.length} || '%'`;
+  // Add generic search filter if provided (user name or reservation ID)
+  if (filters?.search) {
+    params.push(filters.search);
+    const searchParamIndex = params.length;
+    // Cast rr.id to text for ILIKE comparison
+    query += ` AND (u.name ILIKE '%' || $${searchParamIndex} || '%' OR rr.id::text ILIKE '%' || $${searchParamIndex} || '%')`;
   }
 
   // Add roomId filter if provided

@@ -10,7 +10,7 @@ import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import ro
 
 interface ReservationsPageProps {
   searchParams?: {
-    userName?: string;
+    search?: string; // Generic search filter
     roomId?: string; // Room ID from search params (string)
     statusId?: string; // Status ID from search params (string)
   };
@@ -20,7 +20,7 @@ export default async function ReservationsPage({
   searchParams,
 }: ReservationsPageProps) {
   // Read filters from searchParams
-  const userNameFilter = searchParams?.userName;
+  const searchFilter = searchParams?.search as string | undefined; // Read generic search filter
   const roomIdParam = searchParams?.roomId;
   const statusIdParam = searchParams?.statusId;
 
@@ -33,7 +33,7 @@ export default async function ReservationsPage({
   // Fetch data concurrently
   const [reservations, rooms, statuses] = await Promise.all([
     getAllReservations({
-      userNameFilter,
+      search: searchFilter, // Pass generic search filter
       roomId: isNaN(roomIdFilter as number) ? undefined : roomIdFilter, // Pass parsed ID or undefined
       statusId: isNaN(statusIdFilter as number) ? undefined : statusIdFilter, // Pass parsed ID or undefined
     }),

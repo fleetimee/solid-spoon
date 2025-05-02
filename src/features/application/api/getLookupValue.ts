@@ -61,5 +61,5 @@ export async function getLookupsByCategory(
 export async function getReservationStatuses(): Promise<
   { id: number; value: string }[]
 > {
-  return getLookupsByCategory("RESERVATION_STATUS");
+  return getLookupsByCategory("reservation_status");
 }

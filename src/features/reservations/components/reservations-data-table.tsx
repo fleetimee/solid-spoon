@@ -50,7 +50,7 @@ export function ReservationsDataTable<TData, TValue>({
 
   // Debounce state
   const [debouncedValue, setDebouncedValue] = React.useState(
-    searchParams.get("userName") ?? ""
+    searchParams.get("search") ?? "" // Use 'search' parameter
   );
   const debounceTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -75,9 +75,9 @@ export function ReservationsDataTable<TData, TValue>({
     const value = debouncedValue.trim();
 
     if (!value) {
-      current.delete("userName");
+      current.delete("search"); // Use 'search' parameter
     } else {
-      current.set("userName", value);
+      current.set("search", value); // Use 'search' parameter
     }
 
     // Construct the new search string
@@ -121,8 +121,8 @@ export function ReservationsDataTable<TData, TValue>({
         {" "}
         {/* Added space-x-2 */}
         <Input
-          placeholder="Filter by user name..."
-          defaultValue={searchParams.get("userName") ?? ""}
+          placeholder="Filter by user name or ID..." // Updated placeholder
+          defaultValue={searchParams.get("search") ?? ""} // Use 'search' parameter
           onChange={handleInputChange}
           className="max-w-sm"
         />
