@@ -106,9 +106,11 @@ export default function AdminReservationConfirmationPage({
   const { reservationId } = params;
 
   return (
-    <Suspense fallback={<ConfirmationPageSkeleton />}>
-      <ReservationConfirmationContent reservationId={reservationId} />
-    </Suspense>
+    <main className="flex flex-col grow p-4 md:p-8">
+      <Suspense fallback={<ConfirmationPageSkeleton />}>
+        <ReservationConfirmationContent reservationId={reservationId} />
+      </Suspense>
+    </main>
   );
 }
 
