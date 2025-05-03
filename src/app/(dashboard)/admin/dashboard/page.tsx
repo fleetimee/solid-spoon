@@ -13,41 +13,21 @@ import { ReservationsTrendChart } from "@/features/admin/components/reservations
 import { AdminReservationStatusChart } from "@/features/admin/components/admin-reservation-status-chart";
 import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart";
 import { RoomUtilizationChart } from "@/features/admin/components/room-utilization-chart";
+import { getRecentActivityFeed } from "@/features/activity/api/getRecentActivityFeed";
 import { type ChartConfig } from "@/components/ui/chart";
-import { Users, BedDouble, ListChecks, Plus, Users2 } from "lucide-react"; // Added Plus, Users2
-import Link from "next/link"; // Added Link import
-import { Button } from "@/components/ui/button"; // Added Button import
+import { Users, BedDouble, ListChecks, Plus, Users2, Bell } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 function formatShortDate(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 export default async function AdminDashboardPage() {
-  const stats: AdminDashboardStats = await getAdminDashboardStats();
-
-  // Placeholder data for Recent Activity
-  const recentActivities = [
-    {
-      id: 1,
-      description: "User Jane Doe registered",
-      timestamp: "2 hours ago",
-    },
-    {
-      id: 2,
-      description: "Reservation for Room 101 approved",
-      timestamp: "5 hours ago",
-    },
-    {
-      id: 3,
-      description: "New Room 'Conference Hall' added",
-      timestamp: "1 day ago",
-    },
-    {
-      id: 4,
-      description: "User John Smith updated profile",
-      timestamp: "2 days ago",
-    },
-  ];
+  const [stats, activityFeedData] = await Promise.all([
+    getAdminDashboardStats(),
+    getRecentActivityFeed(),
+  ]);
 
   const trendDataMap = new Map<string, number>();
   const today = new Date();
@@ -230,32 +210,34 @@ export default async function AdminDashboardPage() {
         )}
       </div>
 
-      {/* New Sections: Recent Activity and Quick Actions */}
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        {/* Recent Activity Feed Card */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>Latest events in the system.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              {recentActivities.map((activity) => (
-                <li
-                  key={activity.id}
-                  className="flex items-center justify-between text-sm"
-                >
-                  <span>{activity.description}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {activity.timestamp}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {activityFeedData.length > 0 ? (
+              <table className="w-full">
+                <tbody>
+                  {activityFeedData.map((activity) => (
+                    <tr key={activity.id} className="border-b last:border-b-0">
+                      <td className="text-sm pr-2 py-2">{activity.message}</td>
+                      <td className="text-xs text-muted-foreground text-right py-2 whitespace-nowrap">
+                        {activity.timestamp.toLocaleString()}{" "}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No recent activity.
+              </p>
+            )}
           </CardContent>
         </Card>
 
-        {/* Quick Actions Card */}
         <Card>
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
@@ -276,6 +258,11 @@ export default async function AdminDashboardPage() {
             <Button asChild variant="outline">
               <Link href="/admin/users">
                 <Users2 className="mr-2 h-4 w-4" /> View All Users
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/notifications">
+                <Bell className="mr-2 h-4 w-4" /> View Notifications
               </Link>
             </Button>
           </CardContent>
