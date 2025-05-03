@@ -219,12 +219,19 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                   Accept
                 </Link>
               </DropdownMenuItem>
+              {/* Reject Item using Next Link */}
               <DropdownMenuItem
-                onClick={() => console.log("Reject", reservation.id)} // Placeholder
+                asChild
+                className="cursor-pointer p-0" // Reset padding for the Link
                 disabled={reservation.status !== "Pending"}
               >
-                <XCircle className="mr-2 h-4 w-4" />
-                Reject
+                <Link
+                  href={`/admin/rooms/reservations/${reservation.id}/reject`}
+                  className="flex items-center px-2 py-1.5 text-sm w-full h-full" // Add necessary classes
+                >
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Reject
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
