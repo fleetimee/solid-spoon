@@ -18,12 +18,6 @@ import type { VariantProps } from "class-variance-authority"; // Import VariantP
 import { ArrowLeft } from "lucide-react"; // Icon for back button
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter"; // Added import
 
-interface ReservationDetailsPageProps {
-  params: {
-    reservationId: string;
-  };
-}
-
 // Helper function to format dates (can be moved to a utils file later)
 const formatDate = (date: Date | string | null): string => {
   if (!date) return "N/A";
@@ -54,7 +48,9 @@ const getStatusVariant = (
 
 export default async function ReservationDetailsPage({
   params,
-}: ReservationDetailsPageProps) {
+}: {
+  params: { reservationId: string };
+}) {
   const { reservationId } = params;
 
   const reservation: DetailedReservation | null =
