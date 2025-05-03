@@ -56,7 +56,7 @@ export default function MeLayout({ children }: { children: ReactNode }) {
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 pb-16 pt-8">
         <div className="relative mb-20">
           <div className="w-full h-48 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl" />
-          <div className="absolute -bottom-12 left-6 flex items-start space-x-4">
+          <div className="absolute -bottom-12 left-6 flex items-center space-x-4">
             <Avatar className="h-24 w-24 border-4 border-background shadow-md">
               {/* Use session data for avatar if available */}
               <AvatarImage
@@ -73,7 +73,7 @@ export default function MeLayout({ children }: { children: ReactNode }) {
                   {/* Use session data for name */}
                   {session?.user?.name ?? "User Name"}
                 </h1>
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-white drop-shadow-md">
                   {session?.user?.email ?? "No email provided"}
                 </p>
               </div>
@@ -90,20 +90,13 @@ export default function MeLayout({ children }: { children: ReactNode }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="col-span-1">
             <Card>
-              <CardContent className="pt-6">
+              <CardContent className="pt-0">
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-1">
                       Contact
                     </h3>
                     <div className="space-y-2">
-                      <div className="flex items-center text-sm">
-                        <Icon name="Send" className="mr-2 h-4 w-4" />
-                        {/* Use session data for email */}
-                        <span>
-                          {session?.user?.email ?? "user@example.com"}
-                        </span>
-                      </div>
                       <div className="flex items-center text-sm">
                         <Icon name="Calendar" className="mr-2 h-4 w-4" />
                         {/* Placeholder - Could fetch join date */}
