@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers"; // Import headers function
 import { FavoriteRoomsChart } from "@/features/activity/components/favorite-rooms-chart";
 import { MonthlyBookingsChart } from "@/features/activity/components/monthly-bookings-chart"; // Import the new chart
+import { ReservationStatusChart } from "@/features/activity/components/reservation-status-chart"; // Import the pie chart
 import { ChartConfig } from "@/components/ui/chart"; // Keep ChartConfig for definition
 
 export default async function ActivityPage() {
@@ -104,8 +105,49 @@ export default async function ActivityPage() {
   } satisfies ChartConfig;
   // --- End Monthly Bookings Chart Data Processing ---
 
+  // --- Process data for Reservation Status Pie Chart ---
+  const statusCounts: { [key: string]: number } = {};
+  recentActivities.forEach((activity) => {
+    statusCounts[activity.status] = (statusCounts[activity.status] || 0) + 1;
+  });
+
+  const statusChartConfig = {
+    Approved: { label: "Approved", color: "hsl(var(--chart-1))" },
+    Pending: { label: "Pending", color: "hsl(var(--chart-2))" },
+    Rejected: { label: "Rejected", color: "hsl(var(--chart-3))" },
+    Cancelled: { label: "Cancelled", color: "hsl(var(--chart-4))" },
+    // Add more statuses and colors as needed
+  } satisfies ChartConfig;
+
+  const statusData = Object.entries(statusCounts).map(([status, count]) => {
+    // Ensure the status exists in the config, provide a fallback if not
+    const color =
+      statusChartConfig[status as keyof typeof statusChartConfig]?.color ??
+      "hsl(var(--muted))"; // Fallback color
+    return {
+      status,
+      count,
+      fill: color, // Directly use the HSL color string from the config
+    };
+  });
+
+  // CSS variable generation is no longer needed here as colors are passed directly
+  // --- End Reservation Status Pie Chart Data Processing ---
+
   return (
-    <TabsContent value="activity" className="pt-6">
+    <TabsContent
+      value="activity"
+      className="pt-6"
+      style={
+        {
+          "--chart-1": "220 90% 50%",
+          "--chart-2": "40 90% 50%",
+          "--chart-3": "0 90% 50%",
+          "--chart-4": "260 90% 50%",
+          // Removed the dynamic CSS variable injection for status colors
+        } as React.CSSProperties
+      }
+    >
       <div className="space-y-8">
         {/* Recent Activity Section */}
         <div>
@@ -203,6 +245,28 @@ export default async function ActivityPage() {
             chartData={monthlyChartData}
             chartConfig={monthlyChartConfig}
           />
+        </div>
+
+        {/* Reservation Status Distribution Chart Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">
+            Reservation Status Distribution
+          </h2>
+          {statusData.length > 0 ? (
+            <ReservationStatusChart
+              chartData={statusData}
+              chartConfig={statusChartConfig}
+              totalReservations={recentActivities.length}
+            />
+          ) : (
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground">
+                  No reservation data available to show status distribution.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </TabsContent>
