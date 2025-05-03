@@ -11,7 +11,8 @@ import {
 } from "@/features/admin/api/getAdminDashboardStats";
 import { ReservationsTrendChart } from "@/features/admin/components/reservations-trend-chart";
 import { AdminReservationStatusChart } from "@/features/admin/components/admin-reservation-status-chart";
-import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart"; // Import the new chart
+import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart";
+import { RoomUtilizationChart } from "@/features/admin/components/room-utilization-chart"; // Import the new chart
 import { type ChartConfig } from "@/components/ui/chart";
 import { Users, BedDouble, ListChecks } from "lucide-react"; // Icons for cards
 
@@ -108,6 +109,14 @@ export default async function AdminDashboardPage() {
     },
   } satisfies ChartConfig;
 
+  // --- Config for Room Utilization Chart ---
+  const utilizationChartConfig = {
+    utilization: {
+      label: "Utilization",
+      color: "hsl(var(--chart-5))", // Use another chart color
+    },
+  } satisfies ChartConfig;
+
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
       <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
@@ -188,8 +197,6 @@ export default async function AdminDashboardPage() {
 
       {/* Charts Row 2 */}
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        {" "}
-        {/* Adjust grid cols as needed */}
         {/* Most Active Rooms Chart */}
         {stats.mostActiveRooms.length > 0 ? (
           <MostActiveRoomsChart
@@ -197,18 +204,26 @@ export default async function AdminDashboardPage() {
             chartConfig={activeRoomsChartConfig}
           />
         ) : (
-          <Card className="flex items-center justify-center h-[350px] lg:col-span-1">
-            {" "}
-            {/* Adjust span if needed */}
+          <Card className="flex items-center justify-center h-[350px]">
             <p className="text-muted-foreground">
               Not enough data for most active rooms.
             </p>
           </Card>
         )}
-        {/* Add another chart here later if desired */}
-        {/* <Card className="flex items-center justify-center h-[350px] lg:col-span-1">
-             <p className="text-muted-foreground">Placeholder for another chart</p>
-         </Card> */}
+
+        {/* Room Utilization Chart */}
+        {stats.roomUtilization.length > 0 ? (
+          <RoomUtilizationChart
+            chartData={stats.roomUtilization}
+            chartConfig={utilizationChartConfig}
+          />
+        ) : (
+          <Card className="flex items-center justify-center h-[350px]">
+            <p className="text-muted-foreground">
+              Could not calculate room utilization.
+            </p>
+          </Card>
+        )}
       </div>
     </div>
   );
