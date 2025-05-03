@@ -14,7 +14,9 @@ import { AdminReservationStatusChart } from "@/features/admin/components/admin-r
 import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart";
 import { RoomUtilizationChart } from "@/features/admin/components/room-utilization-chart";
 import { type ChartConfig } from "@/components/ui/chart";
-import { Users, BedDouble, ListChecks } from "lucide-react";
+import { Users, BedDouble, ListChecks, Plus, Users2 } from "lucide-react"; // Added Plus, Users2
+import Link from "next/link"; // Added Link import
+import { Button } from "@/components/ui/button"; // Added Button import
 
 function formatShortDate(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -22,6 +24,30 @@ function formatShortDate(date: Date): string {
 
 export default async function AdminDashboardPage() {
   const stats: AdminDashboardStats = await getAdminDashboardStats();
+
+  // Placeholder data for Recent Activity
+  const recentActivities = [
+    {
+      id: 1,
+      description: "User Jane Doe registered",
+      timestamp: "2 hours ago",
+    },
+    {
+      id: 2,
+      description: "Reservation for Room 101 approved",
+      timestamp: "5 hours ago",
+    },
+    {
+      id: 3,
+      description: "New Room 'Conference Hall' added",
+      timestamp: "1 day ago",
+    },
+    {
+      id: 4,
+      description: "User John Smith updated profile",
+      timestamp: "2 days ago",
+    },
+  ];
 
   const trendDataMap = new Map<string, number>();
   const today = new Date();
@@ -202,6 +228,58 @@ export default async function AdminDashboardPage() {
             </p>
           </Card>
         )}
+      </div>
+
+      {/* New Sections: Recent Activity and Quick Actions */}
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        {/* Recent Activity Feed Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Latest events in the system.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-3">
+              {recentActivities.map((activity) => (
+                <li
+                  key={activity.id}
+                  className="flex items-center justify-between text-sm"
+                >
+                  <span>{activity.description}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {activity.timestamp}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common administrative tasks.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col space-y-3">
+            <Button asChild variant="outline">
+              <Link href="/admin/rooms/reservations">
+                <ListChecks className="mr-2 h-4 w-4" /> Manage Pending
+                Reservations
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/rooms/add">
+                <Plus className="mr-2 h-4 w-4" /> Add New Room
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/admin/users">
+                <Users2 className="mr-2 h-4 w-4" /> View All Users
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
