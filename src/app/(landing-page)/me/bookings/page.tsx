@@ -1,88 +1,95 @@
-"use client";
 import { TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/lib/icons";
+// import { authClient } from "@/lib/auth-client"; // Import authClient - Removed
+import { auth } from "@/lib/auth"; // Add server-side auth import
+import { headers } from "next/headers"; // Import headers
+import { getUserReservations } from "@/features/reservations/api/getUserReservations"; // Import API function
+import { formatDateRangeHumanized } from "@/lib/utils/formatDate"; // Import new date range formatter
 
-export default function BookingsPage() {
+// Helper function for status color
+const getStatusColor = (status: string | null | undefined) => {
+  switch (status?.toLowerCase()) {
+    case "approved":
+      return "bg-green-500";
+    case "pending":
+      return "bg-yellow-500";
+    case "rejected":
+      return "bg-red-500";
+    default:
+      return "bg-gray-500";
+  }
+};
+
+export default async function BookingsPage() {
+  // Replace client-side session fetching with server-side
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  // Handle case where user is not logged in
+  // Access user directly via session.user
+  if (!session?.user?.id) {
+    // Updated check
+    return (
+      <TabsContent value="bookings" className="pt-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Your Bookings</h2>
+          <p>Please log in to view your bookings.</p>
+        </div>
+      </TabsContent>
+    );
+  }
+
+  // Access user ID directly via session.user.id
+  const userId = session.user.id; // Updated access
+  const reservations = await getUserReservations(userId);
+
   return (
     <TabsContent value="bookings" className="pt-6">
       <div>
         <h2 className="text-xl font-semibold mb-4">Your Bookings</h2>
         <div className="grid grid-cols-1 gap-4">
-          <Card>
-            <CardContent className="p-0">
-              <div className="grid grid-cols-[12px_1fr] sm:grid-cols-[12px_3fr_1fr_1fr_1fr] gap-4 p-4">
-                <div className="w-2 h-full self-stretch bg-green-500 rounded-full"></div>
-                <div>
-                  <div className="font-medium">Conference Room A</div>
-                  <div className="text-sm text-muted-foreground">
-                    Team Meeting
+          {reservations && reservations.length > 0 ? (
+            reservations.map((reservation) => (
+              <Card key={reservation.id}>
+                {" "}
+                {/* Assuming reservation has an id */}
+                <CardContent className="p-0">
+                  <div className="grid grid-cols-[12px_1fr] sm:grid-cols-[12px_3fr_1fr_1fr_1fr] gap-4 p-4">
+                    <div
+                      className={`w-2 h-full self-stretch ${getStatusColor(reservation.status)} rounded-full`}
+                    ></div>
+                    <div>
+                      <div className="font-medium">{reservation.roomName}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {reservation.title}
+                      </div>
+                    </div>
+                    <div className="hidden sm:block text-sm">
+                      {/* Use formatDateRangeHumanized */}
+                      {formatDateRangeHumanized(
+                        reservation.startTime,
+                        reservation.endTime
+                      )}
+                    </div>
+                    <div className="hidden sm:block text-sm capitalize">
+                      {reservation.status ?? "N/A"}
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <Button variant="outline" size="sm">
+                        View {/* Keep view button for now */}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className="hidden sm:block text-sm">
-                  Today, 14:00-15:00
-                </div>
-                <div className="hidden sm:block text-sm">8 people</div>
-                <div className="hidden sm:block text-right">
-                  <Button variant="outline" size="sm">
-                    View
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-0">
-              <div className="grid grid-cols-[12px_1fr] sm:grid-cols-[12px_3fr_1fr_1fr_1fr] gap-4 p-4">
-                <div className="w-2 h-full self-stretch bg-blue-500 rounded-full"></div>
-                <div>
-                  <div className="font-medium">Meeting Room B</div>
-                  <div className="text-sm text-muted-foreground">
-                    Client Presentation
-                  </div>
-                </div>
-                <div className="hidden sm:block text-sm">
-                  Tomorrow, 10:00-11:30
-                </div>
-                <div className="hidden sm:block text-sm">4 people</div>
-                <div className="hidden sm:block text-right">
-                  <Button variant="outline" size="sm">
-                    View
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-0">
-              <div className="grid grid-cols-[12px_1fr] sm:grid-cols-[12px_3fr_1fr_1fr_1fr] gap-4 p-4">
-                <div className="w-2 h-full self-stretch bg-purple-500 rounded-full"></div>
-                <div>
-                  <div className="font-medium">Quiet Pod 3</div>
-                  <div className="text-sm text-muted-foreground">
-                    Focus Work
-                  </div>
-                </div>
-                <div className="hidden sm:block text-sm">
-                  May 2, 09:00-12:00
-                </div>
-                <div className="hidden sm:block text-sm">1 person</div>
-                <div className="hidden sm:block text-right">
-                  <Button variant="outline" size="sm">
-                    View
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <p>You have no bookings yet.</p>
+          )}
         </div>
-        <div className="mt-4 text-center">
-          <Button variant="outline">
-            View All Bookings
-            <Icon name="Calendar" className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        {/* Removed the "View All Bookings" button */}
       </div>
     </TabsContent>
   );
