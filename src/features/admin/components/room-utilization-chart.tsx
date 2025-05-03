@@ -25,8 +25,14 @@ export function RoomUtilizationChart({
   chartData,
   chartConfig,
 }: RoomUtilizationChartProps) {
+  // Optional: Calculate dynamic height based on number of bars
+  // Adjust multiplier (35) and base (60) as needed for desired spacing
+  const chartHeight = Math.max(250, chartData.length * 35 + 60); // Min height 250px, add space per bar + margins
+
   return (
-    <Card className="h-full">
+    <Card className="flex flex-col">
+      {" "}
+      {/* Use flex-col to allow content growth */}
       <CardHeader>
         <CardTitle>Room Utilization - Last 30 Days</CardTitle>
         <CardDescription>
@@ -34,13 +40,20 @@ export function RoomUtilizationChart({
           24/7 availability).
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+      <CardContent className="flex-1">
+        {" "}
+        {/* Allow content to take available space */}
+        {/* Removed fixed height from container, using dynamic height on BarChart instead */}
+        <ChartContainer
+          config={chartConfig}
+          className="w-full h-auto min-h-[250px]"
+        >
           <BarChart
             accessibilityLayer
             data={chartData}
             layout="vertical"
-            margin={{ left: 10, right: 50 }} // Increased right margin for label
+            height={chartHeight} // Apply dynamic height here
+            margin={{ left: 10, right: 50, top: 5, bottom: 20 }} // Added top/bottom margin
           >
             <CartesianGrid horizontal={false} />
             <YAxis
@@ -50,6 +63,7 @@ export function RoomUtilizationChart({
               tickMargin={5}
               axisLine={false}
               width={100} // Adjust if room names are longer
+              interval={0} // Ensure all labels are shown
               // tickFormatter={(value) => value.length > 15 ? `${value.substring(0, 15)}...` : value}
             />
             <XAxis
@@ -64,7 +78,7 @@ export function RoomUtilizationChart({
               {/* Add Axis Label */}
               <Label
                 value="Utilization (%)"
-                offset={-5}
+                offset={-15}
                 position="insideBottomRight"
               />
             </XAxis>
@@ -84,6 +98,7 @@ export function RoomUtilizationChart({
               fill="var(--color-utilization)" // Assumes 'utilization' is defined in chartConfig
               radius={4}
               name="Utilization" // Name shown in tooltip
+              barSize={20} // Optional: Adjust bar thickness
             />
           </BarChart>
         </ChartContainer>
