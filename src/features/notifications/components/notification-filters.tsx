@@ -1,38 +1,43 @@
+"use client";
+
 import { NotificationFilter } from "../types/notification";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation"; // Added import
 
 interface NotificationFiltersProps {
-  currentFilter: NotificationFilter;
-  pageSize?: string;
-  showJson?: string;
+  currentFilter: NotificationFilter; // This is the server-rendered filter
+  // pageSize and showJson are implicitly handled by reading from searchParams now
 }
 
 export function NotificationFilters({
   currentFilter,
-  pageSize,
-  showJson,
-}: NotificationFiltersProps) {
+}: // No need to pass pageSize or showJson as props anymore if always read from URL
+NotificationFiltersProps) {
+  const searchParams = useSearchParams(); // Use the hook
+  const clientFilter = searchParams.get("filter") as NotificationFilter | null; // Read the filter param client-side
+
+  // Determine the active filter: prioritize client-side URL param, fallback to server prop
+  // This ensures the tab reflects the URL upon hydration
+  const activeFilter = clientFilter ?? currentFilter;
+
   const getFilterUrl = (filter: NotificationFilter) => {
-    const params = new URLSearchParams();
+    // Create params from current searchParams to preserve others (like pageSize, showJson)
+    const params = new URLSearchParams(searchParams.toString());
     params.set("filter", filter);
     params.set("page", "1"); // Reset to first page when filter changes
-
-    if (pageSize) {
-      params.set("pageSize", pageSize);
-    }
-
-    if (showJson) {
-      params.set("showJson", showJson);
-    }
 
     return `/admin/notifications?${params.toString()}`;
   };
 
+  // Use the determined activeFilter for defaultValue or value.
+  // defaultValue works well here as it sets the initial state based on the URL/prop
+  // and allows internal state management by the Tabs component afterwards.
   return (
-    <Tabs defaultValue={currentFilter} className="w-full">
+    <Tabs defaultValue={activeFilter} className="w-full">
       <TabsList>
         <TabsTrigger value="all" asChild>
+          {/* Links now preserve other existing search params */}
           <Link href={getFilterUrl("all")}>All</Link>
         </TabsTrigger>
         <TabsTrigger value="unread" asChild>
