@@ -4,6 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns"; // For formatting dates
+import { Building, CheckCircle2, Search } from "lucide-react"; // Added icons
 import {
   ColumnDef,
   flexRender,
@@ -138,18 +139,22 @@ export function ReservationsDataTable<
   return (
     <div>
       <div className="flex items-center space-x-2 py-4">
-        <Input
-          placeholder="Filter by user name or ID..."
-          defaultValue={searchParams.get("search") ?? ""}
-          onChange={handleInputChange}
-          className="max-w-sm"
-        />
+        <div className="relative">
+          <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Filter by name or ID..."
+            defaultValue={searchParams.get("search") ?? ""}
+            onChange={handleInputChange}
+            className="max-w-sm pl-8" // Added pl-8
+          />
+        </div>
         {/* Room Filter Select */}
         <Select
           value={searchParams.get("roomId") ?? "all"}
           onValueChange={(value) => handleSelectChange("roomId", value)}
         >
           <SelectTrigger className="w-[180px]">
+            <Building className="mr-2 h-4 w-4" /> {/* Added Icon */}
             <SelectValue placeholder="Filter by Room" />
           </SelectTrigger>
           <SelectContent>
@@ -167,6 +172,7 @@ export function ReservationsDataTable<
           onValueChange={(value) => handleSelectChange("statusId", value)}
         >
           <SelectTrigger className="w-[180px]">
+            <CheckCircle2 className="mr-2 h-4 w-4" /> {/* Added Icon */}
             <SelectValue placeholder="Filter by Status" />
           </SelectTrigger>
           <SelectContent>
