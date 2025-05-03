@@ -205,12 +205,19 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
+              {/* Accept Item using Next Link */}
               <DropdownMenuItem
-                onClick={() => console.log("Approve", reservation.id)} // Placeholder
+                asChild
+                className="cursor-pointer p-0" // Reset padding for the Link
                 disabled={reservation.status !== "Pending"}
               >
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Approve
+                <Link
+                  href={`/admin/rooms/reservations/${reservation.id}/confirmation`}
+                  className="flex items-center px-2 py-1.5 text-sm w-full h-full" // Add necessary classes
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Accept
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => console.log("Reject", reservation.id)} // Placeholder

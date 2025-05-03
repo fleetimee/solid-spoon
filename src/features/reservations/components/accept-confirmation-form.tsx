@@ -22,7 +22,7 @@ import { format } from "date-fns";
 
 import {
   acceptReservationAction,
-  // type AcceptReservationFormState, // No longer needed
+  type AcceptReservationFormState, // Import the state type
 } from "../api/acceptReservationAction";
 
 // Define Zod schema for the form
@@ -52,7 +52,11 @@ export function AcceptConfirmationForm({
   reservation,
 }: AcceptConfirmationFormProps) {
   const router = useRouter();
-  // Remove manual submitting state: const [isSubmitting, setIsSubmitting] = React.useState(false);
+  // Define the initial state for the action
+  const initialState: AcceptReservationFormState = {
+    success: false,
+    message: "",
+  };
 
   // Initialize react-hook-form with Zod resolver
   const form = useForm<AcceptFormValues>({
@@ -66,13 +70,23 @@ export function AcceptConfirmationForm({
   async function onSubmit(values: AcceptFormValues) {
     // No need for setIsSubmitting(true); RHF handles this via formState.isSubmitting
     try {
-      // Create a dummy FormData object as the action signature requires it
+      // Create FormData and append the reservationId
       const formData = new FormData();
-      const result = await acceptReservationAction(
-        parseInt(values.reservationId, 10), // Use validated ID from form values, parsed to number
-        { success: false, message: "" }, // prevState (second argument) - Consider if this needs actual state management later
-        formData // formData (third argument)
-      );
+      formData.append("reservationId", values.reservationId); // Append validated ID
+
+      // Call the action with the new signature (prevState, formData)
+      const result = await acceptReservationAction(initialState, formData);
+
+      // Handle potential validation errors from the action
+      if (!result.success && result.errors?.reservationId) {
+        // Set form error if validation failed in the action
+        form.setError("reservationId", {
+          type: "server",
+          message: result.errors.reservationId.join(", "),
+        });
+        toast.error(result.message || "Validation failed.");
+        return; // Stop execution if validation failed
+      }
 
       if (result.success) {
         toast.success(result.message || "Reservation accepted successfully!");
@@ -91,8 +105,8 @@ export function AcceptConfirmationForm({
 
   return (
     <Form {...form}>
-      {/* Add hidden input if needed by server action, but action uses direct param */}
-      {/* <input type="hidden" {...form.register("reservationId")} /> */}
+      {/* Ensure hidden input is registered so RHF includes it in 'values' */}
+      <input type="hidden" {...form.register("reservationId")} />
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <CardHeader>
