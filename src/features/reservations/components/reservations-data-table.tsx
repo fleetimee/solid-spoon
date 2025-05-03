@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { format } from "date-fns"; // For formatting dates
 import {
   ColumnDef,
   flexRender,
@@ -9,7 +11,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"; // Added Button import
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -26,8 +28,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+// Removed Sheet imports
+import { ReservationWithDetails } from "@/features/reservations/api/getAllReservations";
 
-interface ReservationsDataTableProps<TData, TValue> {
+// Removed TableMeta declaration modification
+
+interface ReservationsDataTableProps<
+  TData extends ReservationWithDetails,
+  TValue,
+> {
+  // Ensure TData extends ReservationWithDetails
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number; // Added pageCount prop
@@ -35,7 +45,10 @@ interface ReservationsDataTableProps<TData, TValue> {
   statuses: { id: number; value: string }[];
 }
 
-export function ReservationsDataTable<TData, TValue>({
+export function ReservationsDataTable<
+  TData extends ReservationWithDetails,
+  TValue,
+>({
   columns,
   data,
   pageCount, // Destructure pageCount
@@ -44,6 +57,8 @@ export function ReservationsDataTable<TData, TValue>({
 }: ReservationsDataTableProps<TData, TValue>) {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  // Removed Sheet state and handlers
 
   // Get current page from searchParams, default to 1
   const currentPage = parseInt(searchParams.get("page") ?? "1", 10);
@@ -60,9 +75,9 @@ export function ReservationsDataTable<TData, TValue>({
     pageCount: pageCount, // Set pageCount for manual pagination
     manualPagination: true, // Enable manual pagination
     manualFiltering: true, // Indicate filtering is handled externally
-    manualSorting: true, // Indicate sorting is handled externally
+    manualSorting: true,
     getCoreRowModel: getCoreRowModel(),
-    // No need for client-side pagination, filtering, or sorting models/state
+    // Removed meta property for handleViewSheet
   });
 
   // Effect to update URL when debounced search value changes
@@ -238,6 +253,8 @@ export function ReservationsDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+
+      {/* Removed Reservation Details Sheet */}
     </div>
   );
 }

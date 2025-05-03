@@ -2,12 +2,17 @@ import db from "@/lib/db";
 
 export type ReservationWithDetails = {
   id: string;
+  title: string | null; // Added title
+  description: string | null; // Added description
   userName: string | null;
   roomName: string;
   startTime: Date;
   endTime: Date;
   status: string;
-  createdAt: Date; // Added createdAt field
+  createdAt: Date;
+  approverName: string | null; // Added approverName
+  approvedAt: Date | null; // Added approvedAt
+  rejectionReason: string | null; // Added rejectionReason
 };
 
 // Define a mapping from sortBy keys to database column expressions
@@ -51,6 +56,7 @@ export async function getAllReservations(
     FROM room_reservation rr
     JOIN room r ON rr.room_id = r.id
     LEFT JOIN "user" u ON rr.user_id = u.id
+    LEFT JOIN "user" approver_user ON rr.approver_id = approver_user.id -- Join for approver name
     JOIN lookup l ON rr.status_id = l.id
     WHERE l.category = 'reservation_status'
   `;
@@ -94,12 +100,17 @@ export async function getAllReservations(
   let dataQuery = `
     SELECT
       rr.id,
+      rr.title, -- Select title
+      rr.description, -- Select description
       u.name AS "userName",
       r.name AS "roomName",
       rr.start_time AS "startTime",
       rr.end_time AS "endTime",
       l.value AS status,
-      rr.created_at AS "createdAt"
+      rr.created_at AS "createdAt",
+      approver_user.name AS "approverName", -- Select approver name
+      rr.approved_at AS "approvedAt", -- Select approved_at
+      rr.rejection_reason AS "rejectionReason" -- Select rejection_reason
     ${baseQuery}
     ${filterConditions.replace(/^ AND/, " AND")}
   `;

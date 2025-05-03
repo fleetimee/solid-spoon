@@ -89,7 +89,7 @@ export default async function Layout({
               <BreadcrumbNav />
             </div>
           </header>
-          <main className="flex-1">{children}</main>
+          <main className="flex flex-col flex-1 flex-grow">{children}</main>
         </SidebarInset>
       </BreadcrumbProvider>
     </SidebarProvider>

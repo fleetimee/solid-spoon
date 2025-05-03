@@ -1,6 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import React from "react"; // Remove useState import
+import { ColumnDef, Row, Table } from "@tanstack/react-table"; // Add Row and Table for type safety
 import {
   ArrowUpDown,
   ArrowUp,
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ReservationWithDetails } from "@/features/reservations/api/getAllReservations";
 import { formatDateToJakarta } from "@/lib/utils/formatDate"; // Import the helper
+// Removed Dialog imports
 
 // Helper function to create sortable headers
 const createSortableHeader = (
@@ -163,52 +165,73 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
     id: "actions",
     enableSorting: false,
     enableHiding: false,
-    cell: ({ row }) => {
+    // Add table to cell context for accessing meta
+    cell: ({
+      row,
+      table,
+    }: {
+      row: Row<ReservationWithDetails>;
+      table: Table<ReservationWithDetails>;
+    }) => {
       const reservation = row.original;
+      // Removed local state for dialog and menu
+
+      // Removed handleViewSheet access
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`/admin/reservations/${reservation.id}`}>
-                <Eye className="mr-2 h-4 w-4" />
-                View Details
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => console.log("Approve", reservation.id)} // Placeholder
-              disabled={reservation.status !== "Pending"}
-            >
-              <CheckCircle className="mr-2 h-4 w-4" />
-              Approve
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log("Reject", reservation.id)} // Placeholder
-              disabled={reservation.status !== "Pending"}
-            >
-              <XCircle className="mr-2 h-4 w-4" />
-              Reject
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => console.log("Cancel", reservation.id)} // Placeholder
-              disabled={["Completed", "Cancelled", "Rejected"].includes(
-                reservation.status
-              )}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Cancel
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          {/* Removed Details Dialog */}
+
+          {/* Dropdown Menu */}
+          {/* Removed open and onOpenChange props */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              {/* View Details Item using Next Link */}
+              <DropdownMenuItem asChild className="cursor-pointer p-0">
+                {/* Use asChild on DropdownMenuItem and remove padding */}
+                <Link
+                  href={`/admin/rooms/reservations/${reservation.id}`}
+                  className="flex items-center px-2 py-1.5 text-sm w-full h-full" // Add necessary classes for layout and styling
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  View Details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => console.log("Approve", reservation.id)} // Placeholder
+                disabled={reservation.status !== "Pending"}
+              >
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Approve
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => console.log("Reject", reservation.id)} // Placeholder
+                disabled={reservation.status !== "Pending"}
+              >
+                <XCircle className="mr-2 h-4 w-4" />
+                Reject
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => console.log("Cancel", reservation.id)} // Placeholder
+                disabled={["Completed", "Cancelled", "Rejected"].includes(
+                  reservation.status
+                )}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Cancel
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
     },
   },

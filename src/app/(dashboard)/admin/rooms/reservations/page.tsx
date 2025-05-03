@@ -1,3 +1,4 @@
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter"; // Add this import
 import { Typography } from "@/components/ui/typography";
 import { getReservationStatuses } from "@/features/application/api/getLookupValue"; // Import status fetcher
 import {
@@ -86,6 +87,14 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
 
   return (
     <div className="flex flex-col p-6 md:p-8 gap-8">
+      {/* Add BreadcrumbSetter here */}
+      <BreadcrumbSetter
+        items={[
+          { label: "Home", href: "/admin/dashboard" },
+          { label: "Rooms", href: "/admin/rooms" },
+          { label: "Reservations", href: "/admin/rooms/reservations" },
+        ]}
+      />
       <div className="flex flex-col gap-2">
         <Typography variant="h1">Manage Reservations</Typography>
         <Typography variant="muted">
