@@ -46,13 +46,18 @@ const getStatusVariant = (
   }
 };
 
+// Define the props interface
+interface ReservationDetailsPageProps {
+  params: Promise<{
+    reservationId: string;
+  }>;
+}
+
 export default async function ReservationDetailsPage(
-  props: {
-    params: Promise<{ reservationId: string }>;
-  }
+  props: ReservationDetailsPageProps
 ) {
-  const params = await props.params;
-  const { reservationId } = params;
+  const params = await props.params; // Await the params promise
+  const { reservationId } = params; // Destructure after awaiting
 
   const reservation: DetailedReservation | null =
     await getReservationById(reservationId);
@@ -177,22 +182,22 @@ export default async function ReservationDetailsPage(
 
               {/* Approver */}
               {reservation.approverName && ( // Conditionally render Approver details
-                (<div>
+                <div>
                   <Typography variant="small" className="text-muted-foreground">
                     Approver
                   </Typography>
                   <Typography>{reservation.approverName}</Typography>
-                </div>)
+                </div>
               )}
 
               {/* Approved At */}
               {reservation.approvedAt && ( // Conditionally render Approved At
-                (<div>
+                <div>
                   <Typography variant="small" className="text-muted-foreground">
                     Approved At
                   </Typography>
                   <Typography>{formatDate(reservation.approvedAt)}</Typography>
-                </div>)
+                </div>
               )}
 
               {/* Description */}
