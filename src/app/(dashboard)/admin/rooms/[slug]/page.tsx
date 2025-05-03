@@ -3,6 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"; // Added Dropdown imports
+import {
   getRecentReservations,
   RecentReservation,
 } from "@/features/reservations/api/getRecentReservations";
@@ -31,6 +37,9 @@ import {
   Edit,
   Building,
   Quote, // Added Quote icon
+  ChevronDown, // Added ChevronDown icon
+  DoorOpen, // Added DoorOpen icon
+  List, // Added List icon
 } from "lucide-react";
 import { FacilityBadge } from "@/features/rooms/components/facility-badge";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
@@ -296,9 +305,34 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               <History className="w-5 h-5" />
               Recent Reservations (Last 10)
             </CardTitle>
-            <Button asChild size="sm" variant="outline">
-              <Link href="/reservations">Manage Reservation</Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex items-center"
+                >
+                  Manage Reservations
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="flex items-center" asChild>
+                  <Link
+                    href={`/admin/rooms/reservations?page=1&roomId=${room.id}`}
+                  >
+                    <DoorOpen className="mr-2 h-4 w-4" />
+                    <span>This Room's Reservations</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center" asChild>
+                  <Link href="/admin/rooms/reservations">
+                    <List className="mr-2 h-4 w-4" />
+                    <span>All Reservations</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </CardHeader>
           <CardContent className="pt-6">
             <Table>
