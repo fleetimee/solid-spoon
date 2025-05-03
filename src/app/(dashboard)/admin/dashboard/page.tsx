@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   Card,
   CardContent,
@@ -18,16 +19,17 @@ import { type ChartConfig } from "@/components/ui/chart";
 import { Users, BedDouble, ListChecks, Plus, Users2, Bell } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function formatShortDate(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 export default async function AdminDashboardPage() {
-  const [stats, activityFeedData] = await Promise.all([
-    getAdminDashboardStats(),
-    getRecentActivityFeed(),
-  ]);
+  // Fetch stats first
+  const stats = await getAdminDashboardStats();
+  // Then fetch activity feed data
+  const activityFeedData = await getRecentActivityFeed();
 
   const trendDataMap = new Map<string, number>();
   const today = new Date();
@@ -211,32 +213,73 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest events in the system.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {activityFeedData.length > 0 ? (
-              <table className="w-full">
-                <tbody>
-                  {activityFeedData.map((activity) => (
-                    <tr key={activity.id} className="border-b last:border-b-0">
-                      <td className="text-sm pr-2 py-2">{activity.message}</td>
-                      <td className="text-xs text-muted-foreground text-right py-2 whitespace-nowrap">
-                        {activity.timestamp.toLocaleString()}{" "}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                No recent activity.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <Suspense
+          fallback={
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-6 w-1/2" /> {/* Placeholder for title */}
+                <Skeleton className="h-4 w-3/4" />{" "}
+                {/* Placeholder for description */}
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-3/4" />{" "}
+                  {/* Placeholder for activity text */}
+                  <Skeleton className="h-4 w-1/4" />{" "}
+                  {/* Placeholder for date */}
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+                <div className="flex justify-between">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </div>
+              </CardContent>
+            </Card>
+          }
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Latest events in the system.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {activityFeedData.length > 0 ? (
+                <table className="w-full">
+                  <tbody>
+                    {activityFeedData.map((activity) => (
+                      <tr
+                        key={activity.id}
+                        className="border-b last:border-b-0"
+                      >
+                        <td className="text-sm pr-2 py-2">
+                          {activity.message}
+                        </td>
+                        <td className="text-xs text-muted-foreground text-right py-2 whitespace-nowrap">
+                          {activity.timestamp.toLocaleString()}{" "}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No recent activity.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </Suspense>
 
         <Card>
           <CardHeader>
