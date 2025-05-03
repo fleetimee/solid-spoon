@@ -212,7 +212,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                 disabled={reservation.status !== "Pending"}
               >
                 <Link
-                  href={`/admin/rooms/reservations/${reservation.id}/confirmation`}
+                  href={`/admin/rooms/reservations/${reservation.id}/accept`}
                   className="flex items-center px-2 py-1.5 text-sm w-full h-full" // Add necessary classes
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
