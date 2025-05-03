@@ -154,26 +154,26 @@ alter table room
 
 create table room_reservation
 (
-    id               varchar(50)  not null
+    id               varchar(50)              not null
         primary key,
-    room_id          integer      not null
+    room_id          integer                  not null
         references room
             on delete cascade,
-    user_id          text         not null
+    user_id          text                     not null
         references "user",
-    title            varchar(255) not null,
+    title            varchar(255)             not null,
     description      text,
-    start_time       timestamp    not null,
-    end_time         timestamp    not null,
-    status_id        bigint       not null
+    start_time       timestamp with time zone not null,
+    end_time         timestamp with time zone not null,
+    status_id        bigint                   not null
         references lookup,
     approver_id      text
         references "user",
-    approved_at      timestamp,
+    approved_at      timestamp with time zone,
     rejection_reason text,
-    created_at       timestamp default CURRENT_TIMESTAMP,
-    updated_at       timestamp default CURRENT_TIMESTAMP,
-    is_active        boolean   default true
+    created_at       timestamp with time zone default CURRENT_TIMESTAMP,
+    updated_at       timestamp with time zone default CURRENT_TIMESTAMP,
+    is_active        boolean                  default true
 );
 
 alter table room_reservation
@@ -210,10 +210,10 @@ create table notification
     recipient_id text,
     title        varchar(255) not null,
     message      text         not null,
-    is_read      boolean   default false,
+    is_read      boolean                  default false,
     type         varchar(50),
     link         varchar(1024),
-    created_at   timestamp default CURRENT_TIMESTAMP
+    created_at   timestamp with time zone default CURRENT_TIMESTAMP
 );
 
 alter table notification
@@ -315,5 +315,4 @@ create trigger set_reservation_id
     for each row
     when (new.id IS NULL)
 execute procedure generate_reservation_id();
-
 
