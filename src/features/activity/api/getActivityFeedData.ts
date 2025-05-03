@@ -1,6 +1,7 @@
 import db from "@/lib/db"; // Assuming db utility exists
 
-interface RecentActivity {
+export interface RecentActivity {
+  // Add export
   reservation_id: number;
   room_name: string;
   reservation_title: string;
@@ -40,7 +41,7 @@ async function getRecentActivity(userId: string): Promise<RecentActivity[]> {
       rr.created_at
     FROM room_reservation rr
     JOIN room r ON rr.room_id = r.id
-    JOIN lookup l ON rr.status_id = l.id AND l.category = 'RESERVATION_STATUS'
+    JOIN lookup l ON rr.status_id = l.id AND l.category = 'reservation_status'
     WHERE rr.user_id = $1 -- Using $1 for parameter binding assuming pg or similar
     ORDER BY rr.created_at DESC
     LIMIT 5;
