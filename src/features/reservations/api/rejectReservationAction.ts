@@ -81,7 +81,72 @@ export async function rejectReservationAction(
       // await client.query('INSERT INTO audit_log ...');
     });
 
-    // Revalidate paths after successful update
+    // --- 4. Fetch Details & Send Notification (After successful transaction) ---
+    try {
+      // Fetch details needed for the notification *after* the update is confirmed
+      const detailsResult = await db.query(
+        `SELECT
+           u.email as "userEmail",
+           u.name as "userName",
+           r.name as "roomName"
+         FROM room_reservation rr
+         JOIN "user" u ON rr.user_id = u.id -- Corrected table name to "user"
+         JOIN room r ON rr.room_id = r.id
+         WHERE rr.id = $1`,
+        [reservationId] // Use the validated reservationId
+      );
+
+      // Check if detailsResult and rowCount are valid before proceeding
+      if (
+        detailsResult &&
+        detailsResult.rowCount &&
+        detailsResult.rowCount > 0
+      ) {
+        const reservationDetails = detailsResult.rows[0];
+        try {
+          const notifyUrl = new URL(
+            "/api/reservations/notify",
+            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000" // Fallback needed
+          ).toString();
+
+          await fetch(notifyUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              reservationId: reservationId,
+              userEmail: reservationDetails.userEmail,
+              userName: reservationDetails.userName,
+              roomName: reservationDetails.roomName,
+              status: "rejected", // Explicitly set status
+              reason: rejectionReason, // Include the rejection reason
+            }),
+          });
+          console.log(
+            `Notification attempt for rejected reservation ${reservationId}`
+          );
+        } catch (notifyError) {
+          console.error(
+            `Failed to send notification for rejected reservation ${reservationId}:`,
+            notifyError
+          );
+          // Do not fail the entire action if notification fails
+        }
+      } else {
+        console.warn(
+          `Could not find details for rejected reservation ${reservationId} after update. Notification not sent.`
+        );
+      }
+    } catch (detailError) {
+      // Log error fetching details, but don't fail the primary action
+      console.error(
+        `Error fetching details for notification (reservation ${reservationId}):`,
+        detailError
+      );
+    }
+
+    // --- 5. Revalidate Paths ---
     revalidatePath("/admin/rooms/reservations"); // Admin list
     revalidatePath(`/admin/rooms/reservations/${reservationId}/reject`); // Specific rejection page
     revalidatePath("/me/bookings"); // User's booking list

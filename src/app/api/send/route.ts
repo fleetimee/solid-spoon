@@ -9,7 +9,7 @@ export async function POST() {
       from: "CapstoneD <capstone-kelompok-d@capstone-mail.fleetime.my.id>",
       to: ["zane.227@gmail.com"],
       subject: "Hello world",
-      react: await EmailTemplate({ firstName: "John" }),
+      text: "Hello world",
     });
 
     if (error) {

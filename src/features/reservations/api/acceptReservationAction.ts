@@ -70,18 +70,17 @@ export async function acceptReservationAction(
   const acceptedStatusId = acceptedStatus.id; // Get the ID from the found status object
 
   try {
-    // Use the withTransaction helper
+    // --- 3. Update Reservation Status (Transaction) ---
     await withTransaction(async (client: PoolClient) => {
-      const result = await client.query(
+      const updateResult = await client.query(
         `UPDATE room_reservation
          SET status_id = $1, approver_id = $2, approved_at = NOW()
          WHERE id = $3`,
-        // Use the validated reservationId from formData
-        [acceptedStatusId, adminUserId, parseResult.data.reservationId] // Use the validated string ID
+        [acceptedStatusId, adminUserId, parseResult.data.reservationId]
       );
 
       // Check if any row was updated
-      if (result.rowCount === 0) {
+      if (updateResult.rowCount === 0) {
         // Throw an error to trigger rollback
         throw new Error(
           `Reservation with ID ${parseResult.data.reservationId} not found or could not be updated.`
@@ -89,7 +88,71 @@ export async function acceptReservationAction(
       }
     });
 
-    // Revalidate paths after successful update
+    // --- 4. Fetch Details & Send Notification (After successful transaction) ---
+    try {
+      // Fetch details needed for the notification *after* the update is confirmed
+      const detailsResult = await db.query(
+        `SELECT
+           u.email as "userEmail",
+           u.name as "userName",
+           r.name as "roomName"
+         FROM room_reservation rr
+         JOIN "user" u ON rr.user_id = u.id -- Corrected table name to "user"
+         JOIN room r ON rr.room_id = r.id
+         WHERE rr.id = $1`,
+        [parseResult.data.reservationId]
+      );
+
+      // Check if detailsResult and rowCount are valid before proceeding
+      if (
+        detailsResult &&
+        detailsResult.rowCount &&
+        detailsResult.rowCount > 0
+      ) {
+        const reservationDetails = detailsResult.rows[0];
+        try {
+          const notifyUrl = new URL(
+            "/api/reservations/notify",
+            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000" // Fallback needed
+          ).toString();
+
+          await fetch(notifyUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              reservationId: parseResult.data.reservationId,
+              userEmail: reservationDetails.userEmail,
+              userName: reservationDetails.userName,
+              roomName: reservationDetails.roomName,
+              status: "approved", // Explicitly set status
+            }),
+          });
+          console.log(
+            `Notification attempt for accepted reservation ${parseResult.data.reservationId}`
+          );
+        } catch (notifyError) {
+          console.error(
+            `Failed to send notification for accepted reservation ${parseResult.data.reservationId}:`,
+            notifyError
+          );
+          // Do not fail the entire action if notification fails
+        }
+      } else {
+        console.warn(
+          `Could not find details for accepted reservation ${parseResult.data.reservationId} after update. Notification not sent.`
+        );
+      }
+    } catch (detailError) {
+      // Log error fetching details, but don't fail the primary action
+      console.error(
+        `Error fetching details for notification (reservation ${parseResult.data.reservationId}):`,
+        detailError
+      );
+    }
+
+    // --- 5. Revalidate Paths ---
     revalidatePath("/admin/rooms/reservations"); // Admin list
     revalidatePath(
       `/admin/rooms/reservations/${parseResult.data.reservationId}/confirmation`
