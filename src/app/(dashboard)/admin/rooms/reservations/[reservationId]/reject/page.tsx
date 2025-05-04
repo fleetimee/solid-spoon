@@ -13,9 +13,9 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
 
 interface RejectionPageProps {
-  params: {
+  params: Promise<{
     reservationId: string;
-  };
+  }>;
 }
 
 // Define the expected structure for the form prop (same as accept/reject form)
@@ -85,9 +85,8 @@ async function ReservationRejectionContent({
   );
 }
 
-export default function AdminReservationRejectionPage({
-  params,
-}: RejectionPageProps) {
+export default async function AdminReservationRejectionPage(props: RejectionPageProps) {
+  const params = await props.params;
   const { reservationId } = params;
 
   return (

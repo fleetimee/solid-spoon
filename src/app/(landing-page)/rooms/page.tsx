@@ -241,9 +241,8 @@ export default async function RoomsPage(props: RoomsPageProps) {
                 </div>
               ) : (
                 // Updated text for no rooms available
-                <Typography className="text-muted-foreground max-w-md mx-auto">
-                  No rooms are currently available. Please check back later!
-                </Typography>
+                (<Typography className="text-muted-foreground max-w-md mx-auto">No rooms are currently available. Please check back later!
+                                  </Typography>)
               )}
             </CardContent>
 

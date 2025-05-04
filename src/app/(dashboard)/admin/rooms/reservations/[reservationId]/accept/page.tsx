@@ -13,9 +13,9 @@ import { Typography } from "@/components/ui/typography";
 import { Suspense } from "react";
 
 interface ConfirmationPageProps {
-  params: {
+  params: Promise<{
     reservationId: string;
-  };
+  }>;
 }
 
 // Define the expected structure of the reservation data fetched by getReservationById
@@ -100,9 +100,8 @@ async function ReservationConfirmationContent({
   );
 }
 
-export default function AdminReservationConfirmationPage({
-  params,
-}: ConfirmationPageProps) {
+export default async function AdminReservationConfirmationPage(props: ConfirmationPageProps) {
+  const params = await props.params;
   const { reservationId } = params;
 
   return (
