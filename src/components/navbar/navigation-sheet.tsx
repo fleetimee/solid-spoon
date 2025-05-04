@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,6 +17,7 @@ import {
   LogIn,
   UserPlus,
 } from "lucide-react";
+import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Logo } from "./logo";
 import type { Session, User } from "better-auth"; // Import Session and User types
 import Link from "next/link";
@@ -30,10 +33,14 @@ interface AuthSession {
 }
 
 interface NavigationSheetProps {
-  session: AuthSession | null; // Update prop type to AuthSession
+  session: AuthSession | null;
+  initialUnreadCount?: number;
 }
 
-export const NavigationSheet = ({ session }: NavigationSheetProps) => {
+export const NavigationSheet = ({
+  session,
+  initialUnreadCount = 0,
+}: NavigationSheetProps) => {
   // Destructure session (AuthSession | null)
   return (
     <Sheet>
@@ -54,25 +61,27 @@ export const NavigationSheet = ({ session }: NavigationSheetProps) => {
           {session ? ( // Check if the AuthSession object exists
             // Authenticated User Content
             <div className="flex flex-col space-y-4">
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage
-                    src={session.user.image ?? undefined} // Access user via session.user
-                    alt={session.user.name ?? ""} // Access user via session.user
-                  />
-                  <AvatarFallback>
-                    {session.user.name?.charAt(0).toUpperCase() ?? "?"}{" "}
-                    {/* Access user via session.user */}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {session.user.name} {/* Access user via session.user */}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {session.user.email} {/* Access user via session.user */}
-                  </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src={session.user.image ?? undefined}
+                      alt={session.user.name ?? ""}
+                    />
+                    <AvatarFallback>
+                      {session.user.name?.charAt(0).toUpperCase() ?? "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {session.user.name}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session.user.email}
+                    </p>
+                  </div>
                 </div>
+                <NotificationBell initialCount={initialUnreadCount} />
               </div>
               <Separator />
               <Button variant="ghost" className="w-full justify-start" asChild>

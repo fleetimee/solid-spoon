@@ -136,7 +136,10 @@ export function Navbar({ session, initialNotificationCount }: NavbarProps) {
           {/* Mobile Menu */}
           <div className="md:hidden">
             {/* Note: Mobile menu might need adjustment for auth state too */}
-            <NavigationSheet session={session} />
+            <NavigationSheet
+              session={session}
+              initialUnreadCount={initialNotificationCount}
+            />
           </div>
         </div>
       </div>
