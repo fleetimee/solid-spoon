@@ -1,5 +1,60 @@
+"use server";
+
 import db from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { Notification, NotificationFilter } from "../types/notification";
+
+/**
+ * Fetches the most recent notifications for the currently logged-in user.
+ * Optimized for the notification bell popover display.
+ * @returns Array of up to 10 most recent notifications, or empty array if user is not logged in
+ */
+export async function getRecentNotifications(): Promise<Notification[]> {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    if (!session?.user?.id) {
+      return [];
+    }
+
+    const result = await db.query(
+      `
+      SELECT
+        id,
+        recipient_id,
+        title,
+        message,
+        is_read,
+        type,
+        link,
+        created_at
+      FROM notification
+      WHERE recipient_id = $1
+      ORDER BY created_at DESC
+      LIMIT 10
+      `,
+      [session.user.id]
+    );
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      recipient_id: row.recipient_id,
+      title: row.title,
+      message: row.message,
+      isRead: row.is_read,
+      type: row.type || "system",
+      link: row.link,
+      timestamp: new Date(row.created_at),
+      priority: row.priority || "normal",
+      created_at: new Date(row.created_at),
+    }));
+  } catch (error) {
+    console.error("Error fetching recent notifications:", error);
+    return [];
+  }
+}
 
 export interface NotificationSearchParams {
   filter?: NotificationFilter;
@@ -33,7 +88,7 @@ export async function getNotifications(
   const filter = searchParams?.filter || "all";
 
   // Base condition - filter by recipient_id
-  const params: Array<string | number | null> = ["admin"];
+  const params: Array<string | number | null> = [userId];
 
   console.log("Params:", params);
 
