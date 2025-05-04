@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { NotificationsList } from "./notifications-list";
+import { PopoverNotificationsList } from "./popover-notifications-list";
 import { getNotificationsAction } from "../actions/getNotificationsAction";
 import { Notification } from "../types/notification";
 
@@ -81,13 +81,7 @@ export function NotificationBell({ initialCount }: NotificationBellProps) {
             {error}
           </div>
         ) : (
-          <NotificationsList
-            notifications={notifications}
-            filter="all"
-            totalItems={notifications.length}
-            currentPage={1}
-            pageSize={notifications.length}
-          />
+          <PopoverNotificationsList notifications={notifications} />
         )}
       </PopoverContent>
     </Popover>
