@@ -1,6 +1,5 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
 import ThemeToggle from "../theme-toggle";
@@ -30,7 +29,7 @@ interface NavbarProps {
   session: AuthSession | null; // Update prop type
 }
 
-export function Navbar({ session }: NavbarProps) {
+export async function Navbar({ session }: NavbarProps) {
   // Destructure session (which is AuthSession | null)
   // Removed: client-side session fetching hook
 
@@ -44,6 +43,8 @@ export function Navbar({ session }: NavbarProps) {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
+
+          {session && <NotificationBell />}
 
           {session ? ( // Check if the combined session object exists
             <DropdownMenu>
