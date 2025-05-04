@@ -88,9 +88,10 @@ export async function rejectReservationAction(
         `SELECT
            u.email as "userEmail",
            u.name as "userName",
-           r.name as "roomName"
+           r.name as "roomName",
+           rr.user_id as "userId"
          FROM room_reservation rr
-         JOIN "user" u ON rr.user_id = u.id -- Corrected table name to "user"
+         JOIN "user" u ON rr.user_id = u.id
          JOIN room r ON rr.room_id = r.id
          WHERE rr.id = $1`,
         [reservationId] // Use the validated reservationId
@@ -132,6 +133,30 @@ export async function rejectReservationAction(
             notifyError
           );
           // Do not fail the entire action if notification fails
+        }
+
+        // Insert notification record
+        try {
+          await db.query(
+            `INSERT INTO notification (recipient_id, title, message, type, link)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [
+              reservationDetails.userId,
+              "Reservation Rejected",
+              `Your reservation for room '${reservationDetails.roomName}' has been rejected. Reason: ${rejectionReason}`,
+              "user",
+              "/me/bookings",
+            ]
+          );
+          console.log(
+            `Notification record created for reservation ${reservationId}`
+          );
+        } catch (notificationError) {
+          console.error(
+            `Failed to create notification record for reservation ${reservationId}:`,
+            notificationError
+          );
+          // Don't fail the action if notification insertion fails
         }
       } else {
         console.warn(
