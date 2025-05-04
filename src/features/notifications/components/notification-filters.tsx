@@ -7,6 +7,8 @@ import { useSearchParams } from "next/navigation"; // Added import
 
 interface NotificationFiltersProps {
   currentFilter: NotificationFilter; // This is the server-rendered filter
+  pageSize?: string | undefined;
+  showJson?: string | undefined;
   // pageSize and showJson are implicitly handled by reading from searchParams now
 }
 

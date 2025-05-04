@@ -11,15 +11,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
-  FlatCompat
-    .importEslintrc("./.eslintrc.json")
-    .then((config) => {
-      return compat.config(config);
-    })
-    .catch((error) => {
-      console.error("Error importing ESLint config:", error);
-      return {};
-    }),
+  ...compat.extends("./.eslintrc.json"), // Use the compat instance to extend the config
   {
     files: ["*.ts", "*.tsx"],
     rules: {
