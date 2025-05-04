@@ -1,8 +1,8 @@
 import * as React from "react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   getReservationById,
-  DetailedReservation, // Import the actual return type
+  DetailedReservation,
 } from "@/features/reservations/api/getReservationById";
 import {
   AcceptConfirmationForm,
@@ -18,17 +18,15 @@ interface ConfirmationPageProps {
   }>;
 }
 
-// Define the expected structure of the reservation data fetched by getReservationById
-// Ensure this matches the actual return type, including nested room and user details
 type ReservationWithDetails = {
   id: string;
   title: string;
   description: string | null;
   start_time: Date;
   end_time: Date;
-  room: { id: number; name: string; slug: string }; // Match DetailedReservation types (roomId is number)
-  user: { id: string; name: string | null; email: string | null }; // Match DetailedReservation types
-  status: string; // Add other fields passed to AcceptConfirmationForm if needed
+  room: { id: number; name: string; slug: string };
+  user: { id: string; name: string | null; email: string | null };
+  status: string;
   statusId: number;
   approverName: string | null;
   approvedAt: Date | null;
@@ -41,17 +39,21 @@ async function ReservationConfirmationContent({
 }: {
   reservationId: string;
 }) {
-  // Fetch reservation details using the actual function and type
   const detailedReservation = await getReservationById(reservationId);
 
   if (!detailedReservation) {
-    notFound(); // Trigger 404 if reservation doesn't exist
+    notFound();
   }
 
-  // Map the flat structure from DetailedReservation to the nested ReservationWithDetails
+  console.log("Detailed Reservation:", detailedReservation);
+
+  if (detailedReservation.statusId == 3) {
+    redirect("/admin/rooms/reservations");
+  }
+
   const reservation: ReservationWithDetails = {
     id: detailedReservation.id,
-    title: detailedReservation.title ?? "Untitled Reservation", // Provide default if null
+    title: detailedReservation.title ?? "Untitled Reservation",
     description: detailedReservation.description,
     start_time: detailedReservation.startTime,
     end_time: detailedReservation.endTime,
@@ -61,7 +63,7 @@ async function ReservationConfirmationContent({
       slug: detailedReservation.roomSlug,
     },
     user: {
-      id: detailedReservation.userId ?? "unknown-user", // Provide default if null
+      id: detailedReservation.userId ?? "unknown-user",
       name: detailedReservation.userName,
       email: detailedReservation.userEmail,
     },
@@ -73,7 +75,6 @@ async function ReservationConfirmationContent({
     createdAt: detailedReservation.createdAt,
   };
 
-  // Prepare breadcrumbs using the mapped data
   const breadcrumbs = [
     { label: "Home", href: "/" },
     { label: "Admin", href: "/admin/dashboard" },
@@ -93,14 +94,15 @@ async function ReservationConfirmationContent({
           Review the details below and confirm the acceptance of this
           reservation.
         </Typography>
-        {/* Pass the correctly structured reservation object */}
         <AcceptConfirmationForm reservation={reservation} />
       </div>
     </>
   );
 }
 
-export default async function AdminReservationConfirmationPage(props: ConfirmationPageProps) {
+export default async function AdminReservationConfirmationPage(
+  props: ConfirmationPageProps
+) {
   const params = await props.params;
   const { reservationId } = params;
 
@@ -113,7 +115,6 @@ export default async function AdminReservationConfirmationPage(props: Confirmati
   );
 }
 
-// Skeleton for the entire page while data is loading
 function ConfirmationPageSkeleton() {
   const breadcrumbs = [
     { label: "Home", href: "/" },
