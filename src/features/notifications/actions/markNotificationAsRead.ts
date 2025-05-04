@@ -1,10 +1,12 @@
 "use server";
 
-import db from "../../../lib/db";
+import db from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
+import { auth } from "@/lib/auth";
 
-// Optional: Define a schema for input validation
+// Define schema for input validation
 const MarkAsReadSchema = z.object({
   notificationId: z.number().int().positive(),
 });
@@ -12,6 +14,15 @@ const MarkAsReadSchema = z.object({
 export async function markNotificationAsRead(
   notificationId: number
 ): Promise<{ success: boolean; error?: string }> {
+  // Get current user session
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized. Please sign in." };
+  }
+
   // Validate input
   const validation = MarkAsReadSchema.safeParse({ notificationId });
   if (!validation.success) {
@@ -25,21 +36,23 @@ export async function markNotificationAsRead(
   const validatedId = validation.data.notificationId;
 
   try {
+    // Update notification with security check (recipient_id)
     const result = await db.query(
-      "UPDATE notification SET is_read = true WHERE id = $1",
-      [validatedId]
+      "UPDATE notification SET is_read = true WHERE id = $1 AND recipient_id = $2",
+      [validatedId, session.user.id]
     );
 
     if (result.rowCount === 0) {
-      console.warn(
-        `Notification with ID ${validatedId} not found or already marked as read.`
-      );
-      // Decide if not finding the row is an error or just a no-op
-      // return { success: false, error: "Notification not found." };
+      return {
+        success: false,
+        error:
+          "Notification not found or you don't have permission to modify it.",
+      };
     }
 
-    // Revalidate the notifications page path to refresh the data
+    // Revalidate relevant paths
     revalidatePath("/admin/notifications");
+    revalidatePath("/app/(landing-page)/layout");
 
     return { success: true };
   } catch (error) {

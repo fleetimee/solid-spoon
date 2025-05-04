@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { MailOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Notification } from "../types/notification";
+import { markNotificationAsRead } from "../actions/markNotificationAsRead";
 
 interface PopoverNotificationsListProps {
   notifications: Notification[];
@@ -22,7 +27,7 @@ export function PopoverNotificationsList({
     <div className="space-y-1">
       {notifications.map((notification) => {
         const NotificationContent = (
-          <div className="flex items-start space-x-2 p-2 hover:bg-muted/50 rounded-md transition-colors">
+          <div className="flex items-start gap-2 p-2 hover:bg-muted/50 rounded-md transition-colors">
             {!notification.isRead && (
               <div className="w-2 h-2 mt-2 rounded-full bg-primary flex-shrink-0" />
             )}
@@ -37,6 +42,38 @@ export function PopoverNotificationsList({
                 {new Date(notification.timestamp).toLocaleDateString()}
               </div>
             </div>
+            {!notification.isRead && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0"
+                onClick={async (e) => {
+                  // Prevent navigation if notification is a link
+                  if (notification.link) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+
+                  try {
+                    const result = await markNotificationAsRead(
+                      parseInt(notification.id, 10)
+                    );
+                    if (!result.success) {
+                      throw new Error(result.error);
+                    }
+                    toast.success("Notification marked as read");
+                  } catch (error) {
+                    toast.error(
+                      "Failed to mark notification as read. Please try again."
+                    );
+                    console.error("Error marking notification as read:", error);
+                  }
+                }}
+              >
+                <MailOpen className="h-4 w-4" />
+                <span className="sr-only">Mark as read</span>
+              </Button>
+            )}
           </div>
         );
 
