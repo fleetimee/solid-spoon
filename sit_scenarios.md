@@ -35,3 +35,18 @@
 | SIT-020 | Pengguna | Pemesanan Ruangan  | Mengirim pemesanan dengan field wajib yang kosong               | Sistem menampilkan kesalahan validasi untuk field wajib   | Negatif         |
 | SIT-024 | Pengguna | Lupa Password      | Mengirim permintaan reset password dengan email tidak terdaftar | Sistem menampilkan pesan email tidak ditemukan            | Negatif         |
 | SIT-026 | Pengguna | Reset Password     | Mengatur ulang password dengan token kadaluarsa                 | Sistem menampilkan pesan token tidak valid                | Negatif         |
+
+## Skenario Abnormal
+
+| ID      | Peran    | Fitur               | Deskripsi Kasus Uji                                                       | Hasil yang Diharapkan                                                     | Jenis Pengujian |
+| ------- | -------- | ------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | --------------- |
+| SIT-027 | Pengguna | Autentikasi         | Mengakses API dengan token yang sudah kadaluarsa                          | Sistem mengembalikan kode 401 dan memaksa logout pengguna                 | Abnormal        |
+| SIT-028 | Pengguna | Profil              | Mengunggah foto profil dengan ukuran sangat besar (>50MB)                 | Sistem menolak unggahan dan menampilkan pesan kesalahan ukuran file       | Abnormal        |
+| SIT-029 | Pengguna | Pemesanan Ruangan   | Mengirim form pemesanan dengan nama ruangan berisi 1000+ karakter         | Sistem menolak permintaan dan menampilkan pesan validasi panjang maksimum | Abnormal        |
+| SIT-030 | Admin    | Manajemen Reservasi | Dua admin mencoba menyetujui/menolak reservasi yang sama secara bersamaan | Sistem menangani race condition dan hanya memproses satu perubahan        | Abnormal        |
+| SIT-031 | Pengguna | Pemesanan Ruangan   | Koneksi terputus saat mengirim form pemesanan                             | Sistem menyimpan draft sementara dan memungkinkan pengiriman ulang        | Abnormal        |
+| SIT-032 | Admin    | Manajemen Ruangan   | Mencoba mengakses endpoint admin menggunakan akun pengguna biasa          | Sistem mengembalikan kode 403 dan mencegah akses tidak sah                | Abnormal        |
+| SIT-033 | Pengguna | Pemesanan Ruangan   | Mengirim permintaan pemesanan dengan payload JSON yang tidak valid        | Sistem mengembalikan kode 400 dan pesan kesalahan format                  | Abnormal        |
+| SIT-034 | Admin    | Manajemen Pengguna  | Mencoba membuat 100+ akun pengguna dalam waktu singkat                    | Sistem menerapkan rate limiting dan mencegah pembuatan akun berlebihan    | Abnormal        |
+| SIT-035 | Pengguna | Notifikasi          | Mencoba memuat riwayat notifikasi saat layanan notifikasi tidak tersedia  | Sistem menampilkan pesan kesalahan layanan dan menawarkan refresh         | Abnormal        |
+| SIT-036 | Pengguna | Autentikasi         | Melakukan 10+ percobaan login gagal berturut-turut                        | Sistem mengunci akun sementara dan mengirim email peringatan              | Abnormal        |
