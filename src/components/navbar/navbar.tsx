@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Logo } from "./logo";
@@ -27,12 +29,10 @@ interface AuthSession {
 
 interface NavbarProps {
   session: AuthSession | null; // Update prop type
+  initialNotificationCount: number;
 }
 
-export async function Navbar({ session }: NavbarProps) {
-  // Destructure session (which is AuthSession | null)
-  // Removed: client-side session fetching hook
-
+export function Navbar({ session, initialNotificationCount }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 h-16 bg-background border-b border-accent">
       <div className="h-full flex items-center justify-between max-w-screen-xl mx-auto px-4 sm:px-6">
@@ -44,7 +44,9 @@ export async function Navbar({ session }: NavbarProps) {
         <div className="flex items-center gap-3">
           <ThemeToggle />
 
-          {session && <NotificationBell />}
+          {session && (
+            <NotificationBell initialCount={initialNotificationCount} />
+          )}
 
           {session ? ( // Check if the combined session object exists
             <DropdownMenu>
