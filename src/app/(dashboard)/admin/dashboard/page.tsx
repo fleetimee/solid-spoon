@@ -6,10 +6,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import {
-  getAdminDashboardStats,
-  type AdminDashboardStats,
-} from "@/features/admin/api/getAdminDashboardStats";
+import { getAdminDashboardStats } from "@/features/admin/api/getAdminDashboardStats";
 import { ReservationsTrendChart } from "@/features/admin/components/reservations-trend-chart";
 import { AdminReservationStatusChart } from "@/features/admin/components/admin-reservation-status-chart";
 import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart";
@@ -26,9 +23,7 @@ function formatShortDate(date: Date): string {
 }
 
 export default async function AdminDashboardPage() {
-  // Fetch stats first
   const stats = await getAdminDashboardStats();
-  // Then fetch activity feed data
   const activityFeedData = await getRecentActivityFeed();
 
   const trendDataMap = new Map<string, number>();
@@ -217,16 +212,13 @@ export default async function AdminDashboardPage() {
           fallback={
             <Card>
               <CardHeader>
-                <Skeleton className="h-6 w-1/2" /> {/* Placeholder for title */}
+                <Skeleton className="h-6 w-1/2" />
                 <Skeleton className="h-4 w-3/4" />{" "}
-                {/* Placeholder for description */}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <Skeleton className="h-4 w-3/4" />{" "}
-                  {/* Placeholder for activity text */}
                   <Skeleton className="h-4 w-1/4" />{" "}
-                  {/* Placeholder for date */}
                 </div>
                 <div className="flex justify-between">
                   <Skeleton className="h-4 w-3/4" />
