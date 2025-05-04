@@ -53,7 +53,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
   const showJson = searchParams.showJson === "true";
   const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true";
 
-  const currentLoggedInUser = session?.user.id;
+  const currentLoggedInUser = "admin";
 
   const notificationsData = currentLoggedInUser
     ? await getNotifications(currentLoggedInUser, {

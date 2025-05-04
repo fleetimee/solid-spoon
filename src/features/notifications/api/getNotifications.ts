@@ -88,7 +88,7 @@ export async function getNotifications(
   const filter = searchParams?.filter || "all";
 
   // Base condition - filter by recipient_id
-  const params: Array<string | number | null> = [userId];
+  const params: Array<string | number | null> = ["admin"];
 
   console.log("Params:", params);
 
