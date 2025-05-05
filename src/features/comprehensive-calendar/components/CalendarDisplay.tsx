@@ -4,6 +4,7 @@ import React from "react";
 import { ComprehensiveReservation } from "../api/getComprehensiveReservations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { User, Clock, Building } from "lucide-react";
 
 interface CalendarDisplayProps {
   reservations: ComprehensiveReservation[];
@@ -69,27 +70,39 @@ export function CalendarDisplay({
             {reservations.map((res) => (
               <li
                 key={res.id}
-                className="p-3 border rounded-md flex justify-between items-center bg-muted/50"
+                className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-background hover:bg-muted/50 transition-colors"
               >
-                <div>
-                  <p className="font-semibold">{res.room_name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDisplayDateTime(new Date(res.start_time))} -{" "}
-                    {formatDisplayDateTime(new Date(res.end_time))}
-                  </p>
-                  <p className="text-sm">User: {res.user_name}</p>
+                <div className="flex-1 space-y-1.5">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <Building className="h-4 w-4 text-muted-foreground" />
+                    <span>{res.room_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    <span>
+                      {formatDisplayDateTime(new Date(res.start_time))} -{" "}
+                      {formatDisplayDateTime(new Date(res.end_time))}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span>{res.user_name}</span>
+                  </div>
                   {res.title && (
-                    <p className="text-sm italic">Title: {res.title}</p>
+                    <p className="text-sm italic pl-6">{res.title}</p> // Indent title slightly
                   )}
                 </div>
                 <Badge
                   variant={
                     res.status === "APPROVED"
-                      ? "default"
+                      ? "default" // Reverted 'success' to 'default' as 'success' variant is not available
                       : res.status === "PENDING"
                         ? "secondary"
-                        : "destructive"
+                        : res.status === "REJECTED"
+                          ? "destructive"
+                          : "outline" // Fallback variant
                   }
+                  className="self-start sm:self-center" // Adjust alignment
                 >
                   {res.status}
                 </Badge>
