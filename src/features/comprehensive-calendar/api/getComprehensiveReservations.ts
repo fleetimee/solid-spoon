@@ -69,7 +69,7 @@ export async function getComprehensiveReservations(
   if (params.statuses && params.statuses.length > 0) {
     // Filter by lookup code using the joined table
     // Use IN operator for status filtering with parameterized array
-    sql += ` AND l.code = ANY($${paramIndex}::text[])`; // Use = ANY() for array parameter check
+    sql += ` AND l.id = ANY($${paramIndex}::int[])`; // Filter by lookup ID using integer array
     queryParams.push(params.statuses);
     paramIndex++;
   }
