@@ -20,6 +20,7 @@ import {
 import { LogOut, Terminal, User as UserIcon } from "lucide-react"; // Rename User icon import, add Terminal
 import type { Session, User } from "better-auth"; // Import Session and User types
 import { LogoutConfirmation } from "@/components/auth/logout-confirmation"; // Import LogoutConfirmation
+import ThemeToggleButton from "../ui/theme-toggle-button";
 
 // Define the combined type returned by getSession
 interface AuthSession {
@@ -42,7 +43,7 @@ export function Navbar({ session, initialNotificationCount }: NavbarProps) {
         <NavMenu className="hidden md:block" />
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          <ThemeToggleButton />
 
           {session && (
             <NotificationBell initialCount={initialNotificationCount} />
