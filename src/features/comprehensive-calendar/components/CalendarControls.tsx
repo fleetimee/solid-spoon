@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"; // Assuming Select exists
 // import { DatePicker } from '@/components/ui/date-picker'; // Assuming DatePicker exists
-// import { MultiSelect } from '@/components/ui/multi-select'; // Assuming MultiSelect exists
+import { MultiSelect } from "@/components/ui/multi-select"; // Assuming MultiSelect exists
 import { Skeleton } from "@/components/ui/skeleton"; // For placeholders
 
 // TODO: Define or import ReservationStatus type correctly
@@ -111,8 +111,10 @@ export function CalendarControls({
   };
 
   // TODO: Implement actual MultiSelect integration for statuses
-  const handleStatusSelect = (values: ReservationStatus[]) => {
-    onStatusFilterChange(values);
+  // Ensure the type matches what MultiSelect returns (likely string[])
+  const handleStatusSelect = (values: string[]) => {
+    // Convert back to ReservationStatus[] if necessary, or adjust parent component
+    onStatusFilterChange(values as ReservationStatus[]); // Cast for now, might need refinement
   };
 
   return (
@@ -133,44 +135,36 @@ export function CalendarControls({
         </Button>
       </div>
 
-      {/* Date Picker Placeholder */}
-      <div className="flex items-center gap-2">
-        <Label htmlFor="date-picker">Select Month:</Label>
-        {/* Replace with actual DatePicker */}
-        <Skeleton className="h-9 w-[200px]" />
-        {/* <DatePicker
-          id="date-picker"
-          value={startDate} // Or manage internal state if needed
-          onChange={handleSpecificDateSelect}
-        /> */}
-      </div>
-
-      {/* Room Filter Placeholder */}
+      {/* Room Filter */}
       <div className="flex items-center gap-2">
         <Label htmlFor="room-filter">Filter Rooms:</Label>
-        {/* Replace with actual MultiSelect */}
-        <Skeleton className="h-9 w-[200px]" />
-        {/* <MultiSelect
+        <MultiSelect
           id="room-filter"
-          options={availableRooms.map(room => ({ value: room.id, label: room.name }))}
-          selectedValues={selectedRoomIds}
-          onChange={handleRoomSelect}
+          options={availableRooms.map((room) => ({
+            value: room.id,
+            label: room.name,
+          }))}
+          value={selectedRoomIds}
+          onValueChange={handleRoomSelect}
           placeholder="Select rooms..."
-        /> */}
+          className="w-[200px]"
+        />
       </div>
 
-      {/* Status Filter Placeholder */}
+      {/* Status Filter */}
       <div className="flex items-center gap-2">
         <Label htmlFor="status-filter">Filter Status:</Label>
-        {/* Replace with actual MultiSelect */}
-        <Skeleton className="h-9 w-[200px]" />
-        {/* <MultiSelect
+        <MultiSelect
           id="status-filter"
-          options={availableStatuses.map(status => ({ value: status, label: status }))}
-          selectedValues={selectedStatuses}
-          onChange={handleStatusSelect}
+          options={availableStatuses.map((status) => ({
+            value: status,
+            label: status,
+          }))}
+          value={selectedStatuses}
+          onValueChange={handleStatusSelect}
           placeholder="Select statuses..."
-        /> */}
+          className="w-[200px]"
+        />
       </div>
     </div>
   );
