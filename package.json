@@ -55,6 +55,7 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
+    "react-hotkeys-hook": "^5.0.1",
     "recharts": "^2.15.3",
     "resend": "^4.5.0",
     "sharp": "^0.34.1",

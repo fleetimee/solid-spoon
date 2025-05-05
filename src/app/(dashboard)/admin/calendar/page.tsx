@@ -81,7 +81,7 @@ export default async function ComprehensiveCalendarPage({
   const availableRooms = await getActiveRoomsList();
 
   return (
-    <div className="container mx-auto py-4">
+    <div className="flex flex-col gap-6 p-4 md:p-6">
       {/* TODO: Add Breadcrumb or Page Title */}
       <h1 className="text-2xl font-bold mb-4">Comprehensive Room Calendar</h1>
 
