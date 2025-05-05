@@ -53,12 +53,12 @@ export function NotificationBell({ initialCount }: NotificationBellProps) {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="relative"
+          className="relative w-9 h-9 p-0"
           aria-label={`Notifications ${initialCount > 0 ? `(${initialCount} unread)` : ""}`}
         >
-          <Bell className="h-5 w-5" />
+          <Bell className="size-[1.2rem]" />
           {initialCount > 0 && (
             <Badge
               variant="destructive"
