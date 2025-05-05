@@ -5,6 +5,7 @@ import { Testimonial } from "@/features/frontpage/components/testimonial-section
 import { AvailableRoomsSection } from "@/features/frontpage/components/available-rooms-section"; // Import the new section
 import { getRooms } from "@/features/rooms/api/getRooms"; // Import getRooms
 import { getLookupValue } from "@/features/application/api/getLookupValue";
+import { ScrollHandler } from "./components/scroll-handler"; // Import the new component
 
 export default async function LandingPage() {
   // Make the component async
@@ -15,6 +16,7 @@ export default async function LandingPage() {
 
   return (
     <>
+      <ScrollHandler /> {/* Render the scroll handler component */}
       <Hero heroYoutubeLink={heroYoutubeLink} />
       <Features />
       {/* Pass fetched rooms data as a prop */}
