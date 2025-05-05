@@ -24,11 +24,12 @@ function CalendarLoadingSkeleton() {
   );
 }
 
-export default async function ComprehensiveCalendarPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+export default async function ComprehensiveCalendarPage(
+  props: {
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   // 1. Authorization Check using headers()
   // Construct a new Headers object from awaited next/headers
   const requestHeaders = new Headers(await headers());
