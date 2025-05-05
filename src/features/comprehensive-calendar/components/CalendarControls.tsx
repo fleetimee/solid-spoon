@@ -30,10 +30,10 @@ interface CalendarControlsProps {
   startDate: Date;
   endDate: Date;
   selectedRoomIds: string[];
-  selectedStatuses: ReservationStatus[];
+  selectedStatuses: string[]; // Expect status codes (strings)
   onDateChange: (newStartDate: Date, newEndDate: Date) => void; // Simplified for now
   onRoomFilterChange: (newRoomIds: string[]) => void;
-  onStatusFilterChange: (newStatuses: ReservationStatus[]) => void; // Or string[] if parent expects codes directly
+  onStatusFilterChange: (newStatuses: string[]) => void; // Parent expects status codes (strings)
   availableRooms: { id: number; name: string }[]; // Add available rooms prop
   statusOptions: LookupOption[]; // Add status options prop
 }
@@ -117,8 +117,8 @@ export function CalendarControls({
   // TODO: Implement actual MultiSelect integration for statuses
   // Ensure the type matches what MultiSelect returns (likely string[])
   const handleStatusSelect = (values: string[]) => {
-    // Convert back to ReservationStatus[] if necessary, or adjust parent component
-    onStatusFilterChange(values as ReservationStatus[]); // Cast for now, might need refinement
+    // Pass the selected codes (string[]) directly to the parent
+    onStatusFilterChange(values);
   };
 
   return (

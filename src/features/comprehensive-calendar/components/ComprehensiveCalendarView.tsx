@@ -24,7 +24,7 @@ interface ComprehensiveCalendarViewProps {
   initialStartDate: string; // ISO string
   initialEndDate: string; // ISO string
   initialRoomIds?: string[];
-  initialStatuses?: ReservationStatus[];
+  initialStatuses?: string[]; // Expect status codes (strings)
   // availableRooms: { id: number; name: string }[]; // Renamed
   initialRooms: { id: number; name: string }[]; // Renamed for consistency
   statusOptions: LookupOption[]; // Added status options prop
@@ -64,7 +64,7 @@ export function ComprehensiveCalendarView({
   const [selectedRoomIds, setSelectedRoomIds] =
     useState<string[]>(initialRoomIds);
   const [selectedStatuses, setSelectedStatuses] =
-    useState<ReservationStatus[]>(initialStatuses);
+    useState<string[]>(initialStatuses); // State holds status codes (strings)
 
   // State for the selected reservation
   const [selectedReservation, setSelectedReservation] =
@@ -103,7 +103,8 @@ export function ComprehensiveCalendarView({
     setSelectedRoomIds(newRoomIds);
   };
 
-  const handleStatusFilterChange = (newStatuses: ReservationStatus[]) => {
+  const handleStatusFilterChange = (newStatuses: string[]) => {
+    // Handler receives status codes (strings)
     setSelectedStatuses(newStatuses);
   };
 

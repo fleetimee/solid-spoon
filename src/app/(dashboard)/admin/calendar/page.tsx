@@ -64,7 +64,8 @@ export default async function ComprehensiveCalendarPage({
   const endDate = parseDateParam(searchParams?.endDate, endOfMonth);
   const roomIds = parseArrayParam(searchParams?.roomIds);
   // Assuming parseStatusArrayParam handles converting strings to the ReservationStatus type
-  const statuses = parseStatusArrayParam(searchParams?.statuses);
+  const statusesParam = searchParams?.statuses as string | string[] | undefined; // Explicitly get the param
+  const statuses = parseStatusArrayParam(statusesParam);
 
   // 3. Fetch Data (This part will be suspended)
   // Convert roomIds from string[] to number[]

@@ -1,7 +1,6 @@
-import db from "@/lib/db"; // Use default export
-import { auth } from "@/lib/auth"; // Assuming auth setup for session/user info
-
-// Removed unused ReservationStatus type definition
+import db from "@/lib/db"; // Use default export (pg Pool)
+// Assuming auth setup for session/user info is handled elsewhere
+// import { auth } from "@/lib/auth";
 
 interface GetComprehensiveReservationsParams {
   startDate: Date;
@@ -28,8 +27,7 @@ export async function getComprehensiveReservations(
   params: GetComprehensiveReservationsParams
 ): Promise<ComprehensiveReservation[]> {
   // NOTE: Authorization should be checked *before* calling this function,
-  // typically in the Server Component (page.tsx) that invokes it,
-  // using request context (e.g., cookies from next/headers) and auth helpers.
+  // typically in the Server Component (page.tsx) or middleware.
 
   const queryParams: any[] = [params.startDate, params.endDate];
   let sql = `
@@ -54,6 +52,8 @@ export async function getComprehensiveReservations(
     WHERE
       -- Check for reservations overlapping the date range
       r.start_time < $2 AND r.end_time > $1
+      -- Ensure we only join/filter lookups with the correct category
+      AND l.category = 'reservation_status'
   `;
 
   let paramIndex = 3; // Start parameter index after startDate and endDate
@@ -66,7 +66,9 @@ export async function getComprehensiveReservations(
   }
 
   if (params.statuses && params.statuses.length > 0) {
-    sql += ` AND l.code = ANY($${paramIndex}::text[])`; // Filter by lookup code
+    // Filter by lookup code using the joined table
+    // Use IN operator for status filtering with parameterized array
+    sql += ` AND l.code IN (SELECT unnest($${paramIndex}::text[]))`;
     queryParams.push(params.statuses);
     paramIndex++;
   }
@@ -76,9 +78,9 @@ export async function getComprehensiveReservations(
   sql += ` ORDER BY r.start_time ASC;`;
 
   try {
-    // Use parameterized queries to prevent SQL injection
+    // Use parameterized queries via the pg Pool
     const result = await db.query<ComprehensiveReservation>(sql, queryParams);
-    // TODO: Potentially map snake_case results to camelCase if frontend prefers it
+    // pg returns results in result.rows
     return result.rows;
   } catch (error) {
     console.error("Error fetching comprehensive reservations:", error);
