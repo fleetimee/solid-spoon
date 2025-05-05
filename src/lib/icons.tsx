@@ -18,6 +18,7 @@ import {
   type LucideIcon,
   Users2,
   Bell,
+  ArrowBigLeftDash,
 } from "lucide-react";
 
 export const iconMap: Record<string, LucideIcon> = {
@@ -38,6 +39,7 @@ export const iconMap: Record<string, LucideIcon> = {
   LayoutDashboard,
   Users2,
   Bell,
+  ArrowBigLeftDash,
 };
 
 export function getIconByName(name: string): LucideIcon {

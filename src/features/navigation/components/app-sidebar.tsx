@@ -9,7 +9,7 @@ import { NavMain } from "@/features/navigation/components/nav-main";
 import { NavSecondary } from "@/features/navigation/components/nav-secondary";
 import { NavUser } from "@/features/navigation/components/nav-user";
 import { NavigationMain } from "@/features/navigation/types/navigation";
-import { getIconByName } from "@/lib/icons";
+import { getIconByName, iconMap } from "@/lib/icons";
 import {
   Sidebar,
   SidebarContent,
@@ -21,18 +21,13 @@ import {
 } from "@/components/ui/sidebar";
 
 const staticData = {
-  //   navSecondary: [
-  //     {
-  //       title: "Support",
-  //       url: "#",
-  //       icon: iconMap.LifeBuoy,
-  //     },
-  //     {
-  //       title: "Feedback",
-  //       url: "#",
-  //       icon: iconMap.Send,
-  //     },
-  //   ],
+  navSecondary: [
+    {
+      title: "Back To Landing Page",
+      url: "/",
+      icon: iconMap.ArrowBigLeftDash,
+    },
+  ],
 
   //   projects: [
   //     {
@@ -51,7 +46,6 @@ const staticData = {
   //       icon: iconMap.Map,
   //     },
   //   ],
-  navSecondary: [],
   projects: [],
   defaultUser: {
     name: "Guest User",
@@ -101,7 +95,7 @@ export function AppSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
+              <Link href="/admin/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Command className="size-4" />
                 </div>
@@ -120,9 +114,10 @@ export function AppSidebar({
           unreadNotificationsCount={unreadNotificationsCount}
         />
         {/* <NavProjects projects={staticData.projects} /> */}
-        <NavSecondary items={staticData.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
+        <NavSecondary items={staticData.navSecondary} className="mt-auto" />
+
         <NavUser
           user={userForNav}
           unreadNotificationsCount={unreadNotificationsCount}
