@@ -10,6 +10,7 @@ interface CalendarDisplayProps {
   reservations: ComprehensiveReservation[];
   startDate: Date; // Keep for potential future use or context
   endDate: Date; // Keep for potential future use or context
+  onReservationClick?: (reservation: ComprehensiveReservation) => void; // Add click handler prop
 }
 
 // Helper function to format date/time for display
@@ -31,6 +32,7 @@ export function CalendarDisplay({
   reservations,
   startDate, // Not directly used in list view, but kept for prop consistency
   endDate, // Not directly used in list view, but kept for prop consistency
+  onReservationClick, // Receive the click handler
 }: CalendarDisplayProps) {
   // Handle potential non-array input (good practice)
   if (!Array.isArray(reservations)) {
@@ -70,7 +72,8 @@ export function CalendarDisplay({
             {reservations.map((res) => (
               <li
                 key={res.id}
-                className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-background hover:bg-muted/50 transition-colors"
+                className="p-4 border rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-3 bg-background hover:bg-muted/50 transition-colors cursor-pointer" // Add cursor-pointer
+                onClick={() => onReservationClick?.(res)} // Add onClick handler
               >
                 <div className="flex-1 space-y-1.5">
                   <div className="flex items-center gap-2 font-semibold">

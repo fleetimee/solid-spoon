@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use } from "react"; // useState is already imported
 import { useRouter, useSearchParams } from "next/navigation";
 import { ComprehensiveReservation } from "../api/getComprehensiveReservations";
 // Import the actual components
 import { CalendarControls } from "./CalendarControls";
 import { CalendarDisplay } from "./CalendarDisplay";
+import { ReservationDetailsDialog } from "./ReservationDetailsDialog"; // Import the dialog
 // import { Skeleton } from "@/components/ui/skeleton'; // No longer needed for main placeholders
 
 // TODO: Define or import ReservationStatus type correctly if needed client-side
@@ -54,6 +55,10 @@ export function ComprehensiveCalendarView({
   const [selectedStatuses, setSelectedStatuses] =
     useState<ReservationStatus[]>(initialStatuses);
 
+  // State for the selected reservation
+  const [selectedReservation, setSelectedReservation] =
+    useState<ComprehensiveReservation | null>(null);
+
   // Effect to update URL when client-side state changes
   useEffect(() => {
     const params = new URLSearchParams();
@@ -91,6 +96,13 @@ export function ComprehensiveCalendarView({
     setSelectedStatuses(newStatuses);
   };
 
+  // Handler for clicking a reservation
+  const handleReservationClick = (reservation: ComprehensiveReservation) => {
+    setSelectedReservation(reservation);
+    console.log("Selected Reservation:", reservation);
+    // TODO: Implement opening a dialog/modal here
+  };
+
   // --- Render ---
   return (
     <div className="space-y-4">
@@ -111,7 +123,18 @@ export function ComprehensiveCalendarView({
         reservations={reservations}
         startDate={currentStartDate}
         endDate={currentEndDate}
-        // TODO: Add handlers for clicking/hovering events if needed
+        onReservationClick={handleReservationClick} // Pass the handler
+      />
+
+      {/* Render the Reservation Details Dialog */}
+      <ReservationDetailsDialog
+        reservation={selectedReservation}
+        open={!!selectedReservation} // Dialog is open if a reservation is selected
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedReservation(null); // Clear selection when dialog closes
+          }
+        }}
       />
     </div>
   );
