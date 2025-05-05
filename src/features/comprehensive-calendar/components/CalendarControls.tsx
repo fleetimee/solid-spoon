@@ -143,7 +143,7 @@ export function CalendarControls({
           value={selectedRoomIds}
           onValueChange={handleRoomSelect}
           placeholder="Select rooms..."
-          className="w-[200px]"
+          className="w-96" // Increase width further
         />
       </div>
 
