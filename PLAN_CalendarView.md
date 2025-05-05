@@ -1,57 +1,181 @@
-# Plan: Calendar View for Room Availability
+# Implementation Plan: Comprehensive Calendar View
 
-**Priority:** High (as decided)
+This plan outlines the steps and considerations for implementing the Comprehensive Calendar View feature in the 'capstone-room-reservation' project.
 
-**Goal:** Display a visual calendar on the room detail page indicating when the room is already booked with _approved_ reservations.
+## 1. Key Components
 
-## Implementation Steps:
+- **`ComprehensiveCalendarView` (Client Component):**
+  - Location: `src/features/comprehensive-calendar/components/ComprehensiveCalendarView.tsx`
+  - Responsibilities:
+    - Receives initial data (`initialReservations`, `initialStartDate`, etc.) as props from the parent Server Component (`page.tsx`).
+    - Manages client-side state for selected date range and filters.
+    - Uses `useRouter` from `next/navigation` to update URL search parameters when dates/filters change, triggering server-side data refetching.
+    - Renders `CalendarControls` and the main `CalendarDisplay`.
+- **`CalendarControls` (Client Component):**
+  - Location: `src/features/comprehensive-calendar/components/CalendarControls.tsx`
+  - Responsibilities:
+    - Provides UI elements for date range selection (e.g., month/week navigation, date picker).
+    - Includes filtering options (e.g., dropdowns or multi-selects for rooms, reservation status).
+    - Communicates filter changes back to `ComprehensiveCalendarView` to update state and trigger URL updates.
+- **`CalendarDisplay` (Client Component):**
+  - Location: `src/features/comprehensive-calendar/components/CalendarDisplay.tsx`
+  - Responsibilities:
+    - Receives reservation data as props.
+    - Renders the actual calendar grid (potentially using or adapting `src/components/ui/calendar.tsx` or a library like `react-big-calendar`).
+    - Displays fetched reservations as events on the calendar.
+    - Handles event rendering logic (e.g., styling based on status, showing basic info).
+- **`ReservationPopover` / `ReservationDetailsModal` (Client Component):**
+  - Location: `src/features/comprehensive-calendar/components/ReservationPopover.tsx` (or Modal)
+  - Responsibilities:
+    - Displays detailed information about a reservation when a user hovers over or clicks an event on the `CalendarDisplay`.
+    - Uses data passed down through props.
 
-1.  **Backend (API/Server Action):**
+## 2. Data Requirements
 
-    - **Goal:** Create a way to fetch _approved_ reservations for a specific room.
-    - **Action:** Define a new server action, potentially named `getApprovedRoomReservations(roomId: number)`, which queries the database for reservations associated with the `roomId` that have an 'approved' status. It should return an array of objects containing at least the `start_time` and `end_time` for each approved reservation.
-    - **File:** Likely within `src/features/reservations/api/` or a similar location.
+- **Primary Data:** A collection of reservation objects fetched on the server.
+- **Required Fields per Reservation (from Server Function):**
+  - `id`
+  - `room_id`
+  - `room_name` (joined data)
+  - `user_id`
+  - `user_name` (joined data)
+  - `start_time`
+  - `end_time`
+  - `status` (e.g., 'PENDING', 'APPROVED', 'REJECTED')
+  - `purpose` (optional, for display)
+- **Filtering Parameters (used by Server Function via URL Search Params):**
+  - `startDate`: The start of the visible date range.
+  - `endDate`: The end of the visible date range.
+  - `roomIds` (optional): Array of room IDs to filter by.
+  - `statuses` (optional): Array of reservation statuses to filter by.
 
-2.  **Room Detail Page (`src/app/(landing-page)/v/[roomSlug]/page.tsx`):**
+## 3. Data Fetching (RSC Approach with Raw SQL)
 
-    - **Goal:** Fetch the reservation data alongside the room details.
-    - **Action:**
-      - Keep the existing logic to fetch `room` data using `getRoomBySlug`.
-      - After getting the `room.id`, call the new `getApprovedRoomReservations(room.id)` server action to get the list of approved bookings.
-      - Pass this list of reservations as a prop (`approvedReservations`) to a new client component responsible for rendering the calendar.
+- **Server-Side Data Fetching Function:** Create a dedicated server-side function using raw SQL.
 
-3.  **New Client Component (`src/features/rooms/components/room-availability-calendar.tsx`):**
+  - Location: `src/features/comprehensive-calendar/api/getComprehensiveReservations.ts`
+  - Function Logic (Example using `pg`):
 
-    - **Goal:** Display a calendar highlighting booked dates.
-    - **Action:**
-      - Create this new component that accepts the `approvedReservations` array prop.
-      - Use the existing Shadcn UI `<Calendar>` component (`react-day-picker`).
-      - Process the `approvedReservations` prop to create a `bookedDays` modifier. This modifier should include all dates that fall between the `start_time` and `end_time` of any approved reservation. Consider handling multi-day reservations correctly.
-      - Render the `<Calendar>` component, passing the `bookedDays` modifier to visually distinguish booked dates (e.g., using `styles` or `classNames` props of `react-day-picker`).
-      - This calendar will initially be read-only.
+    ```typescript
+    // src/features/comprehensive-calendar/api/getComprehensiveReservations.ts
+    import { pool } from "@/lib/db"; // Assuming db.ts exports a pg Pool named 'pool'
+    import { ReservationStatus } from "@/types"; // Adjust path/type as needed
 
-4.  **Integration:**
-    - **Goal:** Place the new calendar component on the room detail page.
-    - **Action:** Import and render the `<RoomAvailabilityCalendar approvedReservations={approvedReservations} />` component within the main return statement of the room detail page (`.../[roomSlug]/page.tsx`), placing it logically (e.g., near the room description or booking section).
+    interface GetComprehensiveReservationsParams {
+      startDate: Date;
+      endDate: Date;
+      roomIds?: string[];
+      statuses?: ReservationStatus[];
+    }
 
-## Conceptual Flow:
+    // Define a suitable return type matching query columns
+    type ComprehensiveReservation = {
+      id: string;
+      start_time: Date;
+      end_time: Date;
+      status: ReservationStatus;
+      purpose: string | null;
+      room_id: string;
+      room_name: string;
+      user_id: string;
+      user_name: string;
+    };
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant RoomDetailPage as Room Detail Page (Server)
-    participant RoomAvailabilityCalendar as Calendar Component (Client)
-    participant ServerAction as getApprovedRoomReservations
-    participant Database
+    export async function getComprehensiveReservations(
+      params: GetComprehensiveReservationsParams
+    ): Promise<ComprehensiveReservation[]> {
+      // 1. Add authorization checks here (e.g., check user role via session)
 
-    User->>RoomDetailPage: Navigates to /v/[roomSlug]
-    RoomDetailPage->>Database: Fetch room details (getRoomBySlug)
-    Database-->>RoomDetailPage: Return room details
-    RoomDetailPage->>ServerAction: getApprovedRoomReservations(roomId)
-    ServerAction->>Database: Query approved reservations for roomId
-    Database-->>ServerAction: Return approved reservations (start/end times)
-    ServerAction-->>RoomDetailPage: Return reservations data
-    RoomDetailPage->>RoomAvailabilityCalendar: Render Calendar (pass reservations)
-    RoomAvailabilityCalendar->>RoomAvailabilityCalendar: Calculate 'bookedDays' modifier
-    RoomAvailabilityCalendar->>User: Display Calendar with booked days highlighted
-```
+      const queryParams: any[] = [params.startDate, params.endDate];
+      let sql = `
+        SELECT
+          r.id,
+          r.start_time,
+          r.end_time,
+          r.status,
+          r.purpose,
+          r.room_id,
+          rm.name AS room_name,
+          r.user_id,
+          u.name AS user_name -- Adjust user table/column names if needed
+        FROM
+          reservations r -- Adjust table name if needed
+        JOIN
+          rooms rm ON r.room_id = rm.id -- Adjust table/column names
+        JOIN
+          users u ON r.user_id = u.id -- Adjust table/column names
+        WHERE
+          r.start_time < $2 AND r.end_time > $1 -- Overlap condition
+      `;
+
+      let paramIndex = 3;
+
+      if (params.roomIds && params.roomIds.length > 0) {
+        sql += ` AND r.room_id = ANY($${paramIndex}::uuid[])`; // Assuming room_id is UUID
+        queryParams.push(params.roomIds);
+        paramIndex++;
+      }
+
+      if (params.statuses && params.statuses.length > 0) {
+        sql += ` AND r.status = ANY($${paramIndex}::text[])`; // Assuming status is text
+        queryParams.push(params.statuses);
+        paramIndex++;
+      }
+
+      sql += ` ORDER BY r.start_time ASC;`;
+
+      try {
+        const result = await pool.query<ComprehensiveReservation>(
+          sql,
+          queryParams
+        );
+        // Optional: Map snake_case columns to camelCase if needed by frontend
+        return result.rows;
+      } catch (error) {
+        console.error("Error fetching comprehensive reservations:", error);
+        throw new Error("Failed to fetch reservations.");
+      }
+    }
+    ```
+
+- **Page Component (Server Component):**
+  - Location: e.g., `src/app/(dashboard)/admin/calendar/page.tsx`
+  - Responsibilities:
+    - Acts as a Server Component.
+    - Reads `searchParams` (startDate, endDate, filters).
+    - Parses parameters using utility functions (e.g., in `src/lib/utils.ts`).
+    - Calls `await getComprehensiveReservations()` with parsed parameters.
+    - Passes the fetched `reservations` and initial parameters as props to the client component `<ComprehensiveCalendarView />`.
+- **Client Component Interaction:**
+  - `ComprehensiveCalendarView` and children are Client Components (`"use client";`).
+  - User interactions (changing dates, applying filters) update client-side state.
+  - State changes trigger `router.push()` or `router.replace()` with updated URL search parameters.
+  - Next.js navigation re-renders the `page.tsx` Server Component, which re-runs `getComprehensiveReservations` with the new parameters from the URL.
+
+## 4. UI/UX Considerations
+
+- **Navigation:** Allow easy navigation between months/weeks/days via `CalendarControls`.
+- **Event Display:** Clearly display reservations on `CalendarDisplay`. Use color-coding/icons for status. Handle overlaps.
+- **Details on Demand:** Use `ReservationPopover` (hover) and/or `ReservationDetailsModal` (click) leveraging UI components (`Tooltip`, `Dialog`).
+- **Filtering:** Filters in `CalendarControls` should update dynamically via URL changes. Include a "clear filters" option.
+- **Responsiveness:** Ensure the calendar adapts to different screen sizes.
+- **Loading/Empty States:** Provide visual feedback (e.g., `Skeleton` components) during navigation/refetching and when no reservations match criteria.
+
+## 5. File Structure Suggestions
+
+- **New Feature Directory:**
+  - `src/features/comprehensive-calendar/`
+    - `api/`
+      - `getComprehensiveReservations.ts`
+    - `components/`
+      - `ComprehensiveCalendarView.tsx` (Client)
+      - `CalendarControls.tsx` (Client)
+      - `CalendarDisplay.tsx` (Client)
+      - `ReservationPopover.tsx` (Client)
+      - _(Other supporting components)_
+    - `hooks/` (Optional)
+    - `types/` (Optional)
+- **New Page (Server Component):**
+  - `src/app/(dashboard)/admin/calendar/page.tsx` (or other appropriate route)
+- **Utilities:**
+  - Add necessary parameter parsing functions to `src/lib/utils.ts`.
