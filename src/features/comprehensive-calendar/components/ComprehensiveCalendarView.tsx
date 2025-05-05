@@ -17,6 +17,7 @@ interface ComprehensiveCalendarViewProps {
   initialEndDate: string; // ISO string
   initialRoomIds?: string[];
   initialStatuses?: ReservationStatus[];
+  availableRooms: { id: number; name: string }[]; // Add available rooms prop
 }
 
 // Helper to format date for URL (YYYY-MM-DD)
@@ -30,6 +31,7 @@ export function ComprehensiveCalendarView({
   initialEndDate,
   initialRoomIds = [],
   initialStatuses = [],
+  availableRooms, // Receive the prop
 }: ComprehensiveCalendarViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams(); // To read current URL state if needed, though props are primary source
@@ -101,7 +103,7 @@ export function ComprehensiveCalendarView({
         onDateChange={handleDateChange}
         onRoomFilterChange={handleRoomFilterChange}
         onStatusFilterChange={handleStatusFilterChange}
-        // TODO: Pass available rooms/statuses if needed for dropdowns
+        availableRooms={availableRooms} // Pass down available rooms
       />
 
       {/* Render CalendarDisplay */}

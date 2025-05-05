@@ -17,12 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton"; // For placeholders
 // TODO: Define or import ReservationStatus type correctly
 type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
-// TODO: Fetch or pass down actual room data for filtering
-const availableRooms = [
-  { id: "room1", name: "Room Alpha" },
-  { id: "room2", name: "Room Beta" },
-  { id: "room3", name: "Room Gamma" },
-];
+// Hardcoded rooms removed, will use props instead.
 
 const availableStatuses: ReservationStatus[] = [
   "PENDING",
@@ -39,7 +34,7 @@ interface CalendarControlsProps {
   onDateChange: (newStartDate: Date, newEndDate: Date) => void; // Simplified for now
   onRoomFilterChange: (newRoomIds: string[]) => void;
   onStatusFilterChange: (newStatuses: ReservationStatus[]) => void;
-  // Add props for available rooms/statuses if fetched dynamically
+  availableRooms: { id: number; name: string }[]; // Add available rooms prop
 }
 
 export function CalendarControls({
@@ -50,6 +45,7 @@ export function CalendarControls({
   onDateChange,
   onRoomFilterChange,
   onStatusFilterChange,
+  availableRooms, // Receive the prop
 }: CalendarControlsProps) {
   // Basic date navigation (e.g., previous/next month)
   const handlePrevMonth = () => {
@@ -141,7 +137,7 @@ export function CalendarControls({
         <MultiSelect
           id="room-filter"
           options={availableRooms.map((room) => ({
-            value: room.id,
+            value: room.id.toString(), // Convert number ID to string for value
             label: room.name,
           }))}
           value={selectedRoomIds}

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { cookies, headers } from "next/headers"; // Import headers
 import { auth } from "@/lib/auth"; // Import auth instance
 import { getComprehensiveReservations } from "@/features/comprehensive-calendar/api/getComprehensiveReservations";
+import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import room list function
 // Placeholder import - We will create this component next
 import { ComprehensiveCalendarView } from "@/features/comprehensive-calendar/components/ComprehensiveCalendarView";
 // TODO: Create or verify these utility functions exist in src/lib/utils.ts
@@ -76,6 +77,9 @@ export default async function ComprehensiveCalendarPage({
     statuses,
   });
 
+  // Fetch the list of active rooms
+  const availableRooms = await getActiveRoomsList();
+
   return (
     <div className="container mx-auto py-4">
       {/* TODO: Add Breadcrumb or Page Title */}
@@ -91,6 +95,7 @@ export default async function ComprehensiveCalendarPage({
           initialEndDate={endDate.toISOString()}
           initialRoomIds={roomIds} // Keep original string[] for client state if needed
           initialStatuses={statuses}
+          availableRooms={availableRooms} // Pass down the fetched rooms
         />
       </Suspense>
     </div>
