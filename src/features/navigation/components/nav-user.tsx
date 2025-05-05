@@ -102,15 +102,7 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/upgrade">
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Upgrade to Pro
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+            <DropdownMenuGroup></DropdownMenuGroup>
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
                 <Link href="/account">
@@ -119,22 +111,14 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/billing">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Billing
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/admin/notifications"
-                  className="flex w-full items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <Bell className="mr-2 h-4 w-4" /> {/* Added margin */}
-                    <span>Notifications</span>
-                  </div>
+                <Link href="/admin/notifications">
+                  <Bell className="mr-2 h-4 w-4" />
+                  <span>Notifications</span>
                   {unreadNotificationsCount > 0 && (
-                    <Badge variant="destructive" className="h-5 px-1.5 text-xs">
+                    <Badge
+                      variant="destructive"
+                      className="ml-auto h-5 px-1.5 text-xs"
+                    >
                       {unreadNotificationsCount}
                     </Badge>
                   )}
