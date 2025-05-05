@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers"; // Import headers
 import { auth } from "@/lib/auth"; // Import auth instance
 import { getComprehensiveReservations } from "@/features/comprehensive-calendar/api/getComprehensiveReservations";
 import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import room list function
+import { getReservationStatuses } from "@/features/application/api/getLookupValue"; // Import status fetch function
 // Placeholder import - We will create this component next
 import { ComprehensiveCalendarView } from "@/features/comprehensive-calendar/components/ComprehensiveCalendarView";
 // TODO: Create or verify these utility functions exist in src/lib/utils.ts
@@ -66,10 +67,13 @@ export default async function ComprehensiveCalendarPage({
   const statuses = parseStatusArrayParam(searchParams?.statuses);
 
   // 3. Fetch Data (This part will be suspended)
-  // The promise is passed directly to the component that uses it
   // Convert roomIds from string[] to number[]
   const numericRoomIds = roomIds?.map(Number).filter((id) => !isNaN(id));
 
+  // Fetch statuses
+  const statusOptionsPromise = getReservationStatuses();
+
+  // Fetch reservations
   const reservationsPromise = getComprehensiveReservations({
     startDate,
     endDate,
@@ -77,8 +81,22 @@ export default async function ComprehensiveCalendarPage({
     statuses,
   });
 
-  // Fetch the list of active rooms
-  const availableRooms = await getActiveRoomsList();
+  // Fetch rooms
+  const roomsPromise = getActiveRoomsList();
+
+  // Await all promises concurrently
+  const [fetchedStatusOptions, reservations, rooms] = await Promise.all([
+    statusOptionsPromise,
+    reservationsPromise,
+    roomsPromise,
+  ]);
+
+  // Map fetched statuses to the expected LookupOption format
+  // Assuming the fetched type is { id: number; value: string; } based on the TS error
+  const mappedStatusOptions = fetchedStatusOptions.map((option) => ({
+    code: String(option.id), // Convert id (number) to string for code
+    value: option.value,
+  }));
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-6">
@@ -90,12 +108,15 @@ export default async function ComprehensiveCalendarPage({
         {/* Render the client component, passing the promise and initial params */}
         {/* Pass original string roomIds to client component if needed for display/filters */}
         <ComprehensiveCalendarView
-          reservationsPromise={reservationsPromise}
+          // reservationsPromise={reservationsPromise} // Pass resolved data instead
+          initialReservations={reservations} // Pass resolved reservations
           initialStartDate={startDate.toISOString()} // Pass ISO strings for serialization
           initialEndDate={endDate.toISOString()}
           initialRoomIds={roomIds} // Keep original string[] for client state if needed
           initialStatuses={statuses}
-          availableRooms={availableRooms} // Pass down the fetched rooms
+          // availableRooms={availableRooms} // Pass resolved data instead
+          initialRooms={rooms} // Pass resolved rooms
+          statusOptions={mappedStatusOptions} // Pass mapped statuses
         />
       </Suspense>
     </div>

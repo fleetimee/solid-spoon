@@ -12,13 +12,22 @@ import { ReservationDetailsDialog } from "./ReservationDetailsDialog"; // Import
 // TODO: Define or import ReservationStatus type correctly if needed client-side
 type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
+// Define LookupOption type if not imported
+interface LookupOption {
+  code: string;
+  value: string;
+}
+
 interface ComprehensiveCalendarViewProps {
-  reservationsPromise: Promise<ComprehensiveReservation[]>;
+  // reservationsPromise: Promise<ComprehensiveReservation[]>; // Removed, pass resolved data
+  initialReservations: ComprehensiveReservation[]; // Added
   initialStartDate: string; // ISO string
   initialEndDate: string; // ISO string
   initialRoomIds?: string[];
   initialStatuses?: ReservationStatus[];
-  availableRooms: { id: number; name: string }[]; // Add available rooms prop
+  // availableRooms: { id: number; name: string }[]; // Renamed
+  initialRooms: { id: number; name: string }[]; // Renamed for consistency
+  statusOptions: LookupOption[]; // Added status options prop
 }
 
 // Helper to format date for URL (YYYY-MM-DD)
@@ -27,20 +36,22 @@ const formatDateForUrl = (date: Date): string => {
 };
 
 export function ComprehensiveCalendarView({
-  reservationsPromise,
+  // reservationsPromise, // Removed
+  initialReservations, // Added
   initialStartDate,
   initialEndDate,
   initialRoomIds = [],
   initialStatuses = [],
-  availableRooms, // Receive the prop
+  // availableRooms, // Renamed
+  initialRooms, // Renamed
+  statusOptions, // Added
 }: ComprehensiveCalendarViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams(); // To read current URL state if needed, though props are primary source
 
-  // Resolve the promise passed from the Server Component
-  // Note: `use` hook suspends rendering until the promise resolves.
-  // The parent <Suspense> boundary in page.tsx handles the loading state.
-  const reservations = use(reservationsPromise);
+  // Use the resolved reservations directly from props
+  // const reservations = use(reservationsPromise); // Removed
+  const reservations = initialReservations; // Use prop directly
 
   // Client-side state, initialized from props (which come from URL initially)
   // Use Date objects for manipulation, format for URL updates
@@ -115,7 +126,8 @@ export function ComprehensiveCalendarView({
         onDateChange={handleDateChange}
         onRoomFilterChange={handleRoomFilterChange}
         onStatusFilterChange={handleStatusFilterChange}
-        availableRooms={availableRooms} // Pass down available rooms
+        availableRooms={initialRooms} // Pass down initialRooms
+        statusOptions={statusOptions} // Pass down status options
       />
 
       {/* Render CalendarDisplay */}

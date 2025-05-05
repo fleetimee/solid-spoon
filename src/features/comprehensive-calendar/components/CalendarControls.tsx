@@ -14,17 +14,17 @@ import {
 import { MultiSelect } from "@/components/ui/multi-select"; // Assuming MultiSelect exists
 import { Skeleton } from "@/components/ui/skeleton"; // For placeholders
 
+// Define LookupOption type if not imported
+interface LookupOption {
+  code: string;
+  value: string;
+}
+
 // TODO: Define or import ReservationStatus type correctly
 type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
 
-// Hardcoded rooms removed, will use props instead.
-
-const availableStatuses: ReservationStatus[] = [
-  "PENDING",
-  "APPROVED",
-  "REJECTED",
-  "CANCELLED",
-];
+// Hardcoded statuses removed, will use props instead.
+// const availableStatuses: ReservationStatus[] = [ ... ];
 
 interface CalendarControlsProps {
   startDate: Date;
@@ -33,8 +33,9 @@ interface CalendarControlsProps {
   selectedStatuses: ReservationStatus[];
   onDateChange: (newStartDate: Date, newEndDate: Date) => void; // Simplified for now
   onRoomFilterChange: (newRoomIds: string[]) => void;
-  onStatusFilterChange: (newStatuses: ReservationStatus[]) => void;
+  onStatusFilterChange: (newStatuses: ReservationStatus[]) => void; // Or string[] if parent expects codes directly
   availableRooms: { id: number; name: string }[]; // Add available rooms prop
+  statusOptions: LookupOption[]; // Add status options prop
 }
 
 export function CalendarControls({
@@ -46,7 +47,14 @@ export function CalendarControls({
   onRoomFilterChange,
   onStatusFilterChange,
   availableRooms, // Receive the prop
+  statusOptions, // Receive the prop
 }: CalendarControlsProps) {
+  // Map statusOptions for the MultiSelect component
+  const statusSelectOptions = statusOptions.map((option) => ({
+    value: option.code, // Use the code (e.g., 'PENDING') as the value
+    label: option.value, // Use the value (e.g., 'Pending') as the label
+  }));
+
   // Basic date navigation (e.g., previous/next month)
   const handlePrevMonth = () => {
     const newStartDate = new Date(startDate);
@@ -152,12 +160,9 @@ export function CalendarControls({
         <Label htmlFor="status-filter">Filter Status:</Label>
         <MultiSelect
           id="status-filter"
-          options={availableStatuses.map((status) => ({
-            value: status,
-            label: status,
-          }))}
-          value={selectedStatuses}
-          onValueChange={handleStatusSelect}
+          options={statusSelectOptions} // Use mapped options from props
+          value={selectedStatuses} // This should be bound to the state representing selected status codes (string[])
+          onValueChange={handleStatusSelect} // This handler now receives string[] (codes)
           placeholder="Select statuses..."
           className="w-[200px]"
         />
