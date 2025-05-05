@@ -5,7 +5,7 @@ import { Providers } from "@/components/providers/better-auth-ui-providers";
 import { Toaster } from "sonner";
 import BProgressProviders from "@/components/providers/bprogress-providers";
 import TanstackProviders from "@/components/providers/tanstack-query-providers";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
