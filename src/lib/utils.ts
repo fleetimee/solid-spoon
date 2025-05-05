@@ -54,14 +54,13 @@ const validStatuses: Set<ReservationStatus> = new Set([
 ]);
 
 /**
- * Parses status array param, ensuring values are valid ReservationStatus types.
+ * Parses a potentially comma-separated status string or array from search params into an array of strings.
+ * Handles single values (e.g., "4"), comma-separated values (e.g., "4,5"), and null/undefined/empty inputs.
  */
 export function parseStatusArrayParam(
   param: string | string[] | undefined
-): ReservationStatus[] {
-  const rawArray = parseArrayParam(param);
-  // Filter the array to only include valid status values
-  return rawArray.filter((s): s is ReservationStatus =>
-    validStatuses.has(s as ReservationStatus)
-  );
+): string[] {
+  // Directly return the result of parseArrayParam, which handles splitting and cleaning.
+  // This allows any non-empty string values, including numeric-like ones, as per requirements.
+  return parseArrayParam(param);
 }

@@ -65,10 +65,11 @@ export async function getComprehensiveReservations(
     paramIndex++;
   }
 
+  console.log("Checking params.statuses:", params.statuses);
   if (params.statuses && params.statuses.length > 0) {
     // Filter by lookup code using the joined table
     // Use IN operator for status filtering with parameterized array
-    sql += ` AND l.code IN (SELECT unnest($${paramIndex}::text[]))`;
+    sql += ` AND l.code = ANY($${paramIndex}::text[])`; // Use = ANY() for array parameter check
     queryParams.push(params.statuses);
     paramIndex++;
   }
@@ -78,7 +79,39 @@ export async function getComprehensiveReservations(
   sql += ` ORDER BY r.start_time ASC;`;
 
   try {
-    // Use parameterized queries via the pg Pool
+    // Helper function to format parameters for logging purposes ONLY
+    const formatParamForLog = (param: any): string => {
+      if (param === null || typeof param === "undefined") {
+        return "NULL";
+      }
+      if (typeof param === "number") {
+        return String(param); // Numbers as is
+      }
+      if (param instanceof Date) {
+        return `'${param.toISOString()}'`; // Quoted ISO string for dates
+      }
+      if (Array.isArray(param)) {
+        // Simple JSON stringify for arrays, quoted, escaping internal quotes
+        return `'${JSON.stringify(param).replace(/'/g, "''")}'`;
+      }
+      // Default to string, escape single quotes and wrap in single quotes
+      return `'${String(param).replace(/'/g, "''")}'`;
+    };
+
+    // Create a version of the query with placeholders replaced for logging
+    let loggedQuery = sql;
+    queryParams.forEach((param, index) => {
+      // Use regex to replace $N placeholders globally and ensure whole word match (\b)
+      const placeholderRegex = new RegExp(`\\$${index + 1}\\b`, "g");
+      loggedQuery = loggedQuery.replace(
+        placeholderRegex,
+        formatParamForLog(param)
+      );
+    });
+
+    console.log("Executing Query (interpolated for logging):\n", loggedQuery); // Log interpolated query
+
+    // Use ORIGINAL parameterized query for actual execution to prevent SQL injection
     const result = await db.query<ComprehensiveReservation>(sql, queryParams);
     // pg returns results in result.rows
     return result.rows;
