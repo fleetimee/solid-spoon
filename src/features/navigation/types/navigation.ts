@@ -8,5 +8,7 @@ export interface NavigationMain {
   url: string;
   icon: string;
   isActive: boolean;
+  sortOrder: number;
+
   items: NavigationItem[];
 }
