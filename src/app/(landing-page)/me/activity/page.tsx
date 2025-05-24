@@ -165,7 +165,7 @@ export default async function ActivityPage() {
                         {activity.reservation_title}
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        Booked '{activity.room_name}' from{" "}
+                        Booked &apos;{activity.room_name}&apos; from{" "}
                         {formatDateToJakarta(activity.start_time)} to{" "}
                         {formatDateToJakarta(activity.end_time)} (
                         {activity.status})

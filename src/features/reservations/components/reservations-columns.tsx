@@ -35,9 +35,7 @@ const createSortableHeader = (
   headerText: string
 ): ColumnDef<ReservationWithDetails>["header"] => {
   return ({ column }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const router = useRouter();
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const searchParams = useSearchParams();
 
     const currentSortBy = searchParams.get("sortBy");

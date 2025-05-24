@@ -90,7 +90,7 @@ export function UnbanUserForm({
             <ShieldCheck className="h-5 w-5 text-green-600 dark:text-green-500 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-green-800 dark:text-green-400">
               Unbanning this user will immediately restore their access to the
-              system. They'll be able to sign in again using their existing
+              system. They&apos;ll be able to sign in again using their existing
               credentials.
             </div>
           </div>

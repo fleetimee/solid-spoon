@@ -40,6 +40,152 @@ import { UnbanUserForm } from "../unban-user-form";
 import { UserSessionsDialog } from "../user-sessions-dialog";
 import { DeleteUserForm } from "../delete-user-form";
 
+interface UserActionsCellProps {
+  user: ExtendedUser;
+}
+
+const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
+  const isBanned = user.banned === true;
+  const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
+  const [isUnbanDialogOpen, setIsUnbanDialogOpen] = useState(false);
+  const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] = useState(false);
+  const [isSessionsDialogOpen, setIsSessionsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleMenuOpenChange = (open: boolean) => {
+    setIsMenuOpen(open);
+  };
+
+  const handleChangeRole = () => {
+    setIsMenuOpen(false);
+    setIsChangeRoleDialogOpen(true);
+  };
+
+  const handleViewSessions = () => {
+    setIsMenuOpen(false);
+    setIsSessionsDialogOpen(true);
+  };
+
+  const handleBanUser = () => {
+    setIsMenuOpen(false);
+    setIsBanDialogOpen(true);
+  };
+
+  const handleUnbanUser = () => {
+    setIsMenuOpen(false);
+    setIsUnbanDialogOpen(true);
+  };
+
+  const handleDeleteUser = () => {
+    setIsMenuOpen(false);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleUserUpdated = () => {
+    window.location.reload();
+  };
+
+  return (
+    <div className="flex justify-end">
+      <BanUserForm
+        user={user}
+        isOpen={isBanDialogOpen}
+        onOpenChange={setIsBanDialogOpen}
+        onUserBanned={handleUserUpdated}
+      />
+
+      <UnbanUserForm
+        user={user}
+        isOpen={isUnbanDialogOpen}
+        onOpenChange={setIsUnbanDialogOpen}
+        onUserUnbanned={handleUserUpdated}
+      />
+
+      <ChangeRoleForm
+        user={user}
+        isOpen={isChangeRoleDialogOpen}
+        onOpenChange={setIsChangeRoleDialogOpen}
+        onRoleChanged={handleUserUpdated}
+      />
+
+      <UserSessionsDialog
+        user={user}
+        isOpen={isSessionsDialogOpen}
+        onOpenChange={setIsSessionsDialogOpen}
+      />
+
+      <DeleteUserForm
+        user={user}
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onUserDeleted={handleUserUpdated}
+      />
+
+      <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            aria-label="Open menu"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" sideOffset={5} className="w-48">
+          <DropdownMenuItem
+            onSelect={handleChangeRole}
+            className="cursor-pointer"
+          >
+            <ShieldCheck className="mr-2 h-4 w-4" />
+            Change Role
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onSelect={handleViewSessions}
+            className="cursor-pointer"
+          >
+            <Laptop className="mr-2 h-4 w-4" />
+            View Sessions
+          </DropdownMenuItem>
+
+          {isBanned ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={handleUnbanUser}
+                className="text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 cursor-pointer"
+              >
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Unban User
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={handleBanUser}
+                className="text-destructive focus:text-destructive cursor-pointer"
+              >
+                <Ban className="mr-2 h-4 w-4" />
+                Ban User
+              </DropdownMenuItem>
+            </>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={handleDeleteUser}
+            className="text-destructive focus:text-destructive cursor-pointer"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete User
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  );
+};
+
 export const columns: ColumnDef<ExtendedUser>[] = [
   {
     accessorKey: "email",
@@ -231,146 +377,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const user = row.original;
-      const isBanned = user.banned === true;
-      const [isBanDialogOpen, setIsBanDialogOpen] = useState(false);
-      const [isUnbanDialogOpen, setIsUnbanDialogOpen] = useState(false);
-      const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] =
-        useState(false);
-      const [isSessionsDialogOpen, setIsSessionsDialogOpen] = useState(false);
-      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-      const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-      const handleMenuOpenChange = (open: boolean) => {
-        setIsMenuOpen(open);
-      };
-
-      const handleChangeRole = () => {
-        setIsMenuOpen(false);
-        setIsChangeRoleDialogOpen(true);
-      };
-
-      const handleViewSessions = () => {
-        setIsMenuOpen(false);
-        setIsSessionsDialogOpen(true);
-      };
-
-      const handleBanUser = () => {
-        setIsMenuOpen(false);
-        setIsBanDialogOpen(true);
-      };
-
-      const handleUnbanUser = () => {
-        setIsMenuOpen(false);
-        setIsUnbanDialogOpen(true);
-      };
-
-      const handleDeleteUser = () => {
-        setIsMenuOpen(false);
-        setIsDeleteDialogOpen(true);
-      };
-
-      const handleUserUpdated = () => {
-        window.location.reload();
-      };
-
-      return (
-        <div className="flex justify-end">
-          <BanUserForm
-            user={user}
-            isOpen={isBanDialogOpen}
-            onOpenChange={setIsBanDialogOpen}
-            onUserBanned={handleUserUpdated}
-          />
-
-          <UnbanUserForm
-            user={user}
-            isOpen={isUnbanDialogOpen}
-            onOpenChange={setIsUnbanDialogOpen}
-            onUserUnbanned={handleUserUpdated}
-          />
-
-          <ChangeRoleForm
-            user={user}
-            isOpen={isChangeRoleDialogOpen}
-            onOpenChange={setIsChangeRoleDialogOpen}
-            onRoleChanged={handleUserUpdated}
-          />
-
-          <UserSessionsDialog
-            user={user}
-            isOpen={isSessionsDialogOpen}
-            onOpenChange={setIsSessionsDialogOpen}
-          />
-
-          <DeleteUserForm
-            user={user}
-            isOpen={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
-            onUserDeleted={handleUserUpdated}
-          />
-
-          <DropdownMenu open={isMenuOpen} onOpenChange={handleMenuOpenChange}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="h-8 w-8 p-0"
-                aria-label="Open menu"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={5} className="w-48">
-              <DropdownMenuItem
-                onSelect={handleChangeRole}
-                className="cursor-pointer"
-              >
-                <ShieldCheck className="mr-2 h-4 w-4" />
-                Change Role
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onSelect={handleViewSessions}
-                className="cursor-pointer"
-              >
-                <Laptop className="mr-2 h-4 w-4" />
-                View Sessions
-              </DropdownMenuItem>
-
-              {isBanned ? (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onSelect={handleUnbanUser}
-                    className="text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 cursor-pointer"
-                  >
-                    <ShieldCheck className="mr-2 h-4 w-4" />
-                    Unban User
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onSelect={handleBanUser}
-                    className="text-destructive focus:text-destructive cursor-pointer"
-                  >
-                    <Ban className="mr-2 h-4 w-4" />
-                    Ban User
-                  </DropdownMenuItem>
-                </>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={handleDeleteUser}
-                className="text-destructive focus:text-destructive cursor-pointer"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete User
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
+      return <UserActionsCell user={user} />;
     },
   },
 ];

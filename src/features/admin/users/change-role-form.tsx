@@ -153,7 +153,8 @@ export function ChangeRoleForm({
                     </Select>
                   </FormControl>
                   <FormDescription>
-                    This will change the user's permissions and access level.
+                    This will change the user&apos;s permissions and access
+                    level.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

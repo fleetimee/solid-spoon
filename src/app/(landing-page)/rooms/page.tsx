@@ -228,8 +228,9 @@ export default async function RoomsPage(props: RoomsPageProps) {
               {hasFilters ? (
                 <div className="space-y-4">
                   <Typography className="text-muted-foreground max-w-md mx-auto">
-                    Your current filter settings didn't return any results. Try
-                    adjusting your filters or clearing them to see all rooms.
+                    Your current filter settings didn&apos;t return any results.
+                    Try adjusting your filters or clearing them to see all
+                    rooms.
                   </Typography>
 
                   <div className="flex flex-col gap-2 items-center mt-2">
@@ -241,8 +242,9 @@ export default async function RoomsPage(props: RoomsPageProps) {
                 </div>
               ) : (
                 // Updated text for no rooms available
-                (<Typography className="text-muted-foreground max-w-md mx-auto">No rooms are currently available. Please check back later!
-                                  </Typography>)
+                <Typography className="text-muted-foreground max-w-md mx-auto">
+                  No rooms are currently available. Please check back later!
+                </Typography>
               )}
             </CardContent>
 

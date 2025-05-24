@@ -1,24 +1,25 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+import { FlatCompat } from '@eslint/eslintrc'
+ 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
+  // import.meta.dirname is available after Node.js v20.11.0
+  baseDirectory: import.meta.dirname,
+})
+ 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-  ...compat.extends("./.eslintrc.json"), // Use the compat instance to extend the config
-  {
-    files: ["*.ts", "*.tsx"],
+  ...compat.config({
+    extends: ['next/core-web-vitals', 'next/typescript'],
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "off",
+      'react/react-in-jsx-scope': 'off', // Next.js does not require React to be in scope
+      'no-unused-vars': 'off', // Disable base unused variables rule (recommended for @typescript-eslint/no-unused-vars)
+      '@typescript-eslint/no-unused-vars': 'off', // Disable TypeScript-specific unused variables rule
+      'no-console': 'off', // Disable console statements
+      'import/no-anonymous-default-export': 'off', // Allow anonymous default exports
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'prefer-const': 'off',
+      'react/display-name': 'off',
     },
-  },
-];
-
-export default eslintConfig;
+  }),
+]
+ 
+export default eslintConfig

@@ -85,7 +85,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                 color: "#374151",
               }}
             >
-              We're pleased to inform you that your reservation for{" "}
+              We&apos;re pleased to inform you that your reservation for{" "}
               <strong style={{ color: "#15803d" }}>{roomName}</strong> has been
               approved! You can now proceed with using the room as scheduled.
             </p>

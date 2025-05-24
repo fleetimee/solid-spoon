@@ -158,8 +158,8 @@ export function BanUserForm({
                     />
                   </FormControl>
                   <FormDescription>
-                    If no reason is provided, it will default to "No reason
-                    provided"
+                    If no reason is provided, it will default to &quot;No reason
+                    provided&quot;
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

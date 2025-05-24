@@ -322,7 +322,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                     href={`/admin/rooms/reservations?page=1&roomId=${room.id}`}
                   >
                     <DoorOpen className="mr-2 h-4 w-4" />
-                    <span>This Room's Reservations</span>
+                    <span>This Room&apos;s Reservations</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="flex items-center" asChild>
