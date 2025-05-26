@@ -34,7 +34,7 @@ const createSortableHeader = (
   columnKey: keyof ReservationWithDetails | string, // Allow string for flexibility if needed, but prefer keyof
   headerText: string
 ): ColumnDef<ReservationWithDetails>["header"] => {
-  return ({ column }) => {
+  const SortableHeaderCell = ({ column }: { column: any }) => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -89,6 +89,8 @@ const createSortableHeader = (
       </Button>
     );
   };
+  SortableHeaderCell.displayName = `SortableHeaderCell_${headerText.replace(/\s+/g, "")}`;
+  return SortableHeaderCell;
 };
 
 export const columns: ColumnDef<ReservationWithDetails>[] = [

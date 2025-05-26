@@ -52,7 +52,7 @@ export async function getAllReservations(
   const offset = (page - 1) * pageSize;
 
   // Base query parts
-  let baseQuery = `
+  const baseQuery = `
     FROM room_reservation rr
     JOIN room r ON rr.room_id = r.id
     LEFT JOIN "user" u ON rr.user_id = u.id

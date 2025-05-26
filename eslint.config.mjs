@@ -14,10 +14,8 @@ const eslintConfig = [
       '@typescript-eslint/no-unused-vars': 'off', // Disable TypeScript-specific unused variables rule
       'no-console': 'off', // Disable console statements
       'import/no-anonymous-default-export': 'off', // Allow anonymous default exports
-      '@typescript-eslint/no-explicit-any': 'off',
-      'react-hooks/exhaustive-deps': 'off',
-      'prefer-const': 'off',
-      'react/display-name': 'off',
+      'react-hooks/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn', // Ensure no-explicit-any is active
     },
   }),
 ]
