@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
-import { admin } from "better-auth/plugins";
+import { admin, captcha } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 
 import { Resend } from "resend";
@@ -12,7 +12,14 @@ export const auth = betterAuth({
   database: new Pool({
     connectionString: process.env.DATABASE_URL,
   }),
-  plugins: [admin(), nextCookies()],
+  plugins: [
+    admin(),
+    nextCookies(),
+    captcha({
+      provider: "google-recaptcha",
+      secretKey: process.env.RECAPTCHA_SECRET_KEY as string,
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,

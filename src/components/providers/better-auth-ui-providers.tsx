@@ -19,6 +19,11 @@ export function Providers({ children }: { children: ReactNode }) {
         // Clear router cache (protected routes)
         router.refresh();
       }}
+      captcha={{
+        provider: "google-recaptcha-v2-checkbox",
+        siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "",
+        hideBadge: false,
+      }}
       Link={Link}
       localization={{
         signIn: "Welcome Back",
