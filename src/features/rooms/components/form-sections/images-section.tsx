@@ -49,8 +49,8 @@ export function ImagesSection({
     <Card className="border-none shadow-lg bg-gradient-to-br from-card via-card to-muted/20">
       <CardHeader className="space-y-3 pb-6">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md">
-            <Camera className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 shadow-md flex-shrink-0">
+            <Camera className="h-5 w-5 text-white flex-shrink-0" />
           </div>
           <div>
             <CardTitle className="text-xl font-bold flex items-center gap-2">
