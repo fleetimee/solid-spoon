@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
-import { RoomForm } from "@/features/rooms/components/room-form";
+import { AddRoomHeader } from "@/features/rooms/components/add-room-header";
+import { AddRoomFormSections } from "@/features/rooms/components/add-room-form-sections";
 
 export const metadata: Metadata = {
   title: "Add New Room | Room Management",
@@ -23,16 +24,11 @@ export default function AddRoomsPage() {
     <>
       <BreadcrumbSetter items={addRoomBreadcrumb} />
 
-      <main className="flex flex-col grow p-4 md:p-8">
-        <div className="flex flex-col gap-2 mb-6">
-          <h1 className="text-3xl font-semibold tracking-tight">Add Room</h1>
-          <p className="text-muted-foreground">
-            Fill in the details below to add a new room.
-          </p>
-        </div>
+      <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+        <AddRoomHeader />
 
-        <RoomForm />
-      </main>
+        <AddRoomFormSections />
+      </div>
     </>
   );
 }

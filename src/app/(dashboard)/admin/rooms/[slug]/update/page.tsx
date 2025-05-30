@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { ArrowLeft } from "lucide-react";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { getRoomBySlug } from "@/features/rooms/api/getRooms";
-import { RoomForm } from "@/features/rooms/components/room-form";
+import { AddRoomHeader } from "@/features/rooms/components/add-room-header";
+import { AddRoomFormSections } from "@/features/rooms/components/add-room-form-sections";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface UpdateRoomPageProps {
@@ -63,25 +62,16 @@ export default async function UpdateRoomPage(props: UpdateRoomPageProps) {
     <>
       <BreadcrumbSetter items={roomBreadcrumb} />
 
-      <main className="flex flex-col grow p-4 md:p-6">
-        <div className="mb-6">
-          <Link
-            href={`/admin/rooms/${slug}`}
-            className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-2"
-          >
-            <ArrowLeft className="h-3 w-3" />
-            <span>Back to room details</span>
-          </Link>
-          <h1 className="text-2xl font-bold">Update Room</h1>
-          <p className="text-muted-foreground">
-            Make changes to the room details and click Update Room when done.
-          </p>
-        </div>
+      <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+        <AddRoomHeader
+          title={`✏️ Update ${room.name}`}
+          description="Make changes to your room details and enhance the experience"
+        />
 
         <Suspense fallback={<Skeleton className="h-10 w-full" />}>
-          <RoomForm room={room} mode="update" />
+          <AddRoomFormSections room={room} mode="update" />
         </Suspense>
-      </main>
+      </div>
     </>
   );
 }
