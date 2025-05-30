@@ -93,7 +93,7 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
         {infoCards.map((card, cardIndex) => (
           <Card
             key={cardIndex}
-            className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200"
+            className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
           >
             <CardHeader>
               <CardTitle className="text-lg text-gray-900 dark:text-gray-100">
@@ -105,9 +105,9 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
               {card.items.map((item, itemIndex) => (
                 <div
                   key={itemIndex}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                  className="flex items-center gap-4 p-3 rounded-lg bg-white/70 dark:bg-gray-800/70 hover:bg-white dark:hover:bg-gray-800 transition-colors duration-200 border border-gray-100 dark:border-gray-700"
                 >
-                  <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                  <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
                     <item.icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
@@ -137,7 +137,7 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
       </div>
 
       {/* Facilities Section */}
-      <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
+      <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg text-gray-900 dark:text-gray-100">
             Facilities & Amenities

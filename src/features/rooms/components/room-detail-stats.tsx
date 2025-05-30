@@ -26,18 +26,21 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
       value: stats.totalReservations.toLocaleString(),
       icon: Calendar,
       description: "All-time bookings",
+      type: "total" as const,
     },
     {
       title: "Active Bookings",
       value: stats.activeBookings.toLocaleString(),
       icon: BookOpen,
       description: "Current & upcoming",
+      type: "active" as const,
     },
     {
       title: "Utilization Rate",
       value: formatUtilizationRate(stats.utilizationRate),
       icon: TrendingUp,
       description: "Last 30 days",
+      type: "utilization" as const,
       valueClassName: getUtilizationColor(stats.utilizationRate),
     },
     {
@@ -47,8 +50,56 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
         : "Never",
       icon: Clock,
       description: "Most recent booking",
+      type: "recent" as const,
     },
   ];
+
+  const getCardConfig = (
+    type: "total" | "active" | "utilization" | "recent"
+  ) => {
+    switch (type) {
+      case "total":
+        return {
+          bgGradient:
+            "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
+          hoverGradient: "from-blue-400/10 to-indigo-400/10",
+          titleColor: "text-blue-700 dark:text-blue-300",
+          iconBg: "from-blue-400 to-indigo-500",
+          valueColor: "text-blue-800 dark:text-blue-200",
+          descriptionColor: "text-blue-600 dark:text-blue-400",
+        };
+      case "active":
+        return {
+          bgGradient:
+            "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20",
+          hoverGradient: "from-emerald-400/10 to-green-400/10",
+          titleColor: "text-emerald-700 dark:text-emerald-300",
+          iconBg: "from-emerald-400 to-green-500",
+          valueColor: "text-emerald-800 dark:text-emerald-200",
+          descriptionColor: "text-emerald-600 dark:text-emerald-400",
+        };
+      case "utilization":
+        return {
+          bgGradient:
+            "from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20",
+          hoverGradient: "from-purple-400/10 to-pink-400/10",
+          titleColor: "text-purple-700 dark:text-purple-300",
+          iconBg: "from-purple-400 to-pink-500",
+          valueColor: "text-purple-800 dark:text-purple-200",
+          descriptionColor: "text-purple-600 dark:text-purple-400",
+        };
+      case "recent":
+        return {
+          bgGradient:
+            "from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20",
+          hoverGradient: "from-amber-400/10 to-orange-400/10",
+          titleColor: "text-amber-700 dark:text-amber-300",
+          iconBg: "from-amber-400 to-orange-500",
+          valueColor: "text-amber-800 dark:text-amber-200",
+          descriptionColor: "text-amber-600 dark:text-amber-400",
+        };
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -59,32 +110,43 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsData.map((stat, index) => (
-          <Card
-            key={index}
-            className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-200"
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center justify-between text-sm font-medium text-muted-foreground">
-                <span>{stat.title}</span>
-                <stat.icon className="h-4 w-4 text-gray-500" />
-              </CardTitle>
-            </CardHeader>
+        {statsData.map((stat, index) => {
+          const config = getCardConfig(stat.type);
+          const Icon = stat.icon;
 
-            <CardContent className="pt-0">
-              <div className="space-y-2">
+          return (
+            <Card
+              key={index}
+              className={`group relative overflow-hidden border-0 bg-gradient-to-br ${config.bgGradient} shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+            >
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${config.hoverGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+              />
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
+                <CardTitle
+                  className={`text-sm font-medium ${config.titleColor}`}
+                >
+                  {stat.title}
+                </CardTitle>
                 <div
-                  className={`text-2xl font-bold text-gray-900 dark:text-gray-100 ${stat.valueClassName || ""}`}
+                  className={`flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br ${config.iconBg} shadow-md group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+              </CardHeader>
+              <CardContent className="relative">
+                <div
+                  className={`text-3xl font-bold mb-1 ${stat.valueClassName || config.valueColor}`}
                 >
                   {stat.value}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className={`text-xs ${config.descriptionColor} font-medium`}>
                   {stat.description}
                 </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Additional insights */}

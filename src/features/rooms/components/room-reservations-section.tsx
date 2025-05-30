@@ -71,7 +71,7 @@ export function RoomReservationsSection({
         </h2>
       </div>
 
-      <Card className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm">
+      <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="flex items-center gap-2 text-lg font-medium">
             <History className="w-5 h-5 text-gray-600 dark:text-gray-400" />
@@ -114,7 +114,7 @@ export function RoomReservationsSection({
 
         <CardContent>
           {recentReservations && recentReservations.length > 0 ? (
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+            <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white/50 dark:bg-gray-800/50">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
