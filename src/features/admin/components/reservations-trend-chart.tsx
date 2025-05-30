@@ -42,7 +42,10 @@ export function ReservationsTrendChart({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+        <ChartContainer
+          config={chartConfig}
+          className="h-[250px] w-full min-w-0"
+        >
           <LineChart
             accessibilityLayer
             data={chartData}

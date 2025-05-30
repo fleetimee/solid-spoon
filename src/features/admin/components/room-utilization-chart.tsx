@@ -46,7 +46,7 @@ export function RoomUtilizationChart({
         {/* Removed fixed height from container, using dynamic height on BarChart instead */}
         <ChartContainer
           config={chartConfig}
-          className="w-full h-auto min-h-[250px]"
+          className="w-full h-auto min-h-[250px] min-w-0"
         >
           <BarChart
             accessibilityLayer
@@ -62,9 +62,11 @@ export function RoomUtilizationChart({
               tickLine={false}
               tickMargin={5}
               axisLine={false}
-              width={100} // Adjust if room names are longer
+              width={80} // Reduced width for mobile compatibility
               interval={0} // Ensure all labels are shown
-              // tickFormatter={(value) => value.length > 15 ? `${value.substring(0, 15)}...` : value}
+              tickFormatter={(value) =>
+                value.length > 12 ? `${value.substring(0, 12)}...` : value
+              }
             />
             <XAxis
               dataKey="utilization"

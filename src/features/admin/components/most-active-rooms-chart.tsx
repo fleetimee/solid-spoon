@@ -36,7 +36,10 @@ export function MostActiveRoomsChart({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+        <ChartContainer
+          config={chartConfig}
+          className="h-[250px] w-full min-w-0"
+        >
           <BarChart
             accessibilityLayer
             data={chartData}
@@ -51,9 +54,10 @@ export function MostActiveRoomsChart({
               tickLine={false}
               tickMargin={5} // Reduced margin
               axisLine={false}
-              width={100} // Allocate space for room names, potentially increase if names are long
-              // Consider tickFormatter if names are too long:
-              // tickFormatter={(value) => value.length > 15 ? `${value.substring(0, 15)}...` : value}
+              width={80} // Reduced width for mobile compatibility
+              tickFormatter={(value) =>
+                value.length > 12 ? `${value.substring(0, 12)}...` : value
+              }
             />
             <XAxis
               dataKey="count"

@@ -228,12 +228,16 @@ export function DashboardActivitySection({
         <h2 className="text-xl font-semibold">Activity & Quick Actions</h2>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        <Suspense fallback={<ActivityLoadingSkeleton />}>
-          <RecentActivityCard activityFeedData={activityFeedData} />
-        </Suspense>
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+        <div className="min-w-0">
+          <Suspense fallback={<ActivityLoadingSkeleton />}>
+            <RecentActivityCard activityFeedData={activityFeedData} />
+          </Suspense>
+        </div>
 
-        <QuickActionsCard />
+        <div className="min-w-0">
+          <QuickActionsCard />
+        </div>
       </div>
     </div>
   );

@@ -56,67 +56,75 @@ export function DashboardAnalyticsSection({
         <h2 className="text-xl font-semibold">Analytics Overview</h2>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {data.trendChartData.length > 0 ? (
-          <div className="group">
+          <div className="group min-w-0">
             <ReservationsTrendChart
               chartData={data.trendChartData}
               chartConfig={configs.trendChartConfig}
             />
           </div>
         ) : (
-          <EmptyStateCard
-            icon={TrendingUp}
-            title="No reservation data for the last 30 days"
-            description="Data will appear here once reservations are made"
-          />
+          <div className="min-w-0">
+            <EmptyStateCard
+              icon={TrendingUp}
+              title="No reservation data for the last 30 days"
+              description="Data will appear here once reservations are made"
+            />
+          </div>
         )}
 
         {data.statusChartData.length > 0 ? (
-          <div className="group">
+          <div className="group min-w-0">
             <AdminReservationStatusChart
               chartData={data.statusChartData}
               chartConfig={configs.statusChartConfig}
             />
           </div>
         ) : (
-          <EmptyStateCard
-            icon={Activity}
-            title="No reservation status data available"
-            description="Status breakdown will appear here"
-          />
+          <div className="min-w-0">
+            <EmptyStateCard
+              icon={Activity}
+              title="No reservation status data available"
+              description="Status breakdown will appear here"
+            />
+          </div>
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {data.mostActiveRooms.length > 0 ? (
-          <div className="group">
+          <div className="group min-w-0">
             <MostActiveRoomsChart
               chartData={data.mostActiveRooms}
               chartConfig={configs.activeRoomsChartConfig}
             />
           </div>
         ) : (
-          <EmptyStateCard
-            icon={BedDouble}
-            title="Not enough data for room activity"
-            description="Room usage statistics will appear here"
-          />
+          <div className="min-w-0">
+            <EmptyStateCard
+              icon={BedDouble}
+              title="Not enough data for room activity"
+              description="Room usage statistics will appear here"
+            />
+          </div>
         )}
 
         {data.roomUtilization.length > 0 ? (
-          <div className="group">
+          <div className="group min-w-0">
             <RoomUtilizationChart
               chartData={data.roomUtilization}
               chartConfig={configs.utilizationChartConfig}
             />
           </div>
         ) : (
-          <EmptyStateCard
-            icon={Calendar}
-            title="Unable to calculate room utilization"
-            description="Utilization metrics will display here"
-          />
+          <div className="min-w-0">
+            <EmptyStateCard
+              icon={Calendar}
+              title="Unable to calculate room utilization"
+              description="Utilization metrics will display here"
+            />
+          </div>
         )}
       </div>
     </div>

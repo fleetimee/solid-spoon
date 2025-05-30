@@ -116,7 +116,7 @@ export default async function AdminDashboardPage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8 min-w-0 overflow-x-hidden">
       <DashboardHeader
         title="Admin Dashboard"
         description="Manage your room reservation system"

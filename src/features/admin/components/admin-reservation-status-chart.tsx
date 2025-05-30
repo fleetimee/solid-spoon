@@ -47,7 +47,7 @@ export function AdminReservationStatusChart({
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]" // Slightly smaller max height
+          className="mx-auto aspect-square max-h-[250px] min-w-0" // Add min-w-0 for mobile overflow prevention
         >
           <PieChart>
             <ChartTooltip

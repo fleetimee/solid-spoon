@@ -87,7 +87,7 @@ export function DashboardKPICards({ stats }: DashboardKPICardsProps) {
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
       {kpiCards.map((card) => {
         const config = getCardConfig(card.type);
         const Icon = config.icon;
@@ -117,7 +117,9 @@ export function DashboardKPICards({ stats }: DashboardKPICardsProps) {
               </div>
               <div className="flex items-center gap-2">
                 <TrendIcon className={`h-4 w-4 ${config.descriptionColor}`} />
-                <p className={`text-xs ${config.descriptionColor} font-medium`}>
+                <p
+                  className={`text-xs ${config.descriptionColor} font-medium truncate`}
+                >
                   {card.description}
                 </p>
               </div>
