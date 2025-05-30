@@ -11,7 +11,12 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -141,65 +146,86 @@ export function RoomImageGallery({ images }: RoomImageGalleryProps) {
       {/* Full-size Image Modal */}
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent
-          className="max-w-[200vw] max-h-[200vh] p-0 bg-black/90 border-none"
+          className="!max-w-[95vw] !w-[95vw] !max-h-[95vh] !h-[95vh] p-0 bg-black/95 border-none data-[state=open]:duration-300"
           onKeyDown={handleKeyDown}
+          aria-describedby={undefined}
+          style={{
+            maxWidth: "95vw",
+            width: "95vw",
+            maxHeight: "95vh",
+            height: "95vh",
+          }}
         >
-          <DialogTitle>
+          {/* Hidden title for accessibility - positioned absolutely to not affect layout */}
+          <DialogTitle className="absolute top-0 left-0 opacity-0 pointer-events-none">
             <VisuallyHidden>
               Room image {modalImageIndex + 1} of {images.length}
             </VisuallyHidden>
           </DialogTitle>
-          <div className="relative w-full h-[80vh] flex flex-col justify-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-4 right-4 bg-black/50 text-white z-10 hover:bg-black/70"
-              onClick={() => setShowModal(false)}
-              aria-label="Close image viewer"
-            >
-              <X className="h-6 w-6" />
-            </Button>
 
-            <div className="relative flex-1 w-full">
+          {/* Close Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 bg-black/50 text-white z-30 hover:bg-black/70 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+            aria-label="Close image viewer"
+          >
+            <X className="h-6 w-6" />
+          </Button>
+
+          {/* Main Image Container - Full dialog center */}
+          <div className="w-full h-full flex items-center justify-center p-6">
+            <div className="relative w-full h-full max-w-full max-h-full">
               <Image
                 src={images[modalImageIndex]}
                 alt={`Room image ${modalImageIndex + 1}`}
                 fill
                 className="object-contain"
-                sizes="90vw"
+                sizes="95vw"
+                priority
               />
             </div>
+          </div>
 
+          {/* Navigation - Previous */}
+          {images.length > 1 && (
             <div className="absolute inset-y-0 left-0 flex items-center">
               <Button
                 variant="ghost"
                 size="icon"
-                className="ml-4 bg-black/30 hover:bg-black/50 text-white"
+                className="ml-4 bg-black/30 hover:bg-black/50 text-white backdrop-blur-sm"
                 onClick={() => navigateModalImage("prev")}
                 aria-label="Previous image"
               >
                 <ChevronLeft className="h-8 w-8" />
               </Button>
             </div>
+          )}
 
+          {/* Navigation - Next */}
+          {images.length > 1 && (
             <div className="absolute inset-y-0 right-0 flex items-center">
               <Button
                 variant="ghost"
                 size="icon"
-                className="mr-4 bg-black/30 hover:bg-black/50 text-white"
+                className="mr-4 bg-black/30 hover:bg-black/50 text-white backdrop-blur-sm"
                 onClick={() => navigateModalImage("next")}
                 aria-label="Next image"
               >
                 <ChevronRight className="h-8 w-8" />
               </Button>
             </div>
+          )}
 
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-              <div className="bg-black/50 text-white px-4 py-2 rounded-full text-sm">
+          {/* Image Counter */}
+          {images.length > 1 && (
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+              <div className="bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm">
                 {modalImageIndex + 1} / {images.length}
               </div>
             </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
