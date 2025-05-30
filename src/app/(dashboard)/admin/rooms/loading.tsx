@@ -75,7 +75,7 @@ function StatsCardsSkeleton() {
 // Filters Skeleton - Matches RoomsFiltersSection with professional gradient
 function FiltersSkeleton() {
   return (
-    <Card className="border-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm">
+    <Card className="border-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border-gray-200 dark:border-gray-700 shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <Skeleton className="w-8 h-8 rounded-lg" />
