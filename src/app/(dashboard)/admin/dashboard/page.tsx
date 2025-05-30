@@ -1,22 +1,10 @@
-import { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
 import { getAdminDashboardStats } from "@/features/admin/api/getAdminDashboardStats";
-import { ReservationsTrendChart } from "@/features/admin/components/reservations-trend-chart";
-import { AdminReservationStatusChart } from "@/features/admin/components/admin-reservation-status-chart";
-import { MostActiveRoomsChart } from "@/features/admin/components/most-active-rooms-chart";
-import { RoomUtilizationChart } from "@/features/admin/components/room-utilization-chart";
 import { getRecentActivityFeed } from "@/features/activity/api/getRecentActivityFeed";
 import { type ChartConfig } from "@/components/ui/chart";
-import { Users, BedDouble, ListChecks, Plus, Users2, Bell } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { DashboardKPICards } from "@/features/admin/components/dashboard-kpi-cards";
+import { DashboardAnalyticsSection } from "@/features/admin/components/dashboard-analytics-section";
+import { DashboardActivitySection } from "@/features/admin/components/dashboard-activity-section";
 
 function formatShortDate(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -26,6 +14,7 @@ export default async function AdminDashboardPage() {
   const stats = await getAdminDashboardStats();
   const activityFeedData = await getRecentActivityFeed();
 
+  // Process trend data
   const trendDataMap = new Map<string, number>();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -57,13 +46,7 @@ export default async function AdminDashboardPage() {
         new Date(b.date + ", " + today.getFullYear()).getTime()
     );
 
-  const trendChartConfig = {
-    count: {
-      label: "Reservations",
-      color: "hsl(var(--chart-1))",
-    },
-  } satisfies ChartConfig;
-
+  // Process status data
   const statusCounts: { [key: string]: number } = {};
   stats.reservationsLast30Days.forEach((res) => {
     const statusKey = res.status ?? "Unknown";
@@ -91,6 +74,18 @@ export default async function AdminDashboardPage() {
     })
     .filter((item) => item.count > 0);
 
+  // Data is already in the correct format from the API
+  const mostActiveRooms = stats.mostActiveRooms;
+  const roomUtilization = stats.roomUtilization;
+
+  // Chart configurations
+  const trendChartConfig = {
+    count: {
+      label: "Reservations",
+      color: "hsl(var(--chart-1))",
+    },
+  } satisfies ChartConfig;
+
   const activeRoomsChartConfig = {
     count: {
       label: "Reservations",
@@ -105,204 +100,36 @@ export default async function AdminDashboardPage() {
     },
   } satisfies ChartConfig;
 
+  // Prepare data for components
+  const analyticsData = {
+    trendChartData,
+    statusChartData,
+    mostActiveRooms,
+    roomUtilization,
+  };
+
+  const analyticsConfigs = {
+    trendChartConfig,
+    statusChartConfig,
+    activeRoomsChartConfig,
+    utilizationChartConfig,
+  };
+
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6">
-      <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Pending Reservations
-            </CardTitle>
-            <ListChecks className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.pendingReservationCount}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Reservations awaiting approval
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUserCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Total registered users
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Rooms</CardTitle>
-            <BedDouble className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.activeRoomCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Rooms currently available for booking
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+      <DashboardHeader
+        title="Admin Dashboard"
+        description="Manage your room reservation system"
+      />
 
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        {trendChartData.length > 0 ? (
-          <ReservationsTrendChart
-            chartData={trendChartData}
-            chartConfig={trendChartConfig}
-          />
-        ) : (
-          <Card className="flex items-center justify-center h-[350px]">
-            <p className="text-muted-foreground">
-              No reservation data for the last 30 days.
-            </p>
-          </Card>
-        )}
+      <DashboardKPICards stats={stats} />
 
-        {statusChartData.length > 0 ? (
-          <AdminReservationStatusChart
-            chartData={statusChartData}
-            chartConfig={statusChartConfig}
-          />
-        ) : (
-          <Card className="flex items-center justify-center h-[350px]">
-            <p className="text-muted-foreground">
-              No reservation status data for the last 30 days.
-            </p>
-          </Card>
-        )}
-      </div>
+      <DashboardAnalyticsSection
+        data={analyticsData}
+        configs={analyticsConfigs}
+      />
 
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        {stats.mostActiveRooms.length > 0 ? (
-          <MostActiveRoomsChart
-            chartData={stats.mostActiveRooms}
-            chartConfig={activeRoomsChartConfig}
-          />
-        ) : (
-          <Card className="flex items-center justify-center h-[350px]">
-            <p className="text-muted-foreground">
-              Not enough data for most active rooms.
-            </p>
-          </Card>
-        )}
-
-        {stats.roomUtilization.length > 0 ? (
-          <RoomUtilizationChart
-            chartData={stats.roomUtilization}
-            chartConfig={utilizationChartConfig}
-          />
-        ) : (
-          <Card className="flex items-center justify-center h-[350px]">
-            <p className="text-muted-foreground">
-              Could not calculate room utilization.
-            </p>
-          </Card>
-        )}
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-        <Suspense
-          fallback={
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-4 w-3/4" />{" "}
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-3/4" />{" "}
-                  <Skeleton className="h-4 w-1/4" />{" "}
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </div>
-              </CardContent>
-            </Card>
-          }
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Latest events in the system.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {activityFeedData.length > 0 ? (
-                <table className="w-full">
-                  <tbody>
-                    {activityFeedData.map((activity) => (
-                      <tr
-                        key={activity.id}
-                        className="border-b last:border-b-0"
-                      >
-                        <td className="text-sm pr-2 py-2">
-                          {activity.message}
-                        </td>
-                        <td className="text-xs text-muted-foreground text-right py-2 whitespace-nowrap">
-                          {activity.timestamp.toLocaleString()}{" "}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  No recent activity.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </Suspense>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col space-y-3">
-            <Button asChild variant="outline">
-              <Link href="/admin/rooms/reservations">
-                <ListChecks className="mr-2 h-4 w-4" /> Manage Pending
-                Reservations
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin/rooms/add">
-                <Plus className="mr-2 h-4 w-4" /> Add New Room
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin/users">
-                <Users2 className="mr-2 h-4 w-4" /> View All Users
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/admin/notifications">
-                <Bell className="mr-2 h-4 w-4" /> View Notifications
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <DashboardActivitySection activityFeedData={activityFeedData} />
     </div>
   );
 }
