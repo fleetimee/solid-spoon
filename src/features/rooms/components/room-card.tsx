@@ -117,7 +117,7 @@ export function RoomCard({ room, className, link }: RoomCardProps) {
       <div className="p-4 space-y-3">
         <div className="space-y-1">
           {link ? (
-            <Link href={link} className="block hover:underline" scroll={false}>
+            <Link href={link} className="block hover:underline">
               <h3 className="text-lg font-bold text-foreground leading-tight line-clamp-1">
                 {room.name}
               </h3>

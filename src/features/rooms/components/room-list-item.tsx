@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,6 @@ interface RoomListItemProps {
 }
 
 export function RoomListItem({ room }: RoomListItemProps) {
-  const router = useRouter();
   const image = room.coverImage || room.images?.[0] || "/placeholder.svg";
 
   // Parse facilities - handle both string and array formats
@@ -70,10 +69,6 @@ export function RoomListItem({ room }: RoomListItemProps) {
         : room.facilities.split(",").map((facility) => facility.trim())
       : []
     : [];
-
-  const handleViewDetails = () => {
-    router.push(`/v/${room.slug || room.id}`);
-  };
 
   return (
     <Card className="overflow-hidden transition-shadow duration-200 hover:shadow-lg">
@@ -182,15 +177,16 @@ export function RoomListItem({ room }: RoomListItemProps) {
           <div className="flex justify-end mt-auto pt-2">
             {" "}
             {/* mt-auto pushes to bottom, pt-2 adds space */}
-            <Button
-              onClick={handleViewDetails}
-              variant="outline"
-              size="sm" // Use 'sm' size, but custom classes make it visually smaller on mobile
-              className="group text-xs h-8 px-3 md:text-sm md:h-9 md:px-4 md:py-2" // Adjust size classes for responsiveness
-            >
-              Details
-              <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5 md:h-4 md:w-4" />
-            </Button>
+            <Link href={`/v/${room.slug || room.id}`}>
+              <Button
+                variant="outline"
+                size="sm" // Use 'sm' size, but custom classes make it visually smaller on mobile
+                className="group text-xs h-8 px-3 md:text-sm md:h-9 md:px-4 md:py-2" // Adjust size classes for responsiveness
+              >
+                Details
+                <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-0.5 md:h-4 md:w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { FrontendBreadcrumbNav } from "@/components/frontend-breadcrumb-nav";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getUnreadNotificationCount } from "@/features/notifications/api/getUnreadNotificationCount";
+import { RouteScrollHandler } from "./components/route-scroll-handler";
 
 export default async function LandingPageLayout({
   // Changed to async function
@@ -18,6 +19,7 @@ export default async function LandingPageLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
+      <RouteScrollHandler />
       <Navbar session={session} initialNotificationCount={unreadCount} />
       <BreadcrumbProvider>
         <main className="container mx-auto max-w-7xl flex-grow px-4 py-8">

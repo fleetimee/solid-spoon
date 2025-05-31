@@ -155,7 +155,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
           {/* Gallery Section */}
           <div className="lg:col-span-7 xl:col-span-8">
-            <div className="sticky top-8">
+            <div>
               {/* Use fetched images */}
               <RoomImageGallery images={displayImages} />
             </div>
@@ -163,9 +163,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
 
           {/* Product Details Section */}
           <div className="lg:col-span-5 xl:col-span-4">
-            <div className="sticky top-20 space-y-6">
-              {" "}
-              {/* Adjusted top value for sticky navbar */}
+            <div className="space-y-6">
               <div className="space-y-4">
                 <Typography variant="h1" as="h1" className="text-3xl font-bold">
                   {/* Use fetched room name */}
