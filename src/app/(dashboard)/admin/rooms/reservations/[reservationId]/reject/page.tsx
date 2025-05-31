@@ -11,6 +11,8 @@ import {
 } from "@/features/reservations/components/reject-confirmation-form"; // Import rejection form
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { XCircle } from "lucide-react";
 
 interface RejectionPageProps {
   params: Promise<{
@@ -71,13 +73,12 @@ async function ReservationRejectionContent({
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-4">
-        <Typography variant="h2">Confirm Reservation Rejection</Typography>{" "}
-        {/* Update title */}
-        <Typography color="muted">
-          Review the details below and provide a reason for rejecting this
-          reservation. {/* Update description */}
-        </Typography>
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Confirm Reservation Rejection"
+          description="Review the details below and provide a reason for rejecting this reservation."
+          icon={XCircle}
+        />
         {/* Pass the correctly structured reservation object to the rejection form */}
         <RejectConfirmationForm reservation={reservationForForm} />
       </div>
@@ -85,7 +86,9 @@ async function ReservationRejectionContent({
   );
 }
 
-export default async function AdminReservationRejectionPage(props: RejectionPageProps) {
+export default async function AdminReservationRejectionPage(
+  props: RejectionPageProps
+) {
   const params = await props.params;
   const { reservationId } = params;
 
@@ -114,13 +117,12 @@ function RejectionPageSkeleton() {
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-4">
-        <Typography variant="h2">Confirm Reservation Rejection</Typography>{" "}
-        {/* Update title */}
-        <Typography color="muted">
-          Review the details below and provide a reason for rejecting this
-          reservation. {/* Update description */}
-        </Typography>
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Confirm Reservation Rejection"
+          description="Review the details below and provide a reason for rejecting this reservation."
+          icon={XCircle}
+        />
         <RejectConfirmationFormSkeleton /> {/* Use rejection skeleton */}
       </div>
     </>

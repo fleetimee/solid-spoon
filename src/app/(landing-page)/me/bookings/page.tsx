@@ -5,6 +5,8 @@ import { headers } from "next/headers"; // Import headers
 import { getUserReservations } from "@/features/reservations/api/getUserReservations"; // Import API function
 // Removed formatDateRangeHumanized import (now used in BookingsList)
 import { BookingsList } from "@/features/reservations/components/bookings-list"; // Import the new component
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { BookOpen } from "lucide-react";
 
 // Removed getStatusColor helper function
 
@@ -20,9 +22,12 @@ export default async function BookingsPage() {
     // Updated check
     return (
       <TabsContent value="bookings" className="pt-6">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Your Bookings</h2>
-          <p>Please log in to view your bookings.</p>
+        <div className="space-y-6">
+          <DashboardHeader
+            title="Your Bookings"
+            description="Please log in to view your bookings."
+            icon={BookOpen}
+          />
         </div>
       </TabsContent>
     );
@@ -34,8 +39,12 @@ export default async function BookingsPage() {
 
   return (
     <TabsContent value="bookings" className="pt-6">
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Your Bookings</h2>
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Your Bookings"
+          description="View and manage all your room reservations and booking history."
+          icon={BookOpen}
+        />
         {/* Replace the old list rendering with the BookingsList component */}
         <BookingsList reservations={reservations} />
       </div>

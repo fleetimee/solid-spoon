@@ -8,6 +8,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { CalendarPlus } from "lucide-react";
 
 interface NewReservationPageProps {
   params: Promise<{
@@ -79,12 +81,13 @@ export default async function NewReservationPage(
     <>
       <BreadcrumbSetter items={breadcrumbItems} />
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Typography variant="h1">Create New Reservation</Typography>
-        <Typography variant="default" className="text-muted-foreground mb-6">
-          You are booking a reservation for the room:{" "}
-          <span className="font-semibold">{room.name}</span>. Fill in the
-          details below.
-        </Typography>
+        <div className="mb-8">
+          <DashboardHeader
+            title="Create New Reservation"
+            description={`You are booking a reservation for the room: ${room.name}. Fill in the details below.`}
+            icon={CalendarPlus}
+          />
+        </div>
         <div className="max-w-2xl">
           {/* Render the client component, passing the roomId and roomSlug */}
           <NewReservationForm roomId={room.id} roomSlug={roomSlug} />

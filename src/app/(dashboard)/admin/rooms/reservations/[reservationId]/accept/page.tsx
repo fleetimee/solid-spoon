@@ -11,6 +11,8 @@ import {
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
 import { Suspense } from "react";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { CheckCircle } from "lucide-react";
 
 interface ConfirmationPageProps {
   params: Promise<{
@@ -88,12 +90,12 @@ async function ReservationConfirmationContent({
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-4">
-        <Typography variant="h2">Confirm Reservation Acceptance</Typography>
-        <Typography color="muted">
-          Review the details below and confirm the acceptance of this
-          reservation.
-        </Typography>
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Confirm Reservation Acceptance"
+          description="Review the details below and confirm the acceptance of this reservation."
+          icon={CheckCircle}
+        />
         <AcceptConfirmationForm reservation={reservation} />
       </div>
     </>
@@ -128,12 +130,12 @@ function ConfirmationPageSkeleton() {
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-4">
-        <Typography variant="h2">Confirm Reservation Acceptance</Typography>
-        <Typography color="muted">
-          Review the details below and confirm the acceptance of this
-          reservation.
-        </Typography>
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Confirm Reservation Acceptance"
+          description="Review the details below and confirm the acceptance of this reservation."
+          icon={CheckCircle}
+        />
         <AcceptConfirmationFormSkeleton />
       </div>
     </>

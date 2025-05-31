@@ -8,6 +8,8 @@ import {
 import { columns } from "@/features/reservations/components/reservations-columns";
 import { ReservationsDataTable } from "@/features/reservations/components/reservations-data-table";
 import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import room fetcher
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { Calendar } from "lucide-react";
 
 interface ReservationsPageProps {
   searchParams?: Promise<{
@@ -95,13 +97,11 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
           { label: "Reservations", href: "/admin/rooms/reservations" },
         ]}
       />
-      <div className="flex flex-col gap-2">
-        <Typography variant="h1">Manage Reservations</Typography>
-        <Typography variant="muted">
-          View and manage all room reservations. Filter by user, room, or
-          status.
-        </Typography>
-      </div>
+      <DashboardHeader
+        title="Manage Reservations"
+        description="View and manage all room reservations. Filter by user, room, or status."
+        icon={Calendar}
+      />
       {/* Pass data, pageCount, rooms, and statuses to the data table */}
       <ReservationsDataTable
         columns={columns}
