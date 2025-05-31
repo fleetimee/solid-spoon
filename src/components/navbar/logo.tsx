@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -21,14 +22,16 @@ export function Logo({ width = 560, height = 140, className }: LogoProps) {
 
   if (!mounted) {
     return (
-      <Image
-        src="/logo-navbar.png"
-        alt="Company Logo"
-        width={width}
-        height={height}
-        className={cn("h-32 w-auto", className)}
-        priority
-      />
+      <Link href="/" className="cursor-pointer">
+        <Image
+          src="/logo-navbar.png"
+          alt="Company Logo"
+          width={width}
+          height={height}
+          className={cn("h-32 w-auto", className)}
+          priority
+        />
+      </Link>
     );
   }
 
@@ -36,13 +39,15 @@ export function Logo({ width = 560, height = 140, className }: LogoProps) {
     resolvedTheme === "dark" ? "/logo-navbar-white.png" : "/logo-navbar.png";
 
   return (
-    <Image
-      src={logoSrc}
-      alt="Company Logo"
-      width={width}
-      height={height}
-      className={cn("h-32 w-auto", className)}
-      priority
-    />
+    <Link href="/" className="cursor-pointer">
+      <Image
+        src={logoSrc}
+        alt="Company Logo"
+        width={width}
+        height={height}
+        className={cn("h-32 w-auto", className)}
+        priority
+      />
+    </Link>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -14,14 +15,16 @@ export function SheetLogo() {
 
   if (!mounted) {
     return (
-      <Image
-        src="/logo-navbar.png"
-        alt="Company Logo"
-        width={500}
-        height={500}
-        className="h-30 w-auto object-contain"
-        priority
-      />
+      <Link href="/" className="cursor-pointer">
+        <Image
+          src="/logo-navbar.png"
+          alt="Company Logo"
+          width={500}
+          height={500}
+          className="h-30 w-auto object-contain"
+          priority
+        />
+      </Link>
     );
   }
 
@@ -29,13 +32,15 @@ export function SheetLogo() {
     resolvedTheme === "dark" ? "/logo-navbar-white.png" : "/logo-navbar.png";
 
   return (
-    <Image
-      src={logoSrc}
-      alt="Company Logo"
-      width={500}
-      height={500}
-      className="h-30 w-auto object-contain"
-      priority
-    />
+    <Link href="/" className="cursor-pointer">
+      <Image
+        src={logoSrc}
+        alt="Company Logo"
+        width={500}
+        height={500}
+        className="h-30 w-auto object-contain"
+        priority
+      />
+    </Link>
   );
 }
