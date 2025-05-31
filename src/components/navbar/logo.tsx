@@ -1,13 +1,20 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-export function Logo() {
+interface LogoProps {
+  width?: number;
+  height?: number;
+  className?: string;
+}
+
+export function Logo({ width = 560, height = 140, className }: LogoProps) {
   return (
     <Image
       src="/logo-navbar.png"
       alt="Company Logo"
-      width={560}
-      height={140}
-      className="h-32 w-auto"
+      width={width}
+      height={height}
+      className={cn("h-32 w-auto", className)}
       priority
     />
   );
