@@ -73,15 +73,30 @@ async function ReservationRejectionContent({
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-6">
-        <DashboardHeader
-          title="Confirm Reservation Rejection"
-          description="Review the details below and provide a reason for rejecting this reservation."
-          icon={XCircle}
-        />
-        {/* Pass the correctly structured reservation object to the rejection form */}
-        <RejectConfirmationForm reservation={reservationForForm} />
+
+      {/* Enhanced Header Section with Red Theme */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 rounded-2xl" />
+        <div className="relative p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25">
+              <XCircle className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
+                Reject Reservation
+              </h1>
+              <p className="text-lg text-muted-foreground mt-1">
+                Review the details below and provide a reason for rejecting this
+                reservation
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <RejectConfirmationForm reservation={reservationForForm} />
     </>
   );
 }
@@ -93,10 +108,8 @@ export default async function AdminReservationRejectionPage(
   const { reservationId } = params;
 
   return (
-    <main className="flex flex-col grow p-4 md:p-8">
+    <main className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
       <Suspense fallback={<RejectionPageSkeleton />}>
-        {" "}
-        {/* Use rejection skeleton */}
         <ReservationRejectionContent reservationId={reservationId} />
       </Suspense>
     </main>
@@ -117,14 +130,30 @@ function RejectionPageSkeleton() {
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-6">
-        <DashboardHeader
-          title="Confirm Reservation Rejection"
-          description="Review the details below and provide a reason for rejecting this reservation."
-          icon={XCircle}
-        />
-        <RejectConfirmationFormSkeleton /> {/* Use rejection skeleton */}
+
+      {/* Enhanced Header Section Skeleton */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 rounded-2xl" />
+        <div className="relative p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/25">
+              <XCircle className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
+                Reject Reservation
+              </h1>
+              <p className="text-lg text-muted-foreground mt-1">
+                Review the details below and provide a reason for rejecting this
+                reservation
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content Skeleton */}
+      <RejectConfirmationFormSkeleton />
     </>
   );
 }

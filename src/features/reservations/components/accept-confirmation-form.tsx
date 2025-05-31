@@ -19,6 +19,14 @@ import { toast } from "sonner";
 import { Typography } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import {
+  CheckCircle,
+  FileText,
+  DoorOpen,
+  User,
+  Clock,
+  MessageSquare,
+} from "lucide-react";
 
 import {
   acceptReservationAction,
@@ -108,68 +116,154 @@ export function AcceptConfirmationForm({
       {/* Ensure hidden input is registered so RHF includes it in 'values' */}
       <input type="hidden" {...form.register("reservationId")} />
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Confirm Reservation Acceptance</CardTitle>
+        <Card className="border-emerald-200/50 shadow-lg shadow-emerald-500/10">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-emerald-700 dark:text-emerald-300">
+                  Confirm Reservation Acceptance
+                </CardTitle>
+                <Typography variant="small" color="muted" className="mt-1">
+                  Review the reservation details and proceed with acceptance
+                </Typography>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-1">
-              <Typography variant="small" color="muted">
-                Title
-              </Typography>
-              <Typography variant="large" className="font-semibold">
+          <CardContent className="space-y-6">
+            {/* Title Section */}
+            <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-lg border border-emerald-200/50 dark:border-emerald-800/50">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <Typography
+                  variant="small"
+                  color="muted"
+                  className="font-medium"
+                >
+                  Reservation Title
+                </Typography>
+              </div>
+              <Typography
+                variant="large"
+                className="font-semibold text-emerald-900 dark:text-emerald-100"
+              >
                 {reservation.title}
               </Typography>
             </div>
-            <div className="space-y-1">
-              <Typography variant="small" color="muted">
-                Room
-              </Typography>
-              <Typography>{reservation.room.name}</Typography>
-            </div>
-            <div className="space-y-1">
-              <Typography variant="small" color="muted">
-                User
-              </Typography>
-              <Typography>{reservation.user.name ?? "N/A"}</Typography>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-1">
-                <Typography variant="small" color="muted">
-                  Start Time
-                </Typography>
-                <Typography>
-                  {format(new Date(reservation.start_time), "PPP p")}
+
+            {/* Room and User Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-950/30 dark:to-gray-950/30 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <DoorOpen className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                  <Typography
+                    variant="small"
+                    color="muted"
+                    className="font-medium"
+                  >
+                    Room
+                  </Typography>
+                </div>
+                <Typography className="font-semibold">
+                  {reservation.room.name}
                 </Typography>
               </div>
-              <div className="space-y-1">
-                <Typography variant="small" color="muted">
-                  End Time
-                </Typography>
-                <Typography>
-                  {format(new Date(reservation.end_time), "PPP p")}
+
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <Typography
+                    variant="small"
+                    color="muted"
+                    className="font-medium"
+                  >
+                    Requested by
+                  </Typography>
+                </div>
+                <Typography className="font-semibold">
+                  {reservation.user.name ?? "N/A"}
                 </Typography>
               </div>
             </div>
+
+            {/* Time Schedule */}
+            <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-lg border border-amber-200/50 dark:border-amber-800/50">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <Typography
+                  variant="small"
+                  color="muted"
+                  className="font-medium"
+                >
+                  Schedule
+                </Typography>
+              </div>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div>
+                  <Typography variant="small" color="muted" className="mb-1">
+                    Start Time
+                  </Typography>
+                  <Typography className="font-semibold">
+                    {format(new Date(reservation.start_time), "PPP p")}
+                  </Typography>
+                </div>
+                <div>
+                  <Typography variant="small" color="muted" className="mb-1">
+                    End Time
+                  </Typography>
+                  <Typography className="font-semibold">
+                    {format(new Date(reservation.end_time), "PPP p")}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+
+            {/* Description Section */}
             {reservation.description && (
-              <div className="space-y-1">
-                <Typography variant="small" color="muted">
-                  Description
+              <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-lg border border-purple-200/50 dark:border-purple-800/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <Typography
+                    variant="small"
+                    color="muted"
+                    className="font-medium"
+                  >
+                    Description
+                  </Typography>
+                </div>
+                <Typography className="leading-relaxed">
+                  {reservation.description}
                 </Typography>
-                <Typography>{reservation.description}</Typography>
               </div>
             )}
           </CardContent>
-          <CardFooter>
-            {/* Use formState.isSubmitting for disabled state */}
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+
+          <CardFooter className="flex gap-3 pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.history.back()}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/25"
+            >
               {form.formState.isSubmitting ? (
                 <>
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   Confirming...
                 </>
               ) : (
-                "Confirm Acceptance"
+                <>
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Confirm Acceptance
+                </>
               )}
             </Button>
           </CardFooter>
@@ -182,40 +276,73 @@ export function AcceptConfirmationForm({
 // Skeleton loader for the form
 export function AcceptConfirmationFormSkeleton() {
   return (
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-3/4" />
+    <Card className="border-emerald-200/50 shadow-lg shadow-emerald-500/10">
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+            <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-64" />
+            <Skeleton className="h-4 w-80" />
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-6 w-1/2" />
-        </div>
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-5 w-1/3" />
-        </div>
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-5 w-1/3" />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <CardContent className="space-y-6">
+        {/* Title Section Skeleton */}
+        <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-lg border border-emerald-200/50 dark:border-emerald-800/50">
           <div className="space-y-2">
-            <Skeleton className="h-4 w-1/4" />
-            <Skeleton className="h-5 w-2/3" />
-          </div>
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-1/4" />
-            <Skeleton className="h-5 w-2/3" />
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-6 w-3/4" />
           </div>
         </div>
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-1/4" />
-          <Skeleton className="h-5 w-full" />
+
+        {/* Room and User Grid Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-950/30 dark:to-gray-950/30 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-5 w-24" />
+            </div>
+          </div>
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-5 w-28" />
+            </div>
+          </div>
+        </div>
+
+        {/* Schedule Skeleton */}
+        <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-lg border border-amber-200/50 dark:border-amber-800/50">
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-20" />
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+              <div className="space-y-1">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-5 w-32" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Description Skeleton */}
+        <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-lg border border-purple-200/50 dark:border-purple-800/50">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-2/3" />
+          </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Skeleton className="h-10 w-36" />
+
+      <CardFooter className="flex gap-3 pt-6">
+        <Skeleton className="h-10 flex-1" />
+        <Skeleton className="h-10 flex-1" />
       </CardFooter>
     </Card>
   );

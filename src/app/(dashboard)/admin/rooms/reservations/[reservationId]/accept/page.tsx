@@ -90,14 +90,30 @@ async function ReservationConfirmationContent({
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-6">
-        <DashboardHeader
-          title="Confirm Reservation Acceptance"
-          description="Review the details below and confirm the acceptance of this reservation."
-          icon={CheckCircle}
-        />
-        <AcceptConfirmationForm reservation={reservation} />
+
+      {/* Enhanced Header Section with Green Theme */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 rounded-2xl" />
+        <div className="relative p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/25">
+              <CheckCircle className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                Accept Reservation
+              </h1>
+              <p className="text-lg text-muted-foreground mt-1">
+                Review the details below and confirm the acceptance of this
+                reservation
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <AcceptConfirmationForm reservation={reservation} />
     </>
   );
 }
@@ -109,7 +125,7 @@ export default async function AdminReservationConfirmationPage(
   const { reservationId } = params;
 
   return (
-    <main className="flex flex-col grow p-4 md:p-8">
+    <main className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
       <Suspense fallback={<ConfirmationPageSkeleton />}>
         <ReservationConfirmationContent reservationId={reservationId} />
       </Suspense>
@@ -130,14 +146,30 @@ function ConfirmationPageSkeleton() {
   return (
     <>
       <BreadcrumbSetter items={breadcrumbs} />
-      <div className="space-y-6">
-        <DashboardHeader
-          title="Confirm Reservation Acceptance"
-          description="Review the details below and confirm the acceptance of this reservation."
-          icon={CheckCircle}
-        />
-        <AcceptConfirmationFormSkeleton />
+
+      {/* Enhanced Header Section Skeleton */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 rounded-2xl" />
+        <div className="relative p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/25">
+              <CheckCircle className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                Accept Reservation
+              </h1>
+              <p className="text-lg text-muted-foreground mt-1">
+                Review the details below and confirm the acceptance of this
+                reservation
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Main Content Skeleton */}
+      <AcceptConfirmationFormSkeleton />
     </>
   );
 }
