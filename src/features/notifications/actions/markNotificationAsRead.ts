@@ -23,6 +23,8 @@ export async function markNotificationAsRead(
     return { success: false, error: "Unauthorized. Please sign in." };
   }
 
+  const isAdmin = session.user.role === "admin";
+
   // Validate input
   const validation = MarkAsReadSchema.safeParse({ notificationId });
   if (!validation.success) {
@@ -39,7 +41,7 @@ export async function markNotificationAsRead(
     // Update notification with security check (recipient_id)
     const result = await db.query(
       "UPDATE notification SET is_read = true WHERE id = $1 AND recipient_id = $2",
-      [validatedId, session.user.id]
+      [validatedId, isAdmin ? "admin" : session.user.id]
     );
 
     if (result.rowCount === 0) {
