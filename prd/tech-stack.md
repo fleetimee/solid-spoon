@@ -94,6 +94,18 @@ This document outlines and justifies the technology choices for the room reserva
   - Built-in middleware support
   - Edge runtime compatibility
 
+### Server-Side Operations
+
+- **[Next.js Server Actions](src/features/notifications/actions/)** - Type-safe server mutations
+  - Direct server-side data mutations without API routes
+  - Progressive enhancement with form submissions
+  - Type-safe form handling with automatic serialization
+  - Simplified data flow between client and server
+  - Better performance by eliminating API route overhead
+  - Seamless integration with React components and forms
+  - Built-in error handling and loading states
+  - Optimistic updates support with TanStack Query
+
 ### Database & ORM
 
 - **[PostgreSQL](package.json:53)** - Relational database
@@ -141,10 +153,14 @@ This document outlines and justifies the technology choices for the room reserva
 
 ### File Storage
 
-- **[AWS S3](package.json:13-14)** - Cloud object storage
-  - Scalable file storage for room images
-  - Pre-signed URLs for secure uploads
-  - CDN integration for fast content delivery
+- **[MinIO](src/helpers/upload.ts:13-21)** - Self-hosted object storage solution
+  - S3-compatible API for seamless integration with AWS SDK
+  - Self-hosted solution providing better control over data location and privacy
+  - Cost-effective alternative to cloud storage for development and production
+  - Scalable file storage for room images with [`uploadFileToS3()`](src/helpers/upload.ts:31)
+  - Pre-signed URLs for secure uploads via [`getSignedUploadUrl()`](src/helpers/upload.ts:101)
+  - File deletion capabilities through [`deleteFileFromS3()`](src/helpers/upload.ts:76)
+  - Easy development/testing setup with configurable endpoints
 
 ## Infrastructure
 
