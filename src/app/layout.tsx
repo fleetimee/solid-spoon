@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import BProgressProviders from "@/components/providers/bprogress-providers";
 import TanstackProviders from "@/components/providers/tanstack-query-providers";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { RouteScrollHandler } from "@/components/route-scroll-handler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
                 defaultTheme="system"
                 enableSystem
               >
+                <RouteScrollHandler />
                 {children}
               </ThemeProvider>
             </TanstackProviders>
