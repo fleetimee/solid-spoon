@@ -18,7 +18,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
-import { Logo } from "./logo";
+import { SheetLogo } from "./sheet-logo";
 import type { Session, User } from "better-auth"; // Import Session and User types
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -54,8 +54,8 @@ export const NavigationSheet = ({
       </SheetTrigger>
       <SheetContent className="flex flex-col h-full p-0">
         <div className="flex flex-col flex-1 px-4 py-6">
-          <SheetHeader className="p-0 mb-6">
-            <Logo />
+          <SheetHeader className="p-0 mb-6 h-auto max-h-24 flex-shrink-0">
+            <SheetLogo />
           </SheetHeader>
 
           {session ? ( // Check if the AuthSession object exists
