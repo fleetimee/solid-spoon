@@ -14,10 +14,35 @@ import { useEffect, useState } from "react";
 
 const footerSections = [
   {
-    title: "Product",
+    title: "Team Members",
     links: [
       {
-        title: "Overview",
+        title: "John Smith",
+        href: "#",
+      },
+      {
+        title: "Sarah Johnson",
+        href: "#",
+      },
+      {
+        title: "Michael Chen",
+        href: "#",
+      },
+      {
+        title: "Emily Davis",
+        href: "#",
+      },
+      {
+        title: "Alex Rodriguez",
+        href: "#",
+      },
+    ],
+  },
+  {
+    title: "Project Info",
+    links: [
+      {
+        title: "About Project",
         href: "#",
       },
       {
@@ -25,77 +50,40 @@ const footerSections = [
         href: "#",
       },
       {
-        title: "Solutions",
+        title: "Documentation",
         href: "#",
       },
       {
-        title: "Tutorials",
+        title: "Source Code",
         href: "#",
       },
       {
-        title: "Pricing",
-        href: "#",
-      },
-      {
-        title: "Releases",
+        title: "Report Issues",
         href: "#",
       },
     ],
   },
   {
-    title: "Company",
+    title: "Academic",
     links: [
       {
-        title: "About us",
+        title: "Course Info",
         href: "#",
       },
       {
-        title: "Careers",
+        title: "Project Goals",
         href: "#",
       },
       {
-        title: "Press",
+        title: "Technologies",
         href: "#",
       },
       {
-        title: "News",
+        title: "Methodology",
         href: "#",
       },
       {
-        title: "Media kit",
-        href: "#",
-      },
-      {
-        title: "Contact",
-        href: "#",
-      },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      {
-        title: "Blog",
-        href: "#",
-      },
-      {
-        title: "Newsletter",
-        href: "#",
-      },
-      {
-        title: "Events",
-        href: "#",
-      },
-      {
-        title: "Help centre",
-        href: "#",
-      },
-      {
-        title: "Tutorials",
-        href: "#",
-      },
-      {
-        title: "Support",
+        title: "References",
         href: "#",
       },
     ],
@@ -205,7 +193,8 @@ export function Footer() {
           <FooterLogo />
 
           <p className="text-muted-foreground">
-            Simplifying room reservations for modern workplaces.
+            A collaborative team project for room reservation management - built
+            with modern web technologies.
           </p>
         </div>
 
@@ -231,11 +220,7 @@ export function Footer() {
       <div className="max-w-screen-xl mx-auto py-8 flex flex-col-reverse sm:flex-row items-center justify-between gap-x-2 gap-y-5 px-6">
         {/* Copyright */}
         <span className="text-muted-foreground text-center xs:text-start">
-          &copy; {new Date().getFullYear()}{" "}
-          <Link href="https://shadcnui-blocks.com" target="_blank">
-            Shadcn UI Blocks
-          </Link>
-          . All rights reserved.
+          &copy; {new Date().getFullYear()} CapstoneD - Room Reservation System
         </span>
 
         <div className="flex items-center gap-5 text-muted-foreground">
