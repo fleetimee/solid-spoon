@@ -131,7 +131,8 @@ export async function getAllReservations(
       dataQuery += `, rr.start_time ASC`; // Secondary sort for stability
     }
   } else {
-    dataQuery += ` ORDER BY r.name ASC, rr.start_time ASC`; // Default sort
+    // Default sort: newest reservations first (created_at DESC), then by start_time ASC for secondary ordering
+    dataQuery += ` ORDER BY rr.created_at DESC, rr.start_time ASC`;
   }
 
   // Add pagination (LIMIT and OFFSET)
