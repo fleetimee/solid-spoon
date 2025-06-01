@@ -15,6 +15,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Typography } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,6 +38,7 @@ import {
   User,
   Clock,
   MessageSquare,
+  AlertTriangle,
 } from "lucide-react";
 
 import {
@@ -61,6 +73,8 @@ export function AcceptConfirmationForm({
   reservation,
 }: AcceptConfirmationFormProps) {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
   // Define the initial state for the action
   const initialState: AcceptReservationFormState = {
     success: false,
@@ -75,9 +89,9 @@ export function AcceptConfirmationForm({
     },
   });
 
-  // Define the onSubmit handler using validated values
-  async function onSubmit(values: AcceptFormValues) {
-    // No need for setIsSubmitting(true); RHF handles this via formState.isSubmitting
+  // Define the actual submission handler using validated values
+  async function handleAcceptReservation(values: AcceptFormValues) {
+    setIsProcessing(true);
     try {
       // Create FormData and append the reservationId
       const formData = new FormData();
@@ -108,8 +122,15 @@ export function AcceptConfirmationForm({
     } catch (error) {
       console.error("Acceptance failed:", error);
       toast.error("An unexpected error occurred during acceptance.");
+    } finally {
+      setIsProcessing(false);
     }
-    // No need for finally block with setIsSubmitting(false);
+  }
+
+  // Handle form submission with confirmation dialog
+  function onSubmit(values: AcceptFormValues) {
+    // This will be triggered by the confirmation dialog
+    // The actual submission is handled by handleAcceptReservation
   }
 
   return (
@@ -127,7 +148,7 @@ export function AcceptConfirmationForm({
                 <CardTitle className="text-xl text-emerald-700 dark:text-emerald-300">
                   Confirm Reservation Acceptance
                 </CardTitle>
-                <Typography variant="small" color="muted" className="mt-1">
+                <Typography variant="muted" className="mt-1">
                   Review the reservation details and proceed with acceptance
                 </Typography>
               </div>
@@ -138,11 +159,7 @@ export function AcceptConfirmationForm({
             <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 rounded-lg border border-emerald-200/50 dark:border-emerald-800/50">
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                <Typography
-                  variant="small"
-                  color="muted"
-                  className="font-medium"
-                >
+                <Typography variant="small" className="font-medium">
                   Reservation Title
                 </Typography>
               </div>
@@ -159,11 +176,7 @@ export function AcceptConfirmationForm({
               <div className="p-4 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-950/30 dark:to-gray-950/30 rounded-lg border border-slate-200/50 dark:border-slate-800/50">
                 <div className="flex items-center gap-2 mb-2">
                   <DoorOpen className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                  <Typography
-                    variant="small"
-                    color="muted"
-                    className="font-medium"
-                  >
+                  <Typography variant="small" className="font-medium">
                     Room
                   </Typography>
                 </div>
@@ -175,11 +188,7 @@ export function AcceptConfirmationForm({
               <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50">
                 <div className="flex items-center gap-2 mb-3">
                   <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <Typography
-                    variant="small"
-                    color="muted"
-                    className="font-medium"
-                  >
+                  <Typography variant="small" className="font-medium">
                     Requested by
                   </Typography>
                 </div>
@@ -219,17 +228,13 @@ export function AcceptConfirmationForm({
             <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-lg border border-amber-200/50 dark:border-amber-800/50">
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <Typography
-                  variant="small"
-                  color="muted"
-                  className="font-medium"
-                >
+                <Typography variant="small" className="font-medium">
                   Schedule
                 </Typography>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div>
-                  <Typography variant="small" color="muted" className="mb-1">
+                  <Typography variant="muted" className="mb-1">
                     Start Time
                   </Typography>
                   <Typography className="font-semibold">
@@ -237,7 +242,7 @@ export function AcceptConfirmationForm({
                   </Typography>
                 </div>
                 <div>
-                  <Typography variant="small" color="muted" className="mb-1">
+                  <Typography variant="muted" className="mb-1">
                     End Time
                   </Typography>
                   <Typography className="font-semibold">
@@ -252,11 +257,7 @@ export function AcceptConfirmationForm({
               <div className="p-4 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30 rounded-lg border border-purple-200/50 dark:border-purple-800/50">
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  <Typography
-                    variant="small"
-                    color="muted"
-                    className="font-medium"
-                  >
+                  <Typography variant="small" className="font-medium">
                     Description
                   </Typography>
                 </div>
@@ -276,23 +277,70 @@ export function AcceptConfirmationForm({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={form.formState.isSubmitting}
-              className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/25"
-            >
-              {form.formState.isSubmitting ? (
-                <>
-                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                  Confirming...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Confirm Acceptance
-                </>
-              )}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  disabled={form.formState.isSubmitting || isProcessing}
+                  className="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/25"
+                >
+                  {form.formState.isSubmitting || isProcessing ? (
+                    <>
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Confirm Acceptance
+                    </>
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    Accept Reservation?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription asChild>
+                    <div>
+                      <p>
+                        You are about to accept the reservation &ldquo;
+                        {reservation.title}&rdquo; for {reservation.room.name}.
+                      </p>
+                      <p className="mt-4">This action will:</p>
+                      <ul className="list-disc list-inside mt-2 space-y-1">
+                        <li>Approve the reservation request</li>
+                        <li>
+                          Notify the user that their reservation has been
+                          accepted
+                        </li>
+                        <li>Block the time slot for other reservations</li>
+                      </ul>
+                      <p className="mt-4">Are you sure you want to proceed?</p>
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleAcceptReservation(form.getValues())}
+                    disabled={isProcessing}
+                    className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                        Accepting...
+                      </>
+                    ) : (
+                      "Yes, Accept Reservation"
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </Card>
       </form>

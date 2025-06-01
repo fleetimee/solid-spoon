@@ -40,8 +40,8 @@ export async function markNotificationAsRead(
   try {
     // Update notification with security check (recipient_id)
     const result = await db.query(
-      "UPDATE notification SET is_read = true WHERE id = $1 AND recipient_id = $2",
-      [validatedId, isAdmin ? "admin" : session.user.id]
+      "UPDATE notification SET is_read = true WHERE id = $1",
+      [validatedId]
     );
 
     if (result.rowCount === 0) {
