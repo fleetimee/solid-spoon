@@ -22,6 +22,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge"; // Added Badge import
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Added Avatar components
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -186,16 +187,36 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "userName",
-    header: createSortableHeader("userName", "User Name", User),
+    header: createSortableHeader("userName", "Reserved By", User),
     cell: ({ row }) => {
+      const name = row.original.userName || "Unknown User";
+      const email = row.original.userEmail;
+      const userImage = row.original.userImage;
+
+      // Generate initials similar to user datatable
+      const initials = name
+        .split(" ")
+        .map((part) => part.charAt(0))
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+
       return (
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white text-sm font-semibold">
-            {row.original.userName?.charAt(0)?.toUpperCase() || "U"}
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={userImage || undefined} alt={name} />
+            <AvatarFallback className="text-xs">
+              {initials || "??"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="font-medium text-slate-700 dark:text-slate-300">
+              {name}
+            </span>
+            {email && (
+              <span className="text-sm text-muted-foreground">{email}</span>
+            )}
           </div>
-          <span className="font-medium text-slate-700 dark:text-slate-300">
-            {row.original.userName}
-          </span>
         </div>
       );
     },

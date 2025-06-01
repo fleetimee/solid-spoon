@@ -5,6 +5,8 @@ export type ReservationWithDetails = {
   title: string | null; // Added title
   description: string | null; // Added description
   userName: string | null;
+  userEmail: string | null; // Added userEmail
+  userImage: string | null; // Added userImage
   roomName: string;
   startTime: Date;
   endTime: Date;
@@ -103,6 +105,8 @@ export async function getAllReservations(
       rr.title, -- Select title
       rr.description, -- Select description
       u.name AS "userName",
+      u.email AS "userEmail", -- Select user email
+      u.image AS "userImage", -- Select user image
       r.name AS "roomName",
       rr.start_time AS "startTime",
       rr.end_time AS "endTime",
