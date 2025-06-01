@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react"; // Added useState
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { NotificationFilter } from "../types/notification";
-import { Input } from "@/components/ui/input"; // Added Input
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import {
   Pagination,
   PaginationContent,
@@ -20,7 +21,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"; // Added Select imports
+} from "@/components/ui/select";
+import { ChevronLeft, ChevronRight, Hash } from "lucide-react";
 
 interface NotificationPaginationProps {
   currentPage: number;
@@ -139,73 +141,118 @@ export function NotificationPagination({
   const isPresetSize = ["3", "5", "10"].includes(currentSize);
 
   return (
-    <div className="mt-8 flex items-center justify-between">
-      {/* Page size selector with custom input */}
-      <div className="flex items-center gap-2 min-w-[280px]">
-        <span className="text-sm text-muted-foreground">Per page:</span>
-        <Select
-          value={isPresetSize ? currentSize : undefined} // Use value, show preset only if active
-          onValueChange={(value) => {
-            const params = new URLSearchParams(searchParams);
-            params.set("page", "1");
-            params.set("pageSize", value);
-            router.push(`/admin/notifications?${params.toString()}`);
-            setCustomSizeInput(""); // Clear custom input state
-          }}
-        >
-          <SelectTrigger className="h-8 w-[70px]">
-            <SelectValue placeholder="Size" /> {/* Changed placeholder */}
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="3">3</SelectItem>
-            <SelectItem value="5">5</SelectItem>
-            <SelectItem value="10">10</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input
-          type="number"
-          min="1"
-          max="50" // Added a max limit
-          className="h-8 w-[80px]"
-          placeholder="Custom"
-          value={customSizeInput}
-          onChange={(e) => setCustomSizeInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              const customSize = parseInt(customSizeInput);
-              if (isNaN(customSize) || customSize <= 0 || customSize > 50) {
-                // Added max check
-                // Handle invalid input
+    <div
+      className={cn(
+        "mt-8 p-4 rounded-lg border",
+        "bg-gradient-to-r from-purple-50/30 to-violet-50/30",
+        "dark:from-purple-950/10 dark:to-violet-950/10",
+        "border-purple-200/20 dark:border-purple-800/20",
+        "backdrop-blur-sm"
+      )}
+    >
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Page size selector with modern styling */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Hash className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <span className="text-sm font-medium text-foreground">
+              Items per page:
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Select
+              value={isPresetSize ? currentSize : undefined}
+              onValueChange={(value) => {
+                const params = new URLSearchParams(searchParams);
+                params.set("page", "1");
+                params.set("pageSize", value);
+                router.push(`/admin/notifications?${params.toString()}`);
                 setCustomSizeInput("");
-                return;
-              }
+              }}
+            >
+              <SelectTrigger
+                className={cn(
+                  "h-9 w-16 border-purple-200/40 dark:border-purple-800/30",
+                  "bg-white/60 dark:bg-gray-950/60",
+                  "hover:bg-purple-50 dark:hover:bg-purple-950/30",
+                  "transition-colors duration-200"
+                )}
+              >
+                <SelectValue placeholder="Size" />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm">
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+              </SelectContent>
+            </Select>
 
-              const params = new URLSearchParams(searchParams);
-              params.set("page", "1");
-              params.set("pageSize", customSize.toString());
-              router.push(`/admin/notifications?${params.toString()}`);
-            }
-          }}
-        />
+            <Input
+              type="number"
+              min="1"
+              max="50"
+              className={cn(
+                "h-9 w-20 border-purple-200/40 dark:border-purple-800/30",
+                "bg-white/60 dark:bg-gray-950/60",
+                "hover:bg-purple-50 dark:hover:bg-purple-950/30",
+                "focus:ring-purple-500/20 focus:border-purple-400",
+                "transition-colors duration-200"
+              )}
+              placeholder="Custom"
+              value={customSizeInput}
+              onChange={(e) => setCustomSizeInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const customSize = parseInt(customSizeInput);
+                  if (isNaN(customSize) || customSize <= 0 || customSize > 50) {
+                    setCustomSizeInput("");
+                    return;
+                  }
+
+                  const params = new URLSearchParams(searchParams);
+                  params.set("page", "1");
+                  params.set("pageSize", customSize.toString());
+                  router.push(`/admin/notifications?${params.toString()}`);
+                }
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Enhanced pagination */}
+        <Pagination>
+          <PaginationContent className="gap-1">
+            {currentPage > 1 && (
+              <PaginationItem>
+                <PaginationPrevious
+                  href={getPaginationUrl(currentPage - 1)}
+                  className={cn(
+                    "hover:bg-purple-100 dark:hover:bg-purple-900/30",
+                    "hover:text-purple-700 dark:hover:text-purple-300",
+                    "transition-all duration-200 hover:scale-105"
+                  )}
+                />
+              </PaginationItem>
+            )}
+
+            {getPaginationItems()}
+
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <PaginationNext
+                  href={getPaginationUrl(currentPage + 1)}
+                  className={cn(
+                    "hover:bg-purple-100 dark:hover:bg-purple-900/30",
+                    "hover:text-purple-700 dark:hover:text-purple-300",
+                    "transition-all duration-200 hover:scale-105"
+                  )}
+                />
+              </PaginationItem>
+            )}
+          </PaginationContent>
+        </Pagination>
       </div>
-      <Pagination>
-        <PaginationContent>
-          {currentPage > 1 && (
-            <PaginationItem>
-              <PaginationPrevious href={getPaginationUrl(currentPage - 1)} />
-            </PaginationItem>
-          )}
-
-          {getPaginationItems()}
-
-          {currentPage < totalPages && (
-            <PaginationItem>
-              <PaginationNext href={getPaginationUrl(currentPage + 1)} />
-            </PaginationItem>
-          )}
-        </PaginationContent>
-      </Pagination>
-      {/* Removed old page size selector buttons */}
     </div>
   );
 }

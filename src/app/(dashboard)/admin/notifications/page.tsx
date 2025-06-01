@@ -17,6 +17,9 @@ import {
 } from "@/features/notifications/components/notification-json-toggle";
 import { ClearNotificationsButton } from "@/features/notifications/components/clear-notifications-button";
 import { MarkAllAsReadButton } from "@/features/notifications/components/mark-all-as-read-button";
+import { NotificationHeader } from "@/features/notifications/components/notification-header";
+import { NotificationStatsCards } from "@/features/notifications/components/notification-stats-cards";
+import { NotificationContentSection } from "@/features/notifications/components/notification-content-section";
 
 export const metadata: Metadata = {
   title: "Notifications | Room Reservation System",
@@ -99,6 +102,8 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
   }
   const hasUnreadNotifications = unreadNotificationCount > 0;
 
+  const totalNotifications = readNotificationCount + unreadNotificationCount;
+
   const getQuickNavPageNumbers = () => {
     const { currentPage, totalPages } = notificationsData.pagination;
     const result = [];
@@ -146,86 +151,95 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
     <>
       <BreadcrumbSetter items={notificationsBreadcrumb} />
 
-      <main className="flex flex-col grow p-4 md:p-8">
-        <div className="flex flex-col gap-2 mb-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Notifications
-            </h1>
-            {isDevMode && (
-              <NotificationJsonToggle
-                showJson={showJson}
-                filter={searchParams.filter}
-                page={searchParams.page}
-                pageSize={searchParams.pageSize}
-              />
-            )}
-          </div>
-          <p className="text-muted-foreground">
-            View and manage system notifications
-          </p>
+      <main className="flex flex-col grow p-4 md:p-8 space-y-8">
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <NotificationHeader
+            title="Notifications"
+            description="Stay updated with your system activities"
+          />
+          {isDevMode && (
+            <NotificationJsonToggle
+              showJson={showJson}
+              filter={searchParams.filter}
+              page={searchParams.page}
+              pageSize={searchParams.pageSize}
+            />
+          )}
         </div>
 
-        <div className="flex justify-between items-center gap-4 mb-6">
-          <NotificationFilters
-            currentFilter={parsedFilter}
+        {/* Stats Cards Section */}
+        <NotificationStatsCards
+          stats={{
+            totalNotifications,
+            unreadCount: unreadNotificationCount,
+            readCount: readNotificationCount,
+          }}
+        />
+
+        {/* Content Section */}
+        <NotificationContentSection>
+          <div className="flex justify-between items-center gap-4 mb-6">
+            <NotificationFilters
+              currentFilter={parsedFilter}
+              pageSize={searchParams.pageSize}
+              showJson={searchParams.showJson}
+            />
+
+            <div className="flex items-center gap-2">
+              {currentLoggedInUser && (
+                <MarkAllAsReadButton
+                  userId={currentLoggedInUser}
+                  hasUnreadNotifications={hasUnreadNotifications}
+                />
+              )}
+
+              {currentLoggedInUser && (
+                <ClearNotificationsButton
+                  userId={currentLoggedInUser}
+                  hasReadNotifications={hasReadNotifications}
+                />
+              )}
+
+              <div className="hidden md:flex space-x-2">
+                {getQuickNavPageNumbers().map((nav) => (
+                  <Button
+                    key={nav.label}
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="h-8 px-2"
+                  >
+                    <Link href={getPaginationUrl(nav.page)}>
+                      {nav.icon}
+                      <span className="ml-1 sr-only">{nav.label}</span>
+                    </Link>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {isDevMode && showJson && (
+            <NotificationJsonView data={notificationsData} />
+          )}
+
+          <NotificationsList
+            notifications={notificationsData.notifications}
+            filter={parsedFilter}
+            totalItems={notificationsData.pagination.totalItems}
+            currentPage={notificationsData.pagination.currentPage}
+            pageSize={notificationsData.pagination.pageSize}
+          />
+
+          <NotificationPagination
+            currentPage={notificationsData.pagination.currentPage}
+            totalPages={notificationsData.pagination.totalPages}
+            filter={parsedFilter}
             pageSize={searchParams.pageSize}
             showJson={searchParams.showJson}
           />
-
-          <div className="flex items-center gap-2">
-            {currentLoggedInUser && (
-              <MarkAllAsReadButton
-                userId={currentLoggedInUser}
-                hasUnreadNotifications={hasUnreadNotifications}
-              />
-            )}
-
-            {currentLoggedInUser && (
-              <ClearNotificationsButton
-                userId={currentLoggedInUser}
-                hasReadNotifications={hasReadNotifications}
-              />
-            )}
-
-            <div className="hidden md:flex space-x-2">
-              {getQuickNavPageNumbers().map((nav) => (
-                <Button
-                  key={nav.label}
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="h-8 px-2"
-                >
-                  <Link href={getPaginationUrl(nav.page)}>
-                    {nav.icon}
-                    <span className="ml-1 sr-only">{nav.label}</span>
-                  </Link>
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {isDevMode && showJson && (
-          <NotificationJsonView data={notificationsData} />
-        )}
-
-        <NotificationsList
-          notifications={notificationsData.notifications}
-          filter={parsedFilter}
-          totalItems={notificationsData.pagination.totalItems}
-          currentPage={notificationsData.pagination.currentPage}
-          pageSize={notificationsData.pagination.pageSize}
-        />
-
-        <NotificationPagination
-          currentPage={notificationsData.pagination.currentPage}
-          totalPages={notificationsData.pagination.totalPages}
-          filter={parsedFilter}
-          pageSize={searchParams.pageSize}
-          showJson={searchParams.showJson}
-        />
+        </NotificationContentSection>
       </main>
     </>
   );
