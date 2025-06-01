@@ -85,17 +85,26 @@ export function RoomReservationsSection({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
+        <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
           Recent Bookings
         </h2>
       </div>
 
-      <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+      <Card className="group relative overflow-hidden bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20 border-0 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-400/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 relative">
           <CardTitle className="flex items-center gap-2 text-lg font-medium">
-            <History className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            Recent Reservations
-            <Badge variant="secondary" className="ml-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 text-white shadow-md">
+              <History className="w-5 h-5" />
+            </div>
+            <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+              Recent Reservations
+            </span>
+            <Badge
+              variant="secondary"
+              className="ml-2 bg-gradient-to-r from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 text-violet-700 dark:text-violet-300 border-0"
+            >
               All Statuses
             </Badge>
           </CardTitle>
@@ -105,7 +114,7 @@ export function RoomReservationsSection({
               <Button
                 size="sm"
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-white/50 dark:bg-gray-800/50 border-violet-200 dark:border-violet-700 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-500 hover:text-white hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-lg backdrop-blur-sm"
               >
                 <Calendar className="h-4 w-4" />
                 Manage Reservations
@@ -131,37 +140,37 @@ export function RoomReservationsSection({
           </DropdownMenu>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="relative">
           {recentReservations && recentReservations.length > 0 ? (
-            <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-white/50 dark:bg-gray-800/50">
+            <div className="rounded-lg border border-violet-200/50 dark:border-violet-700/30 overflow-hidden bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                    <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                  <TableRow className="bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-950/50 dark:to-purple-950/50 border-violet-200/50 dark:border-violet-700/50">
+                    <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
                         Event Title
                       </div>
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                    <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4" />
                         Booked By
                       </div>
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                    <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4" />
                         Start Time
                       </div>
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                    <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4" />
                         End Time
                       </div>
                     </TableHead>
-                    <TableHead className="font-semibold text-gray-700 dark:text-gray-300">
+                    <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       Status
                     </TableHead>
                   </TableRow>
@@ -170,7 +179,7 @@ export function RoomReservationsSection({
                   {recentReservations.map((reservation, index) => (
                     <TableRow
                       key={reservation.id}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-200 border-gray-100 dark:border-gray-800"
+                      className="hover:bg-violet-50/50 dark:hover:bg-violet-950/20 transition-colors duration-200 border-violet-100/50 dark:border-violet-800/30"
                     >
                       <TableCell className="font-medium">
                         <div className="space-y-1">
@@ -244,20 +253,24 @@ export function RoomReservationsSection({
             </div>
           ) : (
             <div className="text-center py-12">
-              <div className="space-y-4">
-                <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                  <History className="w-8 h-8 text-gray-400" />
+              <div className="space-y-6">
+                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                  <History className="w-10 h-10 text-white" />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
                     No recent reservations
                   </h3>
-                  <p className="text-muted-foreground max-w-sm mx-auto">
+                  <p className="text-violet-600/70 dark:text-violet-400/70 max-w-sm mx-auto">
                     This room hasn&apos;t been booked recently. Reservations
                     will appear here once users start booking this room.
                   </p>
                 </div>
-                <Button variant="outline" asChild className="mt-4">
+                <Button
+                  variant="outline"
+                  asChild
+                  className="mt-4 bg-white/50 dark:bg-gray-800/50 border-violet-200 dark:border-violet-700 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-500 hover:text-white hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-lg backdrop-blur-sm"
+                >
                   <Link href="/admin/rooms/reservations">
                     <Calendar className="w-4 h-4 mr-2" />
                     View All Reservations

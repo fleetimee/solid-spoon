@@ -79,16 +79,20 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
       <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
         <RoomDetailHeader room={room} />
 
-        <RoomDetailStats stats={roomStats} />
+        <div className="bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/10 dark:to-purple-950/10 rounded-xl p-6 shadow-lg border-0 backdrop-blur-sm">
+          <div className="space-y-8">
+            <RoomDetailStats stats={roomStats} />
 
-        <RoomImageSection room={room} />
+            <RoomImageSection room={room} />
 
-        <RoomInfoSection room={room} />
+            <RoomInfoSection room={room} />
 
-        <RoomReservationsSection
-          roomId={room.id}
-          recentReservations={recentReservations}
-        />
+            <RoomReservationsSection
+              roomId={room.id}
+              recentReservations={recentReservations}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

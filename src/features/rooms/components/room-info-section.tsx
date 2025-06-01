@@ -84,7 +84,8 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
+        <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
           Room Information
         </h2>
       </div>
@@ -93,32 +94,34 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
         {infoCards.map((card, cardIndex) => (
           <Card
             key={cardIndex}
-            className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200"
+            className="group relative overflow-hidden bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm"
           >
-            <CardHeader>
-              <CardTitle className="text-lg text-gray-900 dark:text-gray-100">
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-400/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+            <CardHeader className="relative">
+              <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
                 {card.title}
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 relative">
               {card.items.map((item, itemIndex) => (
                 <div
                   key={itemIndex}
-                  className="flex items-center gap-4 p-3 rounded-lg bg-white/70 dark:bg-gray-800/70 hover:bg-white dark:hover:bg-gray-800 transition-colors duration-200 border border-gray-100 dark:border-gray-700"
+                  className="flex items-center gap-4 p-3 rounded-lg bg-white/70 dark:bg-gray-800/70 hover:bg-white/90 dark:hover:bg-gray-800/90 transition-all duration-200 border border-violet-100/50 dark:border-violet-800/30 hover:border-violet-200 dark:hover:border-violet-700 hover:scale-[1.02] backdrop-blur-sm"
                 >
-                  <div className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                  <div className="p-2 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 text-white shadow-md group-hover:scale-110 transition-transform duration-200">
                     <item.icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-sm font-medium text-violet-600/70 dark:text-violet-400/70">
                       {item.label}
                     </p>
                     <div className="font-semibold flex items-center gap-2">
                       {item.badge ? (
                         <Badge
                           variant={item.badgeVariant as any}
-                          className="text-xs"
+                          className="text-xs hover:scale-105 transition-transform duration-200"
                         >
                           {item.value}
                         </Badge>
@@ -137,14 +140,16 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
       </div>
 
       {/* Facilities Section */}
-      <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900/50 dark:to-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg text-gray-900 dark:text-gray-100">
+      <Card className="group relative overflow-hidden bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20 border-0 shadow-lg hover:shadow-xl transition-all duration-300 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-400/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        <CardHeader className="relative">
+          <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
             Facilities & Amenities
           </CardTitle>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="relative">
           {facilities.length > 0 ? (
             <div className="flex flex-wrap gap-3">
               {facilities.map((facility: string, index: number) => (
@@ -158,10 +163,14 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="space-y-3">
-                <div className="text-4xl opacity-30 text-gray-400">🏗️</div>
-                <p className="text-muted-foreground">No facilities listed</p>
-                <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              <div className="space-y-4">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-violet-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-2xl text-white">🏗️</span>
+                </div>
+                <p className="text-violet-700 dark:text-violet-300 font-medium">
+                  No facilities listed
+                </p>
+                <p className="text-sm text-violet-600/70 dark:text-violet-400/70 max-w-sm mx-auto">
                   Add facilities to help users understand what amenities are
                   available in this room
                 </p>

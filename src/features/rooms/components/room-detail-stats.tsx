@@ -61,42 +61,42 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
       case "total":
         return {
           bgGradient:
-            "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20",
-          hoverGradient: "from-blue-400/10 to-indigo-400/10",
-          titleColor: "text-blue-700 dark:text-blue-300",
-          iconBg: "from-blue-400 to-indigo-500",
-          valueColor: "text-blue-800 dark:text-blue-200",
-          descriptionColor: "text-blue-600 dark:text-blue-400",
+            "from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20",
+          hoverGradient: "from-violet-400/10 to-purple-400/10",
+          titleColor: "text-violet-700 dark:text-violet-300",
+          iconBg: "from-violet-400 to-purple-500",
+          valueColor: "text-violet-800 dark:text-violet-200",
+          descriptionColor: "text-violet-600 dark:text-violet-400",
         };
       case "active":
         return {
           bgGradient:
-            "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20",
-          hoverGradient: "from-emerald-400/10 to-green-400/10",
-          titleColor: "text-emerald-700 dark:text-emerald-300",
-          iconBg: "from-emerald-400 to-green-500",
-          valueColor: "text-emerald-800 dark:text-emerald-200",
-          descriptionColor: "text-emerald-600 dark:text-emerald-400",
+            "from-purple-50/50 to-violet-50/50 dark:from-purple-950/20 dark:to-violet-950/20",
+          hoverGradient: "from-purple-400/10 to-violet-400/10",
+          titleColor: "text-purple-700 dark:text-purple-300",
+          iconBg: "from-purple-400 to-violet-500",
+          valueColor: "text-purple-800 dark:text-purple-200",
+          descriptionColor: "text-purple-600 dark:text-purple-400",
         };
       case "utilization":
         return {
           bgGradient:
-            "from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20",
-          hoverGradient: "from-purple-400/10 to-pink-400/10",
-          titleColor: "text-purple-700 dark:text-purple-300",
-          iconBg: "from-purple-400 to-pink-500",
-          valueColor: "text-purple-800 dark:text-purple-200",
-          descriptionColor: "text-purple-600 dark:text-purple-400",
+            "from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20",
+          hoverGradient: "from-violet-400/10 to-purple-400/10",
+          titleColor: "text-violet-700 dark:text-violet-300",
+          iconBg: "from-violet-400 to-purple-500",
+          valueColor: "text-violet-800 dark:text-violet-200",
+          descriptionColor: "text-violet-600 dark:text-violet-400",
         };
       case "recent":
         return {
           bgGradient:
-            "from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20",
-          hoverGradient: "from-amber-400/10 to-orange-400/10",
-          titleColor: "text-amber-700 dark:text-amber-300",
-          iconBg: "from-amber-400 to-orange-500",
-          valueColor: "text-amber-800 dark:text-amber-200",
-          descriptionColor: "text-amber-600 dark:text-amber-400",
+            "from-purple-50/50 to-violet-50/50 dark:from-purple-950/20 dark:to-violet-950/20",
+          hoverGradient: "from-purple-400/10 to-violet-400/10",
+          titleColor: "text-purple-700 dark:text-purple-300",
+          iconBg: "from-purple-400 to-violet-500",
+          valueColor: "text-purple-800 dark:text-purple-200",
+          descriptionColor: "text-purple-600 dark:text-purple-400",
         };
     }
   };
@@ -104,7 +104,8 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
+        <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
           Room Statistics
         </h2>
       </div>
