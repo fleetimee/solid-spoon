@@ -1,14 +1,16 @@
-import { BreadcrumbSetter } from "@/components/breadcrumb-setter"; // Add this import
-import { Typography } from "@/components/ui/typography";
-import { getReservationStatuses } from "@/features/application/api/getLookupValue"; // Import status fetcher
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { getReservationStatuses } from "@/features/application/api/getLookupValue";
 import {
   getAllReservations,
   ReservationWithDetails,
 } from "@/features/reservations/api/getAllReservations";
+import { getReservationStats } from "@/features/reservations/api/getReservationStats";
 import { columns } from "@/features/reservations/components/reservations-columns";
 import { ReservationsDataTable } from "@/features/reservations/components/reservations-data-table";
-import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import room fetcher
-import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { ReservationHeader } from "@/features/reservations/components/reservation-header";
+import { ReservationStatsCards } from "@/features/reservations/components/reservation-stats-cards";
+import { ReservationContentSection } from "@/features/reservations/components/reservation-content-section";
+import { getActiveRoomsList } from "@/features/rooms/api/getRooms";
 import { Calendar } from "lucide-react";
 
 interface ReservationsPageProps {
@@ -77,12 +79,17 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
   };
 
   // Fetch data concurrently (reservations now depend on pagination)
-  const [{ data: reservationsData, totalCount }, rooms, statuses] =
-    await Promise.all([
-      getAllReservations(filters, sorting, pagination), // Pass pagination
-      getActiveRoomsList(),
-      getReservationStatuses(),
-    ]);
+  const [
+    { data: reservationsData, totalCount },
+    rooms,
+    statuses,
+    reservationStats,
+  ] = await Promise.all([
+    getAllReservations(filters, sorting, pagination), // Pass pagination
+    getActiveRoomsList(),
+    getReservationStatuses(),
+    getReservationStats(), // Fetch reservation statistics
+  ]);
 
   // Calculate page count
   const pageCount = Math.ceil(totalCount / validatedPageSize);
@@ -97,19 +104,37 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
           { label: "Reservations", href: "/admin/rooms/reservations" },
         ]}
       />
-      <DashboardHeader
-        title="Manage Reservations"
-        description="View and manage all room reservations. Filter by user, room, or status."
-        icon={Calendar}
+
+      {/* Modern Header Section */}
+      <div className="flex items-center justify-between">
+        <ReservationHeader
+          title="Manage Reservations"
+          description="View and manage all room reservations with modern analytics"
+          icon={Calendar}
+        />
+      </div>
+
+      {/* Stats Cards Section */}
+      <ReservationStatsCards
+        stats={{
+          totalReservations: reservationStats.totalReservations,
+          pendingCount: reservationStats.pendingCount,
+          approvedCount: reservationStats.approvedCount,
+          rejectedCount: reservationStats.rejectedCount,
+        }}
       />
-      {/* Pass data, pageCount, rooms, and statuses to the data table */}
-      <ReservationsDataTable
-        columns={columns}
-        data={reservationsData} // Pass the actual data array
-        pageCount={pageCount} // Pass the calculated page count
-        rooms={rooms}
-        statuses={statuses}
-      />
+
+      {/* Content Section with Glassmorphism */}
+      <ReservationContentSection title="Reservation Data">
+        {/* Pass data, pageCount, rooms, and statuses to the data table */}
+        <ReservationsDataTable
+          columns={columns}
+          data={reservationsData} // Pass the actual data array
+          pageCount={pageCount} // Pass the calculated page count
+          rooms={rooms}
+          statuses={statuses}
+        />
+      </ReservationContentSection>
     </div>
   );
 }
