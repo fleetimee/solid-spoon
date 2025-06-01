@@ -1,5 +1,9 @@
 import { UserManagementClient } from "@/features/admin/users/user-management-client";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { UserHeader } from "@/features/admin/users/components/user-header";
+import { UserStatsCards } from "@/features/admin/users/components/user-stats-cards";
+import { UserContentSection } from "@/features/admin/users/components/user-content-section";
+import { getUserStats } from "@/features/admin/users/api/getUserStats";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -116,19 +120,27 @@ export default async function UsersPage(props: PageProps) {
     }
   }
 
+  // Fetch user statistics
+  const userStats = await getUserStats();
+
   return (
     <>
       <BreadcrumbSetter items={usersBreadcrumb} />
 
-      <main className="flex flex-col grow p-4 md:p-8">
-        <div className="flex flex-col gap-2 mb-6">
-          <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
-          <p className="text-muted-foreground">
-            Manage users and their permissions here.
-          </p>
-        </div>
+      <main className="flex flex-col grow p-4 md:p-8 space-y-8">
+        {/* Modern Header */}
+        <UserHeader
+          title="Users"
+          description="Manage users and their permissions here."
+        />
 
-        <UserManagementClient initialQuery={query} />
+        {/* User Statistics Cards */}
+        <UserStatsCards stats={userStats} />
+
+        {/* User Management Content */}
+        <UserContentSection title="User Management">
+          <UserManagementClient initialQuery={query} />
+        </UserContentSection>
       </main>
     </>
   );
