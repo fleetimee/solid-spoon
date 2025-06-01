@@ -28,7 +28,7 @@ type ReservationDetailsForForm = {
   start_time: Date;
   end_time: Date;
   room: { name: string };
-  user: { name: string | null };
+  user: { name: string | null; email: string | null; image: string | null };
 };
 
 async function ReservationRejectionContent({
@@ -56,6 +56,8 @@ async function ReservationRejectionContent({
     },
     user: {
       name: detailedReservation.userName,
+      email: detailedReservation.userEmail,
+      image: detailedReservation.userImage,
     },
   };
 

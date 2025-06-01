@@ -405,10 +405,10 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                 </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuSeparator className="bg-slate-200 dark:bg-slate-700" />
+              {/* <DropdownMenuSeparator className="bg-slate-200 dark:bg-slate-700" /> */}
 
               {/* Cancel Item */}
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 className={`text-destructive focus:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors duration-200 group ${
                   ["Completed", "Cancelled", "Rejected"].includes(
                     reservation.status
@@ -425,7 +425,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                   <Trash2 className="h-3 w-3 text-white" />
                 </div>
                 <span className="font-medium">Cancel</span>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

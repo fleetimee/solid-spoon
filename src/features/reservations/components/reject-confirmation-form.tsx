@@ -26,6 +26,7 @@ import {
 import { toast } from "sonner";
 import { Typography } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import {
   XCircle,
@@ -59,7 +60,7 @@ type ReservationDetails = {
   start_time: Date;
   end_time: Date;
   room: { name: string };
-  user: { name: string | null };
+  user: { name: string | null; email: string | null; image: string | null };
 };
 
 interface RejectConfirmationFormProps {
@@ -185,7 +186,7 @@ export function RejectConfirmationForm({
               </div>
 
               <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-3">
                   <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   <Typography
                     variant="small"
@@ -195,9 +196,35 @@ export function RejectConfirmationForm({
                     Requested by
                   </Typography>
                 </div>
-                <Typography className="font-semibold">
-                  {reservation.user.name ?? "N/A"}
-                </Typography>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage
+                      src={reservation.user.image || undefined}
+                      alt={reservation.user.name || "User"}
+                    />
+                    <AvatarFallback className="text-lg font-semibold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">
+                      {reservation.user.name
+                        ? reservation.user.name
+                            .split(" ")
+                            .map((part) => part.charAt(0))
+                            .slice(0, 2)
+                            .join("")
+                            .toUpperCase()
+                        : "??"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <Typography className="font-medium">
+                      {reservation.user.name ?? "Unknown User"}
+                    </Typography>
+                    <Typography
+                      variant="small"
+                      className="text-muted-foreground"
+                    >
+                      {reservation.user.email ?? "No email provided"}
+                    </Typography>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -350,9 +377,15 @@ export function RejectConfirmationFormSkeleton() {
             </div>
           </div>
           <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200/50 dark:border-blue-800/50">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-5 w-28" />
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-16 w-16 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+              </div>
             </div>
           </div>
         </div>

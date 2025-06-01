@@ -45,6 +45,7 @@ export function RoomReservationsSection({
       case "Pending":
         return "secondary";
       case "Rejected":
+      case "Cancelled":
         return "destructive";
       default:
         return "outline";
@@ -56,11 +57,28 @@ export function RoomReservationsSection({
       case "Approved":
         return "bg-green-100 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800";
       case "Pending":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-400 dark:border-yellow-800";
+        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800";
       case "Rejected":
         return "bg-red-100 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800";
-      default:
+      case "Cancelled":
         return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-950/30 dark:text-gray-400 dark:border-gray-800";
+      default:
+        return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-950/30 dark:text-slate-400 dark:border-slate-800";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Approved":
+        return "✓";
+      case "Pending":
+        return "⏳";
+      case "Rejected":
+        return "✗";
+      case "Cancelled":
+        return "⚫";
+      default:
+        return "•";
     }
   };
 
@@ -78,7 +96,7 @@ export function RoomReservationsSection({
             <History className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             Recent Reservations
             <Badge variant="secondary" className="ml-2">
-              Last 10
+              All Statuses
             </Badge>
           </CardTitle>
 
@@ -213,6 +231,9 @@ export function RoomReservationsSection({
                           variant="outline"
                           className={`font-medium ${getStatusColor(reservation.statusValue)}`}
                         >
+                          <span className="mr-1" aria-hidden="true">
+                            {getStatusIcon(reservation.statusValue)}
+                          </span>
                           {reservation.statusValue}
                         </Badge>
                       </TableCell>

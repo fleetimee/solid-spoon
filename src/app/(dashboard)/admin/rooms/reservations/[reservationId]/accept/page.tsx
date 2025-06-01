@@ -27,7 +27,12 @@ type ReservationWithDetails = {
   start_time: Date;
   end_time: Date;
   room: { id: number; name: string; slug: string };
-  user: { id: string; name: string | null; email: string | null };
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+  };
   status: string;
   statusId: number;
   approverName: string | null;
@@ -68,6 +73,7 @@ async function ReservationConfirmationContent({
       id: detailedReservation.userId ?? "unknown-user",
       name: detailedReservation.userName,
       email: detailedReservation.userEmail,
+      image: detailedReservation.userImage,
     },
     status: detailedReservation.status,
     statusId: detailedReservation.statusId,

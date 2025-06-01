@@ -62,6 +62,7 @@ export default async function ReservationDetailsPage(
               roomId={reservation.roomId}
               userName={reservation.userName}
               userEmail={reservation.userEmail}
+              userImage={reservation.userImage}
             />
 
             {/* Schedule Information Card */}

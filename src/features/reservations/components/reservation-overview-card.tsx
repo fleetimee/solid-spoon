@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FileText, DoorOpen, User, Plus } from "lucide-react";
 
 export interface ReservationOverviewCardProps {
@@ -16,6 +17,7 @@ export interface ReservationOverviewCardProps {
   roomId: number;
   userName: string | null;
   userEmail: string | null;
+  userImage: string | null;
   className?: string;
 }
 
@@ -26,8 +28,18 @@ export function ReservationOverviewCard({
   roomId,
   userName,
   userEmail,
+  userImage,
   className,
 }: ReservationOverviewCardProps) {
+  // Generate user initials for fallback
+  const userInitials = userName
+    ? userName
+        .split(" ")
+        .map((part) => part.charAt(0))
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "??";
   return (
     <Card className={className}>
       <CardHeader className="pb-4">
@@ -86,7 +98,7 @@ export function ReservationOverviewCard({
 
         {/* User Information */}
         <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 rounded-lg border border-purple-200/50 dark:border-purple-800/50">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-3">
             <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             <Typography
               variant="small"
@@ -95,12 +107,25 @@ export function ReservationOverviewCard({
               Reserved By
             </Typography>
           </div>
-          <Typography className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {userName || "Unknown User"}
-          </Typography>
-          <Typography variant="small" className="text-muted-foreground">
-            {userEmail || "No email provided"}
-          </Typography>
+          <div className="flex items-center gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage
+                src={userImage || undefined}
+                alt={userName || "User"}
+              />
+              <AvatarFallback className="text-lg font-semibold bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <Typography className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                {userName || "Unknown User"}
+              </Typography>
+              <Typography variant="small" className="text-muted-foreground">
+                {userEmail || "No email provided"}
+              </Typography>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

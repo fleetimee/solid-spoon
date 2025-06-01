@@ -8,6 +8,7 @@ export type DetailedReservation = {
   userId: string | null; // Added userId
   userName: string | null;
   userEmail: string | null; // Added userEmail
+  userImage: string | null; // Added userImage
   roomId: number; // Added roomId
   roomName: string;
   roomSlug: string; // Added roomSlug
@@ -45,6 +46,7 @@ export async function getReservationById(
       rr.user_id AS "userId",
       u.name AS "userName",
       u.email AS "userEmail",
+      u.image AS "userImage",
       rr.room_id AS "roomId",
       r.name AS "roomName",
       r.slug AS "roomSlug",

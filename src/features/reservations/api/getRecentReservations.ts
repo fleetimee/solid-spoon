@@ -32,8 +32,11 @@ export async function getRecentReservations(
     LEFT JOIN -- Join with lookup table for status description
       lookup l ON rr.status_id = l.id AND l.category = 'reservation_status'
     WHERE
-      rr.room_id = $1 AND rr.is_active = true AND rr.status_id IN (3, 6)
+      rr.room_id = $1 AND rr.is_active = true
+      -- Removed status filtering to show ALL reservation statuses for complete admin visibility
     ORDER BY
+      -- Prioritize pending reservations that need admin action, then by creation date
+      CASE WHEN l.value = 'Pending' THEN 1 ELSE 2 END,
       rr.created_at DESC
     LIMIT $2; -- Use the limit parameter
   `;
