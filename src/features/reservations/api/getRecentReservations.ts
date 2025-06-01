@@ -6,6 +6,7 @@ export interface RecentReservation {
   startTime: Date; // Assuming DB returns Date objects or ISO strings parsable to Date
   endTime: Date; // Assuming DB returns Date objects or ISO strings parsable to Date
   userName: string;
+  userImage: string | null; // Added user image field
   createdAt: Date; // Assuming DB returns Date objects or ISO strings parsable to Date
   statusValue: string; // Added status description
 }
@@ -21,6 +22,7 @@ export async function getRecentReservations(
       rr.start_time AS "startTime",
       rr.end_time AS "endTime",
       u.name AS "userName",
+      u.image AS "userImage", -- Added user image field
       rr.created_at AS "createdAt",
       l.value AS "statusValue" -- Added status description from lookup
     FROM

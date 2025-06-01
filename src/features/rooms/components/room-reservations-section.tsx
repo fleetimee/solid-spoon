@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
@@ -161,10 +162,21 @@ export function RoomReservationsSection({
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center text-white font-semibold text-sm">
-                            {reservation.userName.charAt(0).toUpperCase()}
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={reservation.userImage || undefined}
+                              alt={reservation.userName}
+                            />
+                            <AvatarFallback className="text-xs">
+                              {reservation.userName
+                                .split(" ")
+                                .map((part) => part.charAt(0))
+                                .slice(0, 2)
+                                .join("")
+                                .toUpperCase() || "??"}
+                            </AvatarFallback>
+                          </Avatar>
                           <span className="font-medium">
                             {reservation.userName}
                           </span>
