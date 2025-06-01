@@ -27,7 +27,17 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Plus, User, Mail, Lock, ShieldCheck } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  User,
+  Mail,
+  Lock,
+  ShieldCheck,
+  Crown,
+  UserPlus,
+  Sparkles,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -100,139 +110,203 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
           <Plus className="mr-2 h-4 w-4" /> Create User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
-          <DialogDescription>
-            Enter the details for the new user. Click save when you&apos;re
-            done.
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[525px] border-0 bg-gradient-to-br from-white/95 to-violet-50/90 dark:from-gray-950/95 dark:to-violet-950/50 backdrop-blur-xl shadow-2xl">
+        {/* Modern Dialog Header with Gradient Icon */}
+        <DialogHeader className="space-y-6 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center shadow-lg">
+                <UserPlus className="h-6 w-6 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center">
+                <Sparkles className="h-3 w-3 text-white" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                Create New User
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                Enter the details for the new user. Click save when you&apos;re
+                done.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-4"
+        {/* Glassmorphism Form Container */}
+        <div className="relative overflow-hidden rounded-2xl border border-violet-200/50 dark:border-violet-800/50 bg-gradient-to-br from-violet-50/30 to-purple-50/30 dark:from-violet-950/5 dark:to-purple-950/5 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-400/3 to-purple-400/3" />
+          <div className="relative p-6">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <User className="h-3 w-3 text-white" />
+                        </div>
+                        Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g., John Doe"
+                          {...field}
+                          disabled={isSubmitting}
+                          className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <Mail className="h-3 w-3 text-white" />
+                        </div>
+                        Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="e.g., john.doe@example.com"
+                          {...field}
+                          disabled={isSubmitting}
+                          className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <Lock className="h-3 w-3 text-white" />
+                        </div>
+                        Password
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Must be at least 8 characters"
+                          {...field}
+                          disabled={isSubmitting}
+                          className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <ShieldCheck className="h-3 w-3 text-white" />
+                        </div>
+                        Role
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
+                          <SelectTrigger className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200">
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent className="border-violet-200/50 dark:border-violet-800/50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl">
+                            <SelectGroup>
+                              <SelectLabel className="text-violet-600 dark:text-violet-400 font-medium">
+                                Available Roles
+                              </SelectLabel>
+                              {ROLES.map((role) => (
+                                <SelectItem
+                                  key={role}
+                                  value={role}
+                                  className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {role === "admin" ? (
+                                      <Crown className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                    ) : (
+                                      <User className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                                    )}
+                                    {role.charAt(0).toUpperCase() +
+                                      role.slice(1)}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground">
+                        User permissions are determined by their role.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </div>
+        </div>
+
+        {/* Modern Action Buttons */}
+        <DialogFooter className="flex gap-3 pt-6">
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting}
+              className="border-violet-200/50 dark:border-violet-800/50 hover:bg-violet-50 dark:hover:bg-violet-950/50 transition-all duration-200"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            onClick={form.handleSubmit(onSubmit)}
+            className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <User className="mr-2 h-4 w-4" /> Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., John Doe"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Mail className="mr-2 h-4 w-4" /> Email
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="e.g., john.doe@example.com"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Lock className="mr-2 h-4 w-4" /> Password
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Must be at least 8 characters"
-                      {...field}
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <ShieldCheck className="mr-2 h-4 w-4" /> Role
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Available Roles</SelectLabel>
-                          {ROLES.map((role) => (
-                            <SelectItem key={role} value={role}>
-                              {role.charAt(0).toUpperCase() + role.slice(1)}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>
-                    User permissions are determined by their role.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isSubmitting}>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" /> Create User
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+              </>
+            ) : (
+              <>
+                <Plus className="mr-2 h-4 w-4" /> Create User
+              </>
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

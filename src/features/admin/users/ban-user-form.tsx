@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Ban, Clock, AlertCircle } from "lucide-react";
+import { Loader2, Ban, Clock, AlertCircle, Shield } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -118,112 +118,176 @@ export function BanUserForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center text-destructive">
-            <Ban className="mr-2 h-5 w-5" /> Ban User
-          </DialogTitle>
-          <DialogDescription>
-            This will prevent the user from signing in and revoke all their
-            existing sessions.
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[525px] border-0 bg-gradient-to-br from-white/95 to-violet-50/90 dark:from-gray-950/95 dark:to-violet-950/50 backdrop-blur-xl shadow-2xl">
+        {/* Modern Dialog Header with Gradient Icon */}
+        <DialogHeader className="space-y-6 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg">
+                <Ban className="h-6 w-6 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center">
+                <Shield className="h-3 w-3 text-white" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-red-600 to-red-700 dark:from-red-400 dark:to-red-500 bg-clip-text text-transparent">
+                Ban User
+              </DialogTitle>
+              <DialogDescription className="text-muted-foreground">
+                This will prevent the user from signing in and revoke all their
+                existing sessions.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="py-4">
-          <div className="flex flex-col gap-1 mb-4 p-2 bg-muted rounded-md">
-            <div className="text-sm font-medium">
-              User: {user.name || "N/A"}
+        {/* Glassmorphism User Info Card */}
+        <div className="mb-6">
+          <div className="relative overflow-hidden rounded-2xl border border-violet-200/50 dark:border-violet-800/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/10 dark:to-purple-950/10 backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-400/5 to-purple-400/5" />
+            <div className="relative p-4 space-y-2">
+              <div className="text-sm font-medium text-foreground">
+                User: {user.name || "N/A"}
+              </div>
+              <div className="text-xs text-muted-foreground">{user.email}</div>
             </div>
-            <div className="text-xs text-muted-foreground">{user.email}</div>
           </div>
         </div>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="banReason"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <AlertCircle className="mr-2 h-4 w-4" /> Reason for ban
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Please provide a reason for this ban"
-                      className="resize-none"
-                      {...field}
-                      disabled={isSubmitting}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    If no reason is provided, it will default to &quot;No reason
-                    provided&quot;
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="banDuration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4" /> Ban Duration
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select ban duration" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1d">1 Day</SelectItem>
-                        <SelectItem value="7d">7 Days</SelectItem>
-                        <SelectItem value="30d">30 Days</SelectItem>
-                        <SelectItem value="90d">90 Days</SelectItem>
-                        <SelectItem value="permanent">Permanent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>
-                    How long the user should be banned for
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isSubmitting}>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                type="submit"
-                variant="destructive"
-                disabled={isSubmitting}
+        {/* Glassmorphism Form Container */}
+        <div className="relative overflow-hidden rounded-2xl border border-violet-200/50 dark:border-violet-800/50 bg-gradient-to-br from-violet-50/30 to-purple-50/30 dark:from-violet-950/5 dark:to-purple-950/5 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-400/3 to-purple-400/3" />
+          <div className="relative p-6">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Banning...
-                  </>
-                ) : (
-                  <>
-                    <Ban className="mr-2 h-4 w-4" /> Ban User
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+                <FormField
+                  control={form.control}
+                  name="banReason"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <AlertCircle className="h-3 w-3 text-white" />
+                        </div>
+                        Reason for ban
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please provide a reason for this ban"
+                          className="resize-none min-h-[100px] border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
+                          {...field}
+                          disabled={isSubmitting}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground">
+                        If no reason is provided, it will default to &quot;No
+                        reason provided&quot;
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="banDuration"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="flex items-center text-sm font-medium text-foreground">
+                        <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
+                          <Clock className="h-3 w-3 text-white" />
+                        </div>
+                        Ban Duration
+                      </FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isSubmitting}
+                        >
+                          <SelectTrigger className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200">
+                            <SelectValue placeholder="Select ban duration" />
+                          </SelectTrigger>
+                          <SelectContent className="border-violet-200/50 dark:border-violet-800/50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl">
+                            <SelectItem
+                              value="1d"
+                              className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                            >
+                              1 Day
+                            </SelectItem>
+                            <SelectItem
+                              value="7d"
+                              className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                            >
+                              7 Days
+                            </SelectItem>
+                            <SelectItem
+                              value="30d"
+                              className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                            >
+                              30 Days
+                            </SelectItem>
+                            <SelectItem
+                              value="90d"
+                              className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                            >
+                              90 Days
+                            </SelectItem>
+                            <SelectItem
+                              value="permanent"
+                              className="focus:bg-violet-50 dark:focus:bg-violet-950/50"
+                            >
+                              Permanent
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription className="text-xs text-muted-foreground">
+                        How long the user should be banned for
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          </div>
+        </div>
+
+        {/* Modern Action Buttons */}
+        <DialogFooter className="flex gap-3 pt-6">
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting}
+              className="border-violet-200/50 dark:border-violet-800/50 hover:bg-violet-50 dark:hover:bg-violet-950/50 transition-all duration-200"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            onClick={form.handleSubmit(onSubmit)}
+            className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Banning...
+              </>
+            ) : (
+              <>
+                <Ban className="mr-2 h-4 w-4" /> Ban User
+              </>
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
