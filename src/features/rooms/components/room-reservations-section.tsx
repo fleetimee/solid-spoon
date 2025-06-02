@@ -25,6 +25,8 @@ import {
   Calendar,
   User,
   Clock,
+  Play,
+  Square,
 } from "lucide-react";
 import { format } from "date-fns";
 import { RecentReservation } from "@/features/reservations/api/getRecentReservations";
@@ -160,13 +162,17 @@ export function RoomReservationsSection({
                     </TableHead>
                     <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
+                        <div className="flex items-center justify-center w-4 h-4 rounded bg-gradient-to-br from-green-400 to-emerald-500 text-white">
+                          <Play className="h-2.5 w-2.5" />
+                        </div>
                         Start Time
                       </div>
                     </TableHead>
                     <TableHead className="font-semibold text-violet-700 dark:text-violet-300">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
+                        <div className="flex items-center justify-center w-4 h-4 rounded bg-gradient-to-br from-red-400 to-rose-500 text-white">
+                          <Square className="h-2.5 w-2.5" />
+                        </div>
                         End Time
                       </div>
                     </TableHead>

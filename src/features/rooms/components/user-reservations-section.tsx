@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Typography } from "@/components/ui/typography";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { UserCheck } from "lucide-react";
+import { UserCheck, Play, Square } from "lucide-react";
 import { format } from "date-fns";
 import { UserRoomReservation } from "@/features/reservations/api/getUserRoomReservations";
 
@@ -47,18 +47,28 @@ export function UserReservationsSection({
                     {reservation.title}
                   </TableCell>
                   <TableCell className="py-3">
-                    <div className="text-xs">
-                      <div className="font-medium">Start</div>
-                      <div className="text-muted-foreground">
-                        {format(new Date(reservation.startTime), "PPp")}
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center w-5 h-5 rounded bg-gradient-to-br from-green-400 to-emerald-500 text-white">
+                        <Play className="h-2.5 w-2.5" />
+                      </div>
+                      <div className="text-xs">
+                        <div className="font-medium">Start</div>
+                        <div className="text-muted-foreground">
+                          {format(new Date(reservation.startTime), "PPp")}
+                        </div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell className="py-3">
-                    <div className="text-xs">
-                      <div className="font-medium">End</div>
-                      <div className="text-muted-foreground">
-                        {format(new Date(reservation.endTime), "PPp")}
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center w-5 h-5 rounded bg-gradient-to-br from-red-400 to-rose-500 text-white">
+                        <Square className="h-2.5 w-2.5" />
+                      </div>
+                      <div className="text-xs">
+                        <div className="font-medium">End</div>
+                        <div className="text-muted-foreground">
+                          {format(new Date(reservation.endTime), "PPp")}
+                        </div>
                       </div>
                     </div>
                   </TableCell>

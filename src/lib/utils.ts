@@ -64,3 +64,38 @@ export function parseStatusArrayParam(
   // This allows any non-empty string values, including numeric-like ones, as per requirements.
   return parseArrayParam(param);
 }
+
+/**
+ * Generates initials from a full name
+ * @param name - The full name to generate initials from
+ * @returns Initials (max 2 characters)
+ */
+export function getInitials(name: string): string {
+  if (!name || name.trim() === "") return "??";
+
+  const words = name.trim().split(/\s+/);
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+
+  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+}
+
+/**
+ * Formats a time range for display
+ * @param startTime - Start time
+ * @param endTime - End time
+ * @returns Formatted time range string
+ */
+export function formatTimeRange(startTime: Date, endTime: Date): string {
+  const formatOptions: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  };
+
+  const start = startTime.toLocaleTimeString("en-US", formatOptions);
+  const end = endTime.toLocaleTimeString("en-US", formatOptions);
+
+  return `${start} - ${end}`;
+}

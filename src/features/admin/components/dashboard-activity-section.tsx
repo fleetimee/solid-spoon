@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Plus,
   Users2,
@@ -17,11 +18,19 @@ import {
   ListChecks,
 } from "lucide-react";
 import Link from "next/link";
+import { getInitials } from "@/lib/utils";
 
 export interface ActivityFeedItem {
   id: string;
   message: string;
   timestamp: Date;
+  userImage?: string | null;
+  details: Record<string, any>;
+  type:
+    | "user_registered"
+    | "room_created"
+    | "reservation_created"
+    | "reservation_updated";
 }
 
 export interface DashboardActivitySectionProps {
@@ -80,27 +89,43 @@ function RecentActivityCard({
       <CardContent>
         {activityFeedData.length > 0 ? (
           <div className="space-y-2 max-h-80 overflow-y-auto">
-            {activityFeedData.map((activity, index) => (
-              <div
-                key={activity.id}
-                className={`flex justify-between items-start p-3 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/80 transition-colors duration-200 ${
-                  index % 2 === 0
-                    ? "bg-white/50 dark:bg-gray-800/50"
-                    : "bg-gray-50/50 dark:bg-gray-700/50"
-                }`}
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">
-                    {activity.message}
-                  </p>
+            {activityFeedData.map((activity, index) => {
+              const hasUser =
+                activity.type === "user_registered" ||
+                activity.type === "reservation_created" ||
+                activity.type === "reservation_updated";
+
+              return (
+                <div
+                  key={activity.id}
+                  className={`flex items-start gap-3 p-3 rounded-lg hover:bg-white/80 dark:hover:bg-gray-800/80 transition-colors duration-200 ${
+                    index % 2 === 0
+                      ? "bg-white/50 dark:bg-gray-800/50"
+                      : "bg-gray-50/50 dark:bg-gray-700/50"
+                  }`}
+                >
+                  {hasUser && (
+                    <Avatar className="h-7 w-7 flex-shrink-0">
+                      <AvatarImage
+                        src={activity.userImage || undefined}
+                        alt={activity.details.userName || "User"}
+                      />
+                      <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                        {getInitials(activity.details.userName || "Unknown")}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed">
+                      {activity.message}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1">
+                      {activity.timestamp.toLocaleString()}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-shrink-0 ml-3">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                    {activity.timestamp.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-8">

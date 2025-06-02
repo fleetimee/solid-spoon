@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Play, Square } from "lucide-react";
 
 // Helper function to format dates
 const formatDate = (date: Date | string | null): string => {
@@ -48,7 +48,9 @@ export function ReservationScheduleCard({
           {/* Start Time */}
           <div className="p-4 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200/50 dark:border-green-800/50">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <div className="flex items-center justify-center w-5 h-5 rounded bg-gradient-to-br from-green-400 to-emerald-500 text-white">
+                <Play className="h-2.5 w-2.5" />
+              </div>
               <Typography
                 variant="small"
                 className="font-semibold text-green-900 dark:text-green-100"
@@ -64,7 +66,9 @@ export function ReservationScheduleCard({
           {/* End Time */}
           <div className="p-4 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200/50 dark:border-red-800/50">
             <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-red-600 dark:text-red-400" />
+              <div className="flex items-center justify-center w-5 h-5 rounded bg-gradient-to-br from-red-400 to-rose-500 text-white">
+                <Square className="h-2.5 w-2.5" />
+              </div>
               <Typography
                 variant="small"
                 className="font-semibold text-red-900 dark:text-red-100"

@@ -3,10 +3,21 @@
 import db from "@/lib/db"; // Use default import
 // Removed unused Prisma client import
 
+// Define user information for reservations
+export type ReservationUser = {
+  id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+};
+
 // Define the expected return type for clarity
 export type ApprovedReservationTime = {
+  id: string;
   startTime: Date;
   endTime: Date;
+  title: string;
+  user: ReservationUser;
 };
 
 /**
@@ -24,19 +35,40 @@ export async function getApprovedRoomReservations(
   }
 
   try {
-    // Use SQL query with the connection pool
+    // Use SQL query with JOIN to get user information
     const result = await db.query(
-      `SELECT start_time AS "startTime", end_time AS "endTime"
-       FROM room_reservation -- Use correct table name
-       WHERE room_id = $1 AND status_id = $2 -- Use correct status column and assumed ID for 'APPROVED'
-       ORDER BY start_time ASC`,
+      `SELECT
+         rr.id,
+         rr.start_time AS "startTime",
+         rr.end_time AS "endTime",
+         rr.title,
+         u.id AS "userId",
+         u.name AS "userName",
+         u.email AS "userEmail",
+         u.image AS "userImage"
+       FROM room_reservation rr
+       JOIN "user" u ON rr.user_id = u.id
+       WHERE rr.room_id = $1 AND rr.status_id = $2 AND rr.is_active = true
+       ORDER BY rr.start_time ASC`,
       [roomId, 3] // Pass parameters safely (using 3 for APPROVED status_id)
     );
 
-    // The result object likely has a 'rows' property containing the data
-    const reservations: ApprovedReservationTime[] = result.rows;
+    // Transform the result to match our interface
+    const reservations: ApprovedReservationTime[] = result.rows.map(
+      (row: any) => ({
+        id: row.id,
+        startTime: row.startTime,
+        endTime: row.endTime,
+        title: row.title,
+        user: {
+          id: row.userId,
+          name: row.userName,
+          email: row.userEmail,
+          image: row.userImage,
+        },
+      })
+    );
 
-    // Ensure startTime and endTime are Date objects (pg usually handles this for TIMESTAMP types)
     return reservations;
   } catch (error) {
     console.error("Failed to fetch approved reservations:", error);

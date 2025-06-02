@@ -14,8 +14,9 @@ import {
   isSameMonth,
   addMonths,
   subMonths,
+  isSameDay,
 } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getInitials, formatTimeRange } from "@/lib/utils";
 import {
   CalendarIcon,
   Clock,
@@ -23,11 +24,105 @@ import {
   XCircle,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 interface RoomAvailabilityCalendarProps {
   approvedReservations: ApprovedReservationTime[];
+}
+
+// Enhanced Reservation Tooltip Component
+interface ReservationTooltipProps {
+  reservations: ApprovedReservationTime[];
+  date: Date;
+  children: React.ReactNode;
+}
+
+function ReservationTooltip({
+  reservations,
+  date,
+  children,
+}: ReservationTooltipProps) {
+  const dayReservations = reservations.filter(
+    (reservation) =>
+      isSameDay(new Date(reservation.startTime), date) ||
+      isSameDay(new Date(reservation.endTime), date) ||
+      (new Date(reservation.startTime) <= date &&
+        new Date(reservation.endTime) >= date)
+  );
+
+  if (dayReservations.length === 0) {
+    return <>{children}</>;
+  }
+
+  return (
+    <Tooltip delayDuration={300}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent
+        side="top"
+        className="max-w-80 p-0 bg-card border border-border shadow-lg"
+        sideOffset={10}
+      >
+        <div className="p-4 space-y-3">
+          <div className="text-sm font-semibold text-foreground border-b border-border pb-2">
+            {format(date, "EEEE, MMMM d, yyyy")}
+          </div>
+
+          <div className="space-y-3">
+            {dayReservations.slice(0, 3).map((reservation, index) => (
+              <div
+                key={reservation.id || index}
+                className="flex items-start gap-3"
+              >
+                <Avatar className="h-8 w-8 flex-shrink-0">
+                  {reservation.user.image ? (
+                    <AvatarImage
+                      src={reservation.user.image}
+                      alt={reservation.user.name}
+                      className="object-cover"
+                    />
+                  ) : null}
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                    {getInitials(reservation.user.name)}
+                  </AvatarFallback>
+                </Avatar>
+
+                <div className="flex-1 min-w-0 space-y-1">
+                  <div className="text-sm font-medium text-foreground">
+                    {reservation.title}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    by {reservation.user.name}
+                  </div>
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {formatTimeRange(
+                      new Date(reservation.startTime),
+                      new Date(reservation.endTime)
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {dayReservations.length > 3 && (
+              <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border">
+                +{dayReservations.length - 3} more reservation
+                {dayReservations.length - 3 !== 1 ? "s" : ""}
+              </div>
+            )}
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
 }
 
 // Legend component for better organization
@@ -112,7 +207,7 @@ export function RoomAvailabilityCalendar({
   const bookedDays = React.useMemo(() => {
     const days = new Set<number>();
 
-    approvedReservations.forEach((reservation) => {
+    approvedReservations.forEach((reservation: ApprovedReservationTime) => {
       const start = new Date(reservation.startTime);
       const end = new Date(reservation.endTime);
 
@@ -232,8 +327,9 @@ export function RoomAvailabilityCalendar({
           {calendarDays.map((date) => {
             const dateStatus = getDateStatus(date);
             const isCurrentMonth = isSameMonth(date, currentDate);
+            const isBooked = dateStatus === "booked";
 
-            return (
+            const dateButton = (
               <button
                 key={date.toISOString()}
                 className={cn(
@@ -251,9 +347,12 @@ export function RoomAvailabilityCalendar({
                     isCurrentMonth && "animate-pulse hover:animate-none",
                   ],
                   dateStatus === "booked" && [
-                    "bg-destructive/10 text-destructive line-through",
-                    "border border-destructive/30 cursor-not-allowed opacity-70",
-                    "hover:bg-destructive/20",
+                    "bg-destructive/10 text-destructive",
+                    "border border-destructive/30 cursor-pointer",
+                    "hover:bg-destructive/20 hover:border-destructive/50",
+                    "relative after:absolute after:inset-0 after:flex after:items-center after:justify-center",
+                    "after:text-xs after:font-bold after:text-destructive/60 after:content-['●']",
+                    "after:top-1 after:right-1 after:w-2 after:h-2",
                   ],
                   dateStatus === "available" && [
                     "bg-green-500/10 text-green-600 dark:text-green-400",
@@ -266,42 +365,33 @@ export function RoomAvailabilityCalendar({
                 )}
                 onMouseEnter={() => setHoveredDate(date)}
                 onMouseLeave={() => setHoveredDate(null)}
-                disabled={dateStatus === "booked" || dateStatus === "past"}
+                disabled={dateStatus === "past"}
+                aria-label={
+                  isBooked
+                    ? `${format(date, "MMMM d, yyyy")} - Reserved (hover for details)`
+                    : format(date, "MMMM d, yyyy")
+                }
               >
                 {format(date, "d")}
               </button>
             );
+
+            // Wrap booked dates with reservation tooltip
+            if (isBooked) {
+              return (
+                <ReservationTooltip
+                  key={date.toISOString()}
+                  reservations={approvedReservations}
+                  date={date}
+                >
+                  {dateButton}
+                </ReservationTooltip>
+              );
+            }
+
+            return dateButton;
           })}
         </div>
-
-        {/* Hover Tooltip */}
-        {hoveredDate && (
-          <div className="absolute top-3 left-3 right-3 bg-popover border border-border rounded-lg p-3 shadow-lg z-10 animate-in fade-in-0 duration-150">
-            <div className="text-sm text-center">
-              <div className="font-medium text-popover-foreground">
-                {hoveredDate.toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </div>
-              <div className="text-muted-foreground mt-1">
-                {isDateBooked(hoveredDate) ? (
-                  <span className="text-destructive">❌ Reserved</span>
-                ) : isToday(hoveredDate) ? (
-                  <span className="text-primary">📅 Today</span>
-                ) : hoveredDate >= today ? (
-                  <span className="text-green-600 dark:text-green-400">
-                    ✅ Available
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">📅 Past Date</span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Enhanced Legend */}

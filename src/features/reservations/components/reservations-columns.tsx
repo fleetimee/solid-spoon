@@ -16,6 +16,8 @@ import {
   MapPin,
   Calendar,
   Hash,
+  Play,
+  Square,
 } from "lucide-react"; // Enhanced icons
 import { useRouter, useSearchParams } from "next/navigation"; // Import hooks
 import Link from "next/link";
@@ -239,11 +241,14 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "startTime",
-    header: createSortableHeader("startTime", "Start Time", Calendar),
+    header: createSortableHeader("startTime", "Start Time", Play),
     cell: ({ row }) => {
       return (
-        <div className="text-sm">
-          <div className="font-medium text-slate-700 dark:text-slate-300">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-br from-green-400 to-emerald-500 text-white">
+            <Play className="h-3 w-3" />
+          </div>
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {formatDateToJakarta(row.original.startTime)}
           </div>
         </div>
@@ -252,17 +257,16 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "endTime",
-    header: () => (
-      <div className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300">
-        <Calendar className="h-4 w-4" />
-        End Time
-      </div>
-    ),
-    enableSorting: false,
+    header: createSortableHeader("endTime", "End Time", Square),
     cell: ({ row }) => {
       return (
-        <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
-          {formatDateToJakarta(row.original.endTime)}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-br from-red-400 to-rose-500 text-white">
+            <Square className="h-3 w-3" />
+          </div>
+          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            {formatDateToJakarta(row.original.endTime)}
+          </div>
         </div>
       );
     },

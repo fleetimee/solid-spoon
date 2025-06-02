@@ -11,6 +11,7 @@ type ActivityFeedItem = {
   timestamp: Date;
   message: string;
   details: Record<string, any>; // Store additional relevant data if needed
+  userImage?: string | null; // Add user image for activity items with users
 };
 
 const FEED_LIMIT = 5;
@@ -31,9 +32,10 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
           'user_registered' AS type,
           u."createdAt" AS timestamp_sort,
           u.name AS detail1, -- User name
-          NULL AS detail2,
+          u.image AS detail2, -- User image
           NULL AS detail3,
-          NULL AS detail4
+          NULL AS detail4,
+          NULL AS detail5
         FROM "user" u
 
         UNION ALL
@@ -46,7 +48,8 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
           r.name AS detail1, -- Room name
           NULL AS detail2,
           NULL AS detail3,
-          NULL AS detail4
+          NULL AS detail4,
+          NULL AS detail5
         FROM room r
 
         UNION ALL
@@ -57,9 +60,10 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
           'reservation_created' AS type,
           rr.created_at AS timestamp_sort,
           u.name AS detail1, -- User name
-          r.name AS detail2, -- Room name
-          rr.title AS detail3, -- Reservation title
-          NULL AS detail4
+          u.image AS detail2, -- User image
+          r.name AS detail3, -- Room name
+          rr.title AS detail4, -- Reservation title
+          NULL AS detail5
         FROM room_reservation rr
         JOIN "user" u ON rr.user_id = u.id
         JOIN room r ON rr.room_id = r.id
@@ -73,9 +77,10 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
           'reservation_updated' AS type,
           rr.updated_at AS timestamp_sort,
           u.name AS detail1, -- User name
-          r.name AS detail2, -- Room name
-          rr.title AS detail3, -- Reservation title
-          l.value AS detail4 -- Status value
+          u.image AS detail2, -- User image
+          r.name AS detail3, -- Room name
+          rr.title AS detail4, -- Reservation title
+          l.value AS detail5 -- Status value
         FROM room_reservation rr
         JOIN "user" u ON rr.user_id = u.id
         JOIN room r ON rr.room_id = r.id
@@ -89,7 +94,8 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
         detail1,
         detail2,
         detail3,
-        detail4
+        detail4,
+        detail5
       FROM RecentActivity
       ORDER BY timestamp_sort DESC
       LIMIT ${FEED_LIMIT};
@@ -110,34 +116,39 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
       detail2: string | null;
       detail3: string | null;
       detail4: string | null;
+      detail5: string | null;
     }>;
 
     // Format the raw data into the desired ActivityFeedItem structure
     const formattedFeed: ActivityFeedItem[] = rawFeed.map((item) => {
       let message = "";
       const details: Record<string, any> = {};
+      let userImage: string | null = null;
 
       switch (item.type) {
         case "user_registered":
           message = `User '${item.detail1 ?? "Unknown"}' registered.`;
           details.userName = item.detail1;
+          userImage = item.detail2;
           break;
         case "room_created":
           message = `Room '${item.detail1 ?? "Unnamed"}' was created.`;
           details.roomName = item.detail1;
           break;
         case "reservation_created":
-          message = `Reservation '${item.detail3 ?? "Untitled"}' for room '${item.detail2 ?? "Unknown"}' by user '${item.detail1 ?? "Unknown"}' was created.`;
+          message = `Reservation '${item.detail4 ?? "Untitled"}' for room '${item.detail3 ?? "Unknown"}' by user '${item.detail1 ?? "Unknown"}' was created.`;
           details.userName = item.detail1;
-          details.roomName = item.detail2;
-          details.reservationTitle = item.detail3;
+          details.roomName = item.detail3;
+          details.reservationTitle = item.detail4;
+          userImage = item.detail2;
           break;
         case "reservation_updated":
-          message = `Reservation '${item.detail3 ?? "Untitled"}' for room '${item.detail2 ?? "Unknown"}' by user '${item.detail1 ?? "Unknown"}' was updated to status '${item.detail4 ?? "Unknown"}'.`;
+          message = `Reservation '${item.detail4 ?? "Untitled"}' for room '${item.detail3 ?? "Unknown"}' by user '${item.detail1 ?? "Unknown"}' was updated to status '${item.detail5 ?? "Unknown"}'.`;
           details.userName = item.detail1;
-          details.roomName = item.detail2;
-          details.reservationTitle = item.detail3;
-          details.status = item.detail4;
+          details.roomName = item.detail3;
+          details.reservationTitle = item.detail4;
+          details.status = item.detail5;
+          userImage = item.detail2;
           break;
         default:
           message = "An unknown activity occurred.";
@@ -149,6 +160,7 @@ export async function getRecentActivityFeed(): Promise<ActivityFeedItem[]> {
         timestamp: item.timestamp_sort,
         message: message,
         details: details,
+        userImage: userImage,
       };
     });
 
