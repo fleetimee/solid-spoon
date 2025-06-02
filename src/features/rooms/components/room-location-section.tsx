@@ -11,19 +11,19 @@ export function RoomLocationSection({
   className = "",
 }: RoomLocationSectionProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-3 ${className}`}>
       <Typography
         variant="h2"
         as="h2"
-        className="flex items-center font-bold text-2xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
+        className="flex items-center font-bold text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
       >
-        <MapPin className="h-6 w-6 mr-3 text-primary" />
+        <MapPin className="h-5 w-5 mr-2 text-primary" />
         Location 📍
       </Typography>
-      <div className="p-6 rounded-xl bg-gradient-to-br from-muted/50 to-card border shadow-sm">
+      <div className="p-4 rounded-xl bg-gradient-to-br from-muted/50 to-card border shadow-sm">
         <Typography
           variant="default"
-          className="text-foreground leading-relaxed"
+          className="text-foreground leading-relaxed text-sm"
         >
           {location || "📍 Location details coming soon - stay tuned!"}
         </Typography>

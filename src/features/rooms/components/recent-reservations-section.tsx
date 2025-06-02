@@ -16,16 +16,16 @@ export function RecentReservationsSection({
   className = "",
 }: RecentReservationsSectionProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       <Typography
         variant="h2"
         as="h2"
-        className="flex items-center font-bold text-2xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
+        className="flex items-center font-bold text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
       >
-        <History className="h-6 w-6 mr-3 text-primary" />
+        <History className="h-5 w-5 mr-2 text-primary" />
         Recent Activity 📈
       </Typography>
-      <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-lg overflow-hidden">
+      <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-md overflow-hidden">
         <Table>
           <TableBody>
             {reservations && reservations.length > 0 ? (
@@ -37,34 +37,34 @@ export function RecentReservationsSection({
                     index % 2 === 0 && "bg-muted/20"
                   )}
                 >
-                  <TableCell className="font-semibold py-4">
+                  <TableCell className="font-semibold py-3 text-sm">
                     {reservation.title}
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="py-3">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-primary"></div>
-                      <span className="font-medium">
+                      <span className="font-medium text-sm">
                         {reservation.userName}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4">
-                    <div className="text-sm">
+                  <TableCell className="py-3">
+                    <div className="text-xs">
                       <div className="font-medium">Start</div>
                       <div className="text-muted-foreground">
                         {format(new Date(reservation.startTime), "PPp")}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4">
-                    <div className="text-sm">
+                  <TableCell className="py-3">
+                    <div className="text-xs">
                       <div className="font-medium">End</div>
                       <div className="text-muted-foreground">
                         {format(new Date(reservation.endTime), "PPp")}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="py-3">
                     <Badge
                       variant={
                         reservation.statusValue === "Approved"
@@ -75,7 +75,7 @@ export function RecentReservationsSection({
                               ? "destructive"
                               : "default"
                       }
-                      className="font-medium"
+                      className="font-medium text-xs"
                     >
                       {reservation.statusValue === "Approved" && "✅ "}
                       {reservation.statusValue === "Pending" && "⏳ "}
@@ -87,12 +87,12 @@ export function RecentReservationsSection({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="text-4xl">🏢</div>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="text-3xl">🏢</div>
                     <Typography
                       variant="default"
-                      className="text-muted-foreground"
+                      className="text-muted-foreground text-sm"
                     >
                       No recent activity - be the first to book this room! 🚀
                     </Typography>

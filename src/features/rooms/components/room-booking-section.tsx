@@ -28,28 +28,28 @@ export function RoomBookingSection({
   className = "",
 }: RoomBookingSectionProps) {
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {/* Calendar Section */}
-      <div className="p-6 rounded-2xl bg-gradient-to-br from-card to-muted/20 border shadow-sm">
+      <div className="p-4 md:p-5 rounded-xl bg-gradient-to-br from-card to-muted/20 border shadow-sm">
         <Typography
           variant="h3"
           as="h3"
-          className="flex items-center font-semibold text-lg mb-4"
+          className="flex items-center font-semibold text-base mb-3"
         >
-          <CalendarIcon className="h-5 w-5 mr-2 text-primary" />
+          <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
           Availability Calendar 📅
         </Typography>
         <RoomAvailabilityCalendar approvedReservations={approvedReservations} />
       </div>
 
       {/* Current Bookings */}
-      <div className="p-6 rounded-2xl bg-gradient-to-br from-accent/5 to-card border shadow-sm">
+      <div className="p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/5 to-card border shadow-sm">
         <Typography
           variant="h3"
           as="h3"
-          className="flex items-center font-semibold text-lg mb-4"
+          className="flex items-center font-semibold text-base mb-3"
         >
-          <Clock className="h-5 w-5 mr-2 text-primary" />
+          <Clock className="h-4 w-4 mr-2 text-primary" />
           Current Bookings 📋
         </Typography>
         {approvedReservations.length > 0 ? (
@@ -57,7 +57,7 @@ export function RoomBookingSection({
             {approvedReservations.map((res) => (
               <div
                 key={`${res.startTime}-${res.endTime}`}
-                className="p-3 rounded-lg bg-muted/50 border border-border/50 text-sm"
+                className="p-2 rounded-lg bg-muted/50 border border-border/50 text-xs"
               >
                 <div className="font-medium">
                   {format(new Date(res.startTime), "PPp")} -{" "}
@@ -67,10 +67,10 @@ export function RoomBookingSection({
             ))}
           </div>
         ) : (
-          <div className="p-4 rounded-lg bg-green-500/5 border border-green-500/20 text-center">
+          <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20 text-center">
             <Typography
               variant="default"
-              className="text-green-700 dark:text-green-400 font-medium"
+              className="text-green-700 dark:text-green-400 font-medium text-sm"
             >
               🎉 No current bookings - Available now!
             </Typography>
@@ -82,10 +82,10 @@ export function RoomBookingSection({
       {pendingCount > 0 && (
         <Alert
           variant="default"
-          className="border-l-4 border-l-blue-500 bg-blue-500/5 backdrop-blur-sm animate-in slide-in-from-left-2 duration-300"
+          className="border-l-4 border-l-blue-500 bg-blue-500/5 backdrop-blur-sm animate-in slide-in-from-left-2 duration-300 py-2"
         >
           <Info className="h-4 w-4 text-blue-500" />
-          <AlertDescription className="text-blue-700 dark:text-blue-300">
+          <AlertDescription className="text-blue-700 dark:text-blue-300 text-sm">
             💫 You have {pendingCount} pending reservation(s) for this room.
           </AlertDescription>
         </Alert>
@@ -95,11 +95,13 @@ export function RoomBookingSection({
       {isLoggedIn && isLimitReached && (
         <Alert
           variant="destructive"
-          className="border-l-4 border-l-destructive bg-destructive/5 backdrop-blur-sm animate-in slide-in-from-top-2 duration-300"
+          className="border-l-4 border-l-destructive bg-destructive/5 backdrop-blur-sm animate-in slide-in-from-top-2 duration-300 py-2"
         >
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Reservation Limit Reached ⚠️</AlertTitle>
-          <AlertDescription>
+          <AlertTitle className="text-sm">
+            Reservation Limit Reached ⚠️
+          </AlertTitle>
+          <AlertDescription className="text-sm">
             You have reached the maximum limit of {reservationLimit} pending
             reservations for this room. You cannot create new reservations until
             existing ones are processed.
@@ -119,16 +121,16 @@ export function RoomBookingSection({
       >
         <Button
           className={cn(
-            "w-full h-14 flex items-center justify-center gap-3 font-semibold text-lg",
+            "w-full h-12 flex items-center justify-center gap-2 font-semibold text-base",
             "bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90",
-            "shadow-lg hover:shadow-xl transition-all duration-300",
-            "transform hover:scale-[1.02] active:scale-[0.98]",
+            "shadow-md hover:shadow-lg transition-all duration-300",
+            "transform hover:scale-[1.01] active:scale-[0.99]",
             "border border-primary/20 hover:border-primary/30",
             !isLimitReached && "animate-pulse hover:animate-none"
           )}
           disabled={isLimitReached}
         >
-          <CalendarIcon className="h-6 w-6" />
+          <CalendarIcon className="h-5 w-5" />
           {isLimitReached ? "Limit Reached 🚫" : "Book Now ✨"}
         </Button>
       </Link>

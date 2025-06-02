@@ -13,19 +13,19 @@ export function RoomDetailHeader({
 }: RoomDetailHeaderProps) {
   return (
     <div
-      className={`space-y-6 p-6 rounded-2xl bg-gradient-to-br from-card via-card to-accent/5 border shadow-lg ${className}`}
+      className={`space-y-4 p-4 md:p-6 rounded-xl bg-gradient-to-br from-card via-card to-accent/5 border shadow-md ${className}`}
     >
-      <div className="space-y-3">
+      <div className="space-y-2">
         <Typography
           variant="h1"
           as="h1"
-          className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
+          className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
         >
           {room.name} ✨
         </Typography>
 
         {/* Quick Stats */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
             <span>{room.capacity} people</span>
@@ -41,33 +41,33 @@ export function RoomDetailHeader({
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         <Typography
           variant="default"
-          className="text-muted-foreground leading-relaxed"
+          className="text-muted-foreground leading-relaxed text-sm"
         >
           {room.description || "No description available."}
         </Typography>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Typography
             variant="h3"
             as="h3"
-            className="flex items-center font-semibold text-lg"
+            className="flex items-center font-semibold text-base"
           >
-            <ListChecks className="h-5 w-5 mr-2 text-primary" />
+            <ListChecks className="h-4 w-4 mr-2 text-primary" />
             Quick Highlights
           </Typography>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/5 border border-primary/20">
               <Users className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">
+              <span className="text-xs font-medium">
                 {room.capacity} Person Capacity
               </span>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-lg bg-green-500/5 border border-green-500/20">
               <Clock className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium">Available 24/7</span>
+              <span className="text-xs font-medium">Available 24/7</span>
             </div>
           </div>
         </div>

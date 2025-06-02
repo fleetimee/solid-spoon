@@ -107,25 +107,21 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <BreadcrumbSetter items={breadcrumbItems} />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Reservation Limit Alert */}
-        {/* Main Product Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Gallery Section */}
-          <div className="lg:col-span-7 xl:col-span-8">
-            <div className="group rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500">
-              {/* Use fetched images */}
-              <RoomImageGallery images={displayImages} />
-            </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Compact Single Column Layout */}
+        <div className="space-y-6">
+          {/* Room Detail Header */}
+          <RoomDetailHeader room={room} />
+
+          {/* Compact Image Gallery */}
+          <div className="rounded-xl overflow-hidden shadow-md">
+            <RoomImageGallery images={displayImages} />
           </div>
 
-          {/* Product Details Section */}
-          <div className="lg:col-span-5 xl:col-span-4">
-            <div className="space-y-8 sticky top-8">
-              {/* Room Detail Header */}
-              <RoomDetailHeader room={room} />
-
-              {/* Room Booking Section */}
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Booking Section */}
+            <div className="lg:col-span-2">
               <RoomBookingSection
                 roomSlug={roomSlug}
                 approvedReservations={approvedReservations}
@@ -135,40 +131,22 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                 isLoggedIn={!!session?.user?.id}
               />
             </div>
-          </div>
-        </div>
-        {/* Additional Information Sections */}
-        <div className="space-y-8">
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-card to-accent/5 overflow-hidden">
-            <div className="relative">
-              {/* Modern pattern background */}
-              <div
-                className="absolute inset-0 opacity-30"
-                style={{
-                  backgroundImage: `radial-gradient(circle at 20% 20%, hsl(var(--primary)) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--accent)) 0%, transparent 50%)`,
-                }}
-              />
-              <div className="relative p-6 md:p-8 space-y-12">
-                {/* Amenities and Location Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Amenities Section */}
-                  <RoomAmenitiesSection facilities={facilities} />
 
-                  {/* Location Section */}
-                  <RoomLocationSection location={room.location} />
-                </div>
-
-                {/* User Reservations Section (Conditional) */}
-                <UserReservationsSection
-                  reservations={myReservations}
-                  isVisible={!!session?.user?.id}
-                />
-
-                {/* Recent Reservations Section */}
-                <RecentReservationsSection reservations={recentReservations} />
-              </div>
+            {/* Amenities and Location */}
+            <div className="space-y-6">
+              <RoomAmenitiesSection facilities={facilities} />
+              <RoomLocationSection location={room.location} />
             </div>
-          </Card>
+          </div>
+
+          {/* User Reservations Section (Conditional) */}
+          <UserReservationsSection
+            reservations={myReservations}
+            isVisible={!!session?.user?.id}
+          />
+
+          {/* Recent Reservations Section */}
+          <RecentReservationsSection reservations={recentReservations} />
         </div>
       </div>
     </div>
