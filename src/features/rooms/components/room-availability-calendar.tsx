@@ -63,33 +63,33 @@ function CalendarLegend() {
   ];
 
   return (
-    <div className="w-full mt-4 p-3 bg-gradient-to-r from-muted/30 to-background/50 rounded-lg border border-border/50">
-      <div className="flex items-center gap-2 mb-3">
-        <CalendarIcon className="h-4 w-4 text-primary" />
-        <span className="text-sm font-medium text-foreground">
+    <div className="w-full mt-6 p-4 bg-gradient-to-r from-muted/30 to-background/50 rounded-lg border border-border/50">
+      <div className="flex items-center gap-2 mb-4">
+        <CalendarIcon className="h-5 w-5 text-primary" />
+        <span className="text-base font-medium text-foreground">
           Calendar Legend
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {legendItems.map((item) => {
           const IconComponent = item.icon;
           return (
-            <div key={item.id} className="flex items-center gap-2 group">
+            <div key={item.id} className="flex items-center gap-3 group">
               <div
                 className={cn(
-                  "h-3 w-3 rounded-sm border transition-all duration-200",
+                  "h-4 w-4 rounded-sm border transition-all duration-200",
                   "group-hover:scale-110 group-hover:shadow-sm",
                   item.indicator
                 )}
               />
-              <div className="flex items-center gap-1.5">
-                <IconComponent className={cn("h-3 w-3", item.className)} />
+              <div className="flex items-center gap-2">
+                <IconComponent className={cn("h-4 w-4", item.className)} />
                 <div className="flex flex-col">
-                  <span className={cn("text-xs font-medium", item.className)}>
+                  <span className={cn("text-sm font-medium", item.className)}>
                     {item.label}
                   </span>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-xs text-muted-foreground">
                     {item.description}
                   </span>
                 </div>
@@ -179,9 +179,9 @@ export function RoomAvailabilityCalendar({
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col w-full">
       {/* Enhanced Calendar Container */}
-      <div className="relative w-full max-w-md p-4 rounded-xl bg-gradient-to-br from-card via-card to-muted/20 border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="relative w-full p-4 sm:p-6 rounded-xl bg-gradient-to-br from-card via-card to-muted/20 border border-border/50 shadow-sm hover:shadow-md transition-shadow duration-300">
         {/* Calendar Header */}
         <div className="flex items-center justify-between mb-4">
           <Button
@@ -216,11 +216,11 @@ export function RoomAvailabilityCalendar({
         </div>
 
         {/* Day Headers */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-3">
           {dayNames.map((day) => (
             <div
               key={day}
-              className="text-center text-xs font-medium text-muted-foreground py-2 uppercase tracking-wider"
+              className="text-center text-xs sm:text-sm font-medium text-muted-foreground py-2 sm:py-3 uppercase tracking-wider"
             >
               {day}
             </div>
@@ -228,7 +228,7 @@ export function RoomAvailabilityCalendar({
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-1 sm:gap-2">
           {calendarDays.map((date) => {
             const dateStatus = getDateStatus(date);
             const isCurrentMonth = isSameMonth(date, currentDate);
@@ -237,7 +237,7 @@ export function RoomAvailabilityCalendar({
               <button
                 key={date.toISOString()}
                 className={cn(
-                  "relative h-10 w-10 p-0 font-normal text-sm rounded-md",
+                  "relative aspect-square min-h-10 sm:min-h-12 w-full p-0 font-normal text-sm sm:text-base rounded-lg",
                   "transition-all duration-200 flex items-center justify-center",
                   "hover:bg-accent/50 hover:text-accent-foreground",
                   "focus:bg-accent focus:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
@@ -276,8 +276,8 @@ export function RoomAvailabilityCalendar({
 
         {/* Hover Tooltip */}
         {hoveredDate && (
-          <div className="absolute top-2 left-2 right-2 bg-popover border border-border rounded-md p-2 shadow-lg z-10 animate-in fade-in-0 duration-150">
-            <div className="text-xs text-center">
+          <div className="absolute top-3 left-3 right-3 bg-popover border border-border rounded-lg p-3 shadow-lg z-10 animate-in fade-in-0 duration-150">
+            <div className="text-sm text-center">
               <div className="font-medium text-popover-foreground">
                 {hoveredDate.toLocaleDateString("en-US", {
                   weekday: "long",
@@ -308,21 +308,21 @@ export function RoomAvailabilityCalendar({
       <CalendarLegend />
 
       {/* Summary Statistics */}
-      <div className="w-full mt-3 p-3 bg-muted/30 rounded-lg border border-border/30">
-        <div className="grid grid-cols-2 gap-4 text-center">
-          <div className="space-y-1">
-            <div className="text-lg font-bold text-destructive">
+      <div className="w-full mt-4 p-4 bg-muted/30 rounded-lg border border-border/30">
+        <div className="grid grid-cols-2 gap-6 text-center">
+          <div className="space-y-2">
+            <div className="text-xl font-bold text-destructive">
               {bookedDays.length}
             </div>
-            <div className="text-xs text-muted-foreground font-medium">
+            <div className="text-sm text-muted-foreground font-medium">
               Reserved Days
             </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-lg font-bold text-green-600 dark:text-green-400">
+          <div className="space-y-2">
+            <div className="text-xl font-bold text-green-600 dark:text-green-400">
               {approvedReservations.length}
             </div>
-            <div className="text-xs text-muted-foreground font-medium">
+            <div className="text-sm text-muted-foreground font-medium">
               Active Bookings
             </div>
           </div>
