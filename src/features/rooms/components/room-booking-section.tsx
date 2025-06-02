@@ -9,24 +9,21 @@ import { RoomAvailabilityCalendar } from "./room-availability-calendar";
 import { ApprovedReservationTime } from "@/features/reservations/api/getApprovedRoomReservations";
 
 export interface RoomBookingSectionProps {
-  roomSlug: string;
   approvedReservations: ApprovedReservationTime[];
   pendingCount: number;
-  isLimitReached: boolean;
   reservationLimit: number;
   isLoggedIn: boolean;
   className?: string;
 }
 
 export function RoomBookingSection({
-  roomSlug,
   approvedReservations,
   pendingCount,
-  isLimitReached,
   reservationLimit,
   isLoggedIn,
   className = "",
 }: RoomBookingSectionProps) {
+  const isLimitReached = !!isLoggedIn && pendingCount >= reservationLimit;
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Calendar Section */}
@@ -108,32 +105,6 @@ export function RoomBookingSection({
           </AlertDescription>
         </Alert>
       )}
-
-      {/* Enhanced Book Now Button */}
-      <Link
-        href={`/v/${roomSlug}/reservations/new`}
-        passHref
-        className={cn(
-          "block",
-          isLimitReached && "pointer-events-none cursor-not-allowed opacity-50"
-        )}
-        aria-disabled={isLimitReached}
-      >
-        <Button
-          className={cn(
-            "w-full h-12 flex items-center justify-center gap-2 font-semibold text-base",
-            "bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90",
-            "shadow-md hover:shadow-lg transition-all duration-300",
-            "transform hover:scale-[1.01] active:scale-[0.99]",
-            "border border-primary/20 hover:border-primary/30",
-            !isLimitReached && "animate-pulse hover:animate-none"
-          )}
-          disabled={isLimitReached}
-        >
-          <CalendarIcon className="h-5 w-5" />
-          {isLimitReached ? "Limit Reached 🚫" : "Book Now ✨"}
-        </Button>
-      </Link>
     </div>
   );
 }

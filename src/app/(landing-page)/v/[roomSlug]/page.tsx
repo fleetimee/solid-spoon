@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { RoomImageGallery } from "@/features/rooms/components/room-image-gallery";
+import { Button } from "@/components/ui/button";
 import React from "react";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
@@ -20,6 +21,9 @@ import {
   ApprovedReservationTime,
 } from "@/features/reservations/api/getApprovedRoomReservations";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import Link from "next/link";
 
 // Import new refactored components
 import { RoomDetailHeader } from "@/features/rooms/components/room-detail-header";
@@ -123,19 +127,46 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
             {/* Booking Section */}
             <div className="lg:col-span-2">
               <RoomBookingSection
-                roomSlug={roomSlug}
                 approvedReservations={approvedReservations}
                 pendingCount={pendingCount}
-                isLimitReached={isLimitReached}
                 reservationLimit={reservationLimit}
                 isLoggedIn={!!session?.user?.id}
               />
             </div>
 
-            {/* Amenities and Location */}
+            {/* Amenities, Location, and Book Now Button */}
             <div className="space-y-6">
               <RoomAmenitiesSection facilities={facilities} />
               <RoomLocationSection location={room.location} />
+
+              {/* Enhanced Book Now Button - Positioned below location */}
+              <div className="space-y-3">
+                <Link
+                  href={`/v/${roomSlug}/reservations/new`}
+                  passHref
+                  className={cn(
+                    "block",
+                    isLimitReached &&
+                      "pointer-events-none cursor-not-allowed opacity-50"
+                  )}
+                  aria-disabled={isLimitReached}
+                >
+                  <Button
+                    className={cn(
+                      "w-full h-12 flex items-center justify-center gap-2 font-semibold text-base",
+                      "bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90",
+                      "shadow-md hover:shadow-lg transition-all duration-300",
+                      "transform hover:scale-[1.01] active:scale-[0.99]",
+                      "border border-primary/20 hover:border-primary/30",
+                      !isLimitReached && "animate-pulse hover:animate-none"
+                    )}
+                    disabled={isLimitReached}
+                  >
+                    <CalendarIcon className="h-5 w-5" />
+                    {isLimitReached ? "Limit Reached 🚫" : "Book Now ✨"}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
 
