@@ -107,7 +107,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <BreadcrumbSetter items={breadcrumbItems} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full max-w-screen-xl mx-auto px-6 py-6">
         {/* Compact Single Column Layout */}
         <div className="space-y-6">
           {/* Room Detail Header */}
