@@ -26,6 +26,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -67,6 +68,7 @@
   --shadow-opacity: var(--shadow-opacity);
   --color-shadow-color: var(--shadow-color);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success-foreground: var(--success-foreground);
 }
 
 :root {
@@ -103,6 +105,8 @@
   --sidebar-border: oklch(0.93 0.03 272.79);
   --sidebar-ring: oklch(0.61 0.22 292.72);
   --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.55 0.15 145);
+  --success-foreground: oklch(1 0 0);
   --font-sans: Roboto, sans-serif;
   --font-serif: Playfair Display, serif;
   --font-mono: Fira Code, monospace;
@@ -173,6 +177,8 @@
   --sidebar-border: oklch(0.28 0.14 291.09);
   --sidebar-ring: oklch(0.61 0.22 292.72);
   --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.65 0.15 145);
+  --success-foreground: oklch(0.1 0 0);
   --radius: 0.625rem;
   --font-sans: Roboto, sans-serif;
   --font-serif: Playfair Display, serif;
