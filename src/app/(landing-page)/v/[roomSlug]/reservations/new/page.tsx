@@ -15,6 +15,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
+import { getApprovedRoomReservations } from "@/features/reservations/api/getApprovedRoomReservations";
 import { CalendarPlus, Sparkles, Clock, MapPin } from "lucide-react";
 
 interface NewReservationPageProps {
@@ -63,13 +64,15 @@ export default async function NewReservationPage(
     notFound();
   }
 
-  // ADDED: Check reservation limit
+  // ADDED: Check reservation limit and fetch approved reservations
   const userId = session.user.id; // Assuming session.user.id exists based on prior check
   const roomId = room.id;
-  const [pendingCount, reservationLimit] = await Promise.all([
-    getPendingReservationCount(userId, roomId),
-    getReservationLimit(),
-  ]);
+  const [pendingCount, reservationLimit, approvedReservations] =
+    await Promise.all([
+      getPendingReservationCount(userId, roomId),
+      getReservationLimit(),
+      getApprovedRoomReservations(roomId),
+    ]);
 
   if (pendingCount >= reservationLimit) {
     redirect("/");
@@ -92,7 +95,7 @@ export default async function NewReservationPage(
           <div className="absolute inset-0 bg-black/10 dark:bg-black/20"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
 
-          <main className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <main className="relative max-w-screen-xl mx-auto px-6 py-12">
             <div className="text-center space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 dark:bg-white/10 backdrop-blur-sm border border-white/30 text-white">
                 <Sparkles className="h-4 w-4" />
@@ -140,7 +143,7 @@ export default async function NewReservationPage(
         </div>
 
         {/* Form Section */}
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <main className="max-w-screen-xl mx-auto px-6 py-12">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Form Card */}
             <div className="lg:col-span-2">
@@ -161,7 +164,11 @@ export default async function NewReservationPage(
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <NewReservationForm roomId={room.id} roomSlug={roomSlug} />
+                  <NewReservationForm
+                    roomId={room.id}
+                    roomSlug={roomSlug}
+                    approvedReservations={approvedReservations}
+                  />
                 </CardContent>
               </Card>
             </div>
