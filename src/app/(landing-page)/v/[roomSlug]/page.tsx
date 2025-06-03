@@ -32,6 +32,7 @@ import { RoomAmenitiesSection } from "@/features/rooms/components/room-amenities
 import { RoomLocationSection } from "@/features/rooms/components/room-location-section";
 import { UserReservationsSection } from "@/features/rooms/components/user-reservations-section";
 import { RecentReservationsSection } from "@/features/rooms/components/recent-reservations-section";
+import { RoomRulesSection } from "@/features/rooms/components/room-rules-section";
 
 interface RoomDetailPageProps {
   params: Promise<{
@@ -167,6 +168,9 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                   </Button>
                 </Link>
               </div>
+
+              {/* Room Rules Section */}
+              <RoomRulesSection />
             </div>
           </div>
 
