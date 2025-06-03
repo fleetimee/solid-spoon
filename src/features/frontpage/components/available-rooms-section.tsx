@@ -34,7 +34,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
             variant="muted"
             className="text-lg md:text-xl max-w-3xl mx-auto mb-8"
           >
-            Browse our collection of premium rooms designed for productivity,
+            Browse our collection of rooms designed for productivity,
             collaboration, and innovation.
           </Typography>
 

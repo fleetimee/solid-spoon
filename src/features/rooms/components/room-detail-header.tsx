@@ -21,7 +21,7 @@ export function RoomDetailHeader({
           as="h1"
           className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
         >
-          {room.name} ✨
+          {room.name}
         </Typography>
 
         {/* Quick Stats */}
@@ -29,14 +29,6 @@ export function RoomDetailHeader({
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
             <span>{room.capacity} people</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>Available now</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            <span>Premium</span>
           </div>
         </div>
       </div>

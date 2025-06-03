@@ -163,7 +163,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                     disabled={isLimitReached}
                   >
                     <CalendarIcon className="h-5 w-5" />
-                    {isLimitReached ? "Limit Reached 🚫" : "Book Now ✨"}
+                    {isLimitReached ? "Limit Reached" : "Book Now"}
                   </Button>
                 </Link>
               </div>

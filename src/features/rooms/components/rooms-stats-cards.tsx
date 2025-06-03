@@ -25,7 +25,7 @@ export function RoomsStatsCards({ stats }: RoomsStatsCardsProps) {
       trendIcon: Calendar,
     },
     {
-      title: "Available Now",
+      title: "Available Rooms",
       value: stats.availableRooms,
       description: "Ready for booking",
       type: "available" as const,

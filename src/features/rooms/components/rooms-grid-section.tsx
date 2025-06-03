@@ -216,7 +216,8 @@ export function RoomsGridSection({
               className="gap-2 shadow-lg hover:shadow-xl transition-shadow"
             >
               <Link href="/admin/rooms/add">
-                <Plus className="h-4 w-4" />✨ Add your first room
+                <Plus className="h-4 w-4" />
+                Add your first room
               </Link>
             </Button>
           )}

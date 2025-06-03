@@ -69,7 +69,7 @@ export function RoomBookingSection({
               variant="default"
               className="text-green-700 dark:text-green-400 font-medium text-sm"
             >
-              🎉 No current bookings - Available now!
+              No current bookings
             </Typography>
           </div>
         )}
