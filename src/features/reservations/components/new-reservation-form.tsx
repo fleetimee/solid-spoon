@@ -9,7 +9,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Added
 // Removed incorrect DateTimePicker import
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { CalendarIcon } from "@radix-ui/react-icons"; // Added
+import { CalendarIcon, Clock, Sparkles, User, FileText } from "lucide-react"; // Added
 import { format } from "date-fns"; // Added
 import { cn } from "@/lib/utils"; // Added
 import { Calendar } from "@/components/ui/calendar"; // Added
@@ -177,35 +177,58 @@ export function NewReservationForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="grid items-start gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Hidden input for roomId - not strictly necessary if passed in onSubmit */}
         <input type="hidden" {...form.register("roomId")} />
 
+        {/* Title Field */}
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
+            <FormItem className="space-y-3">
+              <FormLabel className="text-base font-semibold text-foreground flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-violet-100 dark:bg-violet-900/30">
+                  <User className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                </div>
+                Reservation Title
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Reservation Title" {...field} />
+                <div className="relative">
+                  <Input
+                    placeholder="What's this booking for? (e.g., Team Meeting, Study Session)"
+                    className="h-12 text-base border-2 focus:border-violet-500 transition-all duration-200 pl-4 bg-white/50 dark:bg-background/50 backdrop-blur-sm"
+                    {...field}
+                  />
+                  <div className="absolute inset-y-0 right-3 flex items-center">
+                    <Sparkles className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {/* Description Field */}
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
+            <FormItem className="space-y-3">
+              <FormLabel className="text-base font-semibold text-foreground flex items-center gap-2">
+                <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900/30">
+                  <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                Description
+                <span className="text-sm text-muted-foreground font-normal">
+                  (Optional)
+                </span>
+              </FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Optional description or notes"
+                  placeholder="Add any special notes, requirements, or details about your booking..."
+                  className="min-h-24 text-base border-2 focus:border-blue-500 transition-all duration-200 resize-none bg-white/50 dark:bg-background/50 backdrop-blur-sm"
                   {...field}
                 />
               </FormControl>
@@ -213,277 +236,310 @@ export function NewReservationForm({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="start_time"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Start Time</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP HH:mm") // Updated format
-                      ) : (
-                        <span>Pick a date and time</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <div className="sm:flex">
-                    {" "}
-                    {/* Added container */}
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={(selectedDate) => {
-                        // Updated onSelect logic
-                        const currentHours = field.value?.getHours() ?? 0;
-                        const currentMinutes = field.value?.getMinutes() ?? 0;
-                        const newDate = selectedDate
-                          ? new Date(selectedDate)
-                          : undefined;
-                        if (newDate) {
-                          newDate.setHours(currentHours, currentMinutes);
-                        }
-                        field.onChange(newDate);
-                      }}
-                      initialFocus
-                    />
-                    {/* Added Time Selection UI */}
-                    <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {hours.map((hour) => (
-                            <Button
-                              key={`start_hour_${hour}`}
-                              size="icon"
-                              variant={
-                                field.value && field.value.getHours() === hour
-                                  ? "default"
-                                  : "ghost"
-                              }
-                              className="sm:w-full shrink-0 aspect-square"
-                              onClick={() => {
-                                // Updated onClick logic
-                                const currentDate = field.value || new Date();
-                                const newDate = new Date(currentDate);
-                                newDate.setHours(hour);
-                                field.onChange(newDate);
-                              }}
-                            >
-                              {hour}
-                            </Button>
-                          ))}
-                        </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
-                        />
-                      </ScrollArea>
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {minutes.map((minute) => (
-                            <Button
-                              key={`start_minute_${minute}`}
-                              size="icon"
-                              variant={
-                                field.value &&
-                                field.value.getMinutes() === minute
-                                  ? "default"
-                                  : "ghost"
-                              }
-                              className="sm:w-full shrink-0 aspect-square"
-                              onClick={() => {
-                                // Updated onClick logic
-                                const currentDate = field.value || new Date();
-                                const newDate = new Date(currentDate);
-                                newDate.setMinutes(minute);
-                                field.onChange(newDate);
-                              }}
-                            >
-                              {minute.toString().padStart(2, "0")}
-                            </Button>
-                          ))}
-                        </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
-                        />
-                      </ScrollArea>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="end_time"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>End Time</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP HH:mm") // Updated format
-                      ) : (
-                        <span>Pick a date and time</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <div className="sm:flex">
-                    {" "}
-                    {/* Added container */}
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={(selectedDate) => {
-                        // Updated onSelect logic
-                        const currentHours = field.value?.getHours() ?? 0;
-                        const currentMinutes = field.value?.getMinutes() ?? 0;
-                        const newDate = selectedDate
-                          ? new Date(selectedDate)
-                          : undefined;
-                        if (newDate) {
-                          newDate.setHours(currentHours, currentMinutes);
-                        }
-                        field.onChange(newDate);
-                      }}
-                      disabled={(date) => {
-                        if (!startTime) return false; // Don't disable if start_time isn't set
 
-                        // Calculate the maximum allowed end date (start time + 24 hours)
-                        const maxEndTime = new Date(
-                          startTime.getTime() + 24 * 60 * 60 * 1000
-                        );
+        {/* Time Selection Section */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-md bg-green-100 dark:bg-green-900/30">
+              <Clock className="h-4 w-4 text-green-600 dark:text-green-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">
+              When do you need the space?
+            </h3>
+          </div>
 
-                        // Disable dates before the start time (day level)
-                        const startOfDay = new Date(startTime);
-                        startOfDay.setHours(0, 0, 0, 0);
-                        if (date < startOfDay) {
-                          return true;
-                        }
-
-                        // Disable dates strictly after the max end time (day level)
-                        const maxEndOfDay = new Date(maxEndTime);
-                        maxEndOfDay.setHours(0, 0, 0, 0); // Compare day part only
-                        if (date > maxEndOfDay) {
-                          return true;
-                        }
-
-                        return false; // Otherwise, enable the date
-                      }}
-                      initialFocus
-                    />
-                    {/* Added Time Selection UI */}
-                    <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {hours.map((hour) => (
-                            <Button
-                              key={`end_hour_${hour}`}
-                              size="icon"
-                              variant={
-                                field.value && field.value.getHours() === hour
-                                  ? "default"
-                                  : "ghost"
-                              }
-                              className="sm:w-full shrink-0 aspect-square"
-                              onClick={() => {
-                                // Updated onClick logic
-                                const currentDate = field.value || new Date();
-                                const newDate = new Date(currentDate);
-                                newDate.setHours(hour);
-                                field.onChange(newDate);
-                              }}
-                            >
-                              {hour}
-                            </Button>
-                          ))}
-                        </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Start Time */}
+            <FormField
+              control={form.control}
+              name="start_time"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-base font-medium text-foreground">
+                    🚀 Start Time
+                  </FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full h-12 text-left font-normal text-base border-2 hover:border-green-500 transition-all duration-200 bg-white/50 dark:bg-background/50 backdrop-blur-sm",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
+                              <span>{format(field.value, "PPP HH:mm")}</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 opacity-50" />
+                              <span>Pick your start date & time</span>
+                            </div>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <div className="sm:flex">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(selectedDate) => {
+                            const currentHours = field.value?.getHours() ?? 0;
+                            const currentMinutes =
+                              field.value?.getMinutes() ?? 0;
+                            const newDate = selectedDate
+                              ? new Date(selectedDate)
+                              : undefined;
+                            if (newDate) {
+                              newDate.setHours(currentHours, currentMinutes);
+                            }
+                            field.onChange(newDate);
+                          }}
+                          initialFocus
                         />
-                      </ScrollArea>
-                      <ScrollArea className="w-64 sm:w-auto">
-                        <div className="flex sm:flex-col p-2">
-                          {minutes.map((minute) => (
-                            <Button
-                              key={`end_minute_${minute}`}
-                              size="icon"
-                              variant={
-                                field.value &&
-                                field.value.getMinutes() === minute
-                                  ? "default"
-                                  : "ghost"
-                              }
-                              className="sm:w-full shrink-0 aspect-square"
-                              onClick={() => {
-                                // Updated onClick logic
-                                const currentDate = field.value || new Date();
-                                const newDate = new Date(currentDate);
-                                newDate.setMinutes(minute);
-                                field.onChange(newDate);
-                              }}
-                            >
-                              {minute.toString().padStart(2, "0")}
-                            </Button>
-                          ))}
+                        <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+                          <ScrollArea className="w-64 sm:w-auto">
+                            <div className="flex sm:flex-col p-2">
+                              {hours.map((hour) => (
+                                <Button
+                                  key={`start_hour_${hour}`}
+                                  size="icon"
+                                  variant={
+                                    field.value &&
+                                    field.value.getHours() === hour
+                                      ? "default"
+                                      : "ghost"
+                                  }
+                                  className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
+                                  onClick={() => {
+                                    const currentDate =
+                                      field.value || new Date();
+                                    const newDate = new Date(currentDate);
+                                    newDate.setHours(hour);
+                                    field.onChange(newDate);
+                                  }}
+                                >
+                                  {hour}
+                                </Button>
+                              ))}
+                            </div>
+                            <ScrollBar
+                              orientation="horizontal"
+                              className="sm:hidden"
+                            />
+                          </ScrollArea>
+                          <ScrollArea className="w-64 sm:w-auto">
+                            <div className="flex sm:flex-col p-2">
+                              {minutes.map((minute) => (
+                                <Button
+                                  key={`start_minute_${minute}`}
+                                  size="icon"
+                                  variant={
+                                    field.value &&
+                                    field.value.getMinutes() === minute
+                                      ? "default"
+                                      : "ghost"
+                                  }
+                                  className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
+                                  onClick={() => {
+                                    const currentDate =
+                                      field.value || new Date();
+                                    const newDate = new Date(currentDate);
+                                    newDate.setMinutes(minute);
+                                    field.onChange(newDate);
+                                  }}
+                                >
+                                  {minute.toString().padStart(2, "0")}
+                                </Button>
+                              ))}
+                            </div>
+                            <ScrollBar
+                              orientation="horizontal"
+                              className="sm:hidden"
+                            />
+                          </ScrollArea>
                         </div>
-                        <ScrollBar
-                          orientation="horizontal"
-                          className="sm:hidden"
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* End Time */}
+            <FormField
+              control={form.control}
+              name="end_time"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-base font-medium text-foreground">
+                    🏁 End Time
+                  </FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full h-12 text-left font-normal text-base border-2 hover:border-red-500 transition-all duration-200 bg-white/50 dark:bg-background/50 backdrop-blur-sm",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 text-red-600 dark:text-red-400" />
+                              <span>{format(field.value, "PPP HH:mm")}</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon className="h-4 w-4 opacity-50" />
+                              <span>Pick your end date & time</span>
+                            </div>
+                          )}
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <div className="sm:flex">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(selectedDate) => {
+                            const currentHours = field.value?.getHours() ?? 0;
+                            const currentMinutes =
+                              field.value?.getMinutes() ?? 0;
+                            const newDate = selectedDate
+                              ? new Date(selectedDate)
+                              : undefined;
+                            if (newDate) {
+                              newDate.setHours(currentHours, currentMinutes);
+                            }
+                            field.onChange(newDate);
+                          }}
+                          disabled={(date) => {
+                            if (!startTime) return false;
+
+                            const maxEndTime = new Date(
+                              startTime.getTime() + 24 * 60 * 60 * 1000
+                            );
+
+                            const startOfDay = new Date(startTime);
+                            startOfDay.setHours(0, 0, 0, 0);
+                            if (date < startOfDay) {
+                              return true;
+                            }
+
+                            const maxEndOfDay = new Date(maxEndTime);
+                            maxEndOfDay.setHours(0, 0, 0, 0);
+                            if (date > maxEndOfDay) {
+                              return true;
+                            }
+
+                            return false;
+                          }}
+                          initialFocus
                         />
-                      </ScrollArea>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="flex items-center justify-center gap-2 transition-all hover:scale-[1.02]"
-        >
-          {form.formState.isSubmitting ? (
-            <>
-              <ReloadIcon className="h-4 w-4 animate-spin" />
-              Submitting...
-            </>
-          ) : (
-            <>
-              <CheckIcon className="h-4 w-4" />
-              Submit Reservation
-            </>
-          )}
-        </Button>
+                        <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+                          <ScrollArea className="w-64 sm:w-auto">
+                            <div className="flex sm:flex-col p-2">
+                              {hours.map((hour) => (
+                                <Button
+                                  key={`end_hour_${hour}`}
+                                  size="icon"
+                                  variant={
+                                    field.value &&
+                                    field.value.getHours() === hour
+                                      ? "default"
+                                      : "ghost"
+                                  }
+                                  className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
+                                  onClick={() => {
+                                    const currentDate =
+                                      field.value || new Date();
+                                    const newDate = new Date(currentDate);
+                                    newDate.setHours(hour);
+                                    field.onChange(newDate);
+                                  }}
+                                >
+                                  {hour}
+                                </Button>
+                              ))}
+                            </div>
+                            <ScrollBar
+                              orientation="horizontal"
+                              className="sm:hidden"
+                            />
+                          </ScrollArea>
+                          <ScrollArea className="w-64 sm:w-auto">
+                            <div className="flex sm:flex-col p-2">
+                              {minutes.map((minute) => (
+                                <Button
+                                  key={`end_minute_${minute}`}
+                                  size="icon"
+                                  variant={
+                                    field.value &&
+                                    field.value.getMinutes() === minute
+                                      ? "default"
+                                      : "ghost"
+                                  }
+                                  className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
+                                  onClick={() => {
+                                    const currentDate =
+                                      field.value || new Date();
+                                    const newDate = new Date(currentDate);
+                                    newDate.setMinutes(minute);
+                                    field.onChange(newDate);
+                                  }}
+                                >
+                                  {minute.toString().padStart(2, "0")}
+                                </Button>
+                              ))}
+                            </div>
+                            <ScrollBar
+                              orientation="horizontal"
+                              className="sm:hidden"
+                            />
+                          </ScrollArea>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-6">
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group"
+          >
+            {form.formState.isSubmitting ? (
+              <>
+                <ReloadIcon className="h-5 w-5 animate-spin mr-2" />
+                Creating your reservation...
+              </>
+            ) : (
+              <>
+                <CheckIcon className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                Book This Space ✨
+              </>
+            )}
+          </Button>
+
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            By clicking submit, you agree to our booking terms and policies
+          </p>
+        </div>
       </form>
     </Form>
   );
