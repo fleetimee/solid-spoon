@@ -1,6 +1,14 @@
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHeader,
+  TableHead,
+} from "@/components/ui/table";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 
 export default function LoadingRoomDetail() {
@@ -103,33 +111,213 @@ export default function LoadingRoomDetail() {
               <div className="space-y-3">
                 <Skeleton className="h-12 w-full rounded-md" />
               </div>
+
+              {/* Room Rules Section Skeleton */}
+              <Card className="p-6">
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-2/3" /> {/* Title */}
+                  <div className="space-y-3">
+                    {/* Rule Section 1 */}
+                    <div className="p-3 rounded-lg bg-muted/30 border border-muted">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-4 w-4 rounded" />
+                          <Skeleton className="h-4 w-24" />
+                        </div>
+                        <Skeleton className="h-4 w-4" />
+                      </div>
+                    </div>
+                    {/* Rule Section 2 */}
+                    <div className="p-3 rounded-lg bg-muted/30 border border-muted">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-4 w-4 rounded" />
+                          <Skeleton className="h-4 w-32" />
+                        </div>
+                        <Skeleton className="h-4 w-4" />
+                      </div>
+                    </div>
+                    {/* Rule Section 3 */}
+                    <div className="p-3 rounded-lg bg-muted/30 border border-muted">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-4 w-4 rounded" />
+                          <Skeleton className="h-4 w-28" />
+                        </div>
+                        <Skeleton className="h-4 w-4" />
+                      </div>
+                    </div>
+                    {/* Rule Section 4 */}
+                    <div className="p-3 rounded-lg bg-muted/30 border border-muted">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-4 w-4 rounded" />
+                          <Skeleton className="h-4 w-36" />
+                        </div>
+                        <Skeleton className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Important Notice Skeleton */}
+                  <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
+                    <div className="flex items-start space-x-2">
+                      <Skeleton className="h-4 w-4 rounded mt-0.5" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-3/4" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
             </div>
           </div>
 
           {/* User Reservations Section Skeleton */}
-          <Card className="p-6">
-            <div className="space-y-4">
-              <Skeleton className="h-6 w-1/3" /> {/* Title */}
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" /> {/* Header */}
-                <Skeleton className="h-4 w-full" /> {/* Row 1 */}
-                <Skeleton className="h-4 w-3/4" /> {/* Row 2 */}
-              </div>
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-1/3" /> {/* Title */}
+            <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>
+                      <Skeleton className="h-4 w-12" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-20" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-16" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-14" />
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-36" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-18 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
-          </Card>
+          </div>
 
           {/* Recent Reservations Section Skeleton */}
-          <Card className="p-6">
-            <div className="space-y-4">
-              <Skeleton className="h-6 w-1/3" /> {/* Title */}
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" /> {/* Header */}
-                <Skeleton className="h-4 w-full" /> {/* Row 1 */}
-                <Skeleton className="h-4 w-full" /> {/* Row 2 */}
-                <Skeleton className="h-4 w-5/6" /> {/* Row 3 */}
-              </div>
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-1/3" /> {/* Title */}
+            <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-md overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>
+                      <Skeleton className="h-4 w-12" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-10" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-20" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-16" />
+                    </TableHead>
+                    <TableHead>
+                      <Skeleton className="h-4 w-14" />
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-7 w-7 rounded-full" />
+                        <Skeleton className="h-4 w-20" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-7 w-7 rounded-full" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-36" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-18 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-7 w-7 rounded-full" />
+                        <Skeleton className="h-4 w-18" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-30" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

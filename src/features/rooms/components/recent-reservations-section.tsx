@@ -1,6 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Typography } from "@/components/ui/typography";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  TableHeader,
+  TableHead,
+} from "@/components/ui/table";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn, getInitials } from "@/lib/utils";
 import { History, Play, Square } from "lucide-react";
@@ -28,6 +35,25 @@ export function RecentReservationsSection({
       </Typography>
       <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-md overflow-hidden">
         <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="font-semibold text-foreground">
+                Title
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                User
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Start Time
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                End Time
+              </TableHead>
+              <TableHead className="font-semibold text-foreground">
+                Status
+              </TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
             {reservations && reservations.length > 0 ? (
               reservations.map((reservation, index) => (
