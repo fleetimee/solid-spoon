@@ -100,13 +100,13 @@ export default async function NewReservationPage(
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 dark:bg-white/10 backdrop-blur-sm border border-white/30 text-white">
                 <Sparkles className="h-4 w-4" />
                 <span className="text-sm font-medium">
-                  Book Your Perfect Space
+                  Pesan Ruangan Sempurna Anda
                 </span>
               </div>
 
               <div className="space-y-3">
                 <h1 className="text-4xl md:text-5xl font-bold text-white">
-                  Reserve
+                  Reservasi
                   <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
                     {" "}
                     {room.name}
@@ -116,8 +116,8 @@ export default async function NewReservationPage(
                   variant="lead"
                   className="text-white/90 max-w-2xl mx-auto"
                 >
-                  You&apos;re just a few clicks away from securing your ideal
-                  space. Let&apos;s make it happen! ✨
+                  Anda hanya beberapa klik lagi dari mendapatkan ruangan ideal
+                  Anda. Mari kita wujudkan! ✨
                 </Typography>
               </div>
 
@@ -126,16 +126,16 @@ export default async function NewReservationPage(
                 <div className="flex items-center gap-2 text-white/80">
                   <MapPin className="h-4 w-4" />
                   <span className="text-sm">
-                    {room.location || "Premium Location"}
+                    {room.location || "Lokasi Premium"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-white/80">
                   <Clock className="h-4 w-4" />
-                  <span className="text-sm">Available 24/7</span>
+                  <span className="text-sm">Tersedia 24/7</span>
                 </div>
                 <div className="flex items-center gap-2 text-white/80">
                   <CalendarPlus className="h-4 w-4" />
-                  <span className="text-sm">Instant Booking</span>
+                  <span className="text-sm">Pemesanan Instan</span>
                 </div>
               </div>
             </div>
@@ -155,10 +155,10 @@ export default async function NewReservationPage(
                     </div>
                     <div>
                       <CardTitle className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                        Reservation Details
+                        Detail Reservasi
                       </CardTitle>
                       <CardDescription className="text-base">
-                        Fill out the form below to book your space
+                        Isi formulir di bawah untuk memesan ruangan Anda
                       </CardDescription>
                     </div>
                   </div>
@@ -182,7 +182,7 @@ export default async function NewReservationPage(
                     {room.name}
                   </CardTitle>
                   <CardDescription>
-                    You&apos;re booking this amazing space
+                    Anda sedang memesan ruangan yang luar biasa ini
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -199,7 +199,7 @@ export default async function NewReservationPage(
                         {room.capacity || "N/A"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Capacity
+                        Kapasitas
                       </div>
                     </div>
                     <div className="text-center">
@@ -207,7 +207,7 @@ export default async function NewReservationPage(
                         24/7
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Available
+                        Tersedia
                       </div>
                     </div>
                   </div>
@@ -219,26 +219,27 @@ export default async function NewReservationPage(
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold text-orange-600 dark:text-orange-400 flex items-center gap-2">
                     <Sparkles className="h-4 w-4" />
-                    Pro Tips
+                    Tips Pro
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
                     <p className="text-sm text-muted-foreground">
-                      Book early for the best availability
+                      Pesan lebih awal untuk ketersediaan terbaik
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
                     <p className="text-sm text-muted-foreground">
-                      Add a clear title to help identify your booking
+                      Tambahkan judul yang jelas untuk membantu mengidentifikasi
+                      pemesanan Anda
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
                     <p className="text-sm text-muted-foreground">
-                      Check your email for confirmation details
+                      Periksa email Anda untuk detail konfirmasi
                     </p>
                   </div>
                 </CardContent>

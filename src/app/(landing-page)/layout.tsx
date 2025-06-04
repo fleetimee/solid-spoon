@@ -20,9 +20,8 @@ export default async function LandingPageLayout({
     <div className="flex min-h-screen flex-col">
       <Navbar session={session} initialNotificationCount={unreadCount} />
       <BreadcrumbProvider>
-        <main className="container mx-auto max-w-7xl flex-grow px-4 py-8">
-          {" "}
-          {/* Added container, max-width, padding, margin */}
+        <main className="flex-grow">
+          {/* Removed conflicting container constraints */}
           <FrontendBreadcrumbNav /> {/* Use the new frontend breadcrumb */}
           {children}
         </main>

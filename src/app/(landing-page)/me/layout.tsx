@@ -34,7 +34,7 @@ export default function MeLayout({ children }: { children: ReactNode }) {
   // Handle loading state
   if (isPending) {
     return (
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 pb-16 pt-8 space-y-8">
+      <div className="max-w-screen-xl mx-auto px-6 pb-16 pt-8 space-y-8">
         {/* Simplified loading skeleton */}
         <Skeleton className="h-48 w-full rounded-xl mb-20" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -53,7 +53,7 @@ export default function MeLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <BreadcrumbSetter items={breadcrumbItems} />
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 pb-16 pt-8">
+      <div className="max-w-screen-xl mx-auto px-6 pb-16 pt-8">
         <div className="relative mb-20">
           <div className="w-full h-48 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl" />
           <div className="absolute -bottom-12 left-6 flex items-center space-x-4">

@@ -118,8 +118,7 @@ function ReservationTooltip({
 
             {dayReservations.length > 3 && (
               <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border">
-                +{dayReservations.length - 3} more reservation
-                {dayReservations.length - 3 !== 1 ? "s" : ""}
+                +{dayReservations.length - 3} reservasi lainnya
               </div>
             )}
           </div>
@@ -246,7 +245,7 @@ export function ReservationCalendar({
               }}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
-              Go to today
+              Hari Ini
             </button>
           </div>
 
@@ -361,11 +360,11 @@ export function ReservationCalendar({
                 tabIndex={isClickable ? 0 : -1} // Remove from tab order if not clickable
                 aria-label={
                   isBooked
-                    ? `${format(date, "MMMM d, yyyy")} - Reserved (not selectable)`
+                    ? `${format(date, "MMMM d, yyyy")} - Sudah Dipesan (tidak dapat dipilih)`
                     : dateStatus === "past"
-                      ? `${format(date, "MMMM d, yyyy")} - Past date (not selectable)`
+                      ? `${format(date, "MMMM d, yyyy")} - Tanggal lampau (tidak dapat dipilih)`
                       : dateStatus === "available"
-                        ? `${format(date, "MMMM d, yyyy")} - Available for booking`
+                        ? `${format(date, "MMMM d, yyyy")} - Tersedia untuk pemesanan`
                         : format(date, "MMMM d, yyyy")
                 }
                 aria-disabled={isDateDisabled}
@@ -397,7 +396,7 @@ export function ReservationCalendar({
         <div className="flex items-center gap-2 mb-3">
           <CalendarIcon className="h-4 w-4 text-primary" />
           <span className="text-sm font-medium text-foreground">
-            Calendar Legend
+            Keterangan Kalender
           </span>
         </div>
 
@@ -407,7 +406,7 @@ export function ReservationCalendar({
             <div className="flex items-center gap-1">
               <CheckCircle className="h-3 w-3 text-green-600 dark:text-green-400" />
               <span className="text-xs font-medium text-green-600 dark:text-green-400">
-                Available
+                Tersedia
               </span>
             </div>
           </div>
@@ -417,7 +416,7 @@ export function ReservationCalendar({
             <div className="flex items-center gap-1">
               <XCircle className="h-3 w-3 text-red-600 dark:text-red-400" />
               <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                Reserved (not selectable)
+                Sudah Dipesan
               </span>
             </div>
           </div>
@@ -427,7 +426,7 @@ export function ReservationCalendar({
             <div className="flex items-center gap-1">
               <Clock className="h-3 w-3 text-blue-600 dark:text-blue-400" />
               <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                Today
+                Hari Ini
               </span>
             </div>
           </div>

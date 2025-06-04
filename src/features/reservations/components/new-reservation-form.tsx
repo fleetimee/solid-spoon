@@ -39,10 +39,10 @@ import { ReservationCalendar } from "@/components/ui/reservation-calendar";
 // Define Zod schema for form validation
 const reservationFormSchema = z
   .object({
-    title: z.string().min(1, "Title is required"),
+    title: z.string().min(1, "Judul wajib diisi"),
     description: z.string().optional(),
-    start_time: z.date({ required_error: "Start time is required." }), // Change to z.date
-    end_time: z.date({ required_error: "End time is required." }), // Change to z.date
+    start_time: z.date({ required_error: "Waktu mulai wajib diisi." }), // Change to z.date
+    end_time: z.date({ required_error: "Waktu selesai wajib diisi." }), // Change to z.date
     roomId: z.number(), // Add roomId to the schema
   })
   .refine(
@@ -55,7 +55,7 @@ const reservationFormSchema = z
       return true; // Pass if one or both are missing (handled by required checks)
     },
     {
-      message: "End time must be after start time",
+      message: "Waktu selesai harus setelah waktu mulai",
       path: ["end_time"], // Attach error to end_time field
     }
   )
@@ -70,7 +70,7 @@ const reservationFormSchema = z
       return true; // Pass if one or both dates are missing
     },
     {
-      message: "Reservation duration cannot exceed 24 hours",
+      message: "Durasi reservasi tidak boleh melebihi 24 jam",
       path: ["end_time"], // Attach error to end_time field
     }
   );
@@ -195,12 +195,12 @@ export function NewReservationForm({
                 <div className="p-1.5 rounded-md bg-violet-100 dark:bg-violet-900/30">
                   <User className="h-4 w-4 text-violet-600 dark:text-violet-400" />
                 </div>
-                Reservation Title
+                Judul Reservasi
               </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
-                    placeholder="What's this booking for? (e.g., Team Meeting, Study Session)"
+                    placeholder="Untuk keperluan apa? (mis. Rapat Tim, Sesi Belajar)"
                     className="h-12 text-base border-2 focus:border-violet-500 transition-all duration-200 pl-4 bg-white/50 dark:bg-background/50 backdrop-blur-sm"
                     {...field}
                   />
@@ -224,14 +224,14 @@ export function NewReservationForm({
                 <div className="p-1.5 rounded-md bg-blue-100 dark:bg-blue-900/30">
                   <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                Description
+                Deskripsi
                 <span className="text-sm text-muted-foreground font-normal">
-                  (Optional)
+                  (Opsional)
                 </span>
               </FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Add any special notes, requirements, or details about your booking..."
+                  placeholder="Tambahkan catatan khusus, persyaratan, atau detail lainnya tentang pemesanan Anda..."
                   className="min-h-24 text-base border-2 focus:border-blue-500 transition-all duration-200 resize-none bg-white/50 dark:bg-background/50 backdrop-blur-sm"
                   {...field}
                 />
@@ -248,7 +248,7 @@ export function NewReservationForm({
               <Clock className="h-4 w-4 text-green-600 dark:text-green-400" />
             </div>
             <h3 className="text-lg font-semibold text-foreground">
-              When do you need the space?
+              Kapan Anda membutuhkan ruangannya?
             </h3>
           </div>
 
@@ -256,11 +256,11 @@ export function NewReservationForm({
           <div className="space-y-4">
             <div>
               <h4 className="text-base font-medium text-foreground mb-2">
-                📅 Choose Your Date
+                📅 Pilih Tanggal Anda
               </h4>
               <p className="text-sm text-muted-foreground mb-3">
-                Select an available date to see when the room is free. Reserved
-                dates are highlighted in red.
+                Pilih tanggal yang tersedia untuk melihat kapan ruangan kosong.
+                Tanggal yang sudah dipesan ditandai dengan warna merah.
               </p>
               <ReservationCalendar
                 approvedReservations={approvedReservations}
@@ -293,13 +293,15 @@ export function NewReservationForm({
                     return; // Completely prevent form update for reserved dates
                   }
 
-                  // Only set the date component, let user choose time manually
-                  const newDate = new Date(date);
-                  newDate.setHours(9, 0, 0, 0); // Set to 9 AM as default but user must confirm
-                  form.setValue("start_time", newDate);
+                  // Set the date for both start time and end time
+                  const startDate = new Date(date);
+                  startDate.setHours(9, 0, 0, 0); // Set to 9 AM as default
+                  form.setValue("start_time", startDate);
 
-                  // Clear end time so user has to set it after choosing start time
-                  form.resetField("end_time");
+                  // Set end time to the same date with 10 AM as default
+                  const endDate = new Date(date);
+                  endDate.setHours(10, 0, 0, 0); // Set to 10 AM as default
+                  form.setValue("end_time", endDate);
                 }}
                 disabled={(date) => {
                   // Disable past dates
@@ -349,13 +351,13 @@ export function NewReservationForm({
                   return (
                     <FormItem className="space-y-3">
                       <FormLabel className="text-base font-medium text-foreground">
-                        🚀 Start Time
+                        🚀 Waktu Mulai
                       </FormLabel>
 
                       {!hasDateSelected ? (
                         <div className="w-full h-12 flex items-center justify-center border-2 border-dashed border-muted-foreground/30 rounded-lg bg-muted/20">
                           <p className="text-sm text-muted-foreground">
-                            First select a date from the calendar above
+                            Pilih tanggal dari kalender di atas terlebih dahulu
                           </p>
                         </div>
                       ) : (
@@ -372,7 +374,7 @@ export function NewReservationForm({
                           <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-2">
                               <label className="text-sm font-medium text-foreground">
-                                Hour
+                                Jam
                               </label>
                               <select
                                 value={selectedDate.getHours()}
@@ -393,7 +395,7 @@ export function NewReservationForm({
 
                             <div className="space-y-2">
                               <label className="text-sm font-medium text-foreground">
-                                Minutes
+                                Menit
                               </label>
                               <select
                                 value={selectedDate.getMinutes()}
@@ -425,141 +427,85 @@ export function NewReservationForm({
               <FormField
                 control={form.control}
                 name="end_time"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel className="text-base font-medium text-foreground">
-                      🏁 End Time
-                    </FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full h-12 text-left font-normal text-base border-2 hover:border-red-500 transition-all duration-200 bg-white/50 dark:bg-background/50 backdrop-blur-sm",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              <div className="flex items-center gap-2">
-                                <CalendarIcon className="h-4 w-4 text-red-600 dark:text-red-400" />
-                                <span>{format(field.value, "PPP HH:mm")}</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2">
-                                <CalendarIcon className="h-4 w-4 opacity-50" />
-                                <span>Pick your end date & time</span>
-                              </div>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <div className="sm:flex">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={(selectedDate) => {
-                              const currentHours =
-                                field.value?.getHours() ?? 10;
-                              const currentMinutes =
-                                field.value?.getMinutes() ?? 0;
-                              const newDate = selectedDate
-                                ? new Date(selectedDate)
-                                : undefined;
-                              if (newDate) {
-                                newDate.setHours(currentHours, currentMinutes);
-                              }
-                              field.onChange(newDate);
-                            }}
-                            disabled={(date) => {
-                              if (!startTime) return false;
+                render={({ field }) => {
+                  const selectedDate = field.value;
+                  const hasDateSelected =
+                    selectedDate && selectedDate instanceof Date;
+                  const hasStartTime = startTime && startTime instanceof Date;
 
-                              const maxEndTime = new Date(
-                                startTime.getTime() + 24 * 60 * 60 * 1000
-                              );
-                              const startOfDay = new Date(startTime);
-                              startOfDay.setHours(0, 0, 0, 0);
+                  return (
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-base font-medium text-foreground">
+                        🏁 Waktu Selesai
+                      </FormLabel>
 
-                              if (date < startOfDay) return true;
+                      {!hasStartTime ? (
+                        <div className="w-full h-12 flex items-center justify-center border-2 border-dashed border-muted-foreground/30 rounded-lg bg-muted/20">
+                          <p className="text-sm text-muted-foreground">
+                            Pilih tanggal dari kalender di atas terlebih dahulu
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {/* Selected Date Display */}
+                          <div className="flex items-center gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <CalendarIcon className="h-4 w-4 text-red-600 dark:text-red-400" />
+                            <span className="text-sm font-medium text-red-700 dark:text-red-300">
+                              {format(selectedDate, "EEEE, MMMM d, yyyy")}
+                            </span>
+                          </div>
 
-                              const maxEndOfDay = new Date(maxEndTime);
-                              maxEndOfDay.setHours(0, 0, 0, 0);
-
-                              if (date > maxEndOfDay) return true;
-
-                              return false;
-                            }}
-                            initialFocus
-                          />
-                          <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
-                            <ScrollArea className="w-64 sm:w-auto">
-                              <div className="flex sm:flex-col p-2">
+                          {/* Time Selection */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-foreground">
+                                Jam
+                              </label>
+                              <select
+                                value={selectedDate.getHours()}
+                                onChange={(e) => {
+                                  const newDate = new Date(selectedDate);
+                                  newDate.setHours(parseInt(e.target.value));
+                                  field.onChange(newDate);
+                                }}
+                                className="w-full h-10 px-3 border border-border rounded-md bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary"
+                              >
                                 {hours.map((hour) => (
-                                  <Button
-                                    key={`end_hour_${hour}`}
-                                    size="icon"
-                                    variant={
-                                      field.value &&
-                                      field.value.getHours() === hour
-                                        ? "default"
-                                        : "ghost"
-                                    }
-                                    className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
-                                    onClick={() => {
-                                      const currentDate =
-                                        field.value || new Date();
-                                      const newDate = new Date(currentDate);
-                                      newDate.setHours(hour);
-                                      field.onChange(newDate);
-                                    }}
-                                  >
-                                    {hour}
-                                  </Button>
+                                  <option key={hour} value={hour}>
+                                    {hour.toString().padStart(2, "0")}:00
+                                  </option>
                                 ))}
-                              </div>
-                              <ScrollBar
-                                orientation="horizontal"
-                                className="sm:hidden"
-                              />
-                            </ScrollArea>
-                            <ScrollArea className="w-64 sm:w-auto">
-                              <div className="flex sm:flex-col p-2">
+                              </select>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-foreground">
+                                Menit
+                              </label>
+                              <select
+                                value={selectedDate.getMinutes()}
+                                onChange={(e) => {
+                                  const newDate = new Date(selectedDate);
+                                  newDate.setMinutes(parseInt(e.target.value));
+                                  field.onChange(newDate);
+                                }}
+                                className="w-full h-10 px-3 border border-border rounded-md bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary"
+                              >
                                 {minutes.map((minute) => (
-                                  <Button
-                                    key={`end_minute_${minute}`}
-                                    size="icon"
-                                    variant={
-                                      field.value &&
-                                      field.value.getMinutes() === minute
-                                        ? "default"
-                                        : "ghost"
-                                    }
-                                    className="sm:w-full shrink-0 aspect-square hover:scale-105 transition-transform"
-                                    onClick={() => {
-                                      const currentDate =
-                                        field.value || new Date();
-                                      const newDate = new Date(currentDate);
-                                      newDate.setMinutes(minute);
-                                      field.onChange(newDate);
-                                    }}
-                                  >
+                                  <option key={minute} value={minute}>
                                     {minute.toString().padStart(2, "0")}
-                                  </Button>
+                                  </option>
                                 ))}
-                              </div>
-                              <ScrollBar
-                                orientation="horizontal"
-                                className="sm:hidden"
-                              />
-                            </ScrollArea>
+                              </select>
+                            </div>
                           </div>
                         </div>
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                      )}
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
           </div>
@@ -575,18 +521,19 @@ export function NewReservationForm({
             {form.formState.isSubmitting ? (
               <>
                 <ReloadIcon className="h-5 w-5 animate-spin mr-2" />
-                Creating your reservation...
+                Membuat reservasi Anda...
               </>
             ) : (
               <>
                 <CheckIcon className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                Book This Space ✨
+                Pesan Ruangan Ini ✨
               </>
             )}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground mt-4">
-            By clicking submit, you agree to our booking terms and policies
+            Dengan mengklik kirim, Anda menyetujui syarat dan ketentuan
+            pemesanan kami
           </p>
         </div>
       </form>
