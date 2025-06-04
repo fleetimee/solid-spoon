@@ -178,167 +178,169 @@ export default async function RoomsPage(props: RoomsPageProps) {
     <>
       <BreadcrumbSetter items={roomsBreadcrumb} />
       <main className="flex flex-col grow p-4 md:p-8">
-        <div className="flex flex-col gap-2 mb-6">
-          <Typography
-            variant="h1"
-            className="text-3xl font-semibold tracking-tight"
-          >
-            Available Rooms
-          </Typography>
-          <Typography className="text-muted-foreground">
-            Browse and find the perfect room for your needs.
-          </Typography>
-        </div>
+        <div className="max-w-screen-xl mx-auto w-full px-6">
+          <div className="flex flex-col gap-2 mb-6">
+            <Typography
+              variant="h1"
+              className="text-3xl font-semibold tracking-tight"
+            >
+              Available Rooms
+            </Typography>
+            <Typography className="text-muted-foreground">
+              Browse and find the perfect room for your needs.
+            </Typography>
+          </div>
 
-        <div className="mb-6">
-          <RoomFilters />
-        </div>
+          <div className="mb-6">
+            <RoomFilters />
+          </div>
 
-        {rooms.length === 0 ? (
-          <Card className="border-dashed bg-muted/50 w-full max-w-3xl mx-auto">
-            <CardHeader className="flex flex-col items-center justify-center pb-0 pt-8">
-              <div className="flex flex-col items-center justify-center mb-6">
-                {hasFilters ? (
-                  <div className="bg-muted rounded-full p-6 mb-4">
-                    <Search
-                      className="h-12 w-12 text-muted-foreground"
-                      strokeWidth={1.25}
-                    />
-                  </div>
-                ) : (
-                  <div className="bg-muted rounded-full p-6 mb-4">
-                    <Building2
-                      className="h-12 w-12 text-muted-foreground"
-                      strokeWidth={1.25}
-                    />
-                  </div>
-                )}
-                <Typography
-                  variant="h2"
-                  className="text-xl font-semibold text-center mt-2"
-                >
-                  {hasFilters
-                    ? "No matching rooms found"
-                    : "No rooms available"}
-                </Typography>
-              </div>
-            </CardHeader>
-
-            <CardContent className="text-center space-y-2 pb-6 px-8">
-              {hasFilters ? (
-                <div className="space-y-4">
-                  <Typography className="text-muted-foreground max-w-md mx-auto">
-                    Your current filter settings didn&apos;t return any results.
-                    Try adjusting your filters or clearing them to see all
-                    rooms.
+          {rooms.length === 0 ? (
+            <Card className="border-dashed bg-muted/50 w-full max-w-3xl mx-auto">
+              <CardHeader className="flex flex-col items-center justify-center pb-0 pt-8">
+                <div className="flex flex-col items-center justify-center mb-6">
+                  {hasFilters ? (
+                    <div className="bg-muted rounded-full p-6 mb-4">
+                      <Search
+                        className="h-12 w-12 text-muted-foreground"
+                        strokeWidth={1.25}
+                      />
+                    </div>
+                  ) : (
+                    <div className="bg-muted rounded-full p-6 mb-4">
+                      <Building2
+                        className="h-12 w-12 text-muted-foreground"
+                        strokeWidth={1.25}
+                      />
+                    </div>
+                  )}
+                  <Typography
+                    variant="h2"
+                    className="text-xl font-semibold text-center mt-2"
+                  >
+                    {hasFilters
+                      ? "No matching rooms found"
+                      : "No rooms available"}
                   </Typography>
+                </div>
+              </CardHeader>
 
-                  <div className="flex flex-col gap-2 items-center mt-2">
-                    <div className="bg-background/80 rounded-lg p-3 inline-flex gap-2 text-sm text-muted-foreground">
-                      <Info className="h-4 w-4 flex-shrink-0" />
-                      <span>Tip: Try broadening your search criteria</span>
+              <CardContent className="text-center space-y-2 pb-6 px-8">
+                {hasFilters ? (
+                  <div className="space-y-4">
+                    <Typography className="text-muted-foreground max-w-md mx-auto">
+                      Your current filter settings didn&apos;t return any
+                      results. Try adjusting your filters or clearing them to
+                      see all rooms.
+                    </Typography>
+
+                    <div className="flex flex-col gap-2 items-center mt-2">
+                      <div className="bg-background/80 rounded-lg p-3 inline-flex gap-2 text-sm text-muted-foreground">
+                        <Info className="h-4 w-4 flex-shrink-0" />
+                        <span>Tip: Try broadening your search criteria</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                // Updated text for no rooms available
-                <Typography className="text-muted-foreground max-w-md mx-auto">
-                  No rooms are currently available. Please check back later!
-                </Typography>
-              )}
-            </CardContent>
+                ) : (
+                  // Updated text for no rooms available
+                  <Typography className="text-muted-foreground max-w-md mx-auto">
+                    No rooms are currently available. Please check back later!
+                  </Typography>
+                )}
+              </CardContent>
 
-            <CardFooter className="flex justify-center pb-8 pt-0">
-              {hasFilters ? (
-                <div className="flex flex-wrap gap-3 justify-center">
-                  {/* Updated Clear Filters link */}
-                  <Button asChild variant="outline" className="gap-2">
-                    <Link href="/rooms">
-                      <RefreshCw className="h-4 w-4" />
-                      Clear all filters
-                    </Link>
-                  </Button>
-                  {/* Removed Add Room button */}
-                </div>
-              ) : // Removed Add Room button for empty state
-              null}
-            </CardFooter>
-          </Card>
-        ) : (
-          <>
-            {/* Updated grid for Bento layout */}
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6">
-              {rooms.map((room, index) => {
-                // Define span classes based on index for a repeating Bento pattern
-                let spanClasses = "md:col-span-2"; // Default span
-                const patternIndex = index % 6; // Get position within the 6-item pattern
-
-                if (patternIndex === 0) {
-                  spanClasses = "md:col-span-4 md:row-span-2"; // Large item
-                } else if (patternIndex === 1 || patternIndex === 2) {
-                  spanClasses = "md:col-span-2"; // Small items next to large
-                } else if (patternIndex === 3 || patternIndex === 4) {
-                  spanClasses = "md:col-span-3"; // Medium items below
-                } else if (patternIndex === 5) {
-                  spanClasses = "md:col-span-6"; // Full width item
-                }
-
-                return (
-                  <div key={room.id} className={cn(spanClasses)}>
-                    <RoomCard
-                      room={room}
-                      // Updated link to public detail page
-                      link={`/v/${room.slug}`}
-                      className="h-full" // Ensure card fills the grid area
-                    />
+              <CardFooter className="flex justify-center pb-8 pt-0">
+                {hasFilters ? (
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {/* Updated Clear Filters link */}
+                    <Button asChild variant="outline" className="gap-2">
+                      <Link href="/rooms">
+                        <RefreshCw className="h-4 w-4" />
+                        Clear all filters
+                      </Link>
+                    </Button>
+                    {/* Removed Add Room button */}
                   </div>
-                );
-              })}
-            </div>
+                ) : // Removed Add Room button for empty state
+                null}
+              </CardFooter>
+            </Card>
+          ) : (
+            <>
+              {/* Updated grid for Bento layout */}
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6">
+                {rooms.map((room, index) => {
+                  // Define span classes based on index for a repeating Bento pattern
+                  let spanClasses = "md:col-span-2"; // Default span
+                  const patternIndex = index % 6; // Get position within the 6-item pattern
 
-            {pagination.totalPages > 1 && (
-              <div className="mt-8">
-                <Pagination>
-                  <PaginationContent>
-                    {pagination.currentPage > 1 && (
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href={getPaginationUrl(pagination.currentPage - 1)}
-                          preserveScroll={true}
-                        />
-                      </PaginationItem>
-                    )}
+                  if (patternIndex === 0) {
+                    spanClasses = "md:col-span-4 md:row-span-2"; // Large item
+                  } else if (patternIndex === 1 || patternIndex === 2) {
+                    spanClasses = "md:col-span-2"; // Small items next to large
+                  } else if (patternIndex === 3 || patternIndex === 4) {
+                    spanClasses = "md:col-span-3"; // Medium items below
+                  } else if (patternIndex === 5) {
+                    spanClasses = "md:col-span-6"; // Full width item
+                  }
 
-                    {getPaginationItems()}
-
-                    {pagination.currentPage < pagination.totalPages && (
-                      <PaginationItem>
-                        <PaginationNext
-                          href={getPaginationUrl(pagination.currentPage + 1)}
-                          preserveScroll={true}
-                        />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
+                  return (
+                    <div key={room.id} className={cn(spanClasses)}>
+                      <RoomCard
+                        room={room}
+                        // Updated link to public detail page
+                        link={`/v/${room.slug}`}
+                        className="h-full" // Ensure card fills the grid area
+                      />
+                    </div>
+                  );
+                })}
               </div>
-            )}
 
-            <div className="mt-4 text-center text-sm text-muted-foreground">
-              {pagination.totalItems > 0 && (
-                <>
-                  Showing{" "}
-                  {(pagination.currentPage - 1) * pagination.pageSize + 1} to{" "}
-                  {Math.min(
-                    pagination.currentPage * pagination.pageSize,
-                    pagination.totalItems
-                  )}{" "}
-                  of {pagination.totalItems} rooms
-                </>
+              {pagination.totalPages > 1 && (
+                <div className="mt-8">
+                  <Pagination>
+                    <PaginationContent>
+                      {pagination.currentPage > 1 && (
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href={getPaginationUrl(pagination.currentPage - 1)}
+                            preserveScroll={true}
+                          />
+                        </PaginationItem>
+                      )}
+
+                      {getPaginationItems()}
+
+                      {pagination.currentPage < pagination.totalPages && (
+                        <PaginationItem>
+                          <PaginationNext
+                            href={getPaginationUrl(pagination.currentPage + 1)}
+                            preserveScroll={true}
+                          />
+                        </PaginationItem>
+                      )}
+                    </PaginationContent>
+                  </Pagination>
+                </div>
               )}
-            </div>
-          </>
-        )}
+
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                {pagination.totalItems > 0 && (
+                  <>
+                    Showing{" "}
+                    {(pagination.currentPage - 1) * pagination.pageSize + 1} to{" "}
+                    {Math.min(
+                      pagination.currentPage * pagination.pageSize,
+                      pagination.totalItems
+                    )}{" "}
+                    of {pagination.totalItems} rooms
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </main>
     </>
   );
