@@ -29,16 +29,20 @@ export function UserReservationsSection({
   }
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      <Typography
-        variant="h2"
-        as="h2"
-        className="flex items-center font-bold text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
-      >
-        <UserCheck className="h-5 w-5 mr-2 text-primary" />
-        My Reservations 👤
-      </Typography>
-      <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-md overflow-hidden">
+    <div className={`space-y-6 ${className}`}>
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+          <UserCheck className="h-5 w-5" />
+        </div>
+        <Typography
+          variant="h2"
+          as="h2"
+          className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          My Reservations 👤
+        </Typography>
+      </div>
+      <div className="rounded-xl border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">

@@ -22,8 +22,9 @@ import {
 } from "@/features/reservations/api/getApprovedRoomReservations";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Sparkles, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
+import { Typography } from "@/components/ui/typography";
 
 // Import new refactored components
 import { RoomDetailHeader } from "@/features/rooms/components/room-detail-header";
@@ -109,81 +110,152 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
     !!session?.user?.id && pendingCount >= reservationLimit;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+    <>
       <BreadcrumbSetter items={breadcrumbItems} />
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 dark:from-violet-950/20 dark:via-purple-950/20 dark:to-pink-950/20">
+        {/* Hero Section with Modern Header */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-800 dark:via-purple-800 dark:to-pink-800">
+          <div className="absolute inset-0 bg-black/10 dark:bg-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
 
-      <div className="w-full max-w-screen-xl mx-auto px-6 py-6">
-        {/* Compact Single Column Layout */}
-        <div className="space-y-6">
-          {/* Room Detail Header */}
-          <RoomDetailHeader room={room} />
-
-          {/* Compact Image Gallery */}
-          <div className="rounded-xl overflow-hidden shadow-md">
-            <RoomImageGallery images={displayImages} />
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Booking Section */}
-            <div className="lg:col-span-2">
-              <RoomBookingSection
-                approvedReservations={approvedReservations}
-                pendingCount={pendingCount}
-                reservationLimit={reservationLimit}
-                isLoggedIn={!!session?.user?.id}
-              />
-            </div>
-
-            {/* Amenities, Location, and Book Now Button */}
-            <div className="space-y-6">
-              <RoomAmenitiesSection facilities={facilities} />
-              <RoomLocationSection location={room.location} />
-
-              {/* Enhanced Book Now Button - Positioned below location */}
-              <div className="space-y-3">
-                <Link
-                  href={`/v/${roomSlug}/reservations/new`}
-                  passHref
-                  className={cn(
-                    "block",
-                    isLimitReached &&
-                      "pointer-events-none cursor-not-allowed opacity-50"
-                  )}
-                  aria-disabled={isLimitReached}
-                >
-                  <Button
-                    className={cn(
-                      "w-full h-12 flex items-center justify-center gap-2 font-semibold text-base",
-                      "bg-gradient-to-r from-primary via-primary to-purple-600 hover:from-primary/90 hover:via-primary/90 hover:to-purple-600/90",
-                      "shadow-md hover:shadow-lg transition-all duration-300",
-                      "transform hover:scale-[1.01] active:scale-[0.99]",
-                      "border border-primary/20 hover:border-primary/30",
-                      !isLimitReached && "animate-pulse hover:animate-none"
-                    )}
-                    disabled={isLimitReached}
-                  >
-                    <CalendarIcon className="h-5 w-5" />
-                    {isLimitReached ? "Limit Reached" : "Book Now"}
-                  </Button>
-                </Link>
+          <div className="relative max-w-screen-xl mx-auto px-6 py-12">
+            <div className="text-center space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 dark:bg-white/10 backdrop-blur-sm border border-white/30 text-white">
+                <Sparkles className="h-4 w-4" />
+                <span className="text-sm font-medium">Ruangan Premium</span>
               </div>
 
-              {/* Room Rules Section */}
-              <RoomRulesSection />
+              <div className="space-y-3">
+                <h1 className="text-4xl md:text-5xl font-bold text-white">
+                  <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                    {room.name}
+                  </span>
+                </h1>
+                <Typography
+                  variant="lead"
+                  className="text-white/90 max-w-2xl mx-auto"
+                >
+                  {room.description ||
+                    "Ruangan berkualitas premium dengan fasilitas terbaik untuk kebutuhan Anda"}
+                </Typography>
+              </div>
+
+              {/* Room Quick Info */}
+              <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
+                <div className="flex items-center gap-2 text-white/80">
+                  <MapPin className="h-4 w-4" />
+                  <span className="text-sm">
+                    {room.location || "Lokasi Premium"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <Users className="h-4 w-4" />
+                  <span className="text-sm">
+                    Kapasitas {room.capacity || "N/A"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-white/80">
+                  <Clock className="h-4 w-4" />
+                  <span className="text-sm">Tersedia 24/7</span>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* User Reservations Section (Conditional) */}
-          <UserReservationsSection
-            reservations={myReservations}
-            isVisible={!!session?.user?.id}
-          />
+        <div className="max-w-screen-xl mx-auto px-6 py-12">
+          {/* Compact Single Column Layout */}
+          <div className="space-y-8">
+            {/* Modern Image Gallery */}
+            <div className="rounded-2xl overflow-hidden shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm border-0">
+              <RoomImageGallery images={displayImages} />
+            </div>
 
-          {/* Recent Reservations Section */}
-          <RecentReservationsSection reservations={recentReservations} />
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Booking Section */}
+              <div className="lg:col-span-2">
+                <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
+                  <RoomBookingSection
+                    approvedReservations={approvedReservations}
+                    pendingCount={pendingCount}
+                    reservationLimit={reservationLimit}
+                    isLoggedIn={!!session?.user?.id}
+                  />
+                </Card>
+              </div>
+
+              {/* Sidebar with Amenities, Location, and Book Now Button */}
+              <div className="space-y-6">
+                {/* Amenities Card */}
+                <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
+                  <RoomAmenitiesSection facilities={facilities} />
+                </Card>
+
+                {/* Location Card */}
+                <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
+                  <RoomLocationSection location={room.location} />
+                </Card>
+
+                {/* Enhanced Book Now Button */}
+                <Card className="border-0 shadow-2xl bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 backdrop-blur-sm">
+                  <div className="p-6 space-y-4">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-lg font-semibold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                        Siap untuk Memesan?
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        Dapatkan ruangan impian Anda sekarang
+                      </p>
+                    </div>
+                    <Link
+                      href={`/v/${roomSlug}/reservations/new`}
+                      passHref
+                      className={cn(
+                        "block",
+                        isLimitReached &&
+                          "pointer-events-none cursor-not-allowed opacity-50"
+                      )}
+                      aria-disabled={isLimitReached}
+                    >
+                      <Button
+                        className={cn(
+                          "w-full h-12 flex items-center justify-center gap-2 font-semibold text-base",
+                          "bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 hover:from-violet-700 hover:via-purple-700 hover:to-pink-700",
+                          "shadow-lg hover:shadow-xl transition-all duration-300",
+                          "transform hover:scale-[1.02] active:scale-[0.98]",
+                          "border-0 text-white",
+                          !isLimitReached && "animate-pulse hover:animate-none"
+                        )}
+                        disabled={isLimitReached}
+                      >
+                        <CalendarIcon className="h-5 w-5" />
+                        {isLimitReached ? "Limit Reached" : "Book Now"}
+                      </Button>
+                    </Link>
+                  </div>
+                </Card>
+
+                {/* Room Rules Card */}
+                <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
+                  <RoomRulesSection />
+                </Card>
+              </div>
+            </div>
+
+            {/* User Reservations Section (Conditional) */}
+            <div className="space-y-6">
+              <UserReservationsSection
+                reservations={myReservations}
+                isVisible={!!session?.user?.id}
+              />
+
+              {/* Recent Reservations Section */}
+              <RecentReservationsSection reservations={recentReservations} />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

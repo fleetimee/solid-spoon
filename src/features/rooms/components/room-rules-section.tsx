@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import {
   Collapsible,
@@ -94,17 +94,18 @@ export function RoomRulesSection({ className = "" }: RoomRulesSectionProps) {
   ];
 
   return (
-    <Card className={`space-y-4 ${className}`}>
+    <Card className={`${className}`}>
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+            <Shield className="h-5 w-5" />
+          </div>
+          <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+            Tata Tertib Ruangan
+          </CardTitle>
+        </div>
+      </CardHeader>
       <CardContent className="space-y-4">
-        <Typography
-          variant="h2"
-          as="h2"
-          className="flex items-center font-bold text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent"
-        >
-          <Shield className="h-5 w-5 mr-2 text-primary" />
-          Tata Tertib Ruangan
-        </Typography>
-
         <div className="space-y-3">
           {rulesSections.map((section) => {
             const Icon = section.icon;
@@ -117,7 +118,7 @@ export function RoomRulesSection({ className = "" }: RoomRulesSectionProps) {
                 onOpenChange={() => toggleSection(section.id)}
               >
                 <CollapsibleTrigger className="w-full">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors duration-200 border border-muted">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-violet-50/50 dark:bg-violet-950/20 hover:bg-violet-100/50 dark:hover:bg-violet-900/30 transition-colors duration-200 border border-violet-200/50 dark:border-violet-800/50">
                     <div className="flex items-center space-x-3">
                       <Icon className={cn("h-4 w-4", section.iconColor)} />
                       <Typography
@@ -137,14 +138,14 @@ export function RoomRulesSection({ className = "" }: RoomRulesSectionProps) {
 
                 <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                   <div className="pt-2 pb-1">
-                    <div className="bg-muted/20 rounded-lg p-3 border border-muted/50">
+                    <div className="bg-violet-50/30 dark:bg-violet-950/10 rounded-lg p-3 border border-violet-200/30 dark:border-violet-800/30">
                       <ul className="space-y-2">
                         {section.rules.map((rule, index) => (
                           <li
                             key={index}
                             className="flex items-start space-x-2 text-sm text-muted-foreground"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-violet-500 mt-2 flex-shrink-0" />
                             <span className="leading-relaxed">{rule}</span>
                           </li>
                         ))}
