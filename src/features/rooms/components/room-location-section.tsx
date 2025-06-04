@@ -21,7 +21,7 @@ export function RoomLocationSection({
           as="h2"
           className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
         >
-          Location 📍
+          Lokasi 📍
         </Typography>
       </div>
       <div>
@@ -30,7 +30,7 @@ export function RoomLocationSection({
             variant="default"
             className="text-foreground leading-relaxed text-sm"
           >
-            {location || "📍 Location details coming soon - stay tuned!"}
+            {location || "📍 Detail lokasi akan segera hadir - nantikan!"}
           </Typography>
         </div>
       </div>

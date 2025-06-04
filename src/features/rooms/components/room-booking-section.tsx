@@ -34,7 +34,7 @@ export function RoomBookingSection({
           className="flex items-center font-semibold text-base mb-3"
         >
           <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
-          Availability Calendar 📅
+          Kalender Ketersediaan 📅
         </Typography>
         <RoomAvailabilityCalendar approvedReservations={approvedReservations} />
       </div>
@@ -47,7 +47,7 @@ export function RoomBookingSection({
           className="flex items-center font-semibold text-base mb-3"
         >
           <Clock className="h-4 w-4 mr-2 text-primary" />
-          Current Bookings 📋
+          Pemesanan Saat Ini 📋
         </Typography>
         {approvedReservations.length > 0 ? (
           <div className="space-y-2">
@@ -69,7 +69,7 @@ export function RoomBookingSection({
               variant="default"
               className="text-green-700 dark:text-green-400 font-medium text-sm"
             >
-              No current bookings
+              Tidak ada pemesanan saat ini
             </Typography>
           </div>
         )}
@@ -83,7 +83,8 @@ export function RoomBookingSection({
         >
           <Info className="h-4 w-4 text-blue-500" />
           <AlertDescription className="text-blue-700 dark:text-blue-300 text-sm">
-            💫 You have {pendingCount} pending reservation(s) for this room.
+            💫 Anda memiliki {pendingCount} reservasi tertunda untuk ruangan
+            ini.
           </AlertDescription>
         </Alert>
       )}
@@ -96,12 +97,12 @@ export function RoomBookingSection({
         >
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle className="text-sm">
-            Reservation Limit Reached ⚠️
+            Batas Reservasi Tercapai ⚠️
           </AlertTitle>
           <AlertDescription className="text-sm">
-            You have reached the maximum limit of {reservationLimit} pending
-            reservations for this room. You cannot create new reservations until
-            existing ones are processed.
+            Anda telah mencapai batas maksimum {reservationLimit} reservasi
+            tertunda untuk ruangan ini. Anda tidak dapat membuat reservasi baru
+            sampai reservasi yang ada diproses.
           </AlertDescription>
         </Alert>
       )}

@@ -114,8 +114,7 @@ function ReservationTooltip({
 
             {dayReservations.length > 3 && (
               <div className="text-xs text-muted-foreground text-center pt-2 border-t border-border">
-                +{dayReservations.length - 3} more reservation
-                {dayReservations.length - 3 !== 1 ? "s" : ""}
+                +{dayReservations.length - 3} reservasi lainnya
               </div>
             )}
           </div>
@@ -131,29 +130,29 @@ function CalendarLegend() {
     {
       id: "available",
       icon: CheckCircle,
-      label: "Available",
+      label: "Tersedia",
       className: "text-green-600 dark:text-green-400",
       indicator:
         "bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-600",
-      description: "Open for booking",
+      description: "Terbuka untuk pemesanan",
     },
     {
       id: "booked",
       icon: XCircle,
-      label: "Reserved",
+      label: "Dipesan",
       className: "text-red-600 dark:text-red-400",
       indicator:
         "bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-600",
-      description: "Not available",
+      description: "Tidak tersedia",
     },
     {
       id: "today",
       icon: Clock,
-      label: "Today",
+      label: "Hari Ini",
       className: "text-blue-600 dark:text-blue-400",
       indicator:
         "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600",
-      description: "Current date",
+      description: "Tanggal saat ini",
     },
   ];
 
@@ -162,7 +161,7 @@ function CalendarLegend() {
       <div className="flex items-center gap-2 mb-4">
         <CalendarIcon className="h-5 w-5 text-primary" />
         <span className="text-base font-medium text-foreground">
-          Calendar Legend
+          Legenda Kalender
         </span>
       </div>
 
@@ -296,7 +295,7 @@ export function RoomAvailabilityCalendar({
               onClick={goToToday}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
             >
-              Go to today
+              Ke hari ini
             </button>
           </div>
 
@@ -368,7 +367,7 @@ export function RoomAvailabilityCalendar({
                 disabled={dateStatus === "past"}
                 aria-label={
                   isBooked
-                    ? `${format(date, "MMMM d, yyyy")} - Reserved (hover for details)`
+                    ? `${format(date, "MMMM d, yyyy")} - Dipesan (arahkan untuk detail)`
                     : format(date, "MMMM d, yyyy")
                 }
               >
@@ -405,7 +404,7 @@ export function RoomAvailabilityCalendar({
               {bookedDays.length}
             </div>
             <div className="text-sm text-muted-foreground font-medium">
-              Reserved Days
+              Hari Dipesan
             </div>
           </div>
           <div className="space-y-2">
@@ -413,7 +412,7 @@ export function RoomAvailabilityCalendar({
               {approvedReservations.length}
             </div>
             <div className="text-sm text-muted-foreground font-medium">
-              Active Bookings
+              Pemesanan Aktif
             </div>
           </div>
         </div>

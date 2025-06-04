@@ -22,7 +22,7 @@ export function RoomAmenitiesSection({
           as="h2"
           className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
         >
-          Room Amenities
+          Fasilitas Ruangan
         </Typography>
       </div>
       <div>
@@ -40,7 +40,7 @@ export function RoomAmenitiesSection({
         ) : (
           <div className="p-4 rounded-lg bg-violet-50/50 dark:bg-violet-950/20 border border-dashed border-violet-300/50 dark:border-violet-700/50 text-center">
             <p className="text-muted-foreground text-sm">
-              No specific amenities listed yet.
+              Belum ada fasilitas khusus yang tercantum.
             </p>
           </div>
         )}
