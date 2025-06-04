@@ -224,9 +224,14 @@ export function ReservationCalendar({
         {/* Calendar Header */}
         <div className="flex items-center justify-between mb-4">
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            onClick={goToPreviousMonth}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goToPreviousMonth();
+            }}
             className="h-8 w-8 p-0 hover:bg-accent"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -250,9 +255,14 @@ export function ReservationCalendar({
           </div>
 
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            onClick={goToNextMonth}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              goToNextMonth();
+            }}
             className="h-8 w-8 p-0 hover:bg-accent"
           >
             <ChevronRight className="h-4 w-4" />
