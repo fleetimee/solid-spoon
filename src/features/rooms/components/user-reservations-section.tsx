@@ -39,25 +39,23 @@ export function UserReservationsSection({
           as="h2"
           className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
         >
-          My Reservations 👤
+          Reservasi Saya 👤
         </Typography>
       </div>
-      <div className="rounded-xl border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm overflow-hidden">
+      <div className="rounded-xl border-0 shadow-lg bg-white/70 dark:bg-card/70 backdrop-blur-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="font-semibold text-foreground">
-                Title
+            <TableRow className="bg-gradient-to-r from-violet-500 to-purple-500 hover:bg-gradient-to-r hover:from-violet-600 hover:to-purple-600 border-none">
+              <TableHead className="font-semibold text-white border-r border-white/20 last:border-r-0">
+                Keperluan
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
-                Start Time
+              <TableHead className="font-semibold text-white border-r border-white/20 last:border-r-0">
+                Waktu Mulai
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
-                End Time
+              <TableHead className="font-semibold text-white border-r border-white/20 last:border-r-0">
+                Waktu Selesai
               </TableHead>
-              <TableHead className="font-semibold text-foreground">
-                Status
-              </TableHead>
+              <TableHead className="font-semibold text-white">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -66,8 +64,9 @@ export function UserReservationsSection({
                 <TableRow
                   key={reservation.id}
                   className={cn(
-                    "hover:bg-muted/50 transition-colors duration-200",
-                    index % 2 === 0 && "bg-muted/20"
+                    "hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 dark:hover:from-violet-950/30 dark:hover:to-purple-950/30 transition-all duration-300 border-b border-violet-100/50 dark:border-violet-800/30",
+                    index % 2 === 0 &&
+                      "bg-gradient-to-r from-violet-25 to-purple-25 dark:from-violet-950/10 dark:to-purple-950/10"
                   )}
                 >
                   <TableCell className="font-semibold py-3 text-sm">
@@ -79,7 +78,7 @@ export function UserReservationsSection({
                         <Play className="h-2.5 w-2.5" />
                       </div>
                       <div className="text-xs">
-                        <div className="font-medium">Start</div>
+                        <div className="font-medium">Mulai</div>
                         <div className="text-muted-foreground">
                           {format(new Date(reservation.startTime), "PPp")}
                         </div>
@@ -92,7 +91,7 @@ export function UserReservationsSection({
                         <Square className="h-2.5 w-2.5" />
                       </div>
                       <div className="text-xs">
-                        <div className="font-medium">End</div>
+                        <div className="font-medium">Selesai</div>
                         <div className="text-muted-foreground">
                           {format(new Date(reservation.endTime), "PPp")}
                         </div>
@@ -129,7 +128,7 @@ export function UserReservationsSection({
                       variant="default"
                       className="text-muted-foreground text-sm"
                     >
-                      No reservations yet - ready to book your first one?
+                      Belum ada reservasi - siap untuk memesan yang pertama?
                     </Typography>
                   </div>
                 </TableCell>

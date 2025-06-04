@@ -27,7 +27,7 @@ export function RoomBookingSection({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Calendar Section */}
-      <div className="p-4 md:p-5 rounded-xl bg-gradient-to-br from-card to-muted/20 border shadow-sm">
+      <div className="p-4 md:p-5">
         <Typography
           variant="h3"
           as="h3"
@@ -40,7 +40,7 @@ export function RoomBookingSection({
       </div>
 
       {/* Current Bookings */}
-      <div className="p-4 md:p-5 rounded-xl bg-gradient-to-br from-accent/5 to-card border shadow-sm">
+      <div className="p-4 md:p-5">
         <Typography
           variant="h3"
           as="h3"

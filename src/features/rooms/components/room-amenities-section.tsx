@@ -1,5 +1,4 @@
 import { Typography } from "@/components/ui/typography";
-import { CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { FacilityBadge } from "./facility-badge";
 
@@ -13,18 +12,20 @@ export function RoomAmenitiesSection({
   className = "",
 }: RoomAmenitiesSectionProps) {
   return (
-    <div className={`${className}`}>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-            Room Amenities
-          </CardTitle>
+    <div className={`p-6 space-y-6 ${className}`}>
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+          <Sparkles className="h-5 w-5" />
         </div>
-      </CardHeader>
-      <CardContent>
+        <Typography
+          variant="h2"
+          as="h2"
+          className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          Room Amenities
+        </Typography>
+      </div>
+      <div>
         {facilities.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {facilities.map((facility: string, index: number) => (
@@ -43,7 +44,7 @@ export function RoomAmenitiesSection({
             </p>
           </div>
         )}
-      </CardContent>
+      </div>
     </div>
   );
 }

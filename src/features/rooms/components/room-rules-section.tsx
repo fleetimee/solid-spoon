@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import {
   Collapsible,
@@ -94,18 +93,20 @@ export function RoomRulesSection({ className = "" }: RoomRulesSectionProps) {
   ];
 
   return (
-    <Card className={`${className}`}>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
-            <Shield className="h-5 w-5" />
-          </div>
-          <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-            Tata Tertib Ruangan
-          </CardTitle>
+    <div className={`p-6 space-y-6 ${className}`}>
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+          <Shield className="h-5 w-5" />
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        <Typography
+          variant="h2"
+          as="h2"
+          className="font-bold text-xl bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          Tata Tertib Ruangan
+        </Typography>
+      </div>
+      <div className="space-y-4">
         <div className="space-y-3">
           {rulesSections.map((section) => {
             const Icon = section.icon;
@@ -179,7 +180,7 @@ export function RoomRulesSection({ className = "" }: RoomRulesSectionProps) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
