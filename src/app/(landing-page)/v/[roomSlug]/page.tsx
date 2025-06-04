@@ -22,9 +22,22 @@ import {
 } from "@/features/reservations/api/getApprovedRoomReservations";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Sparkles, Clock, MapPin, Users } from "lucide-react";
+import {
+  CalendarIcon,
+  Sparkles,
+  Clock,
+  MapPin,
+  Users,
+  AlertTriangle,
+} from "lucide-react";
 import Link from "next/link";
 import { Typography } from "@/components/ui/typography";
+import {
+  Banner,
+  BannerClose,
+  BannerIcon,
+  BannerTitle,
+} from "@/components/ui/kibo-ui/banner";
 
 // Import new refactored components
 import { RoomDetailHeader } from "@/features/rooms/components/room-detail-header";
@@ -34,6 +47,7 @@ import { RoomLocationSection } from "@/features/rooms/components/room-location-s
 import { UserReservationsSection } from "@/features/rooms/components/user-reservations-section";
 import { RecentReservationsSection } from "@/features/rooms/components/recent-reservations-section";
 import { RoomRulesSection } from "@/features/rooms/components/room-rules-section";
+import { RoomBanners } from "@/features/rooms/components/room-banners";
 
 interface RoomDetailPageProps {
   params: Promise<{
@@ -171,6 +185,12 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               <RoomImageGallery images={displayImages} />
             </div>
 
+            {/* Room Status Banners */}
+            <RoomBanners
+              isLimitReached={isLimitReached}
+              pendingCount={pendingCount}
+            />
+
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Booking Section */}
@@ -178,7 +198,6 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                 <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
                   <RoomBookingSection
                     approvedReservations={approvedReservations}
-                    pendingCount={pendingCount}
                     reservationLimit={reservationLimit}
                     isLoggedIn={!!session?.user?.id}
                   />

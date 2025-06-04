@@ -1,8 +1,7 @@
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, AlertTriangle, Info, Clock } from "lucide-react";
+import { CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { RoomAvailabilityCalendar } from "./room-availability-calendar";
@@ -10,7 +9,6 @@ import { ApprovedReservationTime } from "@/features/reservations/api/getApproved
 
 export interface RoomBookingSectionProps {
   approvedReservations: ApprovedReservationTime[];
-  pendingCount: number;
   reservationLimit: number;
   isLoggedIn: boolean;
   className?: string;
@@ -18,12 +16,10 @@ export interface RoomBookingSectionProps {
 
 export function RoomBookingSection({
   approvedReservations,
-  pendingCount,
   reservationLimit,
   isLoggedIn,
   className = "",
 }: RoomBookingSectionProps) {
-  const isLimitReached = !!isLoggedIn && pendingCount >= reservationLimit;
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Calendar Section */}
@@ -74,38 +70,6 @@ export function RoomBookingSection({
           </div>
         )}
       </div>
-
-      {/* Pending Reservations Alert */}
-      {pendingCount > 0 && (
-        <Alert
-          variant="default"
-          className="border-l-4 border-l-blue-500 bg-blue-500/5 backdrop-blur-sm animate-in slide-in-from-left-2 duration-300 py-2"
-        >
-          <Info className="h-4 w-4 text-blue-500" />
-          <AlertDescription className="text-blue-700 dark:text-blue-300 text-sm">
-            💫 Anda memiliki {pendingCount} reservasi tertunda untuk ruangan
-            ini.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Reservation Limit Alert */}
-      {isLoggedIn && isLimitReached && (
-        <Alert
-          variant="destructive"
-          className="border-l-4 border-l-destructive bg-destructive/5 backdrop-blur-sm animate-in slide-in-from-top-2 duration-300 py-2"
-        >
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle className="text-sm">
-            Batas Reservasi Tercapai ⚠️
-          </AlertTitle>
-          <AlertDescription className="text-sm">
-            Anda telah mencapai batas maksimum {reservationLimit} reservasi
-            tertunda untuk ruangan ini. Anda tidak dapat membuat reservasi baru
-            sampai reservasi yang ada diproses.
-          </AlertDescription>
-        </Alert>
-      )}
     </div>
   );
 }
