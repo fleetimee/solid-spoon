@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Info, AlertTriangle } from "lucide-react";
 import {
   Banner,
@@ -17,12 +18,17 @@ export function RoomBanners({
   isLimitReached,
   pendingCount,
 }: RoomBannersProps) {
+  // Local state to manage banner visibility
+  const [showLimitBanner, setShowLimitBanner] = useState(true);
+  const [showPendingBanner, setShowPendingBanner] = useState(true);
+
   return (
     <>
       {/* Reservation Limit Banner */}
-      {isLimitReached && (
+      {isLimitReached && showLimitBanner && (
         <Banner
-          visible={isLimitReached}
+          visible={isLimitReached && showLimitBanner}
+          onClose={() => setShowLimitBanner(false)}
           className="bg-red-600 text-white border-0 shadow-lg"
         >
           <div className="flex items-center gap-3 flex-1">
@@ -39,14 +45,15 @@ export function RoomBanners({
               </p>
             </div>
           </div>
-          <BannerClose className="text-white hover:bg-white/20" />
+          <BannerClose />
         </Banner>
       )}
 
       {/* Pending Reservations Banner */}
-      {pendingCount > 0 && (
+      {pendingCount > 0 && showPendingBanner && (
         <Banner
-          visible={pendingCount > 0}
+          visible={pendingCount > 0 && showPendingBanner}
+          onClose={() => setShowPendingBanner(false)}
           className="bg-blue-600 text-white border-0 shadow-lg"
         >
           <div className="flex items-center gap-3 flex-1">
@@ -61,7 +68,7 @@ export function RoomBanners({
               </p>
             </div>
           </div>
-          <BannerClose className="text-white hover:bg-white/20" />
+          <BannerClose />
         </Banner>
       )}
     </>
