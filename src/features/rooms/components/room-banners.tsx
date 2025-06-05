@@ -31,16 +31,16 @@ export function RoomBanners({
           onClose={() => setShowLimitBanner(false)}
           className="bg-red-600 text-white border-0 shadow-lg"
         >
-          <div className="flex items-center gap-3 flex-1">
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <BannerIcon
               icon={AlertTriangle}
-              className="bg-white/20 border-white/30"
+              className="bg-white/20 border-white/30 mt-0.5 sm:mt-0"
             />
-            <div className="flex-1">
-              <BannerTitle className="font-semibold text-white">
+            <div className="flex-1 min-w-0">
+              <BannerTitle className="font-semibold text-white text-sm sm:text-base">
                 Batas Reservasi Tercapai
               </BannerTitle>
-              <p className="text-sm text-white/90 mt-1">
+              <p className="text-xs sm:text-sm text-white/90 mt-0.5 sm:mt-1 leading-tight">
                 Anda telah mencapai batas maksimum reservasi untuk ruangan ini
               </p>
             </div>
@@ -56,13 +56,16 @@ export function RoomBanners({
           onClose={() => setShowPendingBanner(false)}
           className="bg-blue-600 text-white border-0 shadow-lg"
         >
-          <div className="flex items-center gap-3 flex-1">
-            <BannerIcon icon={Info} className="bg-white/20 border-white/30" />
-            <div className="flex-1">
-              <BannerTitle className="font-semibold text-white">
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <BannerIcon
+              icon={Info}
+              className="bg-white/20 border-white/30 mt-0.5 sm:mt-0"
+            />
+            <div className="flex-1 min-w-0">
+              <BannerTitle className="font-semibold text-white text-sm sm:text-base">
                 Reservasi Tertunda
               </BannerTitle>
-              <p className="text-sm text-white/90 mt-1">
+              <p className="text-xs sm:text-sm text-white/90 mt-0.5 sm:mt-1 leading-tight">
                 💫 Anda memiliki {pendingCount} reservasi tertunda untuk ruangan
                 ini
               </p>

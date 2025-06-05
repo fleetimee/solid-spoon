@@ -25,16 +25,18 @@ import {
 import { Typography } from "@/components/ui/typography";
 
 export const metadata: Metadata = {
-  title: "Available Rooms",
-  description: "Browse and find the perfect room for your needs.",
+  title: "Ruangan Tersedia",
+  description:
+    "Jelajahi dan temukan ruangan yang sesuai dengan kebutuhan Anda.",
   openGraph: {
-    description: "Browse and find the perfect room for your needs.",
+    description:
+      "Jelajahi dan temukan ruangan yang sesuai dengan kebutuhan Anda.",
   },
 };
 
 export const fetchCache = "default-cache";
 
-const roomsBreadcrumb = [{ label: "Home", href: "/" }, { label: "Rooms" }];
+const roomsBreadcrumb = [{ label: "Beranda", href: "/" }, { label: "Ruangan" }];
 
 interface RoomsPageProps {
   searchParams: Promise<{
@@ -177,124 +179,191 @@ export default async function RoomsPage(props: RoomsPageProps) {
   return (
     <>
       <BreadcrumbSetter items={roomsBreadcrumb} />
-      <main className="flex flex-col grow p-4 md:p-8">
-        <div className="max-w-screen-xl mx-auto w-full px-6">
-          <div className="flex flex-col gap-2 mb-6">
-            <Typography
-              variant="h1"
-              className="text-3xl font-semibold tracking-tight"
-            >
-              Available Rooms
-            </Typography>
-            <Typography className="text-muted-foreground">
-              Browse and find the perfect room for your needs.
-            </Typography>
+      <main className="flex flex-col grow p-3 sm:p-4 md:p-8 min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/30">
+        <div className="max-w-screen-xl mx-auto w-full px-3 sm:px-6">
+          {/* Enhanced Header with Glass Morphism */}
+          <div className="relative mb-6 sm:mb-8 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-white/20 shadow-xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl sm:rounded-3xl"></div>
+            <div className="relative flex flex-col gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-purple-600 shadow-lg">
+                  <Search className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
+                </div>
+                <div className="text-xl sm:text-2xl">🏢</div>
+              </div>
+              <Typography
+                variant="h1"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight"
+              >
+                Temukan Ruangan Ideal Anda
+              </Typography>
+              <Typography className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
+                Jelajahi ruangan-ruangan berkualitas yang sesuai dengan
+                kebutuhan Anda. Mulai dari ruang pertemuan hingga ruang
+                presentasi.
+              </Typography>
+            </div>
           </div>
 
-          <div className="mb-6">
+          {/* Enhanced Search Section */}
+          <div className="mb-6 sm:mb-8 p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-background/80 to-muted/20 backdrop-blur-sm border border-white/10 shadow-lg">
             <RoomFilters />
           </div>
 
           {rooms.length === 0 ? (
-            <Card className="border-dashed bg-muted/50 w-full max-w-3xl mx-auto">
-              <CardHeader className="flex flex-col items-center justify-center pb-0 pt-8">
-                <div className="flex flex-col items-center justify-center mb-6">
+            <Card className="border-dashed border-2 border-primary/20 bg-gradient-to-br from-background/50 to-muted/30 w-full max-w-3xl mx-auto backdrop-blur-sm shadow-2xl">
+              <CardHeader className="flex flex-col items-center justify-center pb-0 pt-8 sm:pt-12 px-4 sm:px-6">
+                <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
                   {hasFilters ? (
-                    <div className="bg-muted rounded-full p-6 mb-4">
-                      <Search
-                        className="h-12 w-12 text-muted-foreground"
-                        strokeWidth={1.25}
-                      />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-pink-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
+                      <div className="relative bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-950/50 dark:to-pink-950/50 rounded-full p-6 sm:p-8 mb-4 sm:mb-6 shadow-xl">
+                        <Search
+                          className="h-12 w-12 sm:h-16 sm:w-16 text-orange-500 dark:text-orange-400"
+                          strokeWidth={1.5}
+                        />
+                      </div>
                     </div>
                   ) : (
-                    <div className="bg-muted rounded-full p-6 mb-4">
-                      <Building2
-                        className="h-12 w-12 text-muted-foreground"
-                        strokeWidth={1.25}
-                      />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
+                      <div className="relative bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-full p-6 sm:p-8 mb-4 sm:mb-6 shadow-xl">
+                        <Building2
+                          className="h-12 w-12 sm:h-16 sm:w-16 text-blue-500 dark:text-blue-400"
+                          strokeWidth={1.5}
+                        />
+                      </div>
                     </div>
                   )}
                   <Typography
                     variant="h2"
-                    className="text-xl font-semibold text-center mt-2"
+                    className="text-lg sm:text-xl md:text-2xl font-bold text-center mt-3 sm:mt-4 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent leading-tight"
                   >
                     {hasFilters
-                      ? "No matching rooms found"
-                      : "No rooms available"}
+                      ? "🔍 Tidak ada ruangan yang sesuai dengan pencarian"
+                      : "🏢 Belum ada ruangan yang tersedia"}
                   </Typography>
                 </div>
               </CardHeader>
 
-              <CardContent className="text-center space-y-2 pb-6 px-8">
+              <CardContent className="text-center space-y-4 sm:space-y-6 pb-6 sm:pb-8 px-4 sm:px-8">
                 {hasFilters ? (
-                  <div className="space-y-4">
-                    <Typography className="text-muted-foreground max-w-md mx-auto">
-                      Your current filter settings didn&apos;t return any
-                      results. Try adjusting your filters or clearing them to
-                      see all rooms.
+                  <div className="space-y-4 sm:space-y-6">
+                    <Typography className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+                      Pencarian Anda tidak menghasilkan ruangan yang sesuai.
+                      Silakan coba dengan kriteria yang lebih luas.
                     </Typography>
 
-                    <div className="flex flex-col gap-2 items-center mt-2">
-                      <div className="bg-background/80 rounded-lg p-3 inline-flex gap-2 text-sm text-muted-foreground">
-                        <Info className="h-4 w-4 flex-shrink-0" />
-                        <span>Tip: Try broadening your search criteria</span>
+                    <div className="flex flex-col gap-3 items-center">
+                      <div className="bg-gradient-to-r from-background/90 to-muted/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 inline-flex gap-2 sm:gap-3 text-xs sm:text-sm border border-white/10 shadow-lg max-w-sm sm:max-w-none">
+                        <div className="text-xl sm:text-2xl">💡</div>
+                        <span className="text-muted-foreground leading-relaxed">
+                          Saran: Gunakan kata kunci yang lebih umum atau kurangi
+                          filter pencarian
+                        </span>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  // Updated text for no rooms available
-                  <Typography className="text-muted-foreground max-w-md mx-auto">
-                    No rooms are currently available. Please check back later!
-                  </Typography>
+                  <div className="space-y-3 sm:space-y-4">
+                    <Typography className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+                      Kami sedang menyiapkan ruangan-ruangan baru. Silakan
+                      kembali lagi untuk melihat pilihan ruangan yang tersedia.
+                    </Typography>
+                    <div className="text-3xl sm:text-4xl">🔄</div>
+                  </div>
                 )}
               </CardContent>
 
-              <CardFooter className="flex justify-center pb-8 pt-0">
+              <CardFooter className="flex justify-center pb-8 sm:pb-12 pt-0 px-4 sm:px-6">
                 {hasFilters ? (
-                  <div className="flex flex-wrap gap-3 justify-center">
-                    {/* Updated Clear Filters link */}
-                    <Button asChild variant="outline" className="gap-2">
+                  <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="gap-2 rounded-lg sm:rounded-xl border-2 hover:bg-primary/10 transition-all duration-300 hover:scale-105 text-sm sm:text-base h-9 sm:h-10"
+                    >
                       <Link href="/rooms">
-                        <RefreshCw className="h-4 w-4" />
-                        Clear all filters
+                        <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <span className="hidden sm:inline">
+                          Hapus semua filter
+                        </span>
+                        <span className="sm:hidden">Reset Filter</span>
                       </Link>
                     </Button>
-                    {/* Removed Add Room button */}
                   </div>
-                ) : // Removed Add Room button for empty state
-                null}
+                ) : null}
               </CardFooter>
             </Card>
           ) : (
             <>
-              {/* Updated grid for Bento layout */}
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-6">
-                {rooms.map((room, index) => {
-                  // Define span classes based on index for a repeating Bento pattern
-                  let spanClasses = "md:col-span-2"; // Default span
-                  const patternIndex = index % 6; // Get position within the 6-item pattern
-
-                  if (patternIndex === 0) {
-                    spanClasses = "md:col-span-4 md:row-span-2"; // Large item
-                  } else if (patternIndex === 1 || patternIndex === 2) {
-                    spanClasses = "md:col-span-2"; // Small items next to large
-                  } else if (patternIndex === 3 || patternIndex === 4) {
-                    spanClasses = "md:col-span-3"; // Medium items below
-                  } else if (patternIndex === 5) {
-                    spanClasses = "md:col-span-6"; // Full width item
-                  }
-
-                  return (
-                    <div key={room.id} className={cn(spanClasses)}>
-                      <RoomCard
-                        room={room}
-                        // Updated link to public detail page
-                        link={`/v/${room.slug}`}
-                        className="h-full" // Ensure card fills the grid area
-                      />
+              {/* Enhanced grid with animations and modern layout */}
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="text-2xl sm:text-3xl">🎯</div>
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                        Ruangan Tersedia
+                      </h2>
+                      <p className="text-sm sm:text-base text-muted-foreground">
+                        Ditemukan {rooms.length} ruangan yang sesuai dengan
+                        kriteria Anda
+                      </p>
                     </div>
-                  );
-                })}
+                  </div>
+                  <div className="flex sm:hidden items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-purple-600/10 border border-primary/20 self-start">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-xs font-medium">
+                      {pagination.totalItems} total
+                    </span>
+                  </div>
+                  <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-purple-600/10 border border-primary/20">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-sm font-medium">
+                      {pagination.totalItems} total
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 sm:gap-6 md:gap-8">
+                  {rooms.map((room, index) => {
+                    // Enhanced Bento layout with improved patterns
+                    let spanClasses = "sm:col-span-1 md:col-span-2";
+                    const patternIndex = index % 6;
+
+                    if (patternIndex === 0) {
+                      spanClasses = "sm:col-span-2 md:col-span-4 md:row-span-2";
+                    } else if (patternIndex === 1 || patternIndex === 2) {
+                      spanClasses = "sm:col-span-1 md:col-span-2";
+                    } else if (patternIndex === 3 || patternIndex === 4) {
+                      spanClasses = "sm:col-span-1 md:col-span-3";
+                    } else if (patternIndex === 5) {
+                      spanClasses = "sm:col-span-2 md:col-span-6";
+                    }
+
+                    return (
+                      <div
+                        key={room.id}
+                        className={cn(
+                          spanClasses,
+                          "group hover:scale-[1.02] transition-all duration-500 ease-out hover:z-10"
+                        )}
+                        style={{
+                          animationDelay: `${index * 100}ms`,
+                        }}
+                      >
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+                          <RoomCard
+                            room={room}
+                            link={`/v/${room.slug}`}
+                            className="h-full transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {pagination.totalPages > 1 && (
@@ -325,17 +394,32 @@ export default async function RoomsPage(props: RoomsPageProps) {
                 </div>
               )}
 
-              <div className="mt-4 text-center text-sm text-muted-foreground">
+              {/* Enhanced pagination info */}
+              <div className="mt-6 sm:mt-8 text-center">
                 {pagination.totalItems > 0 && (
-                  <>
-                    Showing{" "}
-                    {(pagination.currentPage - 1) * pagination.pageSize + 1} to{" "}
-                    {Math.min(
-                      pagination.currentPage * pagination.pageSize,
-                      pagination.totalItems
-                    )}{" "}
-                    of {pagination.totalItems} rooms
-                  </>
+                  <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm border border-white/10">
+                    <div className="text-base sm:text-lg">📊</div>
+                    <span className="text-xs sm:text-sm text-muted-foreground">
+                      <span className="hidden sm:inline">Menampilkan </span>
+                      <span className="font-semibold text-primary">
+                        {(pagination.currentPage - 1) * pagination.pageSize + 1}
+                      </span>
+                      <span className="hidden sm:inline"> hingga </span>
+                      <span className="sm:hidden">-</span>
+                      <span className="font-semibold text-primary">
+                        {Math.min(
+                          pagination.currentPage * pagination.pageSize,
+                          pagination.totalItems
+                        )}
+                      </span>
+                      <span className="hidden sm:inline"> dari </span>
+                      <span className="sm:hidden">/</span>
+                      <span className="font-semibold text-primary">
+                        {pagination.totalItems}
+                      </span>
+                      <span className="hidden sm:inline"> ruangan</span>
+                    </span>
+                  </div>
                 )}
               </div>
             </>

@@ -52,7 +52,7 @@ export const Banner = ({
     <BannerContext.Provider value={{ show, setShow }}>
       <div
         className={cn(
-          "flex w-full items-center justify-between gap-2 bg-primary px-4 py-2 text-primary-foreground",
+          "flex w-full items-center justify-between gap-2 sm:gap-3 bg-primary px-3 sm:px-4 py-2 sm:py-3 text-primary-foreground",
           inset && "rounded-lg",
           className
         )}
@@ -75,19 +75,22 @@ export const BannerIcon = ({
 }: BannerIconProps) => (
   <div
     className={cn(
-      "rounded-full border border-background/20 bg-background/10 p-1 shadow-sm",
+      "rounded-full border border-background/20 bg-background/10 p-1 sm:p-1.5 shadow-sm flex-shrink-0",
       className
     )}
     {...props}
   >
-    <Icon size={16} />
+    <Icon size={14} className="sm:w-4 sm:h-4" />
   </div>
 );
 
 export type BannerTitleProps = HTMLAttributes<HTMLParagraphElement>;
 
 export const BannerTitle = ({ className, ...props }: BannerTitleProps) => (
-  <p className={cn("flex-1 text-sm", className)} {...props} />
+  <p
+    className={cn("flex-1 text-sm sm:text-base font-medium", className)}
+    {...props}
+  />
 );
 
 export type BannerActionProps = ComponentProps<typeof Button>;
@@ -131,12 +134,12 @@ export const BannerClose = ({
       size={size}
       onClick={handleClick}
       className={cn(
-        "shrink-0 bg-transparent hover:bg-background/10 hover:text-background",
+        "shrink-0 bg-transparent hover:bg-background/10 hover:text-background h-6 w-6 sm:h-8 sm:w-8",
         className
       )}
       {...props}
     >
-      <XIcon size={18} />
+      <XIcon size={14} className="sm:w-4 sm:h-4" />
     </Button>
   );
 };
