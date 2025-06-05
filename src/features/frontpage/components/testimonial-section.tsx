@@ -17,54 +17,54 @@ const testimonials = [
     id: 1,
     name: "Sarah Putri",
     designation: "Office Manager",
-    company: "Tech Startup Jakarta",
+    company: "Divisi Operations",
     testimonial:
-      "Dulu booking ruang meeting itu nightmare banget! Sekarang jadi super simple dan cepet. Cari ruang yang available cuma butuh beberapa detik doang!",
+      "Dulu koordinasi ruang meeting antar tim itu nightmare banget! Sekarang jadi super simple dan cepet. Tim manapun bisa cari ruang yang available cuma butuh beberapa detik doang!",
     avatar: "https://randomuser.me/api/portraits/women/1.jpg",
   },
   {
     id: 2,
     name: "Rizki Pratama",
-    designation: "Team Lead",
-    company: "Digital Agency Bandung",
+    designation: "Team Lead Engineering",
+    company: "Divisi Technology",
     testimonial:
-      "Akhirnya ada sistem reservasi yang bener-bener works! Real-time availability-nya lifesaver banget, dan konfirmasi instan bikin tenang.",
+      "Akhirnya ada sistem internal yang bener-bener works untuk kantor! Real-time availability-nya lifesaver banget buat koordinasi antar tim, dan konfirmasi instan bikin planning meeting jadi tenang.",
     avatar: "https://randomuser.me/api/portraits/men/2.jpg",
   },
   {
     id: 3,
     name: "Melissa Sari",
     designation: "Event Coordinator",
-    company: "Creative Hub Surabaya",
+    company: "Divisi Marketing",
     testimonial:
-      "Gampang banget dipake! Suka bisa liat foto dan fasilitas sebelum booking. Tim gue jadi hemat waktu banget buat koordinasi meeting.",
+      "Gampang banget dipake sama tim! Suka bisa liat foto dan fasilitas ruang kantor sebelum booking. Tim gue jadi hemat waktu banget buat koordinasi meeting sama kolega.",
     avatar: "https://randomuser.me/api/portraits/women/3.jpg",
   },
   {
     id: 4,
     name: "Arif Wibowo",
     designation: "Project Manager",
-    company: "Startup Yogyakarta",
+    company: "Divisi Product",
     testimonial:
-      "Reliable dan efisien abis! Sejak pake platform ini, nggak pernah lagi ada masalah double-booking. Highly recommended buat organisasi manapun!",
+      "Reliable dan efisien abis! Sejak implementasi sistem ini di kantor, nggak pernah lagi ada masalah double-booking antar tim. Highly recommended buat office management!",
     avatar: "https://randomuser.me/api/portraits/men/4.jpg",
   },
   {
     id: 5,
     name: "Fadhil Rahman",
     designation: "Operations Specialist",
-    company: "CodeCrafters Indonesia",
+    company: "Divisi Operations",
     testimonial:
-      "Investment terbaik yang pernah kita buat buat manage shared spaces! Support team-nya juga super responsif dan helpful banget!",
+      "Investment terbaik yang pernah kantor kita buat buat manage ruang meeting bersama! IT support-nya juga super responsif dan helpful banget sama rekan kerja!",
     avatar: "https://randomuser.me/api/portraits/men/5.jpg",
   },
   {
     id: 6,
     name: "Intan Permata",
     designation: "HR Manager",
-    company: "InsightTech Jakarta",
+    company: "Divisi Human Resources",
     testimonial:
-      "Tool ini udah save gue berjam-jam kerja buat koordinasi booking ruang! Interface-nya intuitive dan bikin scheduling jadi effortless.",
+      "Sistem ini udah save gue berjam-jam kerja buat koordinasi booking ruang antar divisi! Interface-nya intuitive dan bikin scheduling meeting tim jadi effortless.",
     avatar: "https://randomuser.me/api/portraits/women/6.jpg",
   },
 ];
@@ -92,7 +92,7 @@ export function Testimonial() {
       className="w-full max-w-screen-xl mx-auto py-6 xs:py-12 px-6"
     >
       <h2 className="mb-8 xs:mb-14 text-4xl md:text-5xl font-bold text-center tracking-tight">
-        Kata Mereka tentang Platform Kami ⭐
+        Kata Rekan Kerja tentang Sistem Internal Kami ⭐
       </h2>
       <div className="container w-full mx-auto">
         <Carousel setApi={setApi}>

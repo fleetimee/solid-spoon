@@ -41,16 +41,16 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
       <div className="max-w-screen-xl w-full flex flex-col lg:flex-row mx-auto items-center justify-between gap-y-14 gap-x-10 px-6 py-12 lg:py-0">
         <div className="max-w-xl">
           <Badge className="rounded-full py-1 border-none">
-            Baru Diluncurkan v1.0.0 ✨
+            Sistem Internal Office v1.0.0 ✨
           </Badge>
           <h1 className="mt-6 max-w-[20ch] text-3xl xs:text-4xl sm:text-5xl lg:text-[2.75rem] xl:text-5xl font-bold !leading-[1.2] tracking-tight">
-            Temukan Ruang Impian Kamu, Tanpa Ribet!
+            Booking Ruang Meeting Kantor, Tanpa Ribet!
           </h1>
           <p className="mt-6 max-w-[60ch] xs:text-lg">
-            Capek nyari ruang meeting atau event yang pas? Platform kami bikin
-            booking jadi super gampang! Cek ketersediaan real-time, lihat
-            fasilitas lengkap, dan book dalam hitungan menit. Yuk, mulai
-            sekarang! 🚀
+            Capek koordinasi ruang meeting sama tim? Sistem internal kami bikin
+            booking ruang kantor jadi super gampang! Cek ketersediaan real-time,
+            lihat fasilitas lengkap, dan book untuk tim kamu dalam hitungan
+            menit. Yuk, kolaborasi lebih efisien! 🚀
           </p>
           <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
             <Link href="#rooms">
@@ -58,7 +58,7 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
                 size="lg"
                 className="w-full sm:w-auto rounded-full text-base"
               >
-                Cari Ruang <ArrowUpRight className="!h-5 !w-5" />
+                Cari Ruang Meeting <ArrowUpRight className="!h-5 !w-5" />
               </Button>
             </Link>
             {/* How It Works Button with Dialog */}

@@ -13,37 +13,37 @@ const features = [
     icon: Search,
     title: "Pencarian Super Cepat ⚡",
     description:
-      "Temukan ruang idaman dalam hitungan detik! Filter canggih kami bikin kamu bisa nyari berdasarkan lokasi, tanggal, harga, dan fasilitas dengan mudah banget.",
+      "Temukan ruang meeting kantor dalam hitungan detik! Filter canggih kami bikin tim kamu bisa nyari berdasarkan lokasi, tanggal, kapasitas, dan fasilitas dengan mudah banget.",
   },
   {
     icon: CalendarCheck2,
     title: "Update Real-Time",
     description:
-      "No more nebak-nebakan! Lihat ketersediaan ruang up-to-date dan book dengan percaya diri. Tanggal yang kamu pilih dijamin aman.",
+      "No more bentrok jadwal meeting! Lihat ketersediaan ruang kantor up-to-date dan book dengan percaya diri. Jadwal tim kamu dijamin aman dari double booking.",
   },
   {
     icon: MousePointer,
     title: "Booking Kilat & Simpel",
     description:
-      "Reserve ruang cuma butuh beberapa klik doang. Proses booking yang streamlined bikin kamu hemat waktu dan langsung confirmed!",
+      "Reserve ruang meeting cuma butuh beberapa klik doang. Proses booking yang streamlined bikin tim kamu hemat waktu dan langsung confirmed untuk kolaborasi!",
   },
   {
     icon: Bell,
     title: "Notifikasi Instan 📲",
     description:
-      "Selalu update dengan info terbaru! Dapat konfirmasi booking langsung dan reminder tepat waktu di device kamu.",
+      "Selalu update dengan info meeting terbaru! Tim kamu dapat konfirmasi booking langsung dan reminder tepat waktu untuk setiap sesi kolaborasi.",
   },
   {
     icon: CheckCircle,
     title: "Aman & Terpercaya",
     description:
-      "Book dengan tenang! Platform kami pakai sistem pembayaran yang secure dan data reservasi kamu dijamin protected.",
+      "Book dengan tenang! Sistem internal kami secure dan data reservasi tim kamu dijamin protected. Privasi kantor tetap terjaga.",
   },
   {
     icon: Info,
     title: "Info Ruang Lengkap",
     description:
-      "Buat keputusan yang tepat! Lihat foto HD, cek fasilitas, kapasitas, dan detail layout setiap ruang sebelum booking.",
+      "Buat keputusan meeting yang tepat! Lihat foto HD, cek fasilitas kantor, kapasitas tim, dan detail layout setiap ruang sebelum booking.",
   },
 ];
 
@@ -160,7 +160,7 @@ export function Features() {
       className="max-w-screen-xl mx-auto w-full py-12 xs:py-20 px-6"
     >
       <h2 className="text-3xl xs:text-4xl md:text-5xl md:leading-[3.5rem] font-bold tracking-tight sm:max-w-xl sm:text-center sm:mx-auto">
-        Semua yang Kamu Butuhkan untuk Booking dengan Confidence 💪
+        Semua yang Tim Kamu Butuhkan untuk Kolaborasi Efektif 💪
       </h2>
       <div className="mt-8 xs:mt-14 w-full mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
         {features.map((feature, index) => (
