@@ -22,25 +22,11 @@ import {
 } from "@/features/reservations/api/getApprovedRoomReservations";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import { cn } from "@/lib/utils";
-import {
-  CalendarIcon,
-  Sparkles,
-  Clock,
-  MapPin,
-  Users,
-  AlertTriangle,
-} from "lucide-react";
+import { CalendarIcon, Sparkles, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 import { Typography } from "@/components/ui/typography";
-import {
-  Banner,
-  BannerClose,
-  BannerIcon,
-  BannerTitle,
-} from "@/components/ui/kibo-ui/banner";
 
 // Import new refactored components
-import { RoomDetailHeader } from "@/features/rooms/components/room-detail-header";
 import { RoomBookingSection } from "@/features/rooms/components/room-booking-section";
 import { RoomAmenitiesSection } from "@/features/rooms/components/room-amenities-section";
 import { RoomLocationSection } from "@/features/rooms/components/room-location-section";
