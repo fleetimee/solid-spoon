@@ -9,34 +9,34 @@ import { PlusIcon } from "lucide-react";
 
 const faq = [
   {
-    question: "How do I book a room?",
+    question: "Gimana cara booking ruang?",
     answer:
-      "Find the room you're interested in using the search or browsing the available rooms section. Click 'Book Now', fill in the required details (title, description, start/end times), and submit your request. You'll be notified once an administrator approves it.",
+      "Cari ruang yang kamu suka lewat search atau browse di bagian ruang tersedia. Klik 'Book Now', isi detail yang diperlukan (judul, deskripsi, waktu mulai/selesai), terus submit request kamu. Nanti bakal dikasih tahu kalau admin sudah approve! 📝",
   },
   {
-    question: "Can I see if a room is available before booking?",
+    question: "Bisa cek ketersediaan ruang sebelum booking nggak?",
     answer:
-      "Yes, our platform shows real-time availability. You can browse rooms and check their calendars to see open time slots before initiating a booking request.",
+      "Tentu saja! Platform kami nampilin ketersediaan real-time. Kamu bisa browse ruang dan cek kalender mereka untuk lihat slot waktu yang available sebelum bikin booking request.",
   },
   {
-    question: "Is there a limit to how many reservations I can request?",
+    question: "Ada batasan berapa banyak reservasi yang bisa direquest?",
     answer:
-      "Yes, there is a limit on the number of pending reservations you can have per room to ensure fair usage. You will see a notification if you reach this limit.",
+      "Iya, ada limit jumlah pending reservations per ruang buat memastikan fair usage untuk semua user. Kamu bakal dapat notifikasi kalau udah reach limit ini.",
   },
   {
-    question: "How will I know if my reservation is approved?",
+    question: "Gimana tau kalau reservasi gue di-approve?",
     answer:
-      "Once an administrator reviews and approves your reservation request, you will receive a notification confirming your booking details.",
+      "Begitu admin review dan approve request reservasi kamu, langsung dapat notifikasi yang confirm detail booking kamu kok! 🔔",
   },
   {
-    question: "Can I modify or cancel my reservation request?",
+    question: "Bisa modify atau cancel request reservasi nggak?",
     answer:
-      "Currently, modification or cancellation after submission needs to be handled by contacting an administrator. Functionality to manage requests directly may be added in the future.",
+      "Saat ini, modifikasi atau pembatalan setelah submit perlu hubungi admin dulu. Tapi fitur untuk manage request langsung mungkin bakal ditambah di update mendatang!",
   },
   {
-    question: "What information do I need to provide?",
+    question: "Info apa aja yang perlu diisi?",
     answer:
-      "You'll need to provide a title for your meeting/event, an optional description, and the specific start and end date/time for your reservation.",
+      "Kamu perlu kasih judul untuk meeting/event kamu, deskripsi (optional), dan waktu mulai plus selesai yang spesifik untuk reservasi kamu.",
   },
 ];
 
@@ -44,10 +44,10 @@ export function FAQ() {
   return (
     <div id="faq" className="w-full max-w-screen-xl mx-auto py-8 xs:py-16 px-6">
       <h2 className="md:text-center text-3xl xs:text-4xl md:text-5xl !leading-[1.15] font-bold tracking-tighter">
-        Frequently Asked Questions
+        Pertanyaan yang Sering Ditanyain 🤔
       </h2>
       <p className="mt-1.5 md:text-center xs:text-lg text-muted-foreground">
-        Quick answers to common questions about booking rooms.
+        Jawaban cepet untuk pertanyaan umum tentang booking ruang.
       </p>
 
       <div className="min-h-[550px] md:min-h-[320px] xl:min-h-[300px]">

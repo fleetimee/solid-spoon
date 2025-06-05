@@ -28,14 +28,14 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
             variant="h2"
             className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl mb-4"
           >
-            Discover Your Perfect Space
+            Temukan Ruang Perfect Kamu! 🏢✨
           </Typography>
           <Typography
             variant="muted"
             className="text-lg md:text-xl max-w-3xl mx-auto mb-8"
           >
-            Browse our collection of rooms designed for productivity,
-            collaboration, and innovation.
+            Browse koleksi ruang yang didesain khusus untuk produktivitas,
+            kolaborasi, dan inovasi. Semua ada di sini!
           </Typography>
 
           {/* View mode toggles */}
@@ -63,7 +63,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
 
         {rooms.length === 0 && (
           <p className="text-center text-muted-foreground">
-            No rooms available at the moment.
+            Belum ada ruang yang tersedia saat ini. Stay tuned! 📅
           </p>
         )}
 
@@ -94,7 +94,7 @@ export function AvailableRoomsSection({ rooms }: AvailableRoomsSectionProps) {
             <div className="mt-8 text-center">
               <Link href="/rooms" className="block">
                 <Button variant="outline" size="lg">
-                  View All Rooms
+                  Lihat Semua Ruang 🏃‍♂️
                 </Button>
               </Link>
             </div>

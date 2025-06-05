@@ -41,15 +41,16 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
       <div className="max-w-screen-xl w-full flex flex-col lg:flex-row mx-auto items-center justify-between gap-y-14 gap-x-10 px-6 py-12 lg:py-0">
         <div className="max-w-xl">
           <Badge className="rounded-full py-1 border-none">
-            Just released v1.0.0
+            Baru Diluncurkan v1.0.0 ✨
           </Badge>
           <h1 className="mt-6 max-w-[20ch] text-3xl xs:text-4xl sm:text-5xl lg:text-[2.75rem] xl:text-5xl font-bold !leading-[1.2] tracking-tight">
-            Find Your Perfect Space, Effortlessly
+            Temukan Ruang Impian Kamu, Tanpa Ribet!
           </h1>
           <p className="mt-6 max-w-[60ch] xs:text-lg">
-            Tired of searching for the right meeting room or event space? Our
-            platform makes booking simple. Browse available rooms, check
-            amenities, and reserve your spot in minutes. Get started today!
+            Capek nyari ruang meeting atau event yang pas? Platform kami bikin
+            booking jadi super gampang! Cek ketersediaan real-time, lihat
+            fasilitas lengkap, dan book dalam hitungan menit. Yuk, mulai
+            sekarang! 🚀
           </p>
           <div className="mt-12 flex flex-col sm:flex-row items-center gap-4">
             <Link href="#rooms">
@@ -57,7 +58,7 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
                 size="lg"
                 className="w-full sm:w-auto rounded-full text-base"
               >
-                Find a Room <ArrowUpRight className="!h-5 !w-5" />
+                Cari Ruang <ArrowUpRight className="!h-5 !w-5" />
               </Button>
             </Link>
             {/* How It Works Button with Dialog */}
@@ -69,12 +70,12 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
                   className="w-full sm:w-auto rounded-full text-base shadow-none"
                   disabled={!heroYoutubeLink} // Disable if no link
                 >
-                  <CirclePlay className="!h-5 !w-5" /> How It Works
+                  <CirclePlay className="!h-5 !w-5" /> Cara Kerjanya
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[650px] md:max-w-[800px] lg:max-w-[900px]">
                 <DialogHeader>
-                  <DialogTitle>How It Works</DialogTitle>
+                  <DialogTitle>Cara Kerjanya</DialogTitle>
                 </DialogHeader>
                 <div className="aspect-video">
                   {" "}
@@ -92,7 +93,7 @@ export function Hero({ heroYoutubeLink }: HeroProps) {
                     ></iframe>
                   ) : (
                     <p className="text-center text-muted-foreground">
-                      Video not available.
+                      Video tidak tersedia.
                     </p>
                   )}
                 </div>

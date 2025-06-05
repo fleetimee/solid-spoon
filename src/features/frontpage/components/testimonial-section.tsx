@@ -15,57 +15,56 @@ import { useEffect, useState } from "react";
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Chen",
+    name: "Sarah Putri",
     designation: "Office Manager",
-    company: "Acme Corp",
+    company: "Tech Startup Jakarta",
     testimonial:
-      "Booking meeting rooms used to be a nightmare! This platform makes it incredibly simple and fast. Finding an available space takes seconds.",
-    avatar: "https://randomuser.me/api/portraits/women/1.jpg", // Kept original avatar style
+      "Dulu booking ruang meeting itu nightmare banget! Sekarang jadi super simple dan cepet. Cari ruang yang available cuma butuh beberapa detik doang!",
+    avatar: "https://randomuser.me/api/portraits/women/1.jpg",
   },
   {
     id: 2,
-    name: "David Rodriguez",
+    name: "Rizki Pratama",
     designation: "Team Lead",
-    company: "Innovate Solutions",
+    company: "Digital Agency Bandung",
     testimonial:
-      "Finally, a reservation system that just works. The real-time availability is a lifesaver, and the instant confirmations give peace of mind.",
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg", // Kept original avatar style
+      "Akhirnya ada sistem reservasi yang bener-bener works! Real-time availability-nya lifesaver banget, dan konfirmasi instan bikin tenang.",
+    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
   },
   {
     id: 3,
-    name: "Emily White",
+    name: "Melissa Sari",
     designation: "Event Coordinator",
-    company: "Global Events Inc.",
+    company: "Creative Hub Surabaya",
     testimonial:
-      "So easy to use! I love being able to see photos and amenities before booking. It's saved our team so much time coordinating meetings.",
-    avatar: "https://randomuser.me/api/portraits/women/3.jpg", // Kept original avatar style
+      "Gampang banget dipake! Suka bisa liat foto dan fasilitas sebelum booking. Tim gue jadi hemat waktu banget buat koordinasi meeting.",
+    avatar: "https://randomuser.me/api/portraits/women/3.jpg",
   },
   {
     id: 4,
-    name: "Michael Brown",
+    name: "Arif Wibowo",
     designation: "Project Manager",
-    company: "Synergy Systems",
+    company: "Startup Yogyakarta",
     testimonial:
-      "Reliable and efficient. We haven't had a double-booking issue since we started using this platform. Highly recommended for any organization.",
-    avatar: "https://randomuser.me/api/portraits/men/4.jpg", // Kept original avatar style
+      "Reliable dan efisien abis! Sejak pake platform ini, nggak pernah lagi ada masalah double-booking. Highly recommended buat organisasi manapun!",
+    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
   },
-  // Keeping remaining testimonials generic for variety, but could be updated too
   {
     id: 5,
-    name: "Daniel Martinez",
+    name: "Fadhil Rahman",
     designation: "Operations Specialist",
-    company: "CodeCrafters",
+    company: "CodeCrafters Indonesia",
     testimonial:
-      "The best investment we've made for managing our shared spaces! The support team is also super responsive and helpful when we had questions.",
+      "Investment terbaik yang pernah kita buat buat manage shared spaces! Support team-nya juga super responsif dan helpful banget!",
     avatar: "https://randomuser.me/api/portraits/men/5.jpg",
   },
   {
     id: 6,
-    name: "Sophia Lee",
+    name: "Intan Permata",
     designation: "HR Manager",
-    company: "InsightTech",
+    company: "InsightTech Jakarta",
     testimonial:
-      "This tool has saved me hours of work coordinating room bookings! The interface is intuitive and makes scheduling effortless.",
+      "Tool ini udah save gue berjam-jam kerja buat koordinasi booking ruang! Interface-nya intuitive dan bikin scheduling jadi effortless.",
     avatar: "https://randomuser.me/api/portraits/women/6.jpg",
   },
 ];
@@ -93,7 +92,7 @@ export function Testimonial() {
       className="w-full max-w-screen-xl mx-auto py-6 xs:py-12 px-6"
     >
       <h2 className="mb-8 xs:mb-14 text-4xl md:text-5xl font-bold text-center tracking-tight">
-        Testimonials
+        Kata Mereka tentang Platform Kami ⭐
       </h2>
       <div className="container w-full mx-auto">
         <Carousel setApi={setApi}>

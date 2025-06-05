@@ -11,39 +11,39 @@ import {
 const features = [
   {
     icon: Search,
-    title: "Effortless Search",
+    title: "Pencarian Super Cepat ⚡",
     description:
-      "Find your ideal room in seconds. Our powerful search filters make it easy to narrow down options by location, date, price, and amenities.",
+      "Temukan ruang idaman dalam hitungan detik! Filter canggih kami bikin kamu bisa nyari berdasarkan lokasi, tanggal, harga, dan fasilitas dengan mudah banget.",
   },
   {
     icon: CalendarCheck2,
-    title: "Real-Time Availability",
+    title: "Update Real-Time",
     description:
-      "No more guessing games. See up-to-the-minute room availability and book with confidence, knowing your chosen dates are secure.",
+      "No more nebak-nebakan! Lihat ketersediaan ruang up-to-date dan book dengan percaya diri. Tanggal yang kamu pilih dijamin aman.",
   },
   {
     icon: MousePointer,
-    title: "Simple & Fast Booking",
+    title: "Booking Kilat & Simpel",
     description:
-      "Reserve your room in just a few clicks. Our streamlined booking process saves you time and hassle, getting you confirmed faster.",
+      "Reserve ruang cuma butuh beberapa klik doang. Proses booking yang streamlined bikin kamu hemat waktu dan langsung confirmed!",
   },
   {
     icon: Bell,
-    title: "Instant Notifications",
+    title: "Notifikasi Instan 📲",
     description:
-      "Stay informed every step of the way. Receive immediate booking confirmations and timely reminders directly to your device.",
+      "Selalu update dengan info terbaru! Dapat konfirmasi booking langsung dan reminder tepat waktu di device kamu.",
   },
   {
     icon: CheckCircle,
-    title: "Secure & Reliable",
+    title: "Aman & Terpercaya",
     description:
-      "Book with peace of mind. Our platform uses secure payment processing and ensures your reservation details are protected.",
+      "Book dengan tenang! Platform kami pakai sistem pembayaran yang secure dan data reservasi kamu dijamin protected.",
   },
   {
     icon: Info,
-    title: "Detailed Room Info",
+    title: "Info Ruang Lengkap",
     description:
-      "Make informed decisions. View high-quality photos, check amenities, capacity, and layout details for every room before booking.",
+      "Buat keputusan yang tepat! Lihat foto HD, cek fasilitas, kapasitas, dan detail layout setiap ruang sebelum booking.",
   },
 ];
 
@@ -160,7 +160,7 @@ export function Features() {
       className="max-w-screen-xl mx-auto w-full py-12 xs:py-20 px-6"
     >
       <h2 className="text-3xl xs:text-4xl md:text-5xl md:leading-[3.5rem] font-bold tracking-tight sm:max-w-xl sm:text-center sm:mx-auto">
-        Everything You Need to Book with Confidence
+        Semua yang Kamu Butuhkan untuk Booking dengan Confidence 💪
       </h2>
       <div className="mt-8 xs:mt-14 w-full mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
         {features.map((feature, index) => (
