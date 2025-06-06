@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import {
   Table,
@@ -15,9 +19,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { UserCheck, Play, Square } from "lucide-react";
+import { UserCheck, Play, Square, X } from "lucide-react";
 import { format } from "date-fns";
 import { UserRoomReservation } from "@/features/reservations/api/getUserRoomReservations";
+import { CancelReservationDialog } from "./cancel-reservation-dialog";
 
 export interface UserReservationsSectionProps {
   reservations: UserRoomReservation[];
@@ -30,6 +35,22 @@ export function UserReservationsSection({
   isVisible,
   className = "",
 }: UserReservationsSectionProps) {
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] =
+    useState<UserRoomReservation | null>(null);
+
+  const handleCancelClick = (reservation: UserRoomReservation) => {
+    setSelectedReservation(reservation);
+    setCancelDialogOpen(true);
+  };
+
+  const handleCancelSuccess = () => {
+    // TODO: Refresh reservations data or handle state update
+    // For now, we'll just close the dialog
+    setCancelDialogOpen(false);
+    setSelectedReservation(null);
+  };
+
   if (!isVisible) {
     return null;
   }
@@ -85,12 +106,22 @@ export function UserReservationsSection({
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <TableHead className="font-semibold text-white cursor-help hover:bg-white/10 transition-colors">
+                    <TableHead className="font-semibold text-white border-r border-white/20 last:border-r-0 cursor-help hover:bg-white/10 transition-colors">
                       Status
                     </TableHead>
                   </TooltipTrigger>
                   <TooltipContent className="bg-gradient-to-r from-violet-600 to-purple-600 text-white border-violet-300">
                     <p>Status persetujuan reservasi ruangan</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TableHead className="font-semibold text-white cursor-help hover:bg-white/10 transition-colors">
+                      Aksi
+                    </TableHead>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gradient-to-r from-violet-600 to-purple-600 text-white border-violet-300">
+                    <p>Aksi yang dapat dilakukan pada reservasi</p>
                   </TooltipContent>
                 </Tooltip>
               </TableRow>
@@ -154,11 +185,31 @@ export function UserReservationsSection({
                         {reservation.statusValue}
                       </Badge>
                     </TableCell>
+                    <TableCell className="py-3">
+                      {reservation.statusValue === "Pending" && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleCancelClick(reservation)}
+                              className="h-7 w-7 p-0 hover:bg-destructive/90 focus-visible:ring-destructive/20"
+                              aria-label={`Batalkan reservasi ${reservation.title}`}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-gradient-to-r from-red-600 to-rose-600 text-white border-red-300">
+                            <p>Batalkan reservasi ini</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
+                  <TableCell colSpan={5} className="h-24 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="text-3xl">📝</div>
                       <Typography
@@ -175,6 +226,14 @@ export function UserReservationsSection({
           </Table>
         </TooltipProvider>
       </div>
+
+      {/* Cancel Reservation Dialog */}
+      <CancelReservationDialog
+        reservation={selectedReservation}
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        onCancel={handleCancelSuccess}
+      />
     </div>
   );
 }
