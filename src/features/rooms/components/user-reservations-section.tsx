@@ -30,6 +30,47 @@ export interface UserReservationsSectionProps {
   className?: string;
 }
 
+// Helper function to check if a reservation can be cancelled in the UI
+function canCancelReservation(reservation: UserRoomReservation): {
+  canCancel: boolean;
+  reason:
+    | "pending"
+    | "approved_eligible"
+    | "approved_too_late"
+    | "other_status";
+  message?: string;
+} {
+  const now = new Date();
+  const reservationStartTime = new Date(reservation.startTime);
+  const hoursUntilStart =
+    (reservationStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+  // PENDING reservations can always be cancelled
+  if (reservation.statusValue === "Pending") {
+    return { canCancel: true, reason: "pending" };
+  }
+
+  // APPROVED reservations can be cancelled if more than 24 hours away
+  if (reservation.statusValue === "Approved") {
+    if (hoursUntilStart > 24) {
+      return { canCancel: true, reason: "approved_eligible" };
+    } else {
+      return {
+        canCancel: false,
+        reason: "approved_too_late",
+        message: `Tidak dapat dibatalkan - hanya ${Math.ceil(hoursUntilStart)} jam tersisa sebelum dimulai. Hubungi admin untuk pembatalan dalam 24 jam.`,
+      };
+    }
+  }
+
+  // Other statuses cannot be cancelled
+  return {
+    canCancel: false,
+    reason: "other_status",
+    message: "Reservasi ini tidak dapat dibatalkan karena status saat ini.",
+  };
+}
+
 export function UserReservationsSection({
   reservations,
   isVisible,
@@ -186,24 +227,68 @@ export function UserReservationsSection({
                       </Badge>
                     </TableCell>
                     <TableCell className="py-3">
-                      {reservation.statusValue === "Pending" && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleCancelClick(reservation)}
-                              className="h-7 w-7 p-0 hover:bg-destructive/90 focus-visible:ring-destructive/20"
-                              aria-label={`Batalkan reservasi ${reservation.title}`}
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-gradient-to-r from-red-600 to-rose-600 text-white border-red-300">
-                            <p>Batalkan reservasi ini</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                      {(() => {
+                        const cancelInfo = canCancelReservation(reservation);
+
+                        if (cancelInfo.canCancel) {
+                          return (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleCancelClick(reservation)}
+                                  className="h-7 w-7 p-0 hover:bg-destructive/90 focus-visible:ring-destructive/20"
+                                  aria-label={`Batalkan reservasi ${reservation.title}`}
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-gradient-to-r from-red-600 to-rose-600 text-white border-red-300">
+                                <p>
+                                  {cancelInfo.reason === "pending"
+                                    ? "Batalkan reservasi ini"
+                                    : "Batalkan reservasi yang disetujui (>24 jam)"}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        } else if (cancelInfo.reason === "approved_too_late") {
+                          return (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  disabled
+                                  className="h-7 w-7 p-0 opacity-50 cursor-not-allowed"
+                                  aria-label="Tidak dapat dibatalkan - hubungi admin"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-gradient-to-r from-amber-600 to-orange-600 text-white border-amber-300 max-w-xs">
+                                <p className="text-sm">{cancelInfo.message}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        } else {
+                          return (
+                            <span className="text-xs text-muted-foreground">
+                              {reservation.statusValue === "Rejected" && "❌"}
+                              {reservation.statusValue === "Completed" && "✅"}
+                              {reservation.statusValue === "Cancelled" && "🚫"}
+                              {reservation.statusValue === "Rejected"
+                                ? " Ditolak"
+                                : reservation.statusValue === "Completed"
+                                  ? " Selesai"
+                                  : reservation.statusValue === "Cancelled"
+                                    ? " Dibatalkan"
+                                    : " -"}
+                            </span>
+                          );
+                        }
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))

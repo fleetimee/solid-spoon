@@ -25,6 +25,46 @@ interface CancelReservationDialogProps {
   onCancel?: () => void;
 }
 
+// Helper function to determine cancellation type and messaging
+function getCancellationInfo(reservation: UserRoomReservation): {
+  type: "pending" | "approved_eligible" | "approved_too_late";
+  title: string;
+  description: string;
+  confirmationText: string;
+} {
+  const now = new Date();
+  const reservationStartTime = new Date(reservation.startTime);
+  const hoursUntilStart =
+    (reservationStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+  if (reservation.statusValue === "Pending") {
+    return {
+      type: "pending",
+      title: "Batalkan Reservasi Menunggu",
+      description:
+        "Anda akan membatalkan reservasi menunggu persetujuan ini. Tindakan ini tidak dapat dibatalkan.",
+      confirmationText: "Ketik judul reservasi untuk konfirmasi pembatalan:",
+    };
+  }
+
+  if (reservation.statusValue === "Approved" && hoursUntilStart > 24) {
+    return {
+      type: "approved_eligible",
+      title: "Batalkan Reservasi Disetujui",
+      description: `Anda akan membatalkan reservasi yang telah disetujui ini. Karena masih lebih dari 24 jam (${Math.ceil(hoursUntilStart)} jam), Anda dapat membatalkannya sendiri. Tindakan ini tidak dapat dibatalkan.`,
+      confirmationText: "Ketik judul reservasi untuk konfirmasi pembatalan:",
+    };
+  }
+
+  // This should not happen in normal flow, but included for completeness
+  return {
+    type: "approved_too_late",
+    title: "Tidak Dapat Membatalkan Reservasi",
+    description: `Reservasi yang telah disetujui ini tidak dapat dibatalkan karena kurang dari 24 jam sebelum waktu mulai. Silakan hubungi administrator.`,
+    confirmationText: "Reservasi ini tidak dapat dibatalkan.",
+  };
+}
+
 export function CancelReservationDialog({
   reservation,
   open,
@@ -56,12 +96,12 @@ export function CancelReservationDialog({
     setError(null);
 
     if (!reservation) {
-      setError("No reservation selected");
+      setError("Tidak ada reservasi yang dipilih");
       return;
     }
 
     if (confirmTitle !== reservation.title) {
-      setError("Reservation title confirmation doesn't match");
+      setError("Konfirmasi judul reservasi tidak cocok");
       return;
     }
 
@@ -70,15 +110,15 @@ export function CancelReservationDialog({
         const result = await cancelReservation(reservation.id.toString());
 
         if (!result.success) {
-          setError(result.error || "Failed to cancel reservation");
-          toast.error("Failed to cancel reservation", {
-            description: result.error || "An unexpected error occurred",
+          setError(result.error || "Gagal membatalkan reservasi");
+          toast.error("Gagal membatalkan reservasi", {
+            description: result.error || "Terjadi kesalahan yang tidak terduga",
           });
           return;
         }
 
-        toast.success("Reservation cancelled successfully", {
-          description: `Your reservation "${reservation.title}" has been cancelled.`,
+        toast.success("Reservasi berhasil dibatalkan", {
+          description: `Reservasi Anda "${reservation.title}" telah dibatalkan.`,
         });
 
         onOpenChange(false);
@@ -87,9 +127,9 @@ export function CancelReservationDialog({
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "Failed to cancel reservation";
+            : "Gagal membatalkan reservasi";
         setError(errorMessage);
-        toast.error("Failed to cancel reservation", {
+        toast.error("Gagal membatalkan reservasi", {
           description: errorMessage,
         });
       }
@@ -100,6 +140,8 @@ export function CancelReservationDialog({
     return null;
   }
 
+  const cancellationInfo = getCancellationInfo(reservation);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] bg-white dark:bg-gray-900 border-2 border-red-200 dark:border-red-800">
@@ -108,26 +150,55 @@ export function CancelReservationDialog({
             <div className="p-2 rounded-lg bg-gradient-to-br from-red-500 to-rose-500 text-white">
               <X className="h-5 w-5" />
             </div>
-            Cancel Reservation
+            {cancellationInfo.title}
           </DialogTitle>
           <DialogDescription className="text-gray-700 dark:text-gray-300">
-            You are about to cancel this reservation. This action cannot be
-            undone.
+            {cancellationInfo.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="relative space-y-6">
           {/* Reservation Details */}
-          <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
-            <h3 className="font-semibold text-red-700 dark:text-red-300 mb-3">
-              Reservation Details
+          <div
+            className={`p-4 rounded-lg border ${
+              cancellationInfo.type === "pending"
+                ? "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800"
+                : "bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800"
+            }`}
+          >
+            <h3
+              className={`font-semibold mb-3 ${
+                cancellationInfo.type === "pending"
+                  ? "text-red-700 dark:text-red-300"
+                  : "text-amber-700 dark:text-amber-300"
+              }`}
+            >
+              Detail Reservasi
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="p-1 rounded bg-red-100 dark:bg-red-900">
-                  <Calendar className="h-3 w-3 text-red-600 dark:text-red-400" />
+                <div
+                  className={`p-1 rounded ${
+                    cancellationInfo.type === "pending"
+                      ? "bg-red-100 dark:bg-red-900"
+                      : "bg-amber-100 dark:bg-amber-900"
+                  }`}
+                >
+                  <Calendar
+                    className={`h-3 w-3 ${
+                      cancellationInfo.type === "pending"
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-amber-600 dark:text-amber-400"
+                    }`}
+                  />
                 </div>
-                <span className="font-medium text-red-700 dark:text-red-300 text-sm">
+                <span
+                  className={`font-medium text-sm ${
+                    cancellationInfo.type === "pending"
+                      ? "text-red-700 dark:text-red-300"
+                      : "text-amber-700 dark:text-amber-300"
+                  }`}
+                >
                   {reservation.title}
                 </span>
               </div>
@@ -137,6 +208,20 @@ export function CancelReservationDialog({
                   {format(new Date(reservation.startTime), "PPp")} -{" "}
                   {format(new Date(reservation.endTime), "PPp")}
                 </span>
+              </div>
+              <div
+                className={`text-xs font-medium ${
+                  cancellationInfo.type === "pending"
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-amber-600 dark:text-amber-400"
+                }`}
+              >
+                Status: {reservation.statusValue}
+                {cancellationInfo.type === "approved_eligible" && (
+                  <span className="block mt-1">
+                    ✅ Memenuhi syarat pembatalan mandiri ({">"}24 jam)
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -149,11 +234,10 @@ export function CancelReservationDialog({
                   htmlFor="confirmTitle"
                   className="text-sm font-semibold bg-gradient-to-r from-red-700 to-rose-700 dark:from-red-300 dark:to-rose-300 bg-clip-text text-transparent"
                 >
-                  Confirmation Required
+                  Konfirmasi Diperlukan
                 </label>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  To confirm cancellation, please type the exact reservation
-                  title:
+                  {cancellationInfo.confirmationText}
                 </p>
                 <div className="p-3 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-800">
                   <span className="font-semibold text-red-700 dark:text-red-300">
@@ -170,7 +254,7 @@ export function CancelReservationDialog({
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck="false"
-                  placeholder="Type the reservation title here"
+                  placeholder="Ketik judul reservasi di sini"
                   value={confirmTitle}
                   onChange={(e) => setConfirmTitle(e.target.value)}
                   className={`
@@ -232,13 +316,13 @@ export function CancelReservationDialog({
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {!isConfirmationValid && confirmTitle.length > 0 ? (
                   <span className="text-red-600 dark:text-red-400 font-medium">
-                    ⚠️ The text you&apos;ve entered doesn&apos;t match the
-                    reservation title.
+                    ⚠️ Teks yang Anda masukkan tidak sesuai dengan judul
+                    reservasi.
                   </span>
                 ) : (
                   <span>
-                    ℹ️ You must type the exact reservation title to confirm
-                    cancellation.
+                    ℹ️ Anda harus mengetik judul reservasi yang tepat untuk
+                    konfirmasi pembatalan.
                   </span>
                 )}
               </p>
@@ -253,7 +337,7 @@ export function CancelReservationDialog({
             disabled={isPending}
             className="flex-1 h-11 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-[1.02] transition-all duration-300 font-medium"
           >
-            Cancel
+            Batal
           </Button>
 
           <Button
@@ -268,14 +352,14 @@ export function CancelReservationDialog({
                   <div className="p-1 rounded-md bg-white/30">
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
-                  <span>Cancelling...</span>
+                  <span>Membatalkan...</span>
                 </>
               ) : (
                 <>
                   <div className="p-1 rounded-md bg-white/30">
                     <X className="h-4 w-4" />
                   </div>
-                  <span>Cancel Reservation</span>
+                  <span>Batalkan Reservasi</span>
                 </>
               )}
             </div>

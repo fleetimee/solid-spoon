@@ -8,8 +8,54 @@ import { auth } from "@/lib/auth";
 
 // Define schema for input validation
 const CancelReservationSchema = z.object({
-  reservationId: z.string().min(1, "Reservation ID is required"),
+  reservationId: z.string().min(1, "ID reservasi diperlukan"),
 });
+
+// Helper function to check if a reservation can be cancelled
+function checkCancellationEligibility(
+  statusId: string,
+  startTime: string,
+  pendingStatusId: string,
+  approvedStatusId: string
+): {
+  canCancel: boolean;
+  error?: string;
+  reason?:
+    | "pending"
+    | "approved_eligible"
+    | "approved_too_late"
+    | "other_status";
+} {
+  const now = new Date();
+  const reservationStartTime = new Date(startTime);
+  const hoursUntilStart =
+    (reservationStartTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+  // PENDING reservations can always be cancelled
+  if (statusId === pendingStatusId) {
+    return { canCancel: true, reason: "pending" };
+  }
+
+  // APPROVED reservations can be cancelled if more than 24 hours away
+  if (statusId === approvedStatusId) {
+    if (hoursUntilStart > 24) {
+      return { canCancel: true, reason: "approved_eligible" };
+    } else {
+      return {
+        canCancel: false,
+        error: `Tidak dapat membatalkan reservasi yang disetujui. Pembatalan hanya diizinkan lebih dari 24 jam sebelum waktu mulai. Reservasi ini dimulai dalam ${Math.ceil(hoursUntilStart)} jam. Silakan hubungi administrator jika Anda perlu membatalkan reservasi ini.`,
+        reason: "approved_too_late",
+      };
+    }
+  }
+
+  // Other statuses (COMPLETED, REJECTED, CANCELLED) cannot be cancelled
+  return {
+    canCancel: false,
+    error: "Reservasi ini tidak dapat dibatalkan karena status saat ini.",
+    reason: "other_status",
+  };
+}
 
 export async function cancelReservation(
   reservationId: string
@@ -20,7 +66,10 @@ export async function cancelReservation(
   });
 
   if (!session?.user?.id) {
-    return { success: false, error: "Unauthorized. Please sign in." };
+    return {
+      success: false,
+      error: "Tidak memiliki otorisasi. Silakan masuk.",
+    };
   }
 
   // Validate input
@@ -30,39 +79,41 @@ export async function cancelReservation(
       "Invalid reservation ID:",
       validation.error.flatten().fieldErrors
     );
-    return { success: false, error: "Invalid reservation ID provided." };
+    return {
+      success: false,
+      error: "ID reservasi yang diberikan tidak valid.",
+    };
   }
 
   const validatedId = validation.data.reservationId;
 
   try {
-    // First, get the PENDING status ID from lookup table
-    const pendingStatusResult = await db.query(
-      `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
-      ["reservation_status", "PENDING"]
+    // Get status IDs from lookup table
+    const statusResult = await db.query(
+      `SELECT id, code FROM lookup WHERE category = $1 AND code IN ($2, $3, $4)`,
+      ["reservation_status", "PENDING", "APPROVED", "CANCELLED"]
     );
-    const pendingStatusId = pendingStatusResult.rows[0]?.id;
 
-    if (!pendingStatusId) {
-      console.error("Could not find PENDING status in lookup table");
+    const statusMap = statusResult.rows.reduce(
+      (acc, row) => {
+        acc[row.code] = row.id;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    const pendingStatusId = statusMap.PENDING;
+    const approvedStatusId = statusMap.APPROVED;
+    const cancelledStatusId = statusMap.CANCELLED;
+
+    if (!pendingStatusId || !approvedStatusId || !cancelledStatusId) {
+      console.error(
+        "Could not find required status IDs in lookup table",
+        statusMap
+      );
       return {
         success: false,
-        error: "System configuration error. Please contact support.",
-      };
-    }
-
-    // Get the CANCELLED status ID from lookup table
-    const cancelledStatusResult = await db.query(
-      `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
-      ["reservation_status", "CANCELLED"]
-    );
-    const cancelledStatusId = cancelledStatusResult.rows[0]?.id;
-
-    if (!cancelledStatusId) {
-      console.error("Could not find CANCELLED status in lookup table");
-      return {
-        success: false,
-        error: "System configuration error. Please contact support.",
+        error: "Kesalahan konfigurasi sistem. Silakan hubungi dukungan.",
       };
     }
 
@@ -90,7 +141,7 @@ export async function cancelReservation(
     if (checkResult.rowCount === 0) {
       return {
         success: false,
-        error: "Reservation not found or has been deleted.",
+        error: "Reservasi tidak ditemukan atau telah dihapus.",
       };
     }
 
@@ -100,50 +151,57 @@ export async function cancelReservation(
     if (reservation.user_id !== session.user.id) {
       return {
         success: false,
-        error: "You don't have permission to cancel this reservation.",
+        error: "Anda tidak memiliki izin untuk membatalkan reservasi ini.",
       };
     }
 
-    // Check if the reservation is in PENDING status using the dynamically retrieved ID
-    if (reservation.status_id !== pendingStatusId) {
+    // Check if the reservation can be cancelled based on status and time
+    const canCancelResult = checkCancellationEligibility(
+      reservation.status_id,
+      reservation.start_time,
+      pendingStatusId,
+      approvedStatusId
+    );
+
+    if (!canCancelResult.canCancel) {
       return {
         success: false,
-        error: `Cannot cancel reservation. Current status: ${reservation.status_value}. Only pending reservations can be cancelled.`,
+        error: canCancelResult.error,
       };
     }
 
-    // Update the reservation status to CANCELLED using the dynamically retrieved ID
+    // Update the reservation status to CANCELLED
     const updateQuery = `
       UPDATE room_reservation
       SET
         status_id = $1,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $2 AND user_id = $3 AND status_id = $4
+      WHERE id = $2 AND user_id = $3 AND status_id = ANY($4)
     `;
 
     const updateResult = await db.query(updateQuery, [
       cancelledStatusId,
       validatedId,
       session.user.id,
-      pendingStatusId,
+      [pendingStatusId, approvedStatusId], // Allow cancellation of both PENDING and APPROVED reservations
     ]);
 
     if (updateResult.rowCount === 0) {
       return {
         success: false,
         error:
-          "Failed to cancel reservation. It may have been modified by another process.",
+          "Gagal membatalkan reservasi. Mungkin telah dimodifikasi oleh proses lain.",
       };
     }
 
     // Create notification for admins about the cancellation
     try {
-      const notificationTitle = "Reservation Cancelled";
+      const notificationTitle = "Reservasi Dibatalkan";
       const userName =
         session.user?.name ||
         session.user?.email ||
         `User ID: ${session.user.id}`;
-      const notificationMessage = `${userName} cancelled their reservation "${reservation.title}" for room "${reservation.room_name}".`;
+      const notificationMessage = `${userName} membatalkan reservasi mereka "${reservation.title}" untuk ruangan "${reservation.room_name}".`;
       const notificationType = "admin";
       const notificationLink = reservation.room_slug
         ? `/admin/rooms/${reservation.room_slug}`
@@ -184,7 +242,7 @@ export async function cancelReservation(
     console.error("Error cancelling reservation:", error);
     return {
       success: false,
-      error: "An unexpected error occurred while cancelling the reservation.",
+      error: "Terjadi kesalahan yang tidak terduga saat membatalkan reservasi.",
     };
   }
 }
