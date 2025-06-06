@@ -24,8 +24,8 @@ export default async function BookingsPage() {
       <TabsContent value="bookings" className="pt-6">
         <div className="space-y-6">
           <DashboardHeader
-            title="Your Bookings"
-            description="Please log in to view your bookings."
+            title="Booking Saya"
+            description="Silakan masuk untuk melihat booking Anda."
             icon={BookOpen}
           />
         </div>
@@ -41,8 +41,8 @@ export default async function BookingsPage() {
     <TabsContent value="bookings" className="pt-6">
       <div className="space-y-6">
         <DashboardHeader
-          title="Your Bookings"
-          description="View and manage all your room reservations and booking history."
+          title="Booking Saya"
+          description="Lihat dan kelola semua reservasi ruangan dan riwayat booking Anda."
           icon={BookOpen}
         />
         {/* Replace the old list rendering with the BookingsList component */}

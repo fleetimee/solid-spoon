@@ -15,6 +15,8 @@ import { MonthlyBookingsChart } from "@/features/activity/components/monthly-boo
 import { ReservationStatusChart } from "@/features/activity/components/reservation-status-chart"; // Import the pie chart
 import { ChartConfig } from "@/components/ui/chart"; // Keep ChartConfig for definition
 import { cn } from "@/lib/utils";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { Activity } from "lucide-react";
 
 export default async function ActivityPage() {
   // Get session using the correct method provided
@@ -196,6 +198,13 @@ export default async function ActivityPage() {
       }
     >
       <div className="space-y-8">
+        {/* Header Section */}
+        <DashboardHeader
+          title="Aktivitas"
+          description="Pantau semua aktivitas booking dan statistik penggunaan ruangan Anda"
+          icon={Activity}
+        />
+
         {/* Recent Activity Section with Modern Design */}
         <div className="relative">
           {/* Gradient background decoration */}

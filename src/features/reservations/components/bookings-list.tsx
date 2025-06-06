@@ -22,13 +22,14 @@ import {
   CheckCircle,
   XCircle,
   Clock3,
-  Sparkles,
+  CalendarDays,
+  Building2,
+  AlertCircle,
 } from "lucide-react";
 import { formatDateRangeHumanized } from "@/lib/utils/formatDate";
-import { type getUserReservations } from "@/features/reservations/api/getUserReservations"; // Assuming type export
+import { type getUserReservations } from "@/features/reservations/api/getUserReservations";
 
-// Define the type for a single reservation based on the expected data structure
-// Adjust this based on the actual return type of getUserReservations if needed
+// Define the type for a single reservation
 type Reservation = Awaited<ReturnType<typeof getUserReservations>>[number];
 
 interface BookingsListProps {
@@ -36,53 +37,53 @@ interface BookingsListProps {
   isLoading?: boolean;
 }
 
-// Enhanced status configuration system
+// Professional status configuration with muted corporate colors
 const getStatusConfig = (status: string | null | undefined) => {
   switch (status?.toLowerCase()) {
     case "approved":
       return {
-        bgGradient:
-          "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20",
-        hoverGradient: "from-emerald-400/10 to-green-400/10",
-        borderGradient: "from-emerald-400 to-green-500",
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-green-200 dark:border-green-800",
         statusBadge: "default" as const,
         statusIcon: CheckCircle,
-        accentColor: "text-emerald-700 dark:text-emerald-300",
-        iconColor: "text-emerald-600 dark:text-emerald-400",
+        statusColor: "bg-green-600",
+        textColor: "text-green-800 dark:text-green-300",
+        iconColor: "text-green-600 dark:text-green-400",
+        badgeColor: "bg-green-600 text-white",
       };
     case "pending":
       return {
-        bgGradient:
-          "from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20",
-        hoverGradient: "from-amber-400/10 to-orange-400/10",
-        borderGradient: "from-amber-400 to-orange-500",
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-amber-200 dark:border-amber-800",
         statusBadge: "secondary" as const,
         statusIcon: Clock3,
-        accentColor: "text-amber-700 dark:text-amber-300",
+        statusColor: "bg-amber-600",
+        textColor: "text-amber-800 dark:text-amber-300",
         iconColor: "text-amber-600 dark:text-amber-400",
+        badgeColor: "bg-amber-600 text-white",
       };
     case "rejected":
     case "cancelled":
       return {
-        bgGradient:
-          "from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20",
-        hoverGradient: "from-red-400/10 to-rose-400/10",
-        borderGradient: "from-red-400 to-rose-500",
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-red-200 dark:border-red-800",
         statusBadge: "destructive" as const,
         statusIcon: XCircle,
-        accentColor: "text-red-700 dark:text-red-300",
+        statusColor: "bg-red-600",
+        textColor: "text-red-800 dark:text-red-300",
         iconColor: "text-red-600 dark:text-red-400",
+        badgeColor: "bg-red-600 text-white",
       };
     default:
       return {
-        bgGradient:
-          "from-slate-50 to-gray-50 dark:from-slate-950/20 dark:to-gray-950/20",
-        hoverGradient: "from-slate-400/10 to-gray-400/10",
-        borderGradient: "from-slate-400 to-gray-500",
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-gray-200 dark:border-gray-700",
         statusBadge: "outline" as const,
-        statusIcon: Clock,
-        accentColor: "text-slate-700 dark:text-slate-300",
-        iconColor: "text-slate-600 dark:text-slate-400",
+        statusIcon: AlertCircle,
+        statusColor: "bg-gray-500",
+        textColor: "text-gray-700 dark:text-gray-300",
+        iconColor: "text-gray-500 dark:text-gray-400",
+        badgeColor: "bg-gray-500 text-white",
       };
   }
 };
@@ -94,38 +95,52 @@ export function BookingsList({
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null);
 
-  // We need to control the Dialog's open state based on whether a reservation is selected
   const isDialogOpen = !!selectedReservation;
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      setSelectedReservation(null); // Reset selection when dialog closes
+      setSelectedReservation(null);
     }
   };
 
-  // Loading skeleton component
+  // Professional loading skeleton
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4">
+      <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
           <Card
             key={i}
-            className="group relative overflow-hidden border-0 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-950/20 dark:to-gray-950/20 shadow-lg"
+            className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
           >
-            <CardContent className="p-0">
-              <div className="grid grid-cols-[12px_1fr] sm:grid-cols-[12px_3fr_1fr_1fr_1fr] gap-4 p-6 items-center">
-                <Skeleton className="w-2 h-16 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-32" />
-                  <Skeleton className="h-4 w-48" />
+            <CardContent className="p-6">
+              <div className="grid grid-cols-[4px_1fr_auto] sm:grid-cols-[4px_2fr_1.2fr_1fr_auto] gap-4 sm:gap-6 items-center">
+                <Skeleton className="w-1 h-16 bg-gray-300 dark:bg-gray-600" />
+                <div className="space-y-2 min-w-0">
+                  <Skeleton className="h-5 w-32 bg-gray-300 dark:bg-gray-600" />
+                  <Skeleton className="h-4 w-48 bg-gray-200 dark:bg-gray-700" />
+                  <div className="sm:hidden">
+                    <div className="p-2 rounded bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 space-y-1">
+                      <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-gray-700" />
+                      <Skeleton className="h-4 w-24 bg-gray-200 dark:bg-gray-700" />
+                    </div>
+                  </div>
+                </div>
+                <div className="hidden sm:block min-w-0">
+                  <div className="space-y-2">
+                    <div className="p-2 rounded bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 space-y-2">
+                      <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-gray-700" />
+                      <Skeleton className="h-4 w-24 bg-gray-200 dark:bg-gray-700" />
+                    </div>
+                    <Skeleton className="h-4 w-20 bg-gray-200 dark:bg-gray-700" />
+                  </div>
                 </div>
                 <div className="hidden sm:block">
-                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-6 w-16 bg-gray-300 dark:bg-gray-600" />
                 </div>
-                <div className="hidden sm:block">
-                  <Skeleton className="h-6 w-16 rounded-full" />
-                </div>
-                <div className="text-right">
-                  <Skeleton className="h-8 w-16 rounded-md" />
+                <div className="flex flex-col gap-2 items-end">
+                  <Skeleton className="h-8 w-16 bg-gray-300 dark:bg-gray-600" />
+                  <div className="sm:hidden">
+                    <Skeleton className="h-5 w-14 bg-gray-300 dark:bg-gray-600" />
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -136,7 +151,7 @@ export function BookingsList({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6">
+    <div className="space-y-4">
       {reservations && reservations.length > 0 ? (
         reservations.map((reservation) => {
           const config = getStatusConfig(reservation.status);
@@ -145,75 +160,185 @@ export function BookingsList({
           return (
             <Card
               key={reservation.id}
-              className={`group relative overflow-hidden border-0 bg-gradient-to-br ${config.bgGradient} shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+              className={`border-l-4 ${config.borderColor} ${config.bgColor} border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200`}
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${config.hoverGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-              />
-              <CardContent className="p-0 relative">
-                <div className="grid grid-cols-[8px_1fr] sm:grid-cols-[8px_3fr_1fr_1fr_1fr] gap-6 p-6 items-center">
-                  {/* Enhanced status indicator */}
+              <CardContent className="p-6">
+                <div className="grid grid-cols-[4px_1fr_auto] sm:grid-cols-[4px_2fr_1.2fr_1fr_auto] gap-4 sm:gap-6 items-center">
+                  {/* Status indicator */}
                   <div
-                    className={`w-2 h-full self-stretch bg-gradient-to-b ${config.borderGradient} rounded-full shadow-sm group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-1 h-16 ${config.statusColor} rounded-sm`}
                   ></div>
 
                   {/* Room and title section */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <MapPin className={`h-4 w-4 ${config.iconColor}`} />
-                      <div
-                        className={`font-semibold text-lg ${config.accentColor}`}
-                      >
+                  <div className="space-y-2 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-800">
+                        <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                      </div>
+                      <div className="font-semibold text-lg text-gray-900 dark:text-gray-100 truncate">
                         {reservation.roomName}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <User className={`h-4 w-4 ${config.iconColor}`} />
-                      <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center gap-3">
+                      <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-800">
+                        <User className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                      </div>
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
                         {reservation.title}
+                      </div>
+                    </div>
+
+                    {/* Mobile date display */}
+                    <div className="sm:hidden">
+                      <div className="p-2 rounded bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <CalendarDays className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <div className="text-xs font-medium text-gray-800 dark:text-gray-200">
+                            {new Date(reservation.startTime).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                timeZone: "Asia/Jakarta",
+                              }
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-6">
+                          <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <div className="text-xs font-medium text-gray-800 dark:text-gray-200">
+                            {new Date(reservation.startTime)
+                              .toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                                timeZone: "Asia/Jakarta",
+                              })
+                              .replace(":", ".")}{" "}
+                            -{" "}
+                            {new Date(reservation.endTime)
+                              .toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                                timeZone: "Asia/Jakarta",
+                              })
+                              .replace(":", ".")}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Time section */}
-                  <div className="hidden sm:block">
-                    <div className="flex items-center gap-2">
-                      <Calendar className={`h-4 w-4 ${config.iconColor}`} />
-                      <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        {formatDateRangeHumanized(
-                          reservation.startTime,
-                          reservation.endTime
-                        )}
+                  {/* Date and Time section - desktop only */}
+                  <div className="hidden sm:block min-w-0">
+                    <div className="space-y-2">
+                      <div className="p-2 rounded bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 space-y-2">
+                        {/* Date row */}
+                        <div className="flex items-center gap-2">
+                          <CalendarDays className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {new Date(reservation.startTime).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                                timeZone: "Asia/Jakarta",
+                              }
+                            )}
+                          </div>
+                        </div>
+                        {/* Time row */}
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                          <div className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                            {new Date(reservation.startTime)
+                              .toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                                timeZone: "Asia/Jakarta",
+                              })
+                              .replace(":", ".")}{" "}
+                            -{" "}
+                            {new Date(reservation.endTime)
+                              .toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                                timeZone: "Asia/Jakarta",
+                              })
+                              .replace(":", ".")}
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Created date */}
+                      {reservation.createdAt && (
+                        <div className="flex items-center gap-2 px-2 py-1 rounded bg-gray-50 dark:bg-gray-800/50">
+                          <Clock className="h-3 w-3 text-gray-500 dark:text-gray-400" />
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            Created{" "}
+                            {new Date(reservation.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year:
+                                  new Date(
+                                    reservation.createdAt
+                                  ).getFullYear() !== new Date().getFullYear()
+                                    ? "numeric"
+                                    : undefined,
+                              }
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Status section */}
-                  <div className="hidden sm:flex items-center gap-2">
-                    <StatusIcon className={`h-4 w-4 ${config.iconColor}`} />
+                  <div className="hidden sm:flex items-center gap-2 justify-center">
+                    <div className={`p-1.5 rounded ${config.statusColor}`}>
+                      <StatusIcon className="h-4 w-4 text-white" />
+                    </div>
                     <Badge
                       variant={config.statusBadge}
-                      className="capitalize font-medium"
+                      className={`capitalize font-medium text-xs px-2 py-1 ${config.badgeColor} border-0`}
                     >
                       {reservation.status ?? "N/A"}
                     </Badge>
                   </div>
 
                   {/* Action button */}
-                  <div className="text-right">
+                  <div className="flex flex-col gap-2 items-end">
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setSelectedReservation(reservation)}
-                          className={`group-hover:scale-105 transition-all duration-200 border-2 ${config.accentColor} hover:bg-white/90 dark:hover:bg-gray-800/90 font-medium`}
+                          className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 border-gray-300 dark:border-gray-600"
                         >
-                          <Eye className="h-4 w-4 mr-2" />
-                          View
+                          <Eye className="h-4 w-4 mr-1" />
+                          <span className="hidden sm:inline">View Details</span>
+                          <span className="sm:hidden">View</span>
                         </Button>
                       </DialogTrigger>
                     </Dialog>
+
+                    {/* Mobile status badge */}
+                    <div className="sm:hidden">
+                      <Badge
+                        variant={config.statusBadge}
+                        className={`capitalize font-medium text-xs px-2 py-1 ${config.badgeColor} border-0`}
+                      >
+                        {reservation.status ?? "N/A"}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -221,26 +346,28 @@ export function BookingsList({
           );
         })
       ) : (
-        // Enhanced empty state
-        <Card className="border-0 bg-gradient-to-br from-slate-50 to-gray-50 dark:from-slate-950/20 dark:to-gray-950/20 shadow-lg">
+        // Professional empty state
+        <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <CardContent className="p-12 text-center">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-slate-400 to-gray-500 shadow-md mx-auto mb-4">
-              <Sparkles className="h-8 w-8 text-white" />
+            <div className="mb-6">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mx-auto">
+                <CalendarDays className="h-8 w-8 text-gray-500 dark:text-gray-400" />
+              </div>
             </div>
-            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
-              No bookings yet
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              No bookings found
             </h3>
-            <p className="text-slate-600 dark:text-slate-400">
-              Your reservation history will appear here once you make your first
-              booking.
+            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+              You haven&apos;t made any room reservations yet. When you book a
+              room, your reservations will appear here.
             </p>
           </CardContent>
         </Card>
       )}
 
-      {/* Enhanced Dialog with admin dashboard styling */}
+      {/* Professional Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
           {selectedReservation &&
             (() => {
               const config = getStatusConfig(selectedReservation.status);
@@ -251,18 +378,16 @@ export function BookingsList({
                   <DialogHeader className="pb-4">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br ${config.borderGradient} shadow-md`}
+                        className={`flex items-center justify-center w-12 h-12 rounded-lg ${config.statusColor}`}
                       >
-                        <StatusIcon className="h-5 w-5 text-white" />
+                        <StatusIcon className="h-6 w-6 text-white" />
                       </div>
-                      <div>
-                        <DialogTitle
-                          className={`text-lg font-semibold ${config.accentColor}`}
-                        >
+                      <div className="flex-1">
+                        <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                           {selectedReservation.roomName}
                         </DialogTitle>
-                        <DialogDescription className="text-slate-600 dark:text-slate-400">
-                          Booking Details for: {selectedReservation.title}
+                        <DialogDescription className="text-gray-600 dark:text-gray-400">
+                          Booking Details • {selectedReservation.title}
                         </DialogDescription>
                       </div>
                     </div>
@@ -270,67 +395,134 @@ export function BookingsList({
 
                   <div className="space-y-4 py-4">
                     <div
-                      className={`rounded-lg p-4 bg-gradient-to-br ${config.bgGradient} border-l-4 border-gradient-to-b ${config.borderGradient}`}
+                      className={`rounded-lg p-4 ${config.bgColor} border-l-4 ${config.borderColor}`}
                     >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                           <div className="flex items-center gap-2">
-                            <MapPin className={`h-4 w-4 ${config.iconColor}`} />
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              Room:
+                            <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-700">
+                              <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                            </div>
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              Room
                             </span>
                           </div>
-                          <span
-                            className={`font-semibold ${config.accentColor}`}
-                          >
+                          <span className="font-semibold text-gray-900 dark:text-gray-100">
                             {selectedReservation.roomName}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                           <div className="flex items-center gap-2">
-                            <User className={`h-4 w-4 ${config.iconColor}`} />
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              Event:
+                            <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-700">
+                              <User className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                            </div>
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              Event
                             </span>
                           </div>
-                          <span className="font-medium text-slate-600 dark:text-slate-400">
+                          <span className="font-medium text-gray-700 dark:text-gray-300 text-right max-w-xs">
                             {selectedReservation.title}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Calendar
-                              className={`h-4 w-4 ${config.iconColor}`}
-                            />
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              Time:
-                            </span>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center gap-2">
+                              <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-700">
+                                <CalendarDays className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                              </div>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                Schedule
+                              </span>
+                            </div>
+                            <div className="text-right space-y-1">
+                              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {new Date(
+                                  selectedReservation.startTime
+                                ).toLocaleDateString("en-GB", {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                  timeZone: "Asia/Jakarta",
+                                })}
+                              </div>
+                              <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                {new Date(selectedReservation.startTime)
+                                  .toLocaleTimeString("en-GB", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                    timeZone: "Asia/Jakarta",
+                                  })
+                                  .replace(":", ".")}{" "}
+                                -{" "}
+                                {new Date(selectedReservation.endTime)
+                                  .toLocaleTimeString("en-GB", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: false,
+                                    timeZone: "Asia/Jakarta",
+                                  })
+                                  .replace(":", ".")}
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                            {formatDateRangeHumanized(
-                              selectedReservation.startTime,
-                              selectedReservation.endTime
-                            )}
-                          </span>
+
+                          {/* Created date in dialog */}
+                          {selectedReservation.createdAt && (
+                            <div className="flex items-center justify-between p-3 rounded bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+                              <div className="flex items-center gap-2">
+                                <div className="p-1.5 rounded bg-gray-100 dark:bg-gray-700">
+                                  <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                                </div>
+                                <span className="font-medium text-gray-900 dark:text-gray-100">
+                                  Created
+                                </span>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                  {new Date(
+                                    selectedReservation.createdAt
+                                  ).toLocaleDateString("en-US", {
+                                    weekday: "short",
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  {new Date(
+                                    selectedReservation.createdAt
+                                  ).toLocaleTimeString("en-US", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                           <div className="flex items-center gap-2">
-                            <StatusIcon
-                              className={`h-4 w-4 ${config.iconColor}`}
-                            />
-                            <span className="font-medium text-slate-700 dark:text-slate-300">
-                              Status:
+                            <div
+                              className={`p-1.5 rounded ${config.statusColor}`}
+                            >
+                              <StatusIcon className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="font-medium text-gray-900 dark:text-gray-100">
+                              Status
                             </span>
                           </div>
-                          <Badge
-                            variant={config.statusBadge}
-                            className="capitalize font-medium"
-                          >
-                            {selectedReservation.status ?? "N/A"}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant={config.statusBadge}
+                              className={`capitalize font-medium text-sm px-3 py-1 ${config.badgeColor} border-0`}
+                            >
+                              {selectedReservation.status ?? "N/A"}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     </div>

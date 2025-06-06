@@ -7,16 +7,25 @@ import {
   SessionsCard,
   UpdateAvatarCard,
 } from "@daveyplate/better-auth-ui";
+import { DashboardHeader } from "@/features/admin/components/dashboard-header";
+import { Settings } from "lucide-react";
 
 export default function SettingsPage() {
   return (
     <TabsContent value="settings" className="pt-6">
-      <div className="flex flex-col gap-6">
-        <UpdateAvatarCard />
-        <SessionsCard />
-        <ChangeEmailCard />
-        <ChangePasswordCard />
-        <DeleteAccountCard />
+      <div className="space-y-6">
+        <DashboardHeader
+          title="Pengaturan"
+          description="Kelola profil, keamanan, dan preferensi akun Anda"
+          icon={Settings}
+        />
+        <div className="flex flex-col gap-6">
+          <UpdateAvatarCard />
+          <SessionsCard />
+          <ChangeEmailCard />
+          <ChangePasswordCard />
+          <DeleteAccountCard />
+        </div>
       </div>
     </TabsContent>
   );
