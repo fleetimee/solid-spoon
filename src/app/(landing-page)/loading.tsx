@@ -1,8 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+import { usePathname } from "next/navigation";
 
-// Skeleton for Modern Hero Section (matching new reservation page)
+// Skeleton for Modern Hero Section (matching reservation page)
 const ModernHeroSkeleton = () => (
   <div className="relative overflow-hidden bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-800 dark:via-purple-800 dark:to-pink-800">
     <div className="absolute inset-0 bg-black/10 dark:bg-black/20"></div>
@@ -40,7 +43,7 @@ const ModernHeroSkeleton = () => (
   </div>
 );
 
-// Skeleton for Modern Form Section (matching new reservation page)
+// Skeleton for Modern Form Section (matching reservation page)
 const ModernFormSkeleton = () => (
   <main className="max-w-screen-xl mx-auto px-6 py-12">
     <div className="grid lg:grid-cols-3 gap-8">
@@ -216,14 +219,105 @@ const AvailableRoomsSkeleton = () => (
   </section>
 );
 
-// Main Loading Component - detects if it's a reservation page
-export default function Loading() {
-  const breadcrumbItems = [{ label: <Skeleton className="h-4 w-16" /> }];
+// FAQ Section Skeleton (matching FAQ component)
+const FAQSkeleton = () => (
+  <section className="py-12 sm:py-16 md:py-20">
+    <div className="w-full max-w-screen-xl mx-auto px-6">
+      <div className="text-center mb-12">
+        <Skeleton className="h-10 w-3/4 sm:w-1/2 md:h-12 mx-auto mb-4" />
+        <Skeleton className="h-5 w-full max-w-2xl mx-auto mb-2" />
+        <Skeleton className="h-5 w-3/4 max-w-xl mx-auto" />
+      </div>
 
-  // Check if this is likely a reservation page based on URL patterns
-  // Since we can't access router in loading component, we'll show the modern version
-  // which works for both reservation pages and can gracefully handle other pages
-  const isReservationPage = true; // Default to modern layout
+      <div className="max-w-3xl mx-auto space-y-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="border rounded-lg overflow-hidden bg-white/50 dark:bg-card/50 backdrop-blur-sm"
+          >
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-5 w-5" />
+              </div>
+            </div>
+            <div className="p-6 space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+// Testimonial Section Skeleton (matching Testimonial component)
+const TestimonialSkeleton = () => (
+  <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-violet-50 via-purple-50 to-pink-50 dark:from-violet-950/20 dark:via-purple-950/20 dark:to-pink-950/20">
+    <div className="w-full max-w-screen-xl mx-auto px-6">
+      <div className="text-center mb-12">
+        <Skeleton className="h-10 w-3/4 sm:w-1/2 md:h-12 mx-auto mb-4" />
+        <Skeleton className="h-5 w-full max-w-2xl mx-auto mb-2" />
+        <Skeleton className="h-5 w-3/4 max-w-xl mx-auto" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-white/70 dark:bg-card/70 backdrop-blur-sm rounded-lg p-6 shadow-lg border-0"
+          >
+            {/* Rating stars skeleton */}
+            <div className="flex items-center gap-1 mb-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 w-4" />
+              ))}
+            </div>
+
+            {/* Testimonial content */}
+            <div className="space-y-3 mb-6">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <Skeleton className="h-4 w-4/5" />
+            </div>
+
+            {/* User profile */}
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+// Main Loading Component - detects page type based on URL
+export default function Loading() {
+  const pathname = usePathname();
+  const [isReservationPage, setIsReservationPage] = useState(false);
+
+  useEffect(() => {
+    // Detect if this is a reservation page based on URL patterns
+    const reservationPatterns = [
+      /\/v\/[^/]+\/reservations\/new/, // Room reservation pages
+      /\/rooms/, // Room listing page
+      /\/v\/[^/]+$/, // Individual room pages
+    ];
+
+    const isReservation = reservationPatterns.some((pattern) =>
+      pattern.test(pathname)
+    );
+    setIsReservationPage(isReservation);
+  }, [pathname]);
+
+  const breadcrumbItems = [{ label: <Skeleton className="h-4 w-16" /> }];
 
   return (
     <>
@@ -239,6 +333,8 @@ export default function Loading() {
             <LegacyHeroSkeleton />
             <FeaturesSkeleton />
             <AvailableRoomsSkeleton />
+            <FAQSkeleton />
+            <TestimonialSkeleton />
           </>
         )}
       </div>
