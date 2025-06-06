@@ -6,6 +6,7 @@ import { getActiveRoomsList } from "@/features/rooms/api/getRooms"; // Import ro
 import { getReservationStatuses } from "@/features/application/api/getLookupValue"; // Import status fetch function
 // Placeholder import - We will create this component next
 import { ComprehensiveCalendarView } from "@/features/comprehensive-calendar/components/ComprehensiveCalendarView";
+import { CalendarHeader } from "@/features/comprehensive-calendar/components/CalendarHeader";
 // TODO: Create or verify these utility functions exist in src/lib/utils.ts
 import {
   parseDateParam,
@@ -13,13 +14,17 @@ import {
   parseStatusArrayParam,
 } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 
 // Define a loading component for Suspense fallback
 function CalendarLoadingSkeleton() {
   return (
     <div className="h-full flex flex-col">
+      <div className="p-4 md:p-6 lg:p-8">
+        <Skeleton className="h-16 w-full" /> {/* Placeholder for header */}
+      </div>
       <div className="p-4 border-b">
-        <Skeleton className="h-16 w-full" /> {/* Placeholder for controls */}
+        <Skeleton className="h-12 w-full" /> {/* Placeholder for controls */}
       </div>
       <div className="flex-1 p-4">
         <Skeleton className="h-full w-full" /> {/* Placeholder for calendar */}
@@ -27,6 +32,11 @@ function CalendarLoadingSkeleton() {
     </div>
   );
 }
+
+const calendarBreadcrumb = [
+  { label: "Kalender" },
+  { label: "Kalender Ruangan" },
+];
 
 export default async function ComprehensiveCalendarPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -104,6 +114,8 @@ export default async function ComprehensiveCalendarPage(props: {
 
   return (
     <>
+      <BreadcrumbSetter items={calendarBreadcrumb} />
+
       {/* Mobile viewport meta tag optimization */}
       <meta
         name="viewport"
@@ -111,9 +123,12 @@ export default async function ComprehensiveCalendarPage(props: {
       />
 
       <div className="h-full flex flex-col touch-pan-y">
-        {/* Compact header without padding */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <h1 className="text-lg sm:text-xl font-semibold">Room Calendar</h1>
+        {/* Beautiful header matching admin dashboard pattern */}
+        <div className="p-4 md:p-6 lg:p-8 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <CalendarHeader
+            title="Kalender Ruangan"
+            description="Kelola dan lihat semua reservasi ruangan di fasilitas Anda"
+          />
         </div>
 
         {/* Fullscreen calendar without padding */}
