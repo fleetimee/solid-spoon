@@ -67,15 +67,21 @@ export async function cancelReservation(
     }
 
     // Now check if the reservation exists and belongs to the user
+    // Also fetch room information for notification
     const checkQuery = `
       SELECT
         rr.id,
         rr.user_id,
         rr.status_id,
         rr.title,
-        l.value as status_value
+        rr.start_time,
+        rr.end_time,
+        l.value as status_value,
+        r.name as room_name,
+        r.slug as room_slug
       FROM room_reservation rr
       INNER JOIN lookup l ON rr.status_id = l.id AND l.category = 'reservation_status'
+      INNER JOIN room r ON rr.room_id = r.id
       WHERE rr.id = $1 AND rr.is_active = true
     `;
 
@@ -130,11 +136,48 @@ export async function cancelReservation(
       };
     }
 
+    // Create notification for admins about the cancellation
+    try {
+      const notificationTitle = "Reservation Cancelled";
+      const userName =
+        session.user?.name ||
+        session.user?.email ||
+        `User ID: ${session.user.id}`;
+      const notificationMessage = `${userName} cancelled their reservation "${reservation.title}" for room "${reservation.room_name}".`;
+      const notificationType = "admin";
+      const notificationLink = reservation.room_slug
+        ? `/admin/rooms/${reservation.room_slug}`
+        : "/admin/reservations";
+
+      await db.query(
+        `INSERT INTO notification (recipient_id, title, message, type, link)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [
+          "admin",
+          notificationTitle,
+          notificationMessage,
+          notificationType,
+          notificationLink,
+        ]
+      );
+
+      console.log(
+        `Admin notification created for cancelled reservation ${validatedId}`
+      );
+    } catch (notificationError) {
+      console.error(
+        `Failed to create notification for cancelled reservation ${validatedId}:`,
+        notificationError
+      );
+      // Don't fail the cancellation if notification creation fails
+    }
+
     // Revalidate relevant paths to refresh the UI
     revalidatePath("/me/bookings");
     revalidatePath("/me/activity");
     revalidatePath("/rooms");
     revalidatePath("/admin/dashboard");
+    revalidatePath("/admin/notifications"); // Add this to refresh notifications
 
     return { success: true };
   } catch (error) {
