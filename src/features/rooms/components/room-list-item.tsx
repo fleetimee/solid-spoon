@@ -22,12 +22,12 @@ import {
   LucideIcon,
   Thermometer,
   Sun,
-  Currency,
+  Blinds,
   Volume2,
   Armchair,
-  Table2Icon,
+  Monitor,
   Lightbulb,
-  PanelLeftClose,
+  VolumeX,
 } from "lucide-react";
 import type { Room } from "@/features/rooms/types/room";
 
@@ -45,12 +45,12 @@ const facilityIcons: Record<string, LucideIcon> = {
   "Air Conditioning": Thermometer,
   Heating: Thermometer,
   "Natural Light": Sun,
-  "Blackout Curtains": Currency,
+  "Blackout Curtains": Blinds,
   Soundproofing: Volume2,
   "Ergonomic Chairs": Armchair,
-  "Standing Desks": Table2Icon,
+  "Standing Desks": Monitor,
   "Adjustable Lighting": Lightbulb,
-  "Acoustic Panels": PanelLeftClose,
+  "Acoustic Panels": VolumeX,
   "Smart Lighting": Lightbulb,
 };
 

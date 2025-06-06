@@ -45,13 +45,12 @@ import {
   PanelTop,
   Thermometer,
   Sun,
-  Currency,
+  Blinds,
   Volume2,
   Armchair,
-  Table2Icon,
+  Monitor,
   Lightbulb,
-  PanelLeftClose,
-  Lightbulb as LightbulbIcon,
+  VolumeX,
 } from "lucide-react";
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -100,17 +99,17 @@ const facilityOptions = [
   { value: "Air Conditioning", label: "Air Conditioning", icon: Thermometer },
   { value: "Heating", label: "Heating", icon: Thermometer },
   { value: "Natural Light", label: "Natural Light", icon: Sun },
-  { value: "Blackout Curtains", label: "Blackout Curtains", icon: Currency },
+  { value: "Blackout Curtains", label: "Blackout Curtains", icon: Blinds },
   { value: "Soundproofing", label: "Soundproofing", icon: Volume2 },
   { value: "Ergonomic Chairs", label: "Ergonomic Chairs", icon: Armchair },
-  { value: "Standing Desks", label: "Standing Desks", icon: Table2Icon },
+  { value: "Standing Desks", label: "Standing Desks", icon: Monitor },
   {
     value: "Adjustable Lighting",
     label: "Adjustable Lighting",
     icon: Lightbulb,
   },
-  { value: "Acoustic Panels", label: "Acoustic Panels", icon: PanelLeftClose },
-  { value: "Smart Lighting", label: "Smart Lighting", icon: LightbulbIcon },
+  { value: "Acoustic Panels", label: "Acoustic Panels", icon: VolumeX },
+  { value: "Smart Lighting", label: "Smart Lighting", icon: Lightbulb },
 ];
 
 type FormValues = z.infer<typeof formSchema>;

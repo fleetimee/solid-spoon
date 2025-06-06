@@ -24,13 +24,12 @@ import {
   LucideIcon,
   Thermometer,
   Sun,
-  Currency,
+  Blinds,
   Volume2,
   Armchair,
-  Table2Icon,
+  Monitor,
   Lightbulb,
-  PanelLeftClose,
-  Lightbulb as LightbulbIcon,
+  VolumeX,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -68,13 +67,13 @@ const facilityIcons: Record<string, LucideIcon> = {
   "Air Conditioning": Thermometer,
   Heating: Thermometer,
   "Natural Light": Sun,
-  "Blackout Curtains": Currency,
+  "Blackout Curtains": Blinds,
   Soundproofing: Volume2,
   "Ergonomic Chairs": Armchair,
-  "Standing Desks": Table2Icon,
+  "Standing Desks": Monitor,
   "Adjustable Lighting": Lightbulb,
-  "Acoustic Panels": PanelLeftClose,
-  "Smart Lighting": LightbulbIcon,
+  "Acoustic Panels": VolumeX,
+  "Smart Lighting": Lightbulb,
 };
 
 const COMMON_FACILITIES = [

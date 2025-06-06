@@ -19,13 +19,12 @@ import {
   LucideIcon,
   Thermometer,
   Sun,
-  Currency,
+  Blinds,
   Volume2,
   Armchair,
-  Table2Icon,
+  Monitor,
   Lightbulb,
-  PanelLeftClose,
-  Lightbulb as LightbulbIcon,
+  VolumeX,
   ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +38,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
-// Define facility icon mapping to match the room-form component
+// Define facility icon mapping with proper semantic icons
 const facilityIcons: Record<string, LucideIcon> = {
   Projector: Projector,
   Whiteboard: PanelTop,
@@ -53,13 +52,13 @@ const facilityIcons: Record<string, LucideIcon> = {
   "Air Conditioning": Thermometer,
   Heating: Thermometer,
   "Natural Light": Sun,
-  "Blackout Curtains": Currency,
+  "Blackout Curtains": Blinds,
   Soundproofing: Volume2,
   "Ergonomic Chairs": Armchair,
-  "Standing Desks": Table2Icon,
+  "Standing Desks": Monitor,
   "Adjustable Lighting": Lightbulb,
-  "Acoustic Panels": PanelLeftClose,
-  "Smart Lighting": LightbulbIcon,
+  "Acoustic Panels": VolumeX,
+  "Smart Lighting": Lightbulb,
 };
 
 interface RoomCardProps {
