@@ -1,12 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react"; // useState is already imported
+import React, { useState, useEffect, use, useRef } from "react"; // useState is already imported
 import { useRouter, useSearchParams } from "next/navigation";
 import { ComprehensiveReservation } from "../api/getComprehensiveReservations";
+import {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  addDays,
+} from "date-fns";
 // Import the actual components
 import { CalendarControls } from "./CalendarControls";
 import { CalendarDisplay } from "./CalendarDisplay";
 import { ReservationDetailsDialog } from "./ReservationDetailsDialog"; // Import the dialog
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 // import { Skeleton } from "@/components/ui/skeleton'; // No longer needed for main placeholders
 
 // TODO: Define or import ReservationStatus type correctly if needed client-side
@@ -48,6 +57,9 @@ export function ComprehensiveCalendarView({
 }: ComprehensiveCalendarViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams(); // To read current URL state if needed, though props are primary source
+  const isMobile = useIsMobile();
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   // Use the resolved reservations directly from props
   // const reservations = use(reservationsPromise); // Removed
@@ -65,6 +77,7 @@ export function ComprehensiveCalendarView({
     useState<string[]>(initialRoomIds);
   const [selectedStatuses, setSelectedStatuses] =
     useState<string[]>(initialStatuses); // State holds status codes (strings)
+  const [view, setView] = useState<"month" | "week">("month"); // Add view state
 
   // State for the selected reservation
   const [selectedReservation, setSelectedReservation] =
@@ -108,6 +121,32 @@ export function ComprehensiveCalendarView({
     setSelectedStatuses(newStatuses);
   };
 
+  // Handler for view change
+  const handleViewChange = (newView: "month" | "week") => {
+    setView(newView);
+
+    // Adjust date range based on view
+    const currentDate = currentStartDate;
+
+    if (newView === "week") {
+      // Switch to week view: set start to Monday of current week
+      const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Start on Monday
+      const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
+      weekEnd.setHours(23, 59, 59, 999);
+
+      setCurrentStartDate(weekStart);
+      setCurrentEndDate(weekEnd);
+    } else {
+      // Switch to month view: set to full month
+      const monthStart = startOfMonth(currentDate);
+      const monthEnd = endOfMonth(currentDate);
+      monthEnd.setHours(23, 59, 59, 999);
+
+      setCurrentStartDate(monthStart);
+      setCurrentEndDate(monthEnd);
+    }
+  };
+
   // Handler for clicking a reservation
   const handleReservationClick = (reservation: ComprehensiveReservation) => {
     setSelectedReservation(reservation);
@@ -115,37 +154,144 @@ export function ComprehensiveCalendarView({
     // TODO: Implement opening a dialog/modal here
   };
 
+  // Mobile swipe gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isMobile || !touchStartRef.current) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+
+    // Only trigger swipe if horizontal movement is greater than vertical
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        // Swipe right - go to previous period
+        if (view === "month") {
+          handlePrevMonth();
+        } else {
+          handlePrevWeek();
+        }
+      } else {
+        // Swipe left - go to next period
+        if (view === "month") {
+          handleNextMonth();
+        } else {
+          handleNextWeek();
+        }
+      }
+    }
+
+    touchStartRef.current = null;
+  };
+
+  // Helper functions for navigation (extracted from CalendarControls logic)
+  const handlePrevMonth = () => {
+    const newStartDate = new Date(currentStartDate);
+    newStartDate.setMonth(newStartDate.getMonth() - 1);
+    newStartDate.setDate(1);
+
+    const newEndDate = new Date(
+      newStartDate.getFullYear(),
+      newStartDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    );
+
+    handleDateChange(newStartDate, newEndDate);
+  };
+
+  const handleNextMonth = () => {
+    const newStartDate = new Date(currentStartDate);
+    newStartDate.setMonth(newStartDate.getMonth() + 1);
+    newStartDate.setDate(1);
+
+    const newEndDate = new Date(
+      newStartDate.getFullYear(),
+      newStartDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    );
+
+    handleDateChange(newStartDate, newEndDate);
+  };
+
+  const handlePrevWeek = () => {
+    const newStartDate = new Date(currentStartDate);
+    newStartDate.setDate(newStartDate.getDate() - 7);
+
+    const newEndDate = new Date(newStartDate);
+    newEndDate.setDate(newEndDate.getDate() + 6);
+    newEndDate.setHours(23, 59, 59, 999);
+
+    handleDateChange(newStartDate, newEndDate);
+  };
+
+  const handleNextWeek = () => {
+    const newStartDate = new Date(currentStartDate);
+    newStartDate.setDate(newStartDate.getDate() + 7);
+
+    const newEndDate = new Date(newStartDate);
+    newEndDate.setDate(newEndDate.getDate() + 6);
+    newEndDate.setHours(23, 59, 59, 999);
+
+    handleDateChange(newStartDate, newEndDate);
+  };
+
   // --- Render ---
   return (
-    <div className="space-y-4">
-      {/* Render CalendarControls */}
-      <CalendarControls
-        startDate={currentStartDate}
-        endDate={currentEndDate}
-        selectedRoomIds={selectedRoomIds}
-        selectedStatuses={selectedStatuses}
-        onDateChange={handleDateChange}
-        onRoomFilterChange={handleRoomFilterChange}
-        onStatusFilterChange={handleStatusFilterChange}
-        availableRooms={initialRooms} // Pass down initialRooms
-        statusOptions={statusOptions} // Pass down status options
-      />
+    <div
+      ref={calendarRef}
+      className={cn("h-full flex flex-col", isMobile && "touch-pan-y")}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Render CalendarControls - Fixed height */}
+      <div className="shrink-0">
+        <CalendarControls
+          startDate={currentStartDate}
+          endDate={currentEndDate}
+          selectedRoomIds={selectedRoomIds}
+          selectedStatuses={selectedStatuses}
+          view={view}
+          onDateChange={handleDateChange}
+          onRoomFilterChange={handleRoomFilterChange}
+          onStatusFilterChange={handleStatusFilterChange}
+          onViewChange={handleViewChange}
+          availableRooms={initialRooms}
+          statusOptions={statusOptions}
+        />
+      </div>
 
-      {/* Render CalendarDisplay */}
-      <CalendarDisplay
-        reservations={reservations}
-        startDate={currentStartDate}
-        endDate={currentEndDate}
-        onReservationClick={handleReservationClick} // Pass the handler
-      />
+      {/* Render CalendarDisplay - Flexible height */}
+      <div className={cn("flex-1 overflow-hidden", isMobile && "relative")}>
+        <CalendarDisplay
+          reservations={reservations}
+          startDate={currentStartDate}
+          endDate={currentEndDate}
+          view={view}
+          onReservationClick={handleReservationClick}
+        />
+      </div>
 
       {/* Render the Reservation Details Dialog */}
       <ReservationDetailsDialog
         reservation={selectedReservation}
-        open={!!selectedReservation} // Dialog is open if a reservation is selected
+        open={!!selectedReservation}
         onOpenChange={(isOpen) => {
           if (!isOpen) {
-            setSelectedReservation(null); // Clear selection when dialog closes
+            setSelectedReservation(null);
           }
         }}
       />

@@ -17,18 +17,20 @@ import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 // Define a loading component for Suspense fallback
 function CalendarLoadingSkeleton() {
   return (
-    <div className="p-4 space-y-4">
-      <Skeleton className="h-10 w-1/4" /> {/* Placeholder for controls */}
-      <Skeleton className="h-[600px] w-full" /> {/* Placeholder for calendar */}
+    <div className="h-full flex flex-col">
+      <div className="p-4 border-b">
+        <Skeleton className="h-16 w-full" /> {/* Placeholder for controls */}
+      </div>
+      <div className="flex-1 p-4">
+        <Skeleton className="h-full w-full" /> {/* Placeholder for calendar */}
+      </div>
     </div>
   );
 }
 
-export default async function ComprehensiveCalendarPage(
-  props: {
-    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-  }
-) {
+export default async function ComprehensiveCalendarPage(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const searchParams = await props.searchParams;
   // 1. Authorization Check using headers()
   // Construct a new Headers object from awaited next/headers
@@ -101,27 +103,35 @@ export default async function ComprehensiveCalendarPage(
   }));
 
   return (
-    <div className="flex flex-col gap-6 p-4 md:p-6">
-      {/* TODO: Add Breadcrumb or Page Title */}
-      <h1 className="text-2xl font-bold mb-4">Comprehensive Room Calendar</h1>
+    <>
+      {/* Mobile viewport meta tag optimization */}
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+      />
 
-      {/* Use Suspense to handle loading state while data is fetched */}
-      <Suspense fallback={<CalendarLoadingSkeleton />}>
-        {/* Render the client component, passing the promise and initial params */}
-        {/* Pass original string roomIds to client component if needed for display/filters */}
-        <ComprehensiveCalendarView
-          // reservationsPromise={reservationsPromise} // Pass resolved data instead
-          initialReservations={reservations} // Pass resolved reservations
-          initialStartDate={startDate.toISOString()} // Pass ISO strings for serialization
-          initialEndDate={endDate.toISOString()}
-          initialRoomIds={roomIds} // Keep original string[] for client state if needed
-          initialStatuses={statuses}
-          // availableRooms={availableRooms} // Pass resolved data instead
-          initialRooms={rooms} // Pass resolved rooms
-          statusOptions={mappedStatusOptions} // Pass mapped statuses
-        />
-      </Suspense>
-    </div>
+      <div className="h-full flex flex-col touch-pan-y">
+        {/* Compact header without padding */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <h1 className="text-lg sm:text-xl font-semibold">Room Calendar</h1>
+        </div>
+
+        {/* Fullscreen calendar without padding */}
+        <div className="flex-1 overflow-hidden">
+          <Suspense fallback={<CalendarLoadingSkeleton />}>
+            <ComprehensiveCalendarView
+              initialReservations={reservations}
+              initialStartDate={startDate.toISOString()}
+              initialEndDate={endDate.toISOString()}
+              initialRoomIds={roomIds}
+              initialStatuses={statuses}
+              initialRooms={rooms}
+              statusOptions={mappedStatusOptions}
+            />
+          </Suspense>
+        </div>
+      </div>
+    </>
   );
 }
 

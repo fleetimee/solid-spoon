@@ -1,0 +1,233 @@
+/* Mobile Calendar Optimizations */
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch-friendly scrollbars on mobile */
+@media (max-width: 767px) {
+  .week-grid-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .week-grid-scroll::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  .week-grid-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .week-grid-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 767px) {
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Minimum touch target size */
+  button,
+  [role="button"],
+  .cursor-pointer {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Calendar event items */
+  .calendar-event {
+    min-height: 32px;
+    touch-action: manipulation;
+  }
+}
+
+/* Mobile-specific calendar grid optimizations */
+@media (max-width: 767px) {
+  /* Week view horizontal scroll */
+  .week-view-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Month view touch optimization */
+  .month-grid-cell {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Improve text readability on small screens */
+  .calendar-text-mobile {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Swipe gesture feedback */
+@media (max-width: 767px) {
+  .swipe-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .swipe-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transition: left 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .swipe-container.swiping::before {
+    left: 100%;
+  }
+}
+
+/* Modal and dialog mobile optimizations */
+@media (max-width: 767px) {
+  [role="dialog"] {
+    margin: 8px;
+    max-height: calc(100vh - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  /* Ensure dialogs don't get cut off */
+  .dialog-content-mobile {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 767px) {
+    /* Fix for iOS Safari address bar height changes */
+    .calendar-container {
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height */
+    }
+
+    /* Prevent zoom on double tap */
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+    }
+
+    /* Allow text selection only where needed */
+    input,
+    textarea,
+    [contenteditable] {
+      -webkit-user-select: auto;
+    }
+  }
+}
+
+/* Android specific optimizations */
+@media (max-width: 767px) and (pointer: coarse) {
+  /* Improve scrolling performance */
+  .calendar-scroll-container {
+    will-change: scroll-position;
+    transform: translateZ(0);
+  }
+
+  /* Reduce motion for better performance */
+  .calendar-animation {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+  }
+}
+
+/* High-DPI mobile screens */
+@media (max-width: 767px) and (-webkit-min-device-pixel-ratio: 2) {
+  /* Sharper text rendering */
+  .calendar-text {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Crisp borders */
+  .calendar-border {
+    border-width: 0.5px;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-width: 767px) and (orientation: landscape) {
+  /* Compact header in landscape */
+  .calendar-header-mobile {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* Maximize calendar space */
+  .calendar-controls-mobile {
+    font-size: 0.75rem;
+  }
+}
+
+/* Accessibility improvements for mobile */
+@media (max-width: 767px) {
+  /* Increase focus ring visibility */
+  .focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* Improve contrast for touch targets */
+  .touch-target {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+
+  .touch-target:active {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Performance optimizations */
+@media (max-width: 767px) {
+  /* Use hardware acceleration for smooth animations */
+  .calendar-animated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* Optimize repaints */
+  .calendar-layer {
+    will-change: transform;
+    contain: layout style paint;
+  }
+}
