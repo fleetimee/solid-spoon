@@ -57,10 +57,19 @@ export function ReservationDetailsDialog({
                     ? "secondary"
                     : reservation.status === "REJECTED"
                       ? "destructive"
-                      : "outline"
+                      : reservation.status === "CANCELLED"
+                        ? "outline"
+                        : "outline"
+              }
+              className={
+                reservation.status === "CANCELLED"
+                  ? "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
+                  : ""
               }
             >
-              {reservation.status}
+              {reservation.status === "CANCELLED"
+                ? "🚫 Dibatalkan"
+                : reservation.status}
             </Badge>
           </DialogTitle>
           <DialogDescription>ID: {reservation.id}</DialogDescription>

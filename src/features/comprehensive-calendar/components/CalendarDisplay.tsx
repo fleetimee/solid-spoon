@@ -103,11 +103,17 @@ export function CalendarDisplay({
                         ? "secondary"
                         : res.status === "REJECTED"
                           ? "destructive"
-                          : "outline" // Fallback variant
+                          : res.status === "CANCELLED"
+                            ? "outline"
+                            : "outline" // Fallback variant
                   }
-                  className="self-start sm:self-center" // Adjust alignment
+                  className={`self-start sm:self-center ${
+                    res.status === "CANCELLED"
+                      ? "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
+                      : ""
+                  }`} // Adjust alignment
                 >
-                  {res.status}
+                  {res.status === "CANCELLED" ? "🚫 Dibatalkan" : res.status}
                 </Badge>
               </li>
             ))}

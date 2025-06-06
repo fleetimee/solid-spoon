@@ -165,14 +165,29 @@ export function RecentReservationsSection({
                               ? "secondary"
                               : reservation.statusValue === "Rejected"
                                 ? "destructive"
-                                : "default"
+                                : reservation.statusValue === "Cancelled"
+                                  ? "outline"
+                                  : "default"
                         }
-                        className="font-medium text-xs"
+                        className={cn(
+                          "font-medium text-xs",
+                          reservation.statusValue === "Cancelled" &&
+                            "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600"
+                        )}
                       >
                         {reservation.statusValue === "Approved" && "✅ "}
                         {reservation.statusValue === "Pending" && "⏳ "}
                         {reservation.statusValue === "Rejected" && "❌ "}
-                        {reservation.statusValue}
+                        {reservation.statusValue === "Cancelled" && "🚫 "}
+                        {reservation.statusValue === "Approved"
+                          ? "Disetujui"
+                          : reservation.statusValue === "Pending"
+                            ? "Pending"
+                            : reservation.statusValue === "Rejected"
+                              ? "Ditolak"
+                              : reservation.statusValue === "Cancelled"
+                                ? "Dibatalkan"
+                                : reservation.statusValue}
                       </Badge>
                     </TableCell>
                   </TableRow>

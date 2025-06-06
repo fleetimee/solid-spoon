@@ -59,7 +59,6 @@ const getStatusConfig = (status: string) => {
         iconColor: "text-amber-600 dark:text-amber-400",
       };
     case "rejected":
-    case "cancelled":
       return {
         variant: "destructive" as const,
         icon: XCircle,
@@ -67,6 +66,15 @@ const getStatusConfig = (status: string) => {
           "from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20",
         textColor: "text-red-700 dark:text-red-300",
         iconColor: "text-red-600 dark:text-red-400",
+      };
+    case "cancelled":
+      return {
+        variant: "outline" as const,
+        icon: XCircle,
+        bgGradient:
+          "from-gray-50 to-slate-50 dark:from-gray-950/20 dark:to-slate-950/20",
+        textColor: "text-gray-700 dark:text-gray-300",
+        iconColor: "text-gray-600 dark:text-gray-400",
       };
     case "completed":
       return {

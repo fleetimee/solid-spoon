@@ -63,7 +63,6 @@ const getStatusConfig = (status: string | null | undefined) => {
         badgeColor: "bg-amber-600 text-white",
       };
     case "rejected":
-    case "cancelled":
       return {
         bgColor: "bg-gray-50 dark:bg-gray-900/50",
         borderColor: "border-red-200 dark:border-red-800",
@@ -73,6 +72,18 @@ const getStatusConfig = (status: string | null | undefined) => {
         textColor: "text-red-800 dark:text-red-300",
         iconColor: "text-red-600 dark:text-red-400",
         badgeColor: "bg-red-600 text-white",
+      };
+    case "cancelled":
+      return {
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-gray-300 dark:border-gray-600",
+        statusBadge: "outline" as const,
+        statusIcon: AlertCircle,
+        statusColor: "bg-gray-600",
+        textColor: "text-gray-700 dark:text-gray-300",
+        iconColor: "text-gray-600 dark:text-gray-400",
+        badgeColor:
+          "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600",
       };
     default:
       return {
