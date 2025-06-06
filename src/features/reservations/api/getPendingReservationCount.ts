@@ -11,13 +11,25 @@ export async function getPendingReservationCount(
   roomId: number
 ): Promise<number> {
   try {
+    // First, get the PENDING status ID from lookup table
+    const pendingStatusResult = await db.query(
+      `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
+      ["reservation_status", "PENDING"]
+    );
+    const pendingStatusId = pendingStatusResult.rows[0]?.id;
+
+    if (!pendingStatusId) {
+      console.error("Could not find PENDING status in lookup table");
+      return 0;
+    }
+
     const result = await db.query<{ count: number }>(
       `
       SELECT count(*)::int
       FROM room_reservation
-      WHERE user_id = $1 AND room_id = $2 AND status_id = 2;
+      WHERE user_id = $1 AND room_id = $2 AND status_id = $3;
     `,
-      [userId, roomId]
+      [userId, roomId, pendingStatusId]
     );
 
     // If a row is returned, return the count, otherwise return 0

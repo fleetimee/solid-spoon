@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { UserRoomReservation } from "@/features/reservations/api/getUserRoomReservations";
+import { cancelReservation } from "@/features/reservations/api/cancelReservation";
 
 interface CancelReservationDialogProps {
   reservation: UserRoomReservation | null;
@@ -66,9 +67,15 @@ export function CancelReservationDialog({
 
     startTransition(async () => {
       try {
-        // TODO: Implement actual cancel reservation API call
-        // For now, just simulate success
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const result = await cancelReservation(reservation.id.toString());
+
+        if (!result.success) {
+          setError(result.error || "Failed to cancel reservation");
+          toast.error("Failed to cancel reservation", {
+            description: result.error || "An unexpected error occurred",
+          });
+          return;
+        }
 
         toast.success("Reservation cancelled successfully", {
           description: `Your reservation "${reservation.title}" has been cancelled.`,
