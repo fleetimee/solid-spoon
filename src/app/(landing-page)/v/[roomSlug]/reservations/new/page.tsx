@@ -16,11 +16,15 @@ import { headers } from "next/headers";
 import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import { getApprovedRoomReservations } from "@/features/reservations/api/getApprovedRoomReservations";
+import { ReservationWarningHandler } from "@/features/rooms/components/reservation-warning-handler";
 import { CalendarPlus, Sparkles, Clock, MapPin } from "lucide-react";
 
 interface NewReservationPageProps {
   params: Promise<{
     roomSlug: string;
+  }>;
+  searchParams: Promise<{
+    warning?: string;
   }>;
 }
 
@@ -45,7 +49,12 @@ export default async function NewReservationPage(
   props: NewReservationPageProps
 ) {
   const params = await props.params;
+  const searchParams = await props.searchParams;
   const { roomSlug } = params;
+
+  // Check if warning parameter is present
+  const showWarning =
+    searchParams.warning === "true" || searchParams.warning === "";
 
   // Check if there's a session and user
   const session = await auth.api.getSession({
@@ -248,6 +257,9 @@ export default async function NewReservationPage(
           </div>
         </main>
       </div>
+
+      {/* Reservation Rules Warning Dialog */}
+      <ReservationWarningHandler showWarning={showWarning} />
     </>
   );
 }

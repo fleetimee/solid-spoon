@@ -214,7 +214,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
                       </p>
                     </div>
                     <Link
-                      href={`/v/${roomSlug}/reservations/new`}
+                      href={`/v/${roomSlug}/reservations/new?warning=true`}
                       passHref
                       className={cn(
                         "block",
