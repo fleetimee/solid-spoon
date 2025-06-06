@@ -99,7 +99,13 @@ export default function MeLayout({ children }: { children: ReactNode }) {
                   <img
                     src={session.user.image}
                     alt={session?.user?.name ?? "Avatar Pengguna"}
-                    className="relative h-28 w-28 border-4 border-white/50 backdrop-blur-sm shadow-2xl group-hover/avatar:scale-105 transition-transform duration-300 cursor-zoom-in rounded-full object-cover"
+                    className="relative border-4 border-white/50 backdrop-blur-sm shadow-2xl group-hover/avatar:scale-105 transition-transform duration-300 cursor-zoom-in rounded-full object-cover"
+                    style={{
+                      width: "112px",
+                      height: "112px",
+                      minWidth: "112px",
+                      minHeight: "112px",
+                    }}
                   />
                 </ImageZoom>
               ) : (
