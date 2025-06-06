@@ -57,6 +57,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-hotkeys-hook": "^5.0.1",
+    "react-medium-image-zoom": "^5.2.14",
     "recharts": "^2.15.3",
     "resend": "^4.5.0",
     "sharp": "^0.34.1",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ImageZoom } from "@/components/ui/kibo-ui/image-zoom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
@@ -88,15 +89,20 @@ export default function MeLayout({ children }: { children: ReactNode }) {
             {/* Glass morphism avatar container */}
             <div className="relative group/avatar">
               <div className="absolute inset-0 bg-gradient-to-br from-slate-400 to-blue-400 rounded-full blur-lg opacity-40 group-hover/avatar:opacity-60 transition-opacity duration-300" />
-              <Avatar className="relative h-28 w-28 border-4 border-white/50 backdrop-blur-sm shadow-2xl group-hover/avatar:scale-105 transition-transform duration-300">
-                <AvatarImage
-                  src={session?.user?.image ?? "/placeholder.svg"}
-                  alt={session?.user?.name ?? "Avatar Pengguna"}
-                />
-                <AvatarFallback className="text-2xl bg-gradient-to-br from-slate-500 to-blue-500 text-white">
-                  {session?.user?.name?.charAt(0) ?? "U"}
-                </AvatarFallback>
-              </Avatar>
+              <ImageZoom
+                className="relative rounded-full"
+                backdropClassName="backdrop-blur-xl"
+              >
+                <Avatar className="relative h-28 w-28 border-4 border-white/50 backdrop-blur-sm shadow-2xl group-hover/avatar:scale-105 transition-transform duration-300 cursor-zoom-in">
+                  <AvatarImage
+                    src={session?.user?.image ?? "/placeholder.svg"}
+                    alt={session?.user?.name ?? "Avatar Pengguna"}
+                  />
+                  <AvatarFallback className="text-2xl bg-gradient-to-br from-slate-500 to-blue-500 text-white">
+                    {session?.user?.name?.charAt(0) ?? "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </ImageZoom>
               {/* Online status indicator */}
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-3 border-white rounded-full shadow-lg animate-pulse" />
             </div>
