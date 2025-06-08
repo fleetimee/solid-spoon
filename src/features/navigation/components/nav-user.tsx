@@ -9,6 +9,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,6 +28,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { LogoutConfirmation } from "@/components/auth/logout-confirmation";
 
 interface UserData {
   name: string;
@@ -53,11 +55,20 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
   const { isMobile } = useSidebar();
   const userInitials = getInitials(user.name);
   const avatarUrl = user.image || "";
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
+  const handleLogoutClick = () => {
+    setIsDropdownOpen(false); // Close dropdown first
+    setTimeout(() => {
+      setIsLogoutDialogOpen(true); // Then open dialog with a small delay for smooth transition
+    }, 100);
+  };
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -126,14 +137,20 @@ export function NavUser({ user, unreadNotificationsCount }: NavUserProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/auth/logout">
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
-              </Link>
+            <DropdownMenuItem
+              onClick={handleLogoutClick}
+              className="cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/30 dark:focus:text-red-300"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Keluar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <LogoutConfirmation
+          open={isLogoutDialogOpen}
+          onOpenChange={setIsLogoutDialogOpen}
+        />
       </SidebarMenuItem>
     </SidebarMenu>
   );
