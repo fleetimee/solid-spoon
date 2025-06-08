@@ -8,7 +8,7 @@ const FROM_EMAIL =
   process.env.EMAIL_FROM ||
   "CapstoneD <capstone-kelompok-d@capstone-mail.fleetime.my.id>";
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"; // Define Base URL
-const SITE_NAME = "Capstone Room Reservation"; // Define Site Name
+const SITE_NAME = "CapstoneD Manajemen Ruangan Meeting"; // Define Site Name
 
 // Define interface for request body
 interface NotifyRequestBody {
@@ -48,9 +48,9 @@ export async function POST(request: Request) {
     let subject = "";
     // Determine subject based on status
     if (status === "approved") {
-      subject = "Your Room Reservation is Approved!";
+      subject = "Reservasi Ruangan Anda Telah Disetujui!";
     } else if (status === "rejected") {
-      subject = "Update on Your Room Reservation";
+      subject = "Pembaruan Status Reservasi Ruangan Anda";
     } else {
       console.warn("Received unhandled reservation status:", status);
       return NextResponse.json(

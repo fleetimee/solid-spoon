@@ -48,7 +48,7 @@ import {
 
 // Define Zod schema for the form
 const acceptFormSchema = z.object({
-  reservationId: z.string().min(1, "Reservation ID is required"), // Validate the ID is present
+  reservationId: z.string().min(1, "ID reservasi diperlukan"), // Validate the ID is present
 });
 
 // Infer the TypeScript type from the schema

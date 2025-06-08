@@ -32,17 +32,17 @@ export const auth = betterAuth({
       await resend.emails.send({
         from: "CapstoneD <capstone-kelompok-d@capstone-mail.fleetime.my.id>",
         to: user.email,
-        subject: "Reset Your Password",
+        subject: "Atur Ulang Kata Sandi Anda",
         react: EmailTemplate({
-          action: "Reset Password",
-          heading: "Reset Your Password",
-          content: `Hello ${name}, please reset your password by clicking the link below.`,
-          siteName: "NEW-TECH",
+          action: "Atur Ulang Kata Sandi",
+          heading: "Atur Ulang Kata Sandi Anda",
+          content: `Halo ${name}, silakan atur ulang kata sandi Anda dengan mengklik tautan di bawah ini.`,
+          siteName: "CapstoneD Manajemen Ruangan Meeting",
           baseUrl: "https://newtech.dev",
           url,
         }),
 
-        text: `Hello ${name},\n\nPlease reset your password by clicking the link below:\n\n${url}\n\nBest regards,\nYour Team`,
+        text: `Halo ${name},\n\nSilakan atur ulang kata sandi Anda dengan mengklik tautan di bawah ini:\n\n${url}\n\nSalam hormat,\nTim Kami`,
       });
     },
   },

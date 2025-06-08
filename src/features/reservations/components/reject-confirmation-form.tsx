@@ -56,8 +56,8 @@ import {
 
 // Define Zod schema for the rejection form
 const rejectFormSchema = z.object({
-  reservationId: z.string().min(1, "Reservation ID is required"),
-  rejectionReason: z.string().min(1, "Rejection reason is required."), // Add rejection reason
+  reservationId: z.string().min(1, "ID reservasi diperlukan"),
+  rejectionReason: z.string().min(1, "Alasan penolakan diperlukan."), // Add rejection reason
 });
 
 // Infer the TypeScript type from the schema

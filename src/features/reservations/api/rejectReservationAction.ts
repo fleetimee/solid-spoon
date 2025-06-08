@@ -18,8 +18,8 @@ export type RejectReservationFormState = {
 
 // Schema for validating rejection input
 const rejectionSchema = z.object({
-  reservationId: z.coerce.string().min(1, "Reservation ID is required."),
-  rejectionReason: z.string().min(1, "Rejection reason is required."),
+  reservationId: z.coerce.string().min(1, "ID reservasi diperlukan."),
+  rejectionReason: z.string().min(1, "Alasan penolakan diperlukan."),
 });
 
 export async function rejectReservationAction(
@@ -35,7 +35,7 @@ export async function rejectReservationAction(
   if (!parseResult.success) {
     return {
       success: false,
-      message: "Validation failed.",
+      message: "Validasi gagal.",
       errors: parseResult.error.flatten().fieldErrors,
     };
   }
@@ -53,7 +53,7 @@ export async function rejectReservationAction(
   if (!session?.user?.id || session.user.role !== "admin") {
     return {
       success: false,
-      message: "Unauthorized: Only admins can reject reservations.",
+      message: "Tidak diizinkan: Hanya admin yang dapat menolak reservasi.",
     };
   }
 
@@ -142,8 +142,8 @@ export async function rejectReservationAction(
              VALUES ($1, $2, $3, $4, $5)`,
             [
               reservationDetails.userId,
-              "Reservation Rejected",
-              `Your reservation for room '${reservationDetails.roomName}' has been rejected. Reason: ${rejectionReason}`,
+              "Reservasi Ditolak",
+              `Reservasi Anda untuk ruangan '${reservationDetails.roomName}' telah ditolak. Alasan: ${rejectionReason}`,
               "user",
               "/me/bookings",
             ]
@@ -180,7 +180,7 @@ export async function rejectReservationAction(
 
     return {
       success: true,
-      message: "Reservation rejected successfully.",
+      message: "Reservasi berhasil ditolak.",
     };
   } catch (error) {
     console.error("Failed to reject reservation:", error);
@@ -188,7 +188,7 @@ export async function rejectReservationAction(
       error instanceof Error ? error.message : "Database error occurred.";
     return {
       success: false,
-      message: `Failed to reject reservation: ${errorMessage}`,
+      message: `Gagal menolak reservasi: ${errorMessage}`,
     };
   }
 }
