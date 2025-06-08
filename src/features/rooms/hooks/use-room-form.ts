@@ -78,14 +78,14 @@ export function useRoomForm({ room, mode = "create" }: UseRoomFormProps) {
     if (isUpdateMode) {
       imageValidation = {
         isValid: hasSuccessfulUploads() || existingImages.length > 0,
-        error: "At least one image is required for the room",
+        error: "Setidaknya satu gambar diperlukan untuk ruangan",
       };
     } else {
       imageValidation = validateImages();
     }
 
     if (!imageValidation.isValid) {
-      setErrorMessage(imageValidation.error || "Image validation failed");
+      setErrorMessage(imageValidation.error || "Validasi gambar gagal");
       return;
     }
 
@@ -111,8 +111,8 @@ export function useRoomForm({ room, mode = "create" }: UseRoomFormProps) {
         const result = await updateRoomAction(room.id, formData);
 
         if (result.success) {
-          toast.success("Room updated successfully", {
-            description: `${values.name} has been updated.`,
+          toast.success("Ruangan berhasil diperbarui", {
+            description: `${values.name} telah diperbarui.`,
           });
 
           router.push(`/admin/rooms/${result.room?.slug || ""}`);
@@ -136,8 +136,8 @@ export function useRoomForm({ room, mode = "create" }: UseRoomFormProps) {
         const result = await createRoomAction(formData);
 
         if (result.success) {
-          toast.success("Room created successfully", {
-            description: `${values.name} has been created.`,
+          toast.success("Ruangan berhasil dibuat", {
+            description: `${values.name} telah dibuat.`,
           });
 
           router.push("/admin/rooms");

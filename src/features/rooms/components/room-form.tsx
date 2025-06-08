@@ -68,12 +68,12 @@ import {
 import { Room } from "../types/room";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Room name is required"),
-  location: z.string().min(1, "Location is required"),
+  name: z.string().min(1, "Nama ruangan diperlukan"),
+  location: z.string().min(1, "Lokasi diperlukan"),
   capacity: z.coerce
     .number()
-    .min(1, "Capacity must be at least 1")
-    .max(1000, "Capacity cannot exceed 1000"),
+    .min(1, "Kapasitas minimal 1 orang")
+    .max(1000, "Kapasitas tidak boleh melebihi 1000 orang"),
   description: z.string().optional(),
   facilities: z.array(z.string()).optional(),
 });
@@ -194,14 +194,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
     if (isUpdateMode) {
       imageValidation = {
         isValid: hasSuccessfulUploads() || existingImages.length > 0,
-        error: "At least one image is required for the room",
+        error: "Setidaknya satu gambar diperlukan untuk ruangan",
       };
     } else {
       imageValidation = validateImages();
     }
 
     if (!imageValidation.isValid) {
-      setErrorMessage(imageValidation.error || "Image validation failed");
+      setErrorMessage(imageValidation.error || "Validasi gambar gagal");
       return;
     }
 
@@ -241,8 +241,8 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
         const result = await updateRoomAction(room.id, formData);
 
         if (result.success) {
-          toast.success("Room updated successfully", {
-            description: `${values.name} has been updated.`,
+          toast.success("Ruangan berhasil diperbarui", {
+            description: `${values.name} telah diperbarui.`,
           });
 
           router.push(`/admin/rooms/${result.room?.slug || ""}`);
@@ -266,8 +266,8 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
         const result = await createRoomAction(formData);
 
         if (result.success) {
-          toast.success("Room created successfully", {
-            description: `${values.name} has been created.`,
+          toast.success("Ruangan berhasil dibuat", {
+            description: `${values.name} telah dibuat.`,
           });
 
           router.push("/admin/rooms");
@@ -299,13 +299,13 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <Star className="h-5 w-5" />
                 {isUpdateMode
-                  ? "Update Room Details"
-                  : "Create Your Perfect Space"}
+                  ? "Perbarui Detail Ruangan"
+                  : "Buat Ruangan Sempurna Anda"}
               </h2>
               <p className="text-muted-foreground mt-1">
                 {isUpdateMode
-                  ? "Update the essential details about your room. A descriptive name and accurate location help users find the right space."
-                  : "Start by providing the essential details about your room. A descriptive name and accurate location help users find the right space for their needs."}
+                  ? "Perbarui detail penting tentang ruangan Anda. Nama yang deskriptif dan lokasi yang akurat membantu pengguna menemukan ruangan yang tepat."
+                  : "Mulai dengan memberikan detail penting tentang ruangan Anda. Nama yang deskriptif dan lokasi yang akurat membantu pengguna menemukan ruangan yang sesuai dengan kebutuhan mereka."}
               </p>
             </div>
 
@@ -318,14 +318,15 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2 text-base">
                         <Home className="h-4 w-4" />
-                        Room Name
+                        Nama Ruangan
                       </FormLabel>
                       <FormDescription>
-                        Choose a clear, memorable name for easy identification
+                        Pilih nama yang jelas dan mudah diingat untuk
+                        identifikasi
                       </FormDescription>
                       <FormControl>
                         <Input
-                          placeholder="Conference Room A"
+                          placeholder="Ruang Konferensi A"
                           {...field}
                           className="mt-2"
                         />
@@ -342,15 +343,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2 text-base">
                         <MapPin className="h-4 w-4" />
-                        Location
+                        Lokasi
                       </FormLabel>
                       <FormDescription>
-                        Specify the building, floor, or area where the room is
-                        located
+                        Tentukan gedung, lantai, atau area dimana ruangan berada
                       </FormDescription>
                       <FormControl>
                         <Input
-                          placeholder="Floor 2, Building A"
+                          placeholder="Lantai 2, Gedung A"
                           {...field}
                           className="mt-2"
                         />
@@ -370,7 +370,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                       <div className="flex items-center justify-between">
                         <FormLabel className="flex items-center gap-2 text-base">
                           <Users className="h-4 w-4" />
-                          Capacity
+                          Kapasitas
                         </FormLabel>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -385,14 +385,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                           </TooltipTrigger>
                           <TooltipContent>
                             <p className="max-w-xs">
-                              This is the maximum number of people the room can
-                              accommodate comfortably.
+                              Ini adalah jumlah maksimum orang yang dapat
+                              ditampung ruangan dengan nyaman.
                             </p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
                       <FormDescription>
-                        How many people can the room accommodate?
+                        Berapa banyak orang yang dapat ditampung ruangan?
                       </FormDescription>
                       <FormControl>
                         <Input
@@ -418,10 +418,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2 text-base">
                         <LayoutGrid className="h-4 w-4" />
-                        Facilities
+                        Fasilitas
                       </FormLabel>
                       <FormDescription>
-                        Select amenities available in this room
+                        Pilih fasilitas yang tersedia di ruangan ini
                       </FormDescription>
                       <FormControl>
                         <MultiSelect
@@ -429,7 +429,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                           options={facilityOptions}
                           onValueChange={field.onChange}
                           value={field.value}
-                          placeholder="Select facilities"
+                          placeholder="Pilih fasilitas"
                           className="min-h-10"
                           maxCount={5}
                         />
@@ -446,11 +446,11 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <FileText className="h-5 w-5" />
-                Tell Us More
+                Ceritakan Lebih Lanjut
               </h2>
               <p className="text-muted-foreground mt-1">
-                Help users understand what makes this room special with a
-                detailed description.
+                Bantu pengguna memahami apa yang membuat ruangan ini istimewa
+                dengan deskripsi yang detail.
               </p>
             </div>
 
@@ -462,15 +462,15 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   <FormItem>
                     <FormLabel className="flex items-center gap-2 text-base">
                       <FileText className="h-4 w-4" />
-                      Room Description
+                      Deskripsi Ruangan
                     </FormLabel>
                     <FormDescription>
-                      Provide details about the room&apos;s features,
-                      atmosphere, and ideal uses
+                      Berikan detail tentang fitur ruangan, suasana, dan
+                      penggunaan yang ideal
                     </FormDescription>
                     <FormControl>
                       <Textarea
-                        placeholder="A spacious conference room with natural lighting, perfect for team meetings and presentations..."
+                        placeholder="Ruang konferensi yang luas dengan pencahayaan alami, sempurna untuk rapat tim dan presentasi..."
                         rows={4}
                         {...field}
                         className="mt-2"
@@ -487,12 +487,12 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <ImageIcon className="h-5 w-5" />
-                {isUpdateMode ? "Manage Room Images" : "Show It Off"}
+                {isUpdateMode ? "Kelola Gambar Ruangan" : "Pamerkan Ruangan"}
               </h2>
               <p className="text-muted-foreground mt-1">
                 {isUpdateMode
-                  ? "Update or add new high-quality images to showcase your room's best features."
-                  : "A picture is worth a thousand words. Upload high-quality images to showcase your room's best features."}
+                  ? "Perbarui atau tambahkan gambar berkualitas tinggi untuk menampilkan fitur terbaik ruangan Anda."
+                  : "Sebuah gambar berbicara lebih dari seribu kata. Unggah gambar berkualitas tinggi untuk menampilkan fitur terbaik ruangan Anda."}
               </p>
             </div>
 
@@ -503,13 +503,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-green-500" />
-                      <span>Current Images</span>
+                      <span>Gambar Saat Ini</span>
                       <span className="bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">
                         {existingImages.length}
                       </span>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Select an image as cover or remove unnecessary images
+                      Pilih gambar sebagai sampul atau hapus gambar yang tidak
+                      perlu
                     </p>
                   </div>
 
@@ -531,7 +532,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                           {img.isCover && (
                             <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
                               <Star className="w-3 h-3" />
-                              Cover
+                              Sampul
                             </div>
                           )}
                         </div>
@@ -552,7 +553,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                               variant="secondary"
                               className="w-8 h-8 rounded-full"
                               onClick={() => setExistingCoverImage(index)}
-                              title="Set as cover"
+                              title="Jadikan sampul"
                             >
                               <Star className="w-4 h-4" />
                             </Button>
@@ -570,15 +571,15 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   className="flex items-center gap-2 text-base"
                 >
                   <Upload className="h-4 w-4" />
-                  {isUpdateMode ? "Add More Images" : "Room Images"}
+                  {isUpdateMode ? "Tambah Gambar Lagi" : "Gambar Ruangan"}
                   {!isUpdateMode && (
                     <span className="text-destructive ml-1">*</span>
                   )}
                 </FormLabel>
                 <FormDescription>
                   {isUpdateMode
-                    ? "Upload additional photos to showcase your room"
-                    : "Upload clear, well-lit photos showing different angles of the room"}
+                    ? "Unggah foto tambahan untuk menampilkan ruangan Anda"
+                    : "Unggah foto yang jelas dan terang yang menunjukkan berbagai sudut ruangan"}
                 </FormDescription>
                 <div className="flex items-center gap-2 mt-3">
                   <label
@@ -601,10 +602,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                         <>
                           <Loader2 className="w-10 h-10 text-primary/70 animate-spin" />
                           <p className="mt-3 text-sm font-medium text-muted-foreground">
-                            Uploading your images...
+                            Mengunggah gambar Anda...
                           </p>
                           <p className="text-xs text-muted-foreground/70 mt-1">
-                            This might take a moment
+                            Ini mungkin memerlukan waktu sebentar
                           </p>
                         </>
                       ) : (
@@ -615,10 +616,10 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                           <p
                             className={`mt-3 text-sm font-medium ${!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0 ? "text-destructive/70" : "text-muted-foreground"}`}
                           >
-                            Click to upload photos
+                            Klik untuk mengunggah foto
                           </p>
                           <p className="text-xs text-muted-foreground/70 mt-1">
-                            PNG, JPG, WEBP up to 10MB
+                            PNG, JPG, WEBP hingga 10MB
                           </p>
                         </>
                       )}
@@ -642,13 +643,14 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium flex items-center gap-1.5">
                       <Check className="h-3.5 w-3.5 text-green-500" />
-                      <span>New Uploaded Photos</span>
+                      <span>Foto Baru yang Diunggah</span>
                       <span className="bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">
                         {images.length}
                       </span>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      First image or selected image will be used as cover
+                      Gambar pertama atau gambar yang dipilih akan digunakan
+                      sebagai sampul
                     </p>
                   </div>
 
@@ -674,7 +676,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                           {img.isCover && (
                             <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
                               <Star className="w-3 h-3" />
-                              Cover
+                              Sampul
                             </div>
                           )}
 
@@ -687,7 +689,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
 
                           {img.status === "error" && (
                             <div className="absolute bottom-0 inset-x-0 bg-destructive text-destructive-foreground p-2 text-xs text-center font-medium">
-                              Upload failed
+                              Unggah gagal
                             </div>
                           )}
                         </div>
@@ -708,7 +710,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                               variant="secondary"
                               className="w-8 h-8 rounded-full"
                               onClick={() => setCoverImage(index)}
-                              title="Set as cover"
+                              title="Jadikan sampul"
                             >
                               <Star className="w-4 h-4" />
                             </Button>
@@ -735,17 +737,17 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                   {!isUpdateMode &&
                   !hasSuccessfulUploads() &&
                   existingImages.length === 0
-                    ? "Photos Required"
-                    : "Upload Tips"}
+                    ? "Foto Diperlukan"
+                    : "Tips Unggah"}
                 </AlertTitle>
                 <AlertDescription className="text-sm mt-1">
                   {!isUpdateMode &&
                   !hasSuccessfulUploads() &&
                   existingImages.length === 0
-                    ? "Please upload at least one photo to showcase the room. This helps users make informed decisions."
+                    ? "Silakan unggah setidaknya satu foto untuk menampilkan ruangan. Ini membantu pengguna membuat keputusan yang tepat."
                     : isUpdateMode
-                      ? "You can add new images or remove existing ones. At least one image must remain for the room."
-                      : "Photos are uploaded immediately. You can rearrange them by setting a different cover image. Clear, bright photos help your room stand out!"}
+                      ? "Anda dapat menambahkan gambar baru atau menghapus yang sudah ada. Setidaknya satu gambar harus tetap ada untuk ruangan."
+                      : "Foto diunggah langsung. Anda dapat mengatur ulang dengan menetapkan gambar sampul yang berbeda. Foto yang jelas dan terang membantu ruangan Anda menonjol!"}
                 </AlertDescription>
               </Alert>
             </div>
@@ -754,7 +756,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
           {errorMessage && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>Kesalahan</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
@@ -762,8 +764,8 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
           <div className="border-t pt-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="text-sm text-muted-foreground">
               <p>
-                All fields marked with{" "}
-                <span className="text-destructive">*</span> are required
+                Semua field yang ditandai{" "}
+                <span className="text-destructive">*</span> wajib diisi
               </p>
             </div>
             <div className="flex gap-4">
@@ -777,7 +779,7 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                 }
                 className="min-w-[100px]"
               >
-                Cancel
+                Batal
               </Button>
               <Button
                 type="submit"
@@ -787,12 +789,12 @@ export function RoomForm({ room, mode = "create" }: RoomFormProps) {
                 {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isUpdateMode ? "Updating..." : "Creating..."}
+                    {isUpdateMode ? "Memperbarui..." : "Membuat..."}
                   </>
                 ) : isUpdateMode ? (
-                  "Update Room"
+                  "Perbarui Ruangan"
                 ) : (
-                  "Create Room"
+                  "Buat Ruangan"
                 )}
               </Button>
             </div>

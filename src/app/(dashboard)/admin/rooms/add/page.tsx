@@ -4,19 +4,20 @@ import { AddRoomHeader } from "@/features/rooms/components/add-room-header";
 import { AddRoomFormSections } from "@/features/rooms/components/add-room-form-sections";
 
 export const metadata: Metadata = {
-  title: "Add New Room | Room Management",
-  description: "Create a new room in the room reservation system",
+  title: "Tambah Ruangan Baru | Manajemen Ruangan",
+  description: "Buat ruangan baru dalam sistem reservasi ruangan",
   openGraph: {
-    title: "Add New Room | Room Management",
-    description: "Create and configure a new room with details and facilities",
+    title: "Tambah Ruangan Baru | Manajemen Ruangan",
+    description:
+      "Buat dan konfigurasi ruangan baru dengan detail dan fasilitas",
     type: "website",
   },
 };
 
 const addRoomBreadcrumb = [
-  { label: "Rooms", href: "#" },
-  { label: "Manage Rooms", href: "/admin/rooms" },
-  { label: "Add Room" },
+  { label: "Ruangan", href: "#" },
+  { label: "Kelola Ruangan", href: "/admin/rooms" },
+  { label: "Tambah Ruangan" },
 ];
 
 export default function AddRoomsPage() {

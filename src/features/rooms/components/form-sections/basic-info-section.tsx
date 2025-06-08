@@ -51,12 +51,12 @@ export function BasicInfoSection({
           </div>
           <div>
             <CardTitle className="text-xl font-bold flex items-center gap-2">
-              🏢 Basic Information
+              🏢 Informasi Dasar
             </CardTitle>
             <CardDescription className="text-base">
               {isUpdateMode
-                ? "Update the essential details about your room"
-                : "Let's start with the fundamentals of your space"}
+                ? "Perbarui detail penting tentang ruangan Anda"
+                : "Mari mulai dengan informasi dasar ruangan Anda"}
             </CardDescription>
           </div>
         </div>
@@ -71,15 +71,15 @@ export function BasicInfoSection({
                 <FormItem className="space-y-3">
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     <Home className="h-4 w-4 text-primary" />
-                    Room Name
+                    Nama Ruangan
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormDescription className="text-sm text-muted-foreground">
-                    Choose a clear, memorable name for easy identification
+                    Pilih nama yang jelas dan mudah diingat untuk identifikasi
                   </FormDescription>
                   <FormControl>
                     <Input
-                      placeholder="e.g., Innovation Hub, Meeting Room Alpha"
+                      placeholder="contoh: Ruang Inovasi, Ruang Rapat Alpha"
                       {...field}
                       className="h-12 text-base border-2 focus:border-primary/50 transition-colors"
                     />
@@ -96,16 +96,15 @@ export function BasicInfoSection({
                 <FormItem className="space-y-3">
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     <MapPin className="h-4 w-4 text-primary" />
-                    Location
+                    Lokasi
                     <span className="text-destructive">*</span>
                   </FormLabel>
                   <FormDescription className="text-sm text-muted-foreground">
-                    Specify the building, floor, or area where the room is
-                    located
+                    Tentukan gedung, lantai, atau area dimana ruangan berada
                   </FormDescription>
                   <FormControl>
                     <Input
-                      placeholder="e.g., Floor 2, Building A, West Wing"
+                      placeholder="contoh: Lantai 2, Gedung A, Sayap Barat"
                       {...field}
                       className="h-12 text-base border-2 focus:border-primary/50 transition-colors"
                     />
@@ -125,7 +124,7 @@ export function BasicInfoSection({
                   <div className="flex items-center justify-between">
                     <FormLabel className="flex items-center gap-2 text-base font-semibold">
                       <Users className="h-4 w-4 text-primary" />
-                      Capacity
+                      Kapasitas
                       <span className="text-destructive">*</span>
                     </FormLabel>
                     <Tooltip>
@@ -141,21 +140,22 @@ export function BasicInfoSection({
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="max-w-xs">
-                          This is the maximum number of people the room can
-                          accommodate comfortably.
+                          Ini adalah jumlah maksimum orang yang dapat ditampung
+                          ruangan dengan nyaman.
                         </p>
                       </TooltipContent>
                     </Tooltip>
                   </div>
                   <FormDescription className="text-sm text-muted-foreground">
-                    How many people can the room accommodate comfortably?
+                    Berapa banyak orang yang dapat ditampung ruangan dengan
+                    nyaman?
                   </FormDescription>
                   <FormControl>
                     <Input
                       type="number"
                       min="1"
                       max="1000"
-                      placeholder="e.g., 12"
+                      placeholder="contoh: 12"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e.target.valueAsNumber);
@@ -175,10 +175,10 @@ export function BasicInfoSection({
                 <FormItem className="space-y-3">
                   <FormLabel className="flex items-center gap-2 text-base font-semibold">
                     <LayoutGrid className="h-4 w-4 text-primary" />
-                    Facilities & Amenities
+                    Fasilitas & Amenitas
                   </FormLabel>
                   <FormDescription className="text-sm text-muted-foreground">
-                    Select amenities available in this room
+                    Pilih fasilitas yang tersedia di ruangan ini
                   </FormDescription>
                   <FormControl>
                     <MultiSelect
@@ -186,7 +186,7 @@ export function BasicInfoSection({
                       options={facilityOptions}
                       onValueChange={field.onChange}
                       value={field.value}
-                      placeholder="Select facilities..."
+                      placeholder="Pilih fasilitas..."
                       className="min-h-12 border-2 focus:border-primary/50"
                       maxCount={5}
                     />

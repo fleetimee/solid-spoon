@@ -1,12 +1,12 @@
 import * as z from "zod";
 
 export const formSchema = z.object({
-  name: z.string().min(1, "Room name is required"),
-  location: z.string().min(1, "Location is required"),
+  name: z.string().min(1, "Nama ruangan diperlukan"),
+  location: z.string().min(1, "Lokasi diperlukan"),
   capacity: z.coerce
     .number()
-    .min(1, "Capacity must be at least 1")
-    .max(1000, "Capacity cannot exceed 1000"),
+    .min(1, "Kapasitas minimal 1 orang")
+    .max(1000, "Kapasitas tidak boleh melebihi 1000 orang"),
   description: z.string().optional(),
   facilities: z.array(z.string()).optional(),
 });
