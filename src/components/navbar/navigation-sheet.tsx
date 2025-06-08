@@ -9,14 +9,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import {
-  Menu,
-  LogOut,
-  Terminal,
-  User as UserIcon,
-  LogIn,
-  UserPlus,
-} from "lucide-react";
+import { Menu, LogOut, Terminal, User as UserIcon, LogIn } from "lucide-react";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { SheetLogo } from "./sheet-logo";
 import type { Session, User } from "better-auth"; // Import Session and User types
@@ -122,12 +115,6 @@ export const NavigationSheet = ({
                 <Link href="/auth/sign-in">
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
-                </Link>
-              </Button>
-              <Button variant="ghost-nav" className="w-full" asChild>
-                <Link href="/auth/sign-up">
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Sign Up
                 </Link>
               </Button>
             </div>

@@ -23,11 +23,6 @@ export async function generateMetadata({
       description:
         "Masuk ke akun Anda untuk mengakses sistem reservasi ruangan dan mengelola booking Anda.",
     },
-    "sign-up": {
-      title: "Daftar - Capstone Room Reservation",
-      description:
-        "Buat akun baru untuk mulai memesan ruangan dan menggunakan layanan reservasi kami.",
-    },
     "forgot-password": {
       title: "Lupa Kata Sandi - Capstone Room Reservation",
       description:
@@ -59,8 +54,6 @@ export async function generateMetadata({
     keywords: [
       "login",
       "masuk",
-      "daftar",
-      "register",
       "autentikasi",
       "akun",
       "reservasi ruangan",
@@ -105,6 +98,11 @@ export default async function AuthPage({
   params: Promise<{ pathname: string }>;
 }) {
   const { pathname } = await params;
+
+  // Redirect sign-up attempts to home page since registration is disabled
+  if (pathname === "sign-up") {
+    redirect("/");
+  }
 
   const session = await auth.api.getSession({
     headers: await headers(),

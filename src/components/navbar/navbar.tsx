@@ -133,9 +133,6 @@ export function Navbar({ session, initialNotificationCount }: NavbarProps) {
               >
                 <Link href="/auth/sign-in">Sign In</Link>
               </Button>
-              <Button className="hidden xs:inline-flex" asChild>
-                <Link href="/auth/signup">Get Started</Link>
-              </Button>
             </>
           )}
 
