@@ -10,6 +10,7 @@ import { NavSecondary } from "@/features/navigation/components/nav-secondary";
 import { NavUser } from "@/features/navigation/components/nav-user";
 import { NavigationMain } from "@/features/navigation/types/navigation";
 import { getIconByName, iconMap } from "@/lib/icons";
+import ThemeToggleSidebar from "@/features/navigation/components/theme-toggle-sidebar";
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +19,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupContent,
 } from "@/components/ui/sidebar";
 
 const staticData = {
@@ -117,6 +120,17 @@ export function AppSidebar({
       </SidebarContent>
       <SidebarFooter>
         <NavSecondary items={staticData.navSecondary} className="mt-auto" />
+
+        {/* Theme Toggle Section */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <ThemeToggleSidebar />
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         <NavUser
           user={userForNav}
