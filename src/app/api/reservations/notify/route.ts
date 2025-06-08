@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL =
   process.env.EMAIL_FROM ||
   "CapstoneD <capstone-kelompok-d@capstone-mail.fleetime.my.id>";
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"; // Define Base URL
+const BASE_URL = process.env.BETTER_AUTH_URL || "http://localhost:3000"; // Define Base URL
 const SITE_NAME = "CapstoneD Manajemen Ruangan Meeting"; // Define Site Name
 
 // Define interface for request body

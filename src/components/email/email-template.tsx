@@ -149,7 +149,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                 saja
               </p>
               <a
-                href="/me/bookings"
+                href={`${process.env.BETTER_AUTH_URL}/me/bookings`}
                 style={{
                   display: "inline-block",
                   backgroundColor: "#2563eb",

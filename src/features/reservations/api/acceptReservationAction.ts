@@ -114,7 +114,7 @@ export async function acceptReservationAction(
         try {
           const notifyUrl = new URL(
             "/api/reservations/notify",
-            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000" // Fallback needed
+            process.env.BETTER_AUTH_URL || "http://localhost:3000" // Fallback needed
           ).toString();
 
           await fetch(notifyUrl, {

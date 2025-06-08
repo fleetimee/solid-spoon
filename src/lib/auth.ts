@@ -38,7 +38,7 @@ export const auth = betterAuth({
           heading: "Atur Ulang Kata Sandi Anda",
           content: `Halo ${name}, silakan atur ulang kata sandi Anda dengan mengklik tautan di bawah ini.`,
           siteName: "CapstoneD Manajemen Ruangan Meeting",
-          baseUrl: "https://newtech.dev",
+          baseUrl: process.env.BETTER_AUTH_URL || "http://localhost:3000",
           url,
         }),
 
