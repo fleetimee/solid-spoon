@@ -28,10 +28,10 @@ export function ReservationRejectionCard({
           </div>
           <div>
             <CardTitle className="text-xl text-red-900 dark:text-red-100">
-              Rejection Reason
+              Alasan Penolakan
             </CardTitle>
             <CardDescription>
-              Explanation for reservation rejection
+              Penjelasan untuk penolakan reservasi
             </CardDescription>
           </div>
         </div>

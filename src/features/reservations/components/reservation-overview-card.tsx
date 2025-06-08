@@ -48,9 +48,9 @@ export function ReservationOverviewCard({
             <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <CardTitle className="text-xl">Reservation Overview</CardTitle>
+            <CardTitle className="text-xl">Ikhtisar Reservasi</CardTitle>
             <CardDescription>
-              Primary reservation details and information
+              Detail dan informasi utama reservasi
             </CardDescription>
           </div>
         </div>
@@ -64,11 +64,11 @@ export function ReservationOverviewCard({
               variant="small"
               className="font-semibold text-blue-900 dark:text-blue-100"
             >
-              Event Title
+              Judul Acara
             </Typography>
           </div>
           <Typography className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {title || "Untitled Reservation"}
+            {title || "Reservasi Tanpa Judul"}
           </Typography>
         </div>
 
@@ -80,7 +80,7 @@ export function ReservationOverviewCard({
               variant="small"
               className="font-semibold text-emerald-900 dark:text-emerald-100"
             >
-              Reserved Room
+              Ruangan yang Dipesan
             </Typography>
           </div>
           <Typography className="text-lg font-medium">
@@ -92,7 +92,7 @@ export function ReservationOverviewCard({
             </Link>
           </Typography>
           <Typography variant="small" className="text-muted-foreground mt-1">
-            Room ID: {roomId}
+            ID Ruangan: {roomId}
           </Typography>
         </div>
 
@@ -104,7 +104,7 @@ export function ReservationOverviewCard({
               variant="small"
               className="font-semibold text-purple-900 dark:text-purple-100"
             >
-              Reserved By
+              Dipesan Oleh
             </Typography>
           </div>
           <div className="flex items-center gap-4">
@@ -119,10 +119,10 @@ export function ReservationOverviewCard({
             </Avatar>
             <div className="flex flex-col">
               <Typography className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                {userName || "Unknown User"}
+                {userName || "Pengguna Tidak Dikenal"}
               </Typography>
               <Typography variant="small" className="text-muted-foreground">
-                {userEmail || "No email provided"}
+                {userEmail || "Email tidak tersedia"}
               </Typography>
             </div>
           </div>

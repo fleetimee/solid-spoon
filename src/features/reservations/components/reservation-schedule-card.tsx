@@ -36,10 +36,8 @@ export function ReservationScheduleCard({
             <Calendar className="h-5 w-5 text-amber-600 dark:text-amber-400" />
           </div>
           <div>
-            <CardTitle className="text-xl">Schedule & Timeline</CardTitle>
-            <CardDescription>
-              Reservation timing and duration details
-            </CardDescription>
+            <CardTitle className="text-xl">Jadwal & Timeline</CardTitle>
+            <CardDescription>Detail waktu dan durasi reservasi</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -55,7 +53,7 @@ export function ReservationScheduleCard({
                 variant="small"
                 className="font-semibold text-green-900 dark:text-green-100"
               >
-                Start Time
+                Waktu Mulai
               </Typography>
             </div>
             <Typography className="font-medium text-gray-900 dark:text-gray-100">
@@ -73,7 +71,7 @@ export function ReservationScheduleCard({
                 variant="small"
                 className="font-semibold text-red-900 dark:text-red-100"
               >
-                End Time
+                Waktu Selesai
               </Typography>
             </div>
             <Typography className="font-medium text-gray-900 dark:text-gray-100">

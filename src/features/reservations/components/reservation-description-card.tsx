@@ -25,8 +25,8 @@ export function ReservationDescriptionCard({
             <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
           </div>
           <div>
-            <CardTitle className="text-xl">Description</CardTitle>
-            <CardDescription>Additional details and notes</CardDescription>
+            <CardTitle className="text-xl">Deskripsi</CardTitle>
+            <CardDescription>Detail dan catatan tambahan</CardDescription>
           </div>
         </div>
       </CardHeader>

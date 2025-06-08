@@ -84,11 +84,11 @@ async function ReservationConfirmationContent({
   };
 
   const breadcrumbs = [
-    { label: "Home", href: "/" },
+    { label: "Beranda", href: "/" },
     { label: "Admin", href: "/admin/dashboard" },
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
-      label: `Confirm: ${reservation.title}`,
+      label: `Konfirmasi: ${reservation.title}`,
       isCurrent: true,
     },
   ];
@@ -107,11 +107,11 @@ async function ReservationConfirmationContent({
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                Accept Reservation
+                Terima Reservasi
               </h1>
               <p className="text-lg text-muted-foreground mt-1">
-                Review the details below and confirm the acceptance of this
-                reservation
+                Tinjau detail di bawah ini dan konfirmasi penerimaan reservasi
+                ini
               </p>
             </div>
           </div>
@@ -141,11 +141,11 @@ export default async function AdminReservationConfirmationPage(
 
 function ConfirmationPageSkeleton() {
   const breadcrumbs = [
-    { label: "Home", href: "/" },
+    { label: "Beranda", href: "/" },
     { label: "Admin", href: "/admin/dashboard" },
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
-      label: `Confirm Reservation`,
+      label: `Konfirmasi Reservasi`,
       isCurrent: true,
     },
   ];
@@ -163,11 +163,11 @@ function ConfirmationPageSkeleton() {
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                Accept Reservation
+                Terima Reservasi
               </h1>
               <p className="text-lg text-muted-foreground mt-1">
-                Review the details below and confirm the acceptance of this
-                reservation
+                Tinjau detail di bawah ini dan konfirmasi penerimaan reservasi
+                ini
               </p>
             </div>
           </div>

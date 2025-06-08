@@ -160,10 +160,10 @@ export function RejectConfirmationForm({
               </div>
               <div>
                 <CardTitle className="text-xl text-red-700 dark:text-red-300">
-                  Confirm Reservation Rejection
+                  Konfirmasi Penolakan Reservasi
                 </CardTitle>
                 <Typography variant="muted" className="mt-1">
-                  Review the reservation details and provide a rejection reason
+                  Tinjau detail reservasi dan berikan alasan penolakan
                 </Typography>
               </div>
             </div>
@@ -174,7 +174,7 @@ export function RejectConfirmationForm({
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="h-4 w-4 text-red-600 dark:text-red-400" />
                 <Typography variant="small" className="font-medium">
-                  Reservation Title
+                  Judul Reservasi
                 </Typography>
               </div>
               <Typography
@@ -191,7 +191,7 @@ export function RejectConfirmationForm({
                 <div className="flex items-center gap-2 mb-2">
                   <DoorOpen className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                   <Typography variant="small" className="font-medium">
-                    Room
+                    Ruangan
                   </Typography>
                 </div>
                 <Typography className="font-semibold">
@@ -203,7 +203,7 @@ export function RejectConfirmationForm({
                 <div className="flex items-center gap-2 mb-3">
                   <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   <Typography variant="small" className="font-medium">
-                    Requested by
+                    Diminta oleh
                   </Typography>
                 </div>
                 <div className="flex items-center gap-4">
@@ -225,13 +225,13 @@ export function RejectConfirmationForm({
                   </Avatar>
                   <div className="flex flex-col">
                     <Typography className="font-medium">
-                      {reservation.user.name ?? "Unknown User"}
+                      {reservation.user.name ?? "Pengguna Tidak Dikenal"}
                     </Typography>
                     <Typography
                       variant="small"
                       className="text-muted-foreground"
                     >
-                      {reservation.user.email ?? "No email provided"}
+                      {reservation.user.email ?? "Email tidak tersedia"}
                     </Typography>
                   </div>
                 </div>
@@ -243,13 +243,13 @@ export function RejectConfirmationForm({
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <Typography variant="small" className="font-medium">
-                  Schedule
+                  Jadwal
                 </Typography>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div>
                   <Typography variant="muted" className="mb-1">
-                    Start Time
+                    Waktu Mulai
                   </Typography>
                   <Typography className="font-semibold">
                     {format(new Date(reservation.start_time), "PPP p")}
@@ -257,7 +257,7 @@ export function RejectConfirmationForm({
                 </div>
                 <div>
                   <Typography variant="muted" className="mb-1">
-                    End Time
+                    Waktu Selesai
                   </Typography>
                   <Typography className="font-semibold">
                     {format(new Date(reservation.end_time), "PPP p")}
@@ -272,7 +272,7 @@ export function RejectConfirmationForm({
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   <Typography variant="small" className="font-medium">
-                    Description
+                    Deskripsi
                   </Typography>
                 </div>
                 <Typography className="leading-relaxed">
@@ -286,7 +286,7 @@ export function RejectConfirmationForm({
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
                 <Typography variant="small" className="font-medium">
-                  Rejection Reason *
+                  Alasan Penolakan *
                 </Typography>
               </div>
               <FormField
@@ -296,7 +296,7 @@ export function RejectConfirmationForm({
                   <FormItem>
                     <FormControl>
                       <Textarea
-                        placeholder="Please provide a clear reason for rejecting this reservation..."
+                        placeholder="Berikan alasan yang jelas untuk menolak reservasi ini..."
                         className="min-h-[100px] border-red-200 dark:border-red-800 focus:border-red-400 dark:focus:border-red-600"
                         {...field}
                       />
@@ -315,7 +315,7 @@ export function RejectConfirmationForm({
               onClick={() => window.history.back()}
               className="flex-1"
             >
-              Cancel
+              Batal
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -332,12 +332,12 @@ export function RejectConfirmationForm({
                   {form.formState.isSubmitting || isProcessing ? (
                     <>
                       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
+                      Memproses...
                     </>
                   ) : (
                     <>
                       <XCircle className="mr-2 h-4 w-4" />
-                      Confirm Rejection
+                      Konfirmasi Penolakan
                     </>
                   )}
                 </Button>
@@ -346,7 +346,7 @@ export function RejectConfirmationForm({
                 <AlertDialogHeader>
                   <AlertDialogTitle className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-red-500" />
-                    Reject Reservation?
+                    Tolak Reservasi?
                   </AlertDialogTitle>
                   <AlertDialogDescription asChild>
                     <div>
@@ -370,7 +370,7 @@ export function RejectConfirmationForm({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => handleRejectReservation(form.getValues())}
                     disabled={isProcessing}
@@ -379,10 +379,10 @@ export function RejectConfirmationForm({
                     {isProcessing ? (
                       <>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Rejecting...
+                        Menolak...
                       </>
                     ) : (
-                      "Yes, Reject Reservation"
+                      "Ya, Tolak Reservasi"
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>

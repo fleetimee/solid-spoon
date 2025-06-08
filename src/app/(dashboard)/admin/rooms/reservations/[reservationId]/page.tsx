@@ -33,9 +33,9 @@ export default async function ReservationDetailsPage(
   }
 
   const breadcrumbs = [
-    { label: "Home", href: "/admin/dashboard" },
-    { label: "Rooms", href: "/admin/rooms" },
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Beranda", href: "/admin/dashboard" },
+    { label: "Ruangan", href: "/admin/rooms" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
       label: reservation.id, // Use reservation ID for the label
       href: `/admin/rooms/reservations/${reservation.id}`,
