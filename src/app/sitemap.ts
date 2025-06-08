@@ -3,7 +3,7 @@ import { getRooms } from "@/features/rooms/api/getRooms";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get the base URL from the metadata configuration
-  const baseUrl = "https://room-reservation.example.com";
+  const baseUrl = "https://capstoned.app";
 
   // Initialize sitemap with static routes
   const staticRoutes: MetadataRoute.Sitemap = [
