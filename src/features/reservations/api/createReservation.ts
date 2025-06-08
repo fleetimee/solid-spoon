@@ -20,7 +20,7 @@ const newReservationSchema = z
       .int()
       .positive("ID ruangan harus berupa bilangan bulat positif"),
     title: z.string().min(1, "Judul diperlukan"),
-    description: z.string().optional(),
+    description: z.string().min(1, "Deskripsi diperlukan"),
     start_time: z
       .string()
       .datetime({ message: "Format tanggal/waktu mulai tidak valid" }),
@@ -129,7 +129,7 @@ export async function createReservationAction(
       validatedData.roomId,
       userId,
       validatedData.title,
-      validatedData.description || null, // Use null if description is empty/undefined
+      validatedData.description, // Description is now required, no need for null fallback
       validatedData.start_time, // Use the validated ISO string
       validatedData.end_time, // Use the validated ISO string
       2, // Assume status ID 1 means 'Pending'
