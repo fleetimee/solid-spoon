@@ -17,6 +17,36 @@ import { ChartConfig } from "@/components/ui/chart"; // Keep ChartConfig for def
 import { cn } from "@/lib/utils";
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { Activity } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Aktivitas Saya - Capstone Room Reservation",
+  description:
+    "Pantau semua aktivitas booking dan statistik penggunaan ruangan Anda. Lihat tren reservasi, ruangan favorit, dan riwayat booking.",
+  keywords: [
+    "aktivitas booking",
+    "statistik reservasi",
+    "riwayat booking",
+    "ruangan favorit",
+    "tren reservasi",
+    "dashboard pengguna",
+    "capstone",
+    "Indonesia",
+  ],
+  openGraph: {
+    title: "Aktivitas Saya - Capstone Room Reservation",
+    description:
+      "Pantau semua aktivitas booking dan statistik penggunaan ruangan Anda. Lihat tren reservasi, ruangan favorit, dan riwayat booking.",
+    type: "website",
+    locale: "id_ID",
+    url: "/me/activity",
+    siteName: "Capstone Room Reservation",
+  },
+  robots: {
+    index: false, // User profile pages should not be indexed
+    follow: false,
+  },
+};
 
 export default async function ActivityPage() {
   // Get session using the correct method provided

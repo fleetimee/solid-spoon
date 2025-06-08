@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon, Sparkles, Clock, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 import { Typography } from "@/components/ui/typography";
+import { Metadata } from "next";
 
 // Import new refactored components
 import { RoomBookingSection } from "@/features/rooms/components/room-booking-section";
@@ -40,6 +41,75 @@ interface RoomDetailPageProps {
     // Updated params type
     roomSlug: string;
   }>;
+}
+
+export async function generateMetadata(
+  props: RoomDetailPageProps
+): Promise<Metadata> {
+  const params = await props.params;
+  const { roomSlug } = params;
+
+  // Fetch room data for metadata
+  const room = await getRoomBySlug(roomSlug);
+
+  // If room not found, return default metadata
+  if (!room) {
+    return {
+      title: "Ruangan Tidak Ditemukan - Capstone Room Reservation",
+      description: "Ruangan yang Anda cari tidak tersedia atau telah dihapus.",
+    };
+  }
+
+  const roomTitle = `${room.name} - Detail Ruangan`;
+  const roomDescription = room.description
+    ? `${room.description} Lokasi: ${room.location || "Tidak disebutkan"}. Kapasitas: ${room.capacity || "N/A"} orang. Fasilitas lengkap tersedia.`
+    : `Ruangan ${room.name} tersedia untuk reservasi. Lokasi: ${room.location || "Tidak disebutkan"}. Kapasitas: ${room.capacity || "N/A"} orang.`;
+
+  const imageUrl =
+    room.coverImage ||
+    (room.images && room.images.length > 0
+      ? room.images[0]
+      : "/placeholder.svg");
+
+  return {
+    title: roomTitle,
+    description: roomDescription,
+    keywords: [
+      "reservasi ruangan",
+      room.name,
+      room.location || "ruangan",
+      "booking ruangan",
+      "sewa ruangan",
+      "meeting room",
+      "capstone",
+      "Indonesia",
+    ],
+    openGraph: {
+      title: roomTitle,
+      description: roomDescription,
+      type: "website",
+      locale: "id_ID",
+      url: `/v/${roomSlug}`,
+      siteName: "Capstone Room Reservation",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${room.name} - Ruangan untuk Reservasi`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: roomTitle,
+      description: roomDescription,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: `/v/${roomSlug}`,
+    },
+  };
 }
 
 export default async function RoomDetailPage(props: RoomDetailPageProps) {
