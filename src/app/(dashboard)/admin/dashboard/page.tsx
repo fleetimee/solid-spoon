@@ -54,11 +54,11 @@ export default async function AdminDashboardPage() {
   });
 
   const statusChartConfig = {
-    Approved: { label: "Approved", color: "hsl(var(--chart-2))" },
-    Pending: { label: "Pending", color: "hsl(var(--chart-4))" },
-    Rejected: { label: "Rejected", color: "hsl(var(--chart-5))" },
-    Cancelled: { label: "Cancelled", color: "hsl(var(--chart-3))" },
-    Unknown: { label: "Unknown", color: "hsl(var(--muted))" },
+    Approved: { label: "Disetujui", color: "hsl(var(--chart-2))" },
+    Pending: { label: "Menunggu", color: "hsl(var(--chart-4))" },
+    Rejected: { label: "Ditolak", color: "hsl(var(--chart-5))" },
+    Cancelled: { label: "Dibatalkan", color: "hsl(var(--chart-3))" },
+    Unknown: { label: "Tidak Diketahui", color: "hsl(var(--muted))" },
   } satisfies ChartConfig;
 
   const statusChartData = Object.entries(statusCounts)
@@ -81,21 +81,21 @@ export default async function AdminDashboardPage() {
   // Chart configurations
   const trendChartConfig = {
     count: {
-      label: "Reservations",
+      label: "Reservasi",
       color: "hsl(var(--chart-1))",
     },
   } satisfies ChartConfig;
 
   const activeRoomsChartConfig = {
     count: {
-      label: "Reservations",
+      label: "Reservasi",
       color: "hsl(var(--chart-3))",
     },
   } satisfies ChartConfig;
 
   const utilizationChartConfig = {
     utilization: {
-      label: "Utilization",
+      label: "Utilisasi",
       color: "hsl(var(--chart-5))",
     },
   } satisfies ChartConfig;
@@ -118,8 +118,8 @@ export default async function AdminDashboardPage() {
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8 min-w-0 overflow-x-hidden">
       <DashboardHeader
-        title="Admin Dashboard"
-        description="Manage your room reservation system"
+        title="Dashboard Admin"
+        description="Kelola sistem reservasi ruangan Anda"
       />
 
       <DashboardKPICards stats={stats} />

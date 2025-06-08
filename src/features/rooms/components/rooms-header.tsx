@@ -9,8 +9,8 @@ export interface RoomsHeaderProps {
 }
 
 export function RoomsHeader({
-  title = "Manage Rooms",
-  description = "Organize and oversee your room inventory with style",
+  title = "Kelola Ruangan",
+  description = "Atur dan awasi inventaris ruangan Anda dengan elegan",
   icon: Icon = Building2,
 }: RoomsHeaderProps) {
   return (
@@ -35,7 +35,7 @@ export function RoomsHeader({
       >
         <Link href="/admin/rooms/add">
           <Plus className="h-4 w-4" />
-          Add Room
+          Tambah Ruangan
         </Link>
       </Button>
     </div>

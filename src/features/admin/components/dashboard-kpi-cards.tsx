@@ -26,21 +26,21 @@ export interface DashboardKPICardsProps {
 export function DashboardKPICards({ stats }: DashboardKPICardsProps) {
   const kpiCards: KPICardData[] = [
     {
-      title: "Pending Reservations",
+      title: "Reservasi Menunggu",
       value: stats.pendingReservationCount,
-      description: "Reservations awaiting approval",
+      description: "Reservasi menunggu persetujuan",
       type: "pending",
     },
     {
-      title: "Total Users",
+      title: "Total Pengguna",
       value: stats.totalUserCount,
-      description: "Total registered users",
+      description: "Total pengguna terdaftar",
       type: "users",
     },
     {
-      title: "Active Rooms",
+      title: "Ruangan Aktif",
       value: stats.activeRoomCount,
-      description: "Available for booking",
+      description: "Tersedia untuk pemesanan",
       type: "rooms",
     },
   ];

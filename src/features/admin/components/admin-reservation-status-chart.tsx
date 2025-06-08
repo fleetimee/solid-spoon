@@ -39,9 +39,9 @@ export function AdminReservationStatusChart({
       {" "}
       {/* Added h-full for consistent height */}
       <CardHeader className="items-center pb-0">
-        <CardTitle>Reservation Status - Last 30 Days</CardTitle>
+        <CardTitle>Status Reservasi - 30 Hari Terakhir</CardTitle>
         <CardDescription>
-          Distribution of reservation statuses in the last 30 days.
+          Distribusi status reservasi dalam 30 hari terakhir.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -80,7 +80,7 @@ export function AdminReservationStatusChart({
         {" "}
         {/* Added padding top */}
         <div className="leading-none text-muted-foreground">
-          Total reservations: {totalCount}
+          Total reservasi: {totalCount}
         </div>
       </CardFooter>
     </Card>

@@ -185,7 +185,7 @@ export function RoomCard({ room, className, link }: RoomCardProps) {
                   <PopoverTrigger asChild>
                     <Badge className="cursor-pointer hover:bg-primary/20 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-muted/50 to-muted/30 text-muted-foreground border-muted/40 hover:border-primary/30 transition-all duration-300 hover:scale-105">
                       <span className="text-xs font-medium">
-                        +{facilities.length - 3} more
+                        +{facilities.length - 3} lainnya
                       </span>
                       <ChevronDown className="h-3 w-3" />
                     </Badge>

@@ -8,16 +8,17 @@ import { RoomsFiltersSection } from "@/features/rooms/components/rooms-filters-s
 import { RoomsGridSection } from "@/features/rooms/components/rooms-grid-section";
 
 export const metadata: Metadata = {
-  title: "Room Management",
-  description: "View and manage all available rooms in the reservation system",
+  title: "Manajemen Ruangan",
+  description:
+    "Lihat dan kelola semua ruangan yang tersedia dalam sistem reservasi",
   openGraph: {
-    description: "Browse and manage all rooms in the reservation system",
+    description: "Jelajahi dan kelola semua ruangan dalam sistem reservasi",
   },
 };
 
 export const fetchCache = "default-cache";
 
-const roomsBreadcrumb = [{ label: "Rooms" }, { label: "Manage Rooms" }];
+const roomsBreadcrumb = [{ label: "Ruangan" }, { label: "Kelola Ruangan" }];
 
 interface RoomsPageProps {
   searchParams: Promise<{

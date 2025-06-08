@@ -36,9 +36,10 @@ export function ReservationsTrendChart({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reservations - Last 30 Days</CardTitle>
+        <CardTitle>Reservasi - 30 Hari Terakhir</CardTitle>
         <CardDescription>
-          Showing total reservations created per day over the last 30 days.
+          Menampilkan total reservasi yang dibuat per hari selama 30 hari
+          terakhir.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -78,7 +79,7 @@ export function ReservationsTrendChart({
               stroke="var(--color-count)" // Assumes 'count' is defined in chartConfig and maps to a color variable
               strokeWidth={2}
               dot={false} // Optionally hide dots on the line
-              name="Reservations" // Name shown in tooltip
+              name="Reservasi" // Name shown in tooltip
             />
           </LineChart>
         </ChartContainer>
@@ -87,7 +88,7 @@ export function ReservationsTrendChart({
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Total reservations in this period: {totalReservations}
+              Total reservasi dalam periode ini: {totalReservations}
               <TrendingUp className="h-4 w-4" /> {/* Example icon */}
             </div>
             {/* <div className="flex items-center gap-2 leading-none text-muted-foreground">

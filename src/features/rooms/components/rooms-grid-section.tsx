@@ -158,8 +158,8 @@ export function RoomsGridSection({
             )}
             <h2 className="text-xl font-semibold text-center mt-2">
               {hasFilters
-                ? "🔍 No matching rooms found"
-                : "🏢 No rooms available"}
+                ? "🔍 Tidak ada ruangan yang cocok"
+                : "🏢 Tidak ada ruangan tersedia"}
             </h2>
           </div>
         </CardHeader>
@@ -168,21 +168,21 @@ export function RoomsGridSection({
           {hasFilters ? (
             <div className="space-y-4">
               <p className="text-muted-foreground max-w-md mx-auto">
-                Your current filter settings didn&apos;t return any results. Try
-                adjusting your filters or clearing them to see all rooms.
+                Pengaturan filter saat ini tidak menghasilkan hasil apapun. Coba
+                sesuaikan filter Anda atau hapus untuk melihat semua ruangan.
               </p>
 
               <div className="flex flex-col gap-2 items-center mt-2">
                 <div className="bg-background/80 rounded-lg p-3 inline-flex gap-2 text-sm text-muted-foreground shadow-sm">
                   <Info className="h-4 w-4 flex-shrink-0 text-blue-500" />
-                  <span>💡 Tip: Try broadening your search criteria</span>
+                  <span>💡 Tips: Coba perluas kriteria pencarian Anda</span>
                 </div>
               </div>
             </div>
           ) : (
             <p className="text-muted-foreground max-w-md mx-auto">
-              There are no rooms set up yet. Get started by adding your first
-              room to begin managing your space inventory.
+              Belum ada ruangan yang dikonfigurasi. Mulailah dengan menambahkan
+              ruangan pertama Anda untuk mulai mengelola inventaris ruang.
             </p>
           )}
         </CardContent>
@@ -197,7 +197,7 @@ export function RoomsGridSection({
               >
                 <Link href="/admin/rooms">
                   <RefreshCw className="h-4 w-4" />
-                  Clear all filters
+                  Hapus semua filter
                 </Link>
               </Button>
               <Button
@@ -206,7 +206,7 @@ export function RoomsGridSection({
               >
                 <Link href="/admin/rooms/add">
                   <Plus className="h-4 w-4" />
-                  Add new room
+                  Tambah ruangan baru
                 </Link>
               </Button>
             </div>
@@ -217,7 +217,7 @@ export function RoomsGridSection({
             >
               <Link href="/admin/rooms/add">
                 <Plus className="h-4 w-4" />
-                Add your first room
+                Tambah ruangan pertama Anda
               </Link>
             </Button>
           )}
@@ -230,13 +230,13 @@ export function RoomsGridSection({
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">🏢 Room Gallery</h2>
+          <h2 className="text-xl font-semibold">🏢 Galeri Ruangan</h2>
           <p className="text-sm text-muted-foreground">
-            Browse and manage your room inventory
+            Jelajahi dan kelola inventaris ruangan Anda
           </p>
         </div>
         <div className="text-sm text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-          {pagination.totalItems} room{pagination.totalItems !== 1 ? "s" : ""}{" "}
+          {pagination.totalItems} ruangan{pagination.totalItems !== 1 ? "" : ""}{" "}
           total
         </div>
       </div>
@@ -281,22 +281,22 @@ export function RoomsGridSection({
           <div className="text-center text-sm text-muted-foreground">
             {pagination.totalItems > 0 && (
               <>
-                Showing{" "}
+                Menampilkan{" "}
                 <span className="font-medium text-foreground">
                   {(pagination.currentPage - 1) * pagination.pageSize + 1}
                 </span>{" "}
-                to{" "}
+                hingga{" "}
                 <span className="font-medium text-foreground">
                   {Math.min(
                     pagination.currentPage * pagination.pageSize,
                     pagination.totalItems
                   )}
                 </span>{" "}
-                of{" "}
+                dari{" "}
                 <span className="font-medium text-foreground">
                   {pagination.totalItems}
                 </span>{" "}
-                rooms
+                ruangan
               </>
             )}
           </div>
