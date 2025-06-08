@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -84,18 +84,14 @@ export const NavigationSheet = ({
                 <NotificationBell initialCount={initialUnreadCount} />
               </div>
               <Separator />
-              <Button variant="ghost" className="w-full justify-start" asChild>
+              <Button variant="ghost-nav" className="w-full" asChild>
                 <Link href="/me">
                   <UserIcon className="mr-2 h-4 w-4" />
                   Profile
                 </Link>
               </Button>
               {session?.user?.role === "admin" && ( // Check role via session.user.role
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  asChild
-                >
+                <Button variant="ghost-nav" className="w-full" asChild>
                   <Link href="/admin/dashboard">
                     <Terminal className="mr-2 h-4 w-4" />
                     Console
@@ -103,26 +99,32 @@ export const NavigationSheet = ({
                 </Button>
               )}
               <LogoutConfirmation asChild>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  // Remove onClick handler
+                <button
+                  className={`${buttonVariants({
+                    variant: "ghost",
+                    size: "default",
+                  })} w-full justify-start text-red-600 dark:text-red-400 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/30 dark:hover:text-red-300 group`}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
+                  <LogOut className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform duration-200" />
+                  <span className="flex items-center gap-2">
+                    Logout
+                    <span className="text-xs opacity-60 group-hover:opacity-80">
+                      ✨
+                    </span>
+                  </span>
+                </button>
               </LogoutConfirmation>
             </div>
           ) : (
             // Unauthenticated User Content
             <div className="flex flex-col space-y-4">
-              <Button variant="ghost" className="w-full justify-start" asChild>
+              <Button variant="ghost-nav" className="w-full" asChild>
                 <Link href="/auth/sign-in">
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
                 </Link>
               </Button>
-              <Button variant="ghost" className="w-full justify-start" asChild>
+              <Button variant="ghost-nav" className="w-full" asChild>
                 <Link href="/auth/sign-up">
                   <UserPlus className="mr-2 h-4 w-4" />
                   Sign Up
