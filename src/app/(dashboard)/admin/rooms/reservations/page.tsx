@@ -99,17 +99,17 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
       {/* Add BreadcrumbSetter here */}
       <BreadcrumbSetter
         items={[
-          { label: "Home", href: "/admin/dashboard" },
-          { label: "Rooms", href: "/admin/rooms" },
-          { label: "Reservations", href: "/admin/rooms/reservations" },
+          { label: "Beranda", href: "/admin/dashboard" },
+          { label: "Ruangan", href: "/admin/rooms" },
+          { label: "Reservasi", href: "/admin/rooms/reservations" },
         ]}
       />
 
       {/* Modern Header Section */}
       <div className="flex items-center justify-between">
         <ReservationHeader
-          title="Manage Reservations"
-          description="View and manage all room reservations with modern analytics"
+          title="Kelola Reservasi"
+          description="Lihat dan kelola semua reservasi ruangan dengan analitik modern"
           icon={Calendar}
         />
       </div>
@@ -125,7 +125,7 @@ export default async function ReservationsPage(props: ReservationsPageProps) {
       />
 
       {/* Content Section with Glassmorphism */}
-      <ReservationContentSection title="Reservation Data">
+      <ReservationContentSection title="Data Reservasi">
         {/* Pass data, pageCount, rooms, and statuses to the data table */}
         <ReservationsDataTable
           columns={columns}

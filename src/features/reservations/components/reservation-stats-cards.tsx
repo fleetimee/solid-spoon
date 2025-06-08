@@ -31,27 +31,27 @@ export interface ReservationCardData {
 export function ReservationStatsCards({ stats }: ReservationStatsCardsProps) {
   const reservationCards: ReservationCardData[] = [
     {
-      title: "Total Reservations",
+      title: "Total Reservasi",
       value: stats.totalReservations,
-      description: "All room reservations",
+      description: "Semua reservasi ruangan",
       type: "total",
     },
     {
-      title: "Pending Approval",
+      title: "Menunggu Persetujuan",
       value: stats.pendingCount,
-      description: "Awaiting admin review",
+      description: "Menunggu tinjauan admin",
       type: "pending",
     },
     {
-      title: "Approved",
+      title: "Disetujui",
       value: stats.approvedCount,
-      description: "Confirmed reservations",
+      description: "Reservasi terkonfirmasi",
       type: "approved",
     },
     {
-      title: "Rejected/Cancelled",
+      title: "Ditolak/Dibatalkan",
       value: stats.rejectedCount,
-      description: "Declined or cancelled",
+      description: "Ditolak atau dibatalkan",
       type: "rejected",
     },
   ];

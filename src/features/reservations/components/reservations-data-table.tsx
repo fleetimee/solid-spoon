@@ -193,7 +193,7 @@ export function ReservationsDataTable<
         <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Filter by name or ID..."
+            placeholder="Filter berdasarkan nama atau ID..."
             defaultValue={searchParams.get("search") ?? ""}
             onChange={handleInputChange}
             className="pl-10"
@@ -207,10 +207,10 @@ export function ReservationsDataTable<
         >
           <SelectTrigger className="w-full sm:w-[200px]">
             <Building className="mr-2 h-4 w-4" />
-            <SelectValue placeholder="Filter by Room" />
+            <SelectValue placeholder="Filter berdasarkan Ruangan" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Rooms</SelectItem>
+            <SelectItem value="all">Semua Ruangan</SelectItem>
             {rooms.map((room) => (
               <SelectItem key={room.id} value={String(room.id)}>
                 {room.name}
@@ -226,10 +226,10 @@ export function ReservationsDataTable<
         >
           <SelectTrigger className="w-full sm:w-[200px]">
             <CheckCircle2 className="mr-2 h-4 w-4" />
-            <SelectValue placeholder="Filter by Status" />
+            <SelectValue placeholder="Filter berdasarkan Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="all">Semua Status</SelectItem>
             {statuses.map((status) => (
               <SelectItem key={status.id} value={String(status.id)}>
                 {status.value}
@@ -286,9 +286,11 @@ export function ReservationsDataTable<
                   <div className="flex flex-col items-center justify-center space-y-3">
                     <Sparkles className="h-12 w-12 text-muted-foreground/50" />
                     <div>
-                      <h3 className="font-medium">No reservations found</h3>
+                      <h3 className="font-medium">
+                        Tidak ada reservasi ditemukan
+                      </h3>
                       <p className="text-sm text-muted-foreground">
-                        Try adjusting your filters or search terms.
+                        Coba sesuaikan filter atau kata pencarian Anda.
                       </p>
                     </div>
                   </div>
@@ -302,7 +304,7 @@ export function ReservationsDataTable<
       {/* Pagination Controls */}
       <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
         <div className="text-sm font-medium text-muted-foreground">
-          Page {currentPage} of {pageCount}
+          Halaman {currentPage} dari {pageCount}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -312,7 +314,7 @@ export function ReservationsDataTable<
             disabled={currentPage <= 1}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
+            Sebelumnya
           </Button>
           <Button
             variant="outline"
@@ -320,7 +322,7 @@ export function ReservationsDataTable<
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= pageCount}
           >
-            Next
+            Selanjutnya
             <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
         </div>

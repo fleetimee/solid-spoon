@@ -197,9 +197,9 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "userName",
-    header: createSortableHeader("userName", "Reserved By", User),
+    header: createSortableHeader("userName", "Dipesan Oleh", User),
     cell: ({ row }) => {
-      const name = row.original.userName || "Unknown User";
+      const name = row.original.userName || "Pengguna Tidak Dikenal";
       const email = row.original.userEmail;
       const userImage = row.original.userImage;
 
@@ -233,7 +233,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "roomName",
-    header: createSortableHeader("roomName", "Room Name", MapPin),
+    header: createSortableHeader("roomName", "Nama Ruangan", MapPin),
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
@@ -249,7 +249,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "startTime",
-    header: createSortableHeader("startTime", "Start Time", Play),
+    header: createSortableHeader("startTime", "Waktu Mulai", Play),
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "endTime",
-    header: createSortableHeader("endTime", "End Time", Square),
+    header: createSortableHeader("endTime", "Waktu Selesai", Square),
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
@@ -281,7 +281,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: createSortableHeader("createdAt", "Created At", Calendar),
+    header: createSortableHeader("createdAt", "Dibuat Pada", Calendar),
     cell: ({ row }) => {
       return (
         <div className="text-sm font-medium text-slate-600 dark:text-slate-400">
@@ -324,7 +324,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
     header: () => (
       <div className="flex items-center justify-center">
         <span className="font-semibold text-slate-700 dark:text-slate-300">
-          Actions
+          Aksi
         </span>
       </div>
     ),
@@ -348,7 +348,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                 variant="ghost"
                 className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 group"
               >
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Buka menu</span>
                 <MoreHorizontal className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
               </Button>
             </DropdownMenuTrigger>
@@ -357,7 +357,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
               className="w-48 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-slate-200 dark:border-slate-700 shadow-xl"
             >
               <DropdownMenuLabel className="font-semibold text-slate-700 dark:text-slate-300">
-                Actions
+                Aksi
               </DropdownMenuLabel>
 
               {/* View Details Item */}
@@ -369,7 +369,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                   <div className="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-br from-blue-400 to-indigo-500 mr-3 group-hover:scale-110 transition-transform duration-200">
                     <Eye className="h-3 w-3 text-white" />
                   </div>
-                  <span className="font-medium">View Details</span>
+                  <span className="font-medium">Lihat Detail</span>
                 </Link>
               </DropdownMenuItem>
 
@@ -392,7 +392,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                   <div className="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-br from-emerald-400 to-green-500 mr-3 group-hover:scale-110 transition-transform duration-200">
                     <CheckCircle className="h-3 w-3 text-white" />
                   </div>
-                  <span className="font-medium">Accept</span>
+                  <span className="font-medium">Terima</span>
                 </Link>
               </DropdownMenuItem>
 
@@ -413,7 +413,7 @@ export const columns: ColumnDef<ReservationWithDetails>[] = [
                   <div className="flex items-center justify-center w-6 h-6 rounded bg-gradient-to-br from-red-400 to-rose-500 mr-3 group-hover:scale-110 transition-transform duration-200">
                     <XCircle className="h-3 w-3 text-white" />
                   </div>
-                  <span className="font-medium">Reject</span>
+                  <span className="font-medium">Tolak</span>
                 </Link>
               </DropdownMenuItem>
 
