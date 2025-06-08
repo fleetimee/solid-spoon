@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -13,6 +14,12 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { XCircle } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Tolak Reservasi - Admin Dashboard",
+  description:
+    "Tolak reservasi ruangan dengan memberikan alasan penolakan yang jelas",
+};
 
 interface RejectionPageProps {
   params: Promise<{

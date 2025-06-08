@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -13,6 +14,12 @@ import { Typography } from "@/components/ui/typography";
 import { Suspense } from "react";
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { CheckCircle } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Terima Reservasi - Admin Dashboard",
+  description:
+    "Konfirmasi penerimaan reservasi ruangan dengan meninjau detail dan memberikan persetujuan",
+};
 
 interface ConfirmationPageProps {
   params: Promise<{

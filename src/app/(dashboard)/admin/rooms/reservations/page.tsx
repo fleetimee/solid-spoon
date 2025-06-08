@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { getReservationStatuses } from "@/features/application/api/getLookupValue";
 import {
@@ -12,6 +13,12 @@ import { ReservationStatsCards } from "@/features/reservations/components/reserv
 import { ReservationContentSection } from "@/features/reservations/components/reservation-content-section";
 import { getActiveRoomsList } from "@/features/rooms/api/getRooms";
 import { Calendar } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Kelola Reservasi - Admin Dashboard",
+  description:
+    "Kelola dan pantau semua reservasi ruangan dengan analitik modern dan fitur filter lanjutan",
+};
 
 interface ReservationsPageProps {
   searchParams?: Promise<{

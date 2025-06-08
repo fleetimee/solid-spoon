@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   getReservationById,
@@ -11,6 +12,12 @@ import { ReservationDescriptionCard } from "@/features/reservations/components/r
 import { ReservationStatusCard } from "@/features/reservations/components/reservation-status-card";
 import { ReservationMetadataCard } from "@/features/reservations/components/reservation-metadata-card";
 import { ReservationRejectionCard } from "@/features/reservations/components/reservation-rejection-card";
+
+export const metadata: Metadata = {
+  title: "Detail Reservasi - Admin Dashboard",
+  description:
+    "Lihat informasi lengkap reservasi ruangan termasuk detail acara, jadwal, dan status",
+};
 
 // Define the props interface
 interface ReservationDetailsPageProps {

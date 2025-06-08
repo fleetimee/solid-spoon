@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import {
   ArrowLeft,
   Calendar,
@@ -26,8 +27,16 @@ import {
 } from "lucide-react";
 
 export default function ReservationDetailsLoading() {
+  const breadcrumbs = [
+    { label: "Beranda", href: "/admin/dashboard" },
+    { label: "Ruangan", href: "/admin/rooms" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
+    { label: "Detail Reservasi", isCurrent: true },
+  ];
+
   return (
     <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
+      <BreadcrumbSetter items={breadcrumbs} />
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
@@ -43,7 +52,7 @@ export default function ReservationDetailsLoading() {
         </div>
         <Button variant="outline" size="default" className="shadow-sm" disabled>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Reservations
+          Kembali ke Reservasi
         </Button>
       </div>
 
@@ -59,11 +68,9 @@ export default function ReservationDetailsLoading() {
                   <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">
-                    Reservation Overview
-                  </CardTitle>
+                  <CardTitle className="text-xl">Ringkasan Reservasi</CardTitle>
                   <CardDescription>
-                    Primary reservation details and information
+                    Detail utama dan informasi reservasi
                   </CardDescription>
                 </div>
               </div>
@@ -108,9 +115,9 @@ export default function ReservationDetailsLoading() {
                   <Calendar className="h-5 w-5 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Schedule & Timeline</CardTitle>
+                  <CardTitle className="text-xl">Jadwal & Timeline</CardTitle>
                   <CardDescription>
-                    Reservation timing and duration details
+                    Detail waktu dan durasi reservasi
                   </CardDescription>
                 </div>
               </div>
@@ -146,10 +153,8 @@ export default function ReservationDetailsLoading() {
                   <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Description</CardTitle>
-                  <CardDescription>
-                    Additional details and notes
-                  </CardDescription>
+                  <CardTitle className="text-xl">Deskripsi</CardTitle>
+                  <CardDescription>Detail tambahan dan catatan</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -168,7 +173,7 @@ export default function ReservationDetailsLoading() {
           {/* Status Card */}
           <Card>
             <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Current Status</CardTitle>
+              <CardTitle className="text-lg">Status Saat Ini</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900 dark:to-slate-900 rounded-lg border">
@@ -184,9 +189,7 @@ export default function ReservationDetailsLoading() {
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Metadata</CardTitle>
-              <CardDescription>
-                System information and timestamps
-              </CardDescription>
+              <CardDescription>Informasi sistem dan timestamp</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Created At */}
