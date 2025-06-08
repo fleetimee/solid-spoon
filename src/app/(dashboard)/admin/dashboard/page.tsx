@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { getAdminDashboardStats } from "@/features/admin/api/getAdminDashboardStats";
 import { getRecentActivityFeed } from "@/features/activity/api/getRecentActivityFeed";
 import { type ChartConfig } from "@/components/ui/chart";
@@ -5,6 +6,20 @@ import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { DashboardKPICards } from "@/features/admin/components/dashboard-kpi-cards";
 import { DashboardAnalyticsSection } from "@/features/admin/components/dashboard-analytics-section";
 import { DashboardActivitySection } from "@/features/admin/components/dashboard-activity-section";
+
+export const metadata: Metadata = {
+  title: "Dashboard Admin - Sistem Reservasi Ruangan",
+  description:
+    "Pantau dan kelola aktivitas sistem reservasi ruangan dengan analitik dan statistik komprehensif",
+  openGraph: {
+    title: "Dashboard Admin - Sistem Reservasi Ruangan",
+    description:
+      "Dasbor admin untuk mengelola sistem reservasi ruangan dengan insights dan analytics real-time",
+    siteName: "Sistem Reservasi Ruangan",
+    type: "website",
+    locale: "id_ID",
+  },
+};
 
 function formatShortDate(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });

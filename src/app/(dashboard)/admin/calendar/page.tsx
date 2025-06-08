@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { cookies, headers } from "next/headers"; // Import headers
 import { auth } from "@/lib/auth"; // Import auth instance
@@ -15,6 +16,20 @@ import {
 } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
+
+export const metadata: Metadata = {
+  title: "Kalender Admin - Jadwal Reservasi Ruangan",
+  description:
+    "Lihat dan kelola semua jadwal reservasi ruangan dalam tampilan kalender yang komprehensif",
+  openGraph: {
+    title: "Kalender Admin - Jadwal Reservasi Ruangan",
+    description:
+      "Kelola jadwal reservasi ruangan dengan mudah melalui tampilan kalender yang intuitif",
+    siteName: "Sistem Reservasi Ruangan",
+    type: "website",
+    locale: "id_ID",
+  },
+};
 
 // Define a loading component for Suspense fallback
 function CalendarLoadingSkeleton() {
