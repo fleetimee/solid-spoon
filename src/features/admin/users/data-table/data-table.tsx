@@ -179,7 +179,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-32 text-center text-muted-foreground"
                 >
-                  No results found.
+                  Tidak ada hasil ditemukan.
                 </TableCell>
               </TableRow>
             )}

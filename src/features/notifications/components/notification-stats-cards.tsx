@@ -28,21 +28,21 @@ export interface NotificationCardData {
 export function NotificationStatsCards({ stats }: NotificationStatsCardsProps) {
   const notificationCards: NotificationCardData[] = [
     {
-      title: "Total Notifications",
+      title: "Total Notifikasi",
       value: stats.totalNotifications,
-      description: "All system notifications",
+      description: "Semua notifikasi sistem",
       type: "total",
     },
     {
-      title: "Unread Count",
+      title: "Belum Dibaca",
       value: stats.unreadCount,
-      description: "Notifications requiring attention",
+      description: "Notifikasi yang memerlukan perhatian",
       type: "unread",
     },
     {
-      title: "Read Count",
+      title: "Sudah Dibaca",
       value: stats.readCount,
-      description: "Previously viewed notifications",
+      description: "Notifikasi yang telah dilihat",
       type: "read",
     },
   ];

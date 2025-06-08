@@ -40,7 +40,7 @@ export function NotificationJsonToggle({
   return (
     <div className="flex items-center space-x-2">
       <Label htmlFor="show-json" className="text-sm">
-        Show JSON
+        Tampilkan JSON
       </Label>
       <Link href={getToggleJsonUrl(!showJson)} className="inline-flex">
         <Switch id="show-json" checked={showJson} />
@@ -54,7 +54,7 @@ export function NotificationJsonView({ data }: { data: unknown }) {
     <div className="rounded-lg border bg-card p-4 mb-8">
       <div className="flex items-center gap-2 mb-4">
         <Code className="h-5 w-5" />
-        <h2 className="text-xl font-semibold">Raw Notification Data (JSON)</h2>
+        <h2 className="text-xl font-semibold">Data Notifikasi Mentah (JSON)</h2>
       </div>
       <pre className="bg-muted p-4 rounded overflow-auto max-h-[400px] text-sm">
         {JSON.stringify(data, null, 2)}

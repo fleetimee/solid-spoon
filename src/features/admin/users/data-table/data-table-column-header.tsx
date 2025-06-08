@@ -64,18 +64,17 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUp className="mr-2 h-4 w-4 text-muted-foreground" /> Ascending
+            <ArrowUp className="mr-2 h-4 w-4 text-muted-foreground" /> Menaik
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDown className="mr-2 h-4 w-4 text-muted-foreground" />{" "}
-            Descending
+            <ArrowDown className="mr-2 h-4 w-4 text-muted-foreground" /> Menurun
           </DropdownMenuItem>
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                <EyeOff className="mr-2 h-4 w-4 text-muted-foreground" /> Hide
-                column
+                <EyeOff className="mr-2 h-4 w-4 text-muted-foreground" />{" "}
+                Sembunyikan kolom
               </DropdownMenuItem>
             </>
           )}

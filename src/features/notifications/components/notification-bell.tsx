@@ -40,10 +40,10 @@ export function NotificationBell({ initialCount }: NotificationBellProps) {
       } else if ("error" in result && result.error) {
         setError(result.error);
       } else {
-        setError("Invalid response format");
+        setError("Format respons tidak valid");
       }
     } catch (err) {
-      setError("Failed to fetch notifications");
+      setError("Gagal mengambil notifikasi");
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +56,7 @@ export function NotificationBell({ initialCount }: NotificationBellProps) {
           variant="ghost"
           size="icon"
           className="relative w-9 h-9 p-0"
-          aria-label={`Notifications ${initialCount > 0 ? `(${initialCount} unread)` : ""}`}
+          aria-label={`Notifikasi ${initialCount > 0 ? `(${initialCount} belum dibaca)` : ""}`}
         >
           <Bell className="size-[1.2rem]" />
           {initialCount > 0 && (

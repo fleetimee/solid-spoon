@@ -65,7 +65,7 @@ function LoadingOverlay() {
     <div className="absolute inset-0 bg-background/80 backdrop-blur-[1px] flex items-center justify-center z-10">
       <div className="flex items-center justify-center p-4 rounded-md bg-background shadow-md border">
         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-        <span className="text-sm font-medium">Updating...</span>
+        <span className="text-sm font-medium">Memperbarui...</span>
       </div>
     </div>
   );

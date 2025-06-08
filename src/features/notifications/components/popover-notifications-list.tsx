@@ -18,7 +18,7 @@ export function PopoverNotificationsList({
   if (!notifications.length) {
     return (
       <div className="py-3 text-sm text-muted-foreground text-center">
-        No new notifications
+        Tidak ada notifikasi baru
       </div>
     );
   }
@@ -61,17 +61,17 @@ export function PopoverNotificationsList({
                     if (!result.success) {
                       throw new Error(result.error);
                     }
-                    toast.success("Notification marked as read");
+                    toast.success("Notifikasi ditandai sebagai dibaca");
                   } catch (error) {
                     toast.error(
-                      "Failed to mark notification as read. Please try again."
+                      "Gagal menandai notifikasi sebagai dibaca. Silakan coba lagi."
                     );
                     console.error("Error marking notification as read:", error);
                   }
                 }}
               >
                 <MailOpen className="h-4 w-4" />
-                <span className="sr-only">Mark as read</span>
+                <span className="sr-only">Tandai sebagai dibaca</span>
               </Button>
             )}
           </div>

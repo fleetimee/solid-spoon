@@ -27,19 +27,21 @@ export function MarkAllAsReadButton({
             // Only show toast if something was actually updated
             if ((result.updatedCount || 0) > 0) {
               toast.success(
-                `Marked ${result.updatedCount} notifications as read.`
+                `${result.updatedCount} notifikasi ditandai sebagai dibaca.`
               );
             } else {
-              toast.info("No unread notifications to mark.");
+              toast.info(
+                "Tidak ada notifikasi yang belum dibaca untuk ditandai."
+              );
             }
             // UI updates via revalidation in action
           } else {
-            toast.error(result.error || "Failed to mark all as read.");
+            toast.error(result.error || "Gagal menandai semua sebagai dibaca.");
           }
         })
         .catch((error) => {
           console.error("Mark all as read transition error:", error);
-          toast.error("An unexpected error occurred.");
+          toast.error("Terjadi kesalahan yang tidak terduga.");
         });
     });
   };
@@ -66,10 +68,10 @@ export function MarkAllAsReadButton({
       {isPending ? (
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 border-2 border-emerald-600/30 border-t-emerald-600 rounded-full animate-spin" />
-          Marking...
+          Menandai...
         </div>
       ) : (
-        "Mark All Read"
+        "Tandai Semua Dibaca"
       )}
     </Button>
   );

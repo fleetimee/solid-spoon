@@ -160,7 +160,7 @@ export function DataTableToolbar<TData>({
           <form onSubmit={onSearchSubmit}>
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search users by email or name..."
+              placeholder="Cari pengguna berdasarkan email atau nama..."
               value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
               className="pl-10 pr-10 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0"
@@ -174,7 +174,7 @@ export function DataTableToolbar<TData>({
                 className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full p-0 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
-                <span className="sr-only">Clear search</span>
+                <span className="sr-only">Hapus pencarian</span>
               </Button>
             )}
           </form>
@@ -184,17 +184,17 @@ export function DataTableToolbar<TData>({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex gap-2">
                 <Shield className="h-4 w-4" />
-                Role
+                Peran
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Filter by Role</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter berdasarkan Peran</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
                 checked={!getSelectedRole()}
                 onCheckedChange={() => toggleRoleFilter("all")}
               >
-                All Roles
+                Semua Peran
               </DropdownMenuCheckboxItem>
               {userRoles.map((role) => (
                 <DropdownMenuCheckboxItem
@@ -216,25 +216,25 @@ export function DataTableToolbar<TData>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter berdasarkan Status</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuCheckboxItem
                 checked={!getSelectedBannedStatus()}
                 onCheckedChange={() => toggleBannedFilter("all")}
               >
-                All Users
+                Semua Pengguna
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={getSelectedBannedStatus() === "active"}
                 onCheckedChange={() => toggleBannedFilter("active")}
               >
-                Active Users
+                Pengguna Aktif
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={getSelectedBannedStatus() === "banned"}
                 onCheckedChange={() => toggleBannedFilter("banned")}
               >
-                Banned Users
+                Pengguna Diblokir
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -243,7 +243,7 @@ export function DataTableToolbar<TData>({
             <SheetTrigger asChild>
               <Button variant="outline" className="relative">
                 <Filter className="mr-2 h-4 w-4" />
-                Filters
+                Filter
                 {activeFilters > 0 && (
                   <Badge
                     variant="secondary"
@@ -258,10 +258,10 @@ export function DataTableToolbar<TData>({
               <SheetHeader className="p-6 pb-2">
                 <SheetTitle className="flex items-center">
                   <Filter className="mr-2 h-5 w-5" />
-                  User Filters
+                  Filter Pengguna
                 </SheetTitle>
                 <SheetDescription>
-                  Find specific users by refining your search
+                  Temukan pengguna tertentu dengan menyaring pencarian Anda
                 </SheetDescription>
               </SheetHeader>
 
@@ -271,10 +271,10 @@ export function DataTableToolbar<TData>({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-medium">Search By</h3>
+                    <h3 className="text-sm font-medium">Cari Berdasarkan</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Choose which field to search in
+                    Pilih bidang yang ingin dicari
                   </p>
                   <Select
                     value={searchField}
@@ -283,11 +283,11 @@ export function DataTableToolbar<TData>({
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select field to search" />
+                      <SelectValue placeholder="Pilih bidang untuk dicari" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="email">Email Address</SelectItem>
-                      <SelectItem value="name">User Name</SelectItem>
+                      <SelectItem value="email">Alamat Email</SelectItem>
+                      <SelectItem value="name">Nama Pengguna</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -295,10 +295,10 @@ export function DataTableToolbar<TData>({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-medium">User Role</h3>
+                    <h3 className="text-sm font-medium">Peran Pengguna</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Filter users by their assigned role
+                    Filter pengguna berdasarkan peran yang diberikan
                   </p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -312,20 +312,20 @@ export function DataTableToolbar<TData>({
                             {pendingRoleFilter
                               ? pendingRoleFilter.charAt(0).toUpperCase() +
                                 pendingRoleFilter.slice(1)
-                              : "All roles"}
+                              : "Semua peran"}
                           </span>
                         </span>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-[320px]">
-                      <DropdownMenuLabel>Available Roles</DropdownMenuLabel>
+                      <DropdownMenuLabel>Peran yang Tersedia</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuCheckboxItem
                         checked={!pendingRoleFilter}
                         onCheckedChange={() => setPendingRoleFilter(null)}
                       >
-                        All Roles
+                        Semua Peran
                       </DropdownMenuCheckboxItem>
                       {userRoles.map((role) => (
                         <DropdownMenuCheckboxItem
@@ -347,10 +347,10 @@ export function DataTableToolbar<TData>({
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <Ban className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="text-sm font-medium">User Status</h3>
+                    <h3 className="text-sm font-medium">Status Pengguna</h3>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Filter users by their account status
+                    Filter pengguna berdasarkan status akun mereka
                   </p>
                   <Select
                     value={pendingBannedFilter || "all"}
@@ -359,12 +359,12 @@ export function DataTableToolbar<TData>({
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select account status" />
+                      <SelectValue placeholder="Pilih status akun" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Users</SelectItem>
-                      <SelectItem value="active">Active Users</SelectItem>
-                      <SelectItem value="banned">Banned Users</SelectItem>
+                      <SelectItem value="all">Semua Pengguna</SelectItem>
+                      <SelectItem value="active">Pengguna Aktif</SelectItem>
+                      <SelectItem value="banned">Pengguna Diblokir</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -373,10 +373,10 @@ export function DataTableToolbar<TData>({
               <div className="mt-auto px-6 py-3 border-t">
                 <div className="text-xs text-muted-foreground mb-2">
                   {activeFilters === 0 ? (
-                    <span>No active filters</span>
+                    <span>Tidak ada filter aktif</span>
                   ) : (
                     <span>
-                      Active filters: <strong>{activeFilters}</strong>
+                      Filter aktif: <strong>{activeFilters}</strong>
                     </span>
                   )}
                 </div>
@@ -393,7 +393,7 @@ export function DataTableToolbar<TData>({
                     }}
                     className="flex-1"
                   >
-                    Reset All
+                    Reset Semua
                   </Button>
                   <SheetClose asChild>
                     <Button
@@ -422,10 +422,10 @@ export function DataTableToolbar<TData>({
                       {isApplyingFilters ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Applying...
+                          Menerapkan...
                         </>
                       ) : (
-                        "Apply Filters"
+                        "Terapkan Filter"
                       )}
                     </Button>
                   </SheetClose>
@@ -450,13 +450,13 @@ export function DataTableToolbar<TData>({
       {isFiltered && (
         <div className="flex min-h-[2.25rem] flex-wrap items-center gap-2">
           <Users className="h-4 w-4 text-muted-foreground mr-1" />
-          <span className="text-sm text-muted-foreground">Active filters:</span>
+          <span className="text-sm text-muted-foreground">Filter aktif:</span>
 
           {searchValue && (
             <Badge variant="secondary" className="flex items-center gap-1">
               <Search className="h-3 w-3 mr-1" />
-              {searchField === "email" ? "Email" : "Name"}
-              {" contains: "}
+              {searchField === "email" ? "Email" : "Nama"}
+              {" berisi: "}
               <span className="font-semibold">{searchValue}</span>
               <Button
                 variant="ghost"
@@ -465,7 +465,7 @@ export function DataTableToolbar<TData>({
                 className="h-4 w-4 ml-1 rounded-full"
               >
                 <X className="h-2 w-2" />
-                <span className="sr-only">Remove search filter</span>
+                <span className="sr-only">Hapus filter pencarian</span>
               </Button>
             </Badge>
           )}
@@ -473,7 +473,7 @@ export function DataTableToolbar<TData>({
           {getSelectedRole() && (
             <Badge variant="secondary" className="flex items-center gap-1">
               <Shield className="h-3 w-3 mr-1" />
-              Role:{" "}
+              Peran:{" "}
               <span className="font-semibold capitalize">
                 {getSelectedRole()}
               </span>
@@ -484,7 +484,7 @@ export function DataTableToolbar<TData>({
                 className="h-4 w-4 ml-1 rounded-full"
               >
                 <X className="h-2 w-2" />
-                <span className="sr-only">Remove role filter</span>
+                <span className="sr-only">Hapus filter peran</span>
               </Button>
             </Badge>
           )}
@@ -494,7 +494,7 @@ export function DataTableToolbar<TData>({
               <Ban className="h-3 w-3 mr-1" />
               Status:{" "}
               <span className="font-semibold capitalize">
-                {getSelectedBannedStatus() === "banned" ? "Banned" : "Active"}
+                {getSelectedBannedStatus() === "banned" ? "Diblokir" : "Aktif"}
               </span>
               <Button
                 variant="ghost"
@@ -503,7 +503,7 @@ export function DataTableToolbar<TData>({
                 className="h-4 w-4 ml-1 rounded-full"
               >
                 <X className="h-2 w-2" />
-                <span className="sr-only">Remove status filter</span>
+                <span className="sr-only">Hapus filter status</span>
               </Button>
             </Badge>
           )}
@@ -516,7 +516,7 @@ export function DataTableToolbar<TData>({
               onClick={resetFilters}
             >
               <X className="h-3 w-3 mr-1" />
-              Clear all
+              Hapus semua
             </Button>
           )}
         </div>

@@ -52,11 +52,11 @@ import {
 const ROLES = ["user", "admin"] as const;
 
 const createUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  name: z.string().min(1, "Nama wajib diisi"),
+  email: z.string().email("Alamat email tidak valid"),
+  password: z.string().min(8, "Kata sandi harus minimal 8 karakter"),
   role: z.enum(ROLES, {
-    required_error: "Please select a role",
+    required_error: "Silakan pilih peran",
   }),
 });
 
@@ -92,16 +92,16 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
 
       if (result.error) {
         console.error("Error creating user:", result.error);
-        toast.error(`Failed to create user: ${result.error.message}`);
+        toast.error(`Gagal membuat pengguna: ${result.error.message}`);
       } else {
-        toast.success(`User "${values.name}" created successfully!`);
+        toast.success(`Pengguna "${values.name}" berhasil dibuat!`);
         form.reset();
         onUserCreated();
         setIsOpen(false);
       }
     } catch (error) {
       console.error("Caught error creating user:", error);
-      toast.error("An unexpected error occurred while creating the user.");
+      toast.error("Terjadi kesalahan tak terduga saat membuat pengguna.");
     } finally {
       setIsSubmitting(false);
     }
@@ -111,7 +111,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-          <Plus className="mr-2 h-4 w-4" /> Create User
+          <Plus className="mr-2 h-4 w-4" /> Buat Pengguna
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[525px] border-0 bg-gradient-to-br from-white/95 to-violet-50/90 dark:from-gray-950/95 dark:to-violet-950/50 backdrop-blur-xl shadow-2xl">
@@ -128,11 +128,11 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
             </div>
             <div className="space-y-1">
               <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                Create New User
+                Buat Pengguna Baru
               </DialogTitle>
               <DialogDescription className="text-muted-foreground">
-                Enter the details for the new user. Click save when you&apos;re
-                done.
+                Masukkan detail untuk pengguna baru. Klik simpan setelah
+                selesai.
               </DialogDescription>
             </div>
           </div>
@@ -155,11 +155,11 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                         <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
                           <User className="h-3 w-3 text-white" />
                         </div>
-                        Name
+                        Nama
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g., John Doe"
+                          placeholder="mis., John Doe"
                           {...field}
                           disabled={isSubmitting}
                           className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
@@ -184,7 +184,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="e.g., john.doe@example.com"
+                          placeholder="mis., john.doe@example.com"
                           {...field}
                           disabled={isSubmitting}
                           className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
@@ -204,12 +204,12 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                         <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
                           <Lock className="h-3 w-3 text-white" />
                         </div>
-                        Password
+                        Kata Sandi
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="password"
-                          placeholder="Must be at least 8 characters"
+                          placeholder="Harus minimal 8 karakter"
                           {...field}
                           disabled={isSubmitting}
                           className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200"
@@ -229,7 +229,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                         <div className="w-5 h-5 rounded-lg bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center mr-2">
                           <ShieldCheck className="h-3 w-3 text-white" />
                         </div>
-                        Role
+                        Peran
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -238,12 +238,12 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                           disabled={isSubmitting}
                         >
                           <SelectTrigger className="border-violet-200/50 dark:border-violet-800/50 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm focus:border-violet-400 focus:ring-violet-400/20 transition-all duration-200">
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder="Pilih peran" />
                           </SelectTrigger>
                           <SelectContent className="border-violet-200/50 dark:border-violet-800/50 bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl">
                             <SelectGroup>
                               <SelectLabel className="text-violet-600 dark:text-violet-400 font-medium">
-                                Available Roles
+                                Peran yang Tersedia
                               </SelectLabel>
                               {ROLES.map((role) => (
                                 <SelectItem
@@ -267,7 +267,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
                         </Select>
                       </FormControl>
                       <FormDescription className="text-xs text-muted-foreground">
-                        User permissions are determined by their role.
+                        Izin pengguna ditentukan oleh peran mereka.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -287,7 +287,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
               disabled={isSubmitting}
               className="border-violet-200/50 dark:border-violet-800/50 hover:bg-violet-50 dark:hover:bg-violet-950/50 transition-all duration-200"
             >
-              Cancel
+              Batal
             </Button>
           </DialogClose>
           <Button
@@ -298,11 +298,11 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
           >
             {isSubmitting ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Membuat...
               </>
             ) : (
               <>
-                <Plus className="mr-2 h-4 w-4" /> Create User
+                <Plus className="mr-2 h-4 w-4" /> Buat Pengguna
               </>
             )}
           </Button>

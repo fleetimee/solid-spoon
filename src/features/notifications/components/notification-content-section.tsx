@@ -7,7 +7,7 @@ export interface NotificationContentSectionProps {
 
 export function NotificationContentSection({
   children,
-  title = "Notification Management",
+  title = "Manajemen Notifikasi",
 }: NotificationContentSectionProps) {
   return (
     <div className="space-y-6">
