@@ -69,7 +69,7 @@ export function RoomImageGallery({ images }: RoomImageGalleryProps) {
   if (!images || images.length === 0) {
     return (
       <div className="w-full h-[400px] bg-muted flex items-center justify-center rounded-lg">
-        <p className="text-muted-foreground">No images available</p>
+        <p className="text-muted-foreground">Tidak ada gambar tersedia</p>
       </div>
     );
   }
@@ -93,7 +93,7 @@ export function RoomImageGallery({ images }: RoomImageGalleryProps) {
                 onClick={() => openImageModal(index)}
                 role="button"
                 tabIndex={0}
-                aria-label={`View full-size image ${index + 1} of ${images.length}`}
+                aria-label={`Lihat gambar ukuran penuh ${index + 1} dari ${images.length}`}
                 onKeyDown={(e) => e.key === "Enter" && openImageModal(index)}
               >
                 <Image

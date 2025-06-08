@@ -22,34 +22,34 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
 
   const statsData = [
     {
-      title: "Total Reservations",
+      title: "Total Reservasi",
       value: stats.totalReservations.toLocaleString(),
       icon: Calendar,
-      description: "All-time bookings",
+      description: "Seluruh pemesanan",
       type: "total" as const,
     },
     {
-      title: "Active Bookings",
+      title: "Pemesanan Aktif",
       value: stats.activeBookings.toLocaleString(),
       icon: BookOpen,
-      description: "Current & upcoming",
+      description: "Saat ini & mendatang",
       type: "active" as const,
     },
     {
-      title: "Utilization Rate",
+      title: "Tingkat Utilisasi",
       value: formatUtilizationRate(stats.utilizationRate),
       icon: TrendingUp,
-      description: "Last 30 days",
+      description: "30 hari terakhir",
       type: "utilization" as const,
       valueClassName: getUtilizationColor(stats.utilizationRate),
     },
     {
-      title: "Last Booked",
+      title: "Terakhir Dipesan",
       value: stats.lastBooked
         ? format(new Date(stats.lastBooked), "MMM d, yyyy")
-        : "Never",
+        : "Tidak Pernah",
       icon: Clock,
-      description: "Most recent booking",
+      description: "Pemesanan terbaru",
       type: "recent" as const,
     },
   ];
@@ -106,7 +106,7 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
       <div className="flex items-center gap-2">
         <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
         <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-          Room Statistics
+          Statistik Ruangan
         </h2>
       </div>
 
@@ -153,13 +153,13 @@ export function RoomDetailStats({ stats }: RoomDetailStatsProps) {
       {/* Additional insights */}
       <div className="flex flex-wrap gap-2 pt-2">
         {stats.utilizationRate >= 80 && (
-          <Badge variant="destructive">High Utilization</Badge>
+          <Badge variant="destructive">Utilisasi Tinggi</Badge>
         )}
         {stats.activeBookings > 5 && (
-          <Badge variant="default">Popular Room</Badge>
+          <Badge variant="default">Ruangan Populer</Badge>
         )}
         {stats.totalReservations === 0 && (
-          <Badge variant="secondary">New Room</Badge>
+          <Badge variant="secondary">Ruangan Baru</Badge>
         )}
       </div>
     </div>

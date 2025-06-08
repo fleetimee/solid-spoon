@@ -12,7 +12,7 @@ export function RoomImageSection({ room }: RoomImageSectionProps) {
       <div className="flex items-center gap-2">
         <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
         <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-          Gallery
+          Galeri
         </h2>
       </div>
 
@@ -40,11 +40,11 @@ export function RoomImageSection({ room }: RoomImageSectionProps) {
                 <span className="text-2xl text-white">📷</span>
               </div>
               <p className="text-violet-700 dark:text-violet-300 text-lg font-medium">
-                No images available
+                Tidak ada gambar tersedia
               </p>
               <p className="text-sm text-violet-600/70 dark:text-violet-400/70 max-w-sm">
-                Add some photos to showcase this room&apos;s features and
-                amenities
+                Tambahkan beberapa foto untuk menampilkan fitur dan fasilitas
+                ruangan ini
               </p>
             </div>
           </div>

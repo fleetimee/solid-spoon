@@ -24,14 +24,14 @@ export async function generateMetadata(
 
   if (!room) {
     return {
-      title: "Room Not Found",
-      description: "The requested room could not be found",
+      title: "Ruangan Tidak Ditemukan",
+      description: "Ruangan yang diminta tidak dapat ditemukan",
     };
   }
 
   return {
-    title: `Delete ${room.name} | Room Management`,
-    description: `Permanently delete the room "${room.name}"`,
+    title: `Hapus ${room.name} | Kelola Ruangan`,
+    description: `Hapus permanen ruangan "${room.name}"`,
   };
 }
 
@@ -45,10 +45,10 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
   }
 
   const roomBreadcrumb = [
-    { label: "Rooms", href: "#" },
-    { label: "Manage Rooms", href: "/admin/rooms" },
+    { label: "Ruangan", href: "#" },
+    { label: "Kelola Ruangan", href: "/admin/rooms" },
     { label: room.name, href: `/admin/rooms/${slug}` },
-    { label: "Delete" },
+    { label: "Hapus" },
   ];
 
   return (

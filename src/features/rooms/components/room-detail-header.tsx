@@ -28,7 +28,7 @@ export function RoomDetailHeader({
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            <span>{room.capacity} people</span>
+            <span>{room.capacity} orang</span>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@ export function RoomDetailHeader({
           variant="default"
           className="text-muted-foreground leading-relaxed text-sm"
         >
-          {room.description || "No description available."}
+          {room.description || "Tidak ada deskripsi tersedia."}
         </Typography>
 
         <div className="space-y-2">
@@ -48,18 +48,18 @@ export function RoomDetailHeader({
             className="flex items-center font-semibold text-base"
           >
             <ListChecks className="h-4 w-4 mr-2 text-primary" />
-            Quick Highlights
+            Sorotan Singkat
           </Typography>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="flex items-center gap-2 p-2 rounded-lg bg-primary/5 border border-primary/20">
               <Users className="h-4 w-4 text-primary" />
               <span className="text-xs font-medium">
-                {room.capacity} Person Capacity
+                Kapasitas {room.capacity} Orang
               </span>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-lg bg-green-500/5 border border-green-500/20">
               <Clock className="h-4 w-4 text-green-500" />
-              <span className="text-xs font-medium">Available 24/7</span>
+              <span className="text-xs font-medium">Tersedia 24/7</span>
             </div>
           </div>
         </div>

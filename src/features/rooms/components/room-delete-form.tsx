@@ -30,7 +30,7 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
     setError(null);
 
     if (confirmName !== room.name) {
-      setError("Room name confirmation doesn't match");
+      setError("Konfirmasi nama ruangan tidak cocok");
       return;
     }
 
