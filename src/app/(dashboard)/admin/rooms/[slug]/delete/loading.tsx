@@ -10,10 +10,10 @@ import {
 
 // Breadcrumb placeholder for delete room
 const deleteRoomBreadcrumb = [
-  { label: "Rooms", href: "#" },
-  { label: "Manage Rooms", href: "#" },
-  { label: "Room", href: "#" },
-  { label: "Delete" },
+  { label: "Ruangan", href: "#" },
+  { label: "Kelola Ruangan", href: "#" },
+  { label: "Ruangan", href: "#" },
+  { label: "Hapus" },
 ];
 
 // Header skeleton with destructive theme

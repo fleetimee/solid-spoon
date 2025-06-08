@@ -72,7 +72,7 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
                   <ArrowLeft className="h-3 w-3 group-hover:text-white transition-colors duration-300" />
                 </div>
                 <span className="group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                  Back to room details
+                  Kembali ke detail ruangan
                 </span>
               </Link>
 
@@ -83,10 +83,10 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
                 </div>
                 <div className="space-y-2">
                   <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-400 dark:to-rose-400 bg-clip-text text-transparent">
-                    Delete Room
+                    Hapus Ruangan
                   </h1>
                   <p className="text-muted-foreground">
-                    You are about to permanently delete the room &quot;
+                    Anda akan menghapus secara permanen ruangan &quot;
                     <span className="font-semibold bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-400 dark:to-rose-400 bg-clip-text text-transparent">
                       {room.name}
                     </span>
@@ -102,7 +102,7 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-rose-500 rounded-full"></div>
-            <h2 className="text-xl font-semibold">Deletion Confirmation</h2>
+            <h2 className="text-xl font-semibold">Konfirmasi Penghapusan</h2>
           </div>
 
           <div className="bg-gradient-to-br from-red-50/50 to-rose-50/50 dark:from-red-950/10 dark:to-rose-950/10 rounded-xl p-6 shadow-lg border-0 backdrop-blur-sm">
@@ -116,7 +116,7 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
                     <Trash2 className="h-5 w-5 text-white" />
                   </div>
                   <h2 className="text-xl font-semibold bg-gradient-to-r from-red-700 to-rose-700 dark:from-red-300 dark:to-rose-300 bg-clip-text text-transparent">
-                    Delete Confirmation
+                    Konfirmasi Penghapusan
                   </h2>
                 </div>
               </CardHeader>
@@ -124,7 +124,8 @@ export default async function DeleteRoomPage(props: DeleteRoomPageProps) {
               <CardContent className="relative pt-6 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm">
                 <div className="mb-6">
                   <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                    To confirm deletion, please type the full name of the room:
+                    Untuk mengkonfirmasi penghapusan, silakan ketik nama lengkap
+                    ruangan:
                   </p>
                   <div className="p-4 bg-gradient-to-r from-red-50/80 to-rose-50/80 dark:from-red-950/30 dark:to-rose-950/30 rounded-lg border border-red-200/50 dark:border-red-800/50 backdrop-blur-sm">
                     <span className="font-semibold text-red-700 dark:text-red-300 text-lg">

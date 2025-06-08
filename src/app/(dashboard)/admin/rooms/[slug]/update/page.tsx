@@ -64,8 +64,8 @@ export default async function UpdateRoomPage(props: UpdateRoomPageProps) {
 
       <div className="flex flex-col gap-8 p-4 md:p-6 lg:p-8">
         <AddRoomHeader
-          title={`✏️ Update ${room.name}`}
-          description="Make changes to your room details and enhance the experience"
+          title={`✏️ Perbarui ${room.name}`}
+          description="Lakukan perubahan pada detail ruangan dan tingkatkan pengalaman"
         />
 
         <Suspense fallback={<Skeleton className="h-10 w-full" />}>

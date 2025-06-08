@@ -42,14 +42,14 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
       const result = await deleteRoomAction(room.id, formData);
 
       if (result.success) {
-        toast.success("Room deleted successfully", {
-          description: `${room.name} has been removed from the system.`,
+        toast.success("Ruangan berhasil dihapus", {
+          description: `${room.name} telah dihapus dari sistem.`,
         });
         router.push("/admin/rooms");
         router.refresh();
       } else {
         setError(result.error || result.message);
-        toast.error("Failed to delete room", {
+        toast.error("Gagal menghapus ruangan", {
           description: result.message,
         });
       }
@@ -65,7 +65,7 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
             htmlFor="confirmName"
             className="text-sm font-semibold bg-gradient-to-r from-red-700 to-rose-700 dark:from-red-300 dark:to-rose-300 bg-clip-text text-transparent"
           >
-            Confirmation Required
+            Konfirmasi Diperlukan
           </label>
           <div className="relative">
             <Input
@@ -75,7 +75,7 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
               autoComplete="off"
               autoCorrect="off"
               spellCheck="false"
-              placeholder="Type the room name here"
+              placeholder="Ketik nama ruangan di sini"
               value={confirmName}
               onChange={(e) => setConfirmName(e.target.value)}
               className={`
@@ -144,7 +144,7 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-gray-500 to-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <span className="relative group-hover:text-white transition-colors duration-300">
-              Cancel
+              Batal
             </span>
           </Button>
 
@@ -161,14 +161,14 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
                   <div className="p-1 rounded-md bg-white/20">
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
-                  <span>Deleting...</span>
+                  <span>Menghapus...</span>
                 </>
               ) : (
                 <>
                   <div className="p-1 rounded-md bg-white/20 group-hover:bg-white/30 transition-colors duration-300">
                     <Trash2 className="h-4 w-4" />
                   </div>
-                  <span>Delete Room</span>
+                  <span>Hapus Ruangan</span>
                 </>
               )}
             </div>
@@ -180,12 +180,12 @@ export function DeleteRoomForm({ room }: DeleteRoomFormProps) {
           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {!isConfirmationValid && confirmName.length > 0 ? (
               <span className="text-red-600 dark:text-red-400 font-medium">
-                ⚠️ The text you&apos;ve entered doesn&apos;t match the room
-                name.
+                ⚠️ Teks yang Anda masukkan tidak cocok dengan nama ruangan.
               </span>
             ) : (
               <span>
-                ℹ️ You must type the exact room name to confirm deletion.
+                ℹ️ Anda harus mengetik nama ruangan yang tepat untuk
+                mengkonfirmasi penghapusan.
               </span>
             )}
           </p>

@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 
 export default function RoomDetailLoading() {
   const roomBreadcrumb = [
-    { label: "Rooms", href: "/admin/rooms" },
-    { label: "Loading..." },
+    { label: "Ruangan", href: "/admin/rooms" },
+    { label: "Memuat..." },
   ];
 
   return (
