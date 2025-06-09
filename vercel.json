@@ -1,0 +1,13 @@
+{
+  "crons": [
+    {
+      "path": "/api/reservations/complete-expired",
+      "schedule": "0 1 * * *"
+    }
+  ],
+  "functions": {
+    "src/app/api/reservations/complete-expired/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}
