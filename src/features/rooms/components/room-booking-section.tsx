@@ -5,17 +5,17 @@ import { CalendarIcon, Clock } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { RoomAvailabilityCalendar } from "./room-availability-calendar";
-import { ApprovedReservationTime } from "@/features/reservations/api/getApprovedRoomReservations";
+import { RoomReservationWithStatus } from "@/features/reservations/api/getAllRoomReservations";
 
 export interface RoomBookingSectionProps {
-  approvedReservations: ApprovedReservationTime[];
+  reservations: RoomReservationWithStatus[];
   reservationLimit: number;
   isLoggedIn: boolean;
   className?: string;
 }
 
 export function RoomBookingSection({
-  approvedReservations,
+  reservations = [],
   reservationLimit,
   isLoggedIn,
   className = "",
@@ -32,7 +32,7 @@ export function RoomBookingSection({
           <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
           Kalender Ketersediaan 📅
         </Typography>
-        <RoomAvailabilityCalendar approvedReservations={approvedReservations} />
+        <RoomAvailabilityCalendar reservations={reservations} />
       </div>
 
       {/* Current Bookings */}
@@ -45,19 +45,21 @@ export function RoomBookingSection({
           <Clock className="h-4 w-4 mr-2 text-primary" />
           Pemesanan Saat Ini 📋
         </Typography>
-        {approvedReservations.length > 0 ? (
+        {reservations.filter((res) => res.status === "Approved").length > 0 ? (
           <div className="space-y-2">
-            {approvedReservations.map((res) => (
-              <div
-                key={`${res.startTime}-${res.endTime}`}
-                className="p-2 rounded-lg bg-muted/50 border border-border/50 text-xs"
-              >
-                <div className="font-medium">
-                  {format(new Date(res.startTime), "PPp")} -{" "}
-                  {format(new Date(res.endTime), "PPp")}
+            {reservations
+              .filter((res) => res.status === "Approved")
+              .map((res) => (
+                <div
+                  key={`${res.startTime}-${res.endTime}`}
+                  className="p-2 rounded-lg bg-muted/50 border border-border/50 text-xs"
+                >
+                  <div className="font-medium">
+                    {format(new Date(res.startTime), "PPp")} -{" "}
+                    {format(new Date(res.endTime), "PPp")}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         ) : (
           <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20 text-center">

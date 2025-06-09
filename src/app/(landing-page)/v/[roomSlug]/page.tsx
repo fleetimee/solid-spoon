@@ -17,9 +17,9 @@ import {
   UserRoomReservation,
 } from "@/features/reservations/api/getUserRoomReservations";
 import {
-  getApprovedRoomReservations,
-  ApprovedReservationTime,
-} from "@/features/reservations/api/getApprovedRoomReservations";
+  getAllRoomReservations,
+  RoomReservationWithStatus,
+} from "@/features/reservations/api/getAllRoomReservations";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Sparkles, Clock, MapPin, Users } from "lucide-react";
@@ -146,10 +146,10 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
     myReservations = await getUserRoomReservations(session.user.id, room.id);
   }
 
-  // Fetch approved reservations for the calendar
-  let approvedReservations: ApprovedReservationTime[] = [];
+  // Fetch all reservations (approved and completed) for the calendar
+  let allReservations: RoomReservationWithStatus[] = [];
   if (room?.id) {
-    approvedReservations = await getApprovedRoomReservations(room.id);
+    allReservations = await getAllRoomReservations(room.id);
   }
 
   // Parse facilities (similar to admin page)
@@ -253,7 +253,7 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
               <div className="lg:col-span-2">
                 <Card className="border-0 shadow-2xl bg-white/70 dark:bg-card/70 backdrop-blur-sm">
                   <RoomBookingSection
-                    approvedReservations={approvedReservations}
+                    reservations={allReservations}
                     reservationLimit={reservationLimit}
                     isLoggedIn={!!session?.user?.id}
                   />

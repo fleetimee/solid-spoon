@@ -32,10 +32,10 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { type ApprovedReservationTime } from "@/features/reservations/api/getApprovedRoomReservations";
+import { type RoomReservationWithStatus } from "@/features/reservations/api/getAllRoomReservations";
 
 interface ReservationCalendarProps {
-  approvedReservations: (ApprovedReservationTime & { status: string })[];
+  approvedReservations: RoomReservationWithStatus[];
   selectedDate?: Date;
   onSelectDate: (date: Date) => void;
   disabled?: (date: Date) => boolean;
@@ -44,7 +44,7 @@ interface ReservationCalendarProps {
 
 // Enhanced Reservation Tooltip Component
 interface ReservationTooltipProps {
-  reservations: (ApprovedReservationTime & { status: string })[];
+  reservations: RoomReservationWithStatus[];
   date: Date;
   children: React.ReactNode;
 }
@@ -415,7 +415,7 @@ export function ReservationCalendar({
                   isBooked
                     ? `${format(date, "MMMM d, yyyy")} - Sudah Dipesan (tidak dapat dipilih)`
                     : isCompleted
-                      ? `${format(date, "MMMM d, yyyy")} - Selesai (dapat dipesan ulang)`
+                      ? `${format(date, "MMMM d, yyyy")} - Selesai (reservasi selesai)`
                       : dateStatus === "past"
                         ? `${format(date, "MMMM d, yyyy")} - Tanggal lampau (tidak dapat dipilih)`
                         : dateStatus === "available"

@@ -33,7 +33,7 @@ import {
   type CreateReservationFormState,
 } from "../api/createReservation";
 import { useRouter } from "next/navigation";
-import { type ApprovedReservationTime } from "../api/getApprovedRoomReservations";
+import { type RoomReservationWithStatus } from "../api/getAllRoomReservations";
 import { ReservationCalendar } from "@/components/ui/reservation-calendar";
 
 // Define Zod schema for form validation
@@ -81,7 +81,7 @@ type ReservationFormValues = z.infer<typeof reservationFormSchema>;
 interface NewReservationFormProps {
   roomId: number; // Accept roomId as a prop
   roomSlug: string; // Add roomSlug prop
-  approvedReservations: ApprovedReservationTime[]; // Add approved reservations prop
+  approvedReservations: RoomReservationWithStatus[]; // Add approved reservations prop
 }
 
 // Define the ReservationForm component using react-hook-form

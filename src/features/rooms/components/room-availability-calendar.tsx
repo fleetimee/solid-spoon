@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { type ApprovedReservationTime } from "../../reservations/api/getApprovedRoomReservations";
+import { type RoomReservationWithStatus } from "../../reservations/api/getAllRoomReservations";
 import {
   eachDayOfInterval,
   startOfDay,
@@ -35,12 +35,12 @@ import {
 } from "@/components/ui/tooltip";
 
 interface RoomAvailabilityCalendarProps {
-  approvedReservations: (ApprovedReservationTime & { status: string })[];
+  reservations: RoomReservationWithStatus[];
 }
 
 // Enhanced Reservation Tooltip Component
 interface ReservationTooltipProps {
-  reservations: (ApprovedReservationTime & { status: string })[];
+  reservations: RoomReservationWithStatus[];
   date: Date;
   children: React.ReactNode;
 }
@@ -149,10 +149,9 @@ function CalendarLegend() {
       id: "completed",
       icon: CheckCircle,
       label: "Selesai",
-      className: "text-blue-600 dark:text-blue-400",
-      indicator:
-        "bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600",
-      description: "Dapat dipesan ulang",
+      className: "text-blue-700 dark:text-blue-400",
+      indicator: "bg-blue-600/10 border-blue-400/30",
+      description: "Selesai dilaksanakan",
     },
     {
       id: "today",
@@ -206,7 +205,7 @@ function CalendarLegend() {
 }
 
 export function RoomAvailabilityCalendar({
-  approvedReservations,
+  reservations,
 }: RoomAvailabilityCalendarProps) {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const [hoveredDate, setHoveredDate] = React.useState<Date | null>(null);
@@ -215,7 +214,7 @@ export function RoomAvailabilityCalendar({
   const bookedDays = React.useMemo(() => {
     const days = new Set<number>();
 
-    approvedReservations
+    reservations
       .filter((reservation) => reservation.status === "Approved")
       .forEach((reservation) => {
         const start = new Date(reservation.startTime);
@@ -232,13 +231,13 @@ export function RoomAvailabilityCalendar({
       });
 
     return Array.from(days).map((timestamp) => new Date(timestamp));
-  }, [approvedReservations]);
+  }, [reservations]);
 
   // Calculate the set of completed days (for visual indication only)
   const completedDays = React.useMemo(() => {
     const days = new Set<number>();
 
-    approvedReservations
+    reservations
       .filter((reservation) => reservation.status === "Completed")
       .forEach((reservation) => {
         const start = new Date(reservation.startTime);
@@ -255,7 +254,7 @@ export function RoomAvailabilityCalendar({
       });
 
     return Array.from(days).map((timestamp) => new Date(timestamp));
-  }, [approvedReservations]);
+  }, [reservations]);
 
   // Calculate today for highlighting
   const today = startOfDay(new Date());
@@ -397,11 +396,11 @@ export function RoomAvailabilityCalendar({
                     "after:top-1 after:right-1 after:w-2 after:h-2",
                   ],
                   dateStatus === "completed" && [
-                    "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-                    "border border-blue-300/30 dark:border-blue-600/30 cursor-pointer",
-                    "hover:bg-blue-500/20 hover:border-blue-500/50",
+                    "bg-blue-600/10 text-blue-700 dark:text-blue-400",
+                    "border border-blue-400/30 cursor-pointer",
+                    "hover:bg-blue-600/20 hover:border-blue-500/50",
                     "relative after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-                    "after:text-xs after:font-bold after:text-blue-500/60 after:content-['✓']",
+                    "after:text-xs after:font-bold after:text-blue-600/60 after:content-['✓']",
                     "after:top-1 after:right-1 after:w-2 after:h-2",
                   ],
                   dateStatus === "available" && [
@@ -433,7 +432,7 @@ export function RoomAvailabilityCalendar({
               return (
                 <ReservationTooltip
                   key={date.toISOString()}
-                  reservations={approvedReservations}
+                  reservations={reservations}
                   date={date}
                 >
                   {dateButton}
@@ -462,10 +461,10 @@ export function RoomAvailabilityCalendar({
           </div>
           <div className="space-y-2">
             <div className="text-xl font-bold text-green-600 dark:text-green-400">
-              {approvedReservations.length}
+              {reservations.length}
             </div>
             <div className="text-sm text-muted-foreground font-medium">
-              Pemesanan Aktif
+              Total Reservasi
             </div>
           </div>
         </div>

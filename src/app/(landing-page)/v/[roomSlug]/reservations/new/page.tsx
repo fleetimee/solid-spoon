@@ -15,7 +15,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getPendingReservationCount } from "@/features/reservations/api/getPendingReservationCount";
 import { getReservationLimit } from "@/features/application/api/getReservationLimit";
-import { getApprovedRoomReservations } from "@/features/reservations/api/getApprovedRoomReservations";
+import { getAllRoomReservations } from "@/features/reservations/api/getAllRoomReservations";
 import { ReservationWarningHandler } from "@/features/rooms/components/reservation-warning-handler";
 import { CalendarPlus, Sparkles, Clock, MapPin } from "lucide-react";
 
@@ -80,7 +80,7 @@ export default async function NewReservationPage(
     await Promise.all([
       getPendingReservationCount(userId, roomId),
       getReservationLimit(),
-      getApprovedRoomReservations(roomId),
+      getAllRoomReservations(roomId),
     ]);
 
   if (pendingCount >= reservationLimit) {
