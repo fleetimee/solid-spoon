@@ -127,7 +127,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
           <Button
             variant="ghost"
             className="h-8 w-8 p-0"
-            aria-label="Open menu"
+            aria-label="Buka menu"
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -138,7 +138,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
             className="cursor-pointer"
           >
             <ShieldCheck className="mr-2 h-4 w-4" />
-            Change Role
+            Ubah Peran
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -146,7 +146,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
             className="cursor-pointer"
           >
             <Laptop className="mr-2 h-4 w-4" />
-            View Sessions
+            Lihat Sesi
           </DropdownMenuItem>
 
           {isBanned ? (
@@ -157,7 +157,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
                 className="text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 cursor-pointer"
               >
                 <ShieldCheck className="mr-2 h-4 w-4" />
-                Unban User
+                Buka Blokir Pengguna
               </DropdownMenuItem>
             </>
           ) : (
@@ -168,7 +168,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
                 className="text-destructive focus:text-destructive cursor-pointer"
               >
                 <Ban className="mr-2 h-4 w-4" />
-                Ban User
+                Blokir Pengguna
               </DropdownMenuItem>
             </>
           )}
@@ -178,7 +178,7 @@ const UserActionsCell: React.FC<UserActionsCellProps> = ({ user }) => {
             className="text-destructive focus:text-destructive cursor-pointer"
           >
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete User
+            Hapus Pengguna
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -203,7 +203,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Name"
+        title="Nama"
         icon={<UserIcon className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),
@@ -236,7 +236,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Role"
+        title="Peran"
         icon={<Shield className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),
@@ -324,7 +324,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
             variant="outline"
             className="bg-green-50 text-green-700 border-green-200"
           >
-            Active
+            Aktif
           </Badge>
         );
       }
@@ -334,7 +334,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center gap-2">
-                <Badge variant="destructive">Banned</Badge>
+                <Badge variant="destructive">Diblokir</Badge>
                 {banExpires && (
                   <Badge variant="outline" className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
@@ -345,11 +345,11 @@ export const columns: ColumnDef<ExtendedUser>[] = [
             </TooltipTrigger>
             <TooltipContent side="right" className="max-w-xs">
               <p className="font-medium">
-                Reason: {banReason || "No reason provided"}
+                Alasan: {banReason || "Tidak ada alasan"}
               </p>
               {banExpires && (
                 <p className="text-sm text-white mt-1">
-                  Expires: {format(banExpires, "PPP")}
+                  Berakhir: {format(banExpires, "PPP")}
                 </p>
               )}
             </TooltipContent>
@@ -363,7 +363,7 @@ export const columns: ColumnDef<ExtendedUser>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Joined At"
+        title="Bergabung Pada"
         icon={<Calendar className="mr-2 h-4 w-4 text-muted-foreground" />}
       />
     ),

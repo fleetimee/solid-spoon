@@ -7,14 +7,14 @@ import { getUserStats } from "@/features/admin/users/api/getUserStats";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "User Management",
-  description: "View and manage all users in the reservation system",
+  title: "Manajemen Pengguna",
+  description: "Lihat dan kelola semua pengguna dalam sistem reservasi",
   openGraph: {
-    description: "Browse and manage all users in the reservation system",
+    description: "Jelajahi dan kelola semua pengguna dalam sistem reservasi",
   },
 };
 
-const usersBreadcrumb = [{ label: "Users" }, { label: "Manage Users" }];
+const usersBreadcrumb = [{ label: "Pengguna" }, { label: "Kelola Pengguna" }];
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -130,15 +130,15 @@ export default async function UsersPage(props: PageProps) {
       <main className="flex flex-col grow p-4 md:p-8 space-y-8">
         {/* Modern Header */}
         <UserHeader
-          title="Users"
-          description="Manage users and their permissions here."
+          title="Pengguna"
+          description="Kelola pengguna dan izin mereka di sini."
         />
 
         {/* User Statistics Cards */}
         <UserStatsCards stats={userStats} />
 
         {/* User Management Content */}
-        <UserContentSection title="User Management">
+        <UserContentSection title="Manajemen Pengguna">
           <UserManagementClient initialQuery={query} />
         </UserContentSection>
       </main>

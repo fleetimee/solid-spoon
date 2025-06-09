@@ -24,9 +24,9 @@ export function FormActionsSection({
         <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
           <div className="text-sm text-muted-foreground">
             <p className="flex items-center gap-1">
-              All fields marked with{" "}
-              <span className="text-destructive font-medium">*</span> are
-              required
+              Semua field yang ditandai{" "}
+              <span className="text-destructive font-medium">*</span> wajib
+              diisi
             </p>
           </div>
           <div className="flex gap-4">
@@ -37,7 +37,7 @@ export function FormActionsSection({
               className="min-w-[120px] h-12"
               disabled={isPending}
             >
-              Cancel
+              Batal
             </Button>
             <Button
               type="submit"
@@ -47,12 +47,12 @@ export function FormActionsSection({
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isUpdateMode ? "Updating..." : "Creating..."}
+                  {isUpdateMode ? "Memperbarui..." : "Membuat..."}
                 </>
               ) : isUpdateMode ? (
-                "Update Room"
+                "Perbarui Ruangan"
               ) : (
-                "Create Room"
+                "Buat Ruangan"
               )}
             </Button>
           </div>

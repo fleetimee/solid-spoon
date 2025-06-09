@@ -53,7 +53,7 @@ export function DataTablePagination<TData>({
       {" "}
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">Baris per halaman</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={handlePageSizeChange}
@@ -72,7 +72,7 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {currentPage} of {pageCount}
+          Halaman {currentPage} dari {pageCount}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -83,7 +83,7 @@ export function DataTablePagination<TData>({
             onClick={() => handlePageIndexChange(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">Ke halaman pertama</span>
             <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -95,7 +95,7 @@ export function DataTablePagination<TData>({
             }
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">Ke halaman sebelumnya</span>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -107,7 +107,7 @@ export function DataTablePagination<TData>({
             }
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">Ke halaman selanjutnya</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button
@@ -117,7 +117,7 @@ export function DataTablePagination<TData>({
             onClick={() => handlePageIndexChange(pageCount - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">Ke halaman terakhir</span>
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>

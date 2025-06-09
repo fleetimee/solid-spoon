@@ -47,7 +47,7 @@ export function ReservationStatusCard({
   return (
     <Card className={className}>
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg">Current Status</CardTitle>
+        <CardTitle className="text-lg">Status Saat Ini</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900 dark:to-slate-900 rounded-lg border">
@@ -57,7 +57,7 @@ export function ReservationStatusCard({
               variant={getStatusVariant(status)}
               className="text-sm font-semibold px-3 py-1"
             >
-              {status || "Unknown"}
+              {status || "Tidak Diketahui"}
             </Badge>
           </div>
         </div>

@@ -32,10 +32,10 @@ export function DescriptionSection({ form }: DescriptionSectionProps) {
           </div>
           <div>
             <CardTitle className="text-xl font-bold flex items-center gap-2">
-              📋 Description & Details
+              📋 Deskripsi & Detail
             </CardTitle>
             <CardDescription className="text-base">
-              Help users understand what makes this room special
+              Bantu pengguna memahami apa yang membuat ruangan ini istimewa
             </CardDescription>
           </div>
         </div>
@@ -48,15 +48,15 @@ export function DescriptionSection({ form }: DescriptionSectionProps) {
             <FormItem className="space-y-3">
               <FormLabel className="flex items-center gap-2 text-base font-semibold">
                 <Sparkles className="h-4 w-4 text-emerald-500" />
-                Room Description
+                Deskripsi Ruangan
               </FormLabel>
               <FormDescription className="text-sm text-muted-foreground">
-                Provide details about the room&apos;s features, atmosphere, and
-                ideal uses
+                Berikan detail tentang fitur ruangan, suasana, dan penggunaan
+                yang ideal
               </FormDescription>
               <FormControl>
                 <Textarea
-                  placeholder="Describe the room's atmosphere, unique features, and what makes it perfect for certain types of meetings or events..."
+                  placeholder="Jelaskan suasana ruangan, fitur unik, dan apa yang membuatnya sempurna untuk jenis rapat atau acara tertentu..."
                   rows={5}
                   {...field}
                   className="text-base border-2 focus:border-emerald-500/50 transition-colors resize-none"

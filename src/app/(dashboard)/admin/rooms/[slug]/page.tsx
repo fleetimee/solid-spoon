@@ -30,8 +30,8 @@ export async function generateMetadata(
 
   if (!room) {
     return {
-      title: "Room Not Found",
-      description: "The requested room could not be found",
+      title: "Ruangan Tidak Ditemukan",
+      description: "Ruangan yang diminta tidak dapat ditemukan",
     };
   }
 
@@ -41,9 +41,9 @@ export async function generateMetadata(
     title: room.name,
     description:
       room.description ||
-      `Details for ${room.name} with capacity of ${room.capacity} people`,
+      `Detail untuk ${room.name} dengan kapasitas ${room.capacity} orang`,
     openGraph: {
-      description: room.description || `View details for ${room.name}`,
+      description: room.description || `Lihat detail untuk ${room.name}`,
       images: room.coverImage
         ? [room.coverImage, ...previousImages]
         : previousImages,
@@ -67,8 +67,8 @@ export default async function RoomDetailPage(props: RoomDetailPageProps) {
   ]);
 
   const roomBreadcrumb = [
-    { label: "Rooms", href: "#" },
-    { label: "Manage Rooms", href: "/admin/rooms" },
+    { label: "Ruangan", href: "#" },
+    { label: "Kelola Ruangan", href: "/admin/rooms" },
     { label: room.name },
   ];
 

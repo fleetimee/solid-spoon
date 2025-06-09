@@ -21,12 +21,6 @@ export function AuthView({ pathname }: { pathname: string }) {
           description:
             "Sign in to your account to manage room reservations and access all features.",
         };
-      case "sign-up":
-        return {
-          title: "Create your account",
-          description:
-            "Join our platform to discover and book the perfect spaces for your needs.",
-        };
       case "forgot-password":
         return {
           title: "Reset your password",
@@ -259,6 +253,12 @@ export function AuthView({ pathname }: { pathname: string }) {
         <div className="w-full max-w-md">
           <AuthCard
             pathname={pathname}
+            view="signIn"
+            localization={{
+              signUp: "", // Hide sign-up text
+              signUpDescription: "", // Hide sign-up description
+              alreadyHaveAnAccount: "Already have an account?", // Keep sign-in link
+            }}
             classNames={{
               base: "border border-input/30 shadow-sm w-full transition-all duration-300",
               header: "px-6 pt-6 pb-2",

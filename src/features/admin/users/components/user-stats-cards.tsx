@@ -31,27 +31,27 @@ export interface UserCardData {
 export function UserStatsCards({ stats }: UserStatsCardsProps) {
   const userCards: UserCardData[] = [
     {
-      title: "Total Users",
+      title: "Total Pengguna",
       value: stats.totalUsers,
-      description: "All registered users",
+      description: "Semua pengguna terdaftar",
       type: "total",
     },
     {
-      title: "Active Users",
+      title: "Pengguna Aktif",
       value: stats.activeUsers,
-      description: "Users with full access",
+      description: "Pengguna dengan akses penuh",
       type: "active",
     },
     {
-      title: "Banned Users",
+      title: "Pengguna Diblokir",
       value: stats.bannedUsers,
-      description: "Users with restricted access",
+      description: "Pengguna dengan akses terbatas",
       type: "banned",
     },
     {
-      title: "New This Month",
+      title: "Baru Bulan Ini",
       value: stats.newUsersThisMonth,
-      description: "Recently joined users",
+      description: "Pengguna yang baru bergabung",
       type: "new",
     },
   ];

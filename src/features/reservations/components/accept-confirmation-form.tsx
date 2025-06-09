@@ -48,7 +48,7 @@ import {
 
 // Define Zod schema for the form
 const acceptFormSchema = z.object({
-  reservationId: z.string().min(1, "Reservation ID is required"), // Validate the ID is present
+  reservationId: z.string().min(1, "ID reservasi diperlukan"), // Validate the ID is present
 });
 
 // Infer the TypeScript type from the schema
@@ -146,10 +146,10 @@ export function AcceptConfirmationForm({
               </div>
               <div>
                 <CardTitle className="text-xl text-emerald-700 dark:text-emerald-300">
-                  Confirm Reservation Acceptance
+                  Konfirmasi Penerimaan Reservasi
                 </CardTitle>
                 <Typography variant="muted" className="mt-1">
-                  Review the reservation details and proceed with acceptance
+                  Tinjau detail reservasi dan lanjutkan dengan penerimaan
                 </Typography>
               </div>
             </div>
@@ -160,7 +160,7 @@ export function AcceptConfirmationForm({
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 <Typography variant="small" className="font-medium">
-                  Reservation Title
+                  Judul Reservasi
                 </Typography>
               </div>
               <Typography
@@ -177,7 +177,7 @@ export function AcceptConfirmationForm({
                 <div className="flex items-center gap-2 mb-2">
                   <DoorOpen className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                   <Typography variant="small" className="font-medium">
-                    Room
+                    Ruangan
                   </Typography>
                 </div>
                 <Typography className="font-semibold">
@@ -189,7 +189,7 @@ export function AcceptConfirmationForm({
                 <div className="flex items-center gap-2 mb-3">
                   <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   <Typography variant="small" className="font-medium">
-                    Requested by
+                    Diminta oleh
                   </Typography>
                 </div>
                 <div className="flex items-center gap-4">
@@ -211,13 +211,13 @@ export function AcceptConfirmationForm({
                   </Avatar>
                   <div className="flex flex-col">
                     <Typography className="font-medium">
-                      {reservation.user.name ?? "Unknown User"}
+                      {reservation.user.name ?? "Pengguna Tidak Dikenal"}
                     </Typography>
                     <Typography
                       variant="small"
                       className="text-muted-foreground"
                     >
-                      {reservation.user.email ?? "No email provided"}
+                      {reservation.user.email ?? "Email tidak tersedia"}
                     </Typography>
                   </div>
                 </div>
@@ -229,13 +229,13 @@ export function AcceptConfirmationForm({
               <div className="flex items-center gap-2 mb-3">
                 <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                 <Typography variant="small" className="font-medium">
-                  Schedule
+                  Jadwal
                 </Typography>
               </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <div>
                   <Typography variant="muted" className="mb-1">
-                    Start Time
+                    Waktu Mulai
                   </Typography>
                   <Typography className="font-semibold">
                     {format(new Date(reservation.start_time), "PPP p")}
@@ -243,7 +243,7 @@ export function AcceptConfirmationForm({
                 </div>
                 <div>
                   <Typography variant="muted" className="mb-1">
-                    End Time
+                    Waktu Selesai
                   </Typography>
                   <Typography className="font-semibold">
                     {format(new Date(reservation.end_time), "PPP p")}
@@ -258,7 +258,7 @@ export function AcceptConfirmationForm({
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                   <Typography variant="small" className="font-medium">
-                    Description
+                    Deskripsi
                   </Typography>
                 </div>
                 <Typography className="leading-relaxed">
@@ -275,7 +275,7 @@ export function AcceptConfirmationForm({
               onClick={() => window.history.back()}
               className="flex-1"
             >
-              Cancel
+              Batal
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -287,12 +287,12 @@ export function AcceptConfirmationForm({
                   {form.formState.isSubmitting || isProcessing ? (
                     <>
                       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
+                      Memproses...
                     </>
                   ) : (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4" />
-                      Confirm Acceptance
+                      Konfirmasi Penerimaan
                     </>
                   )}
                 </Button>
@@ -301,7 +301,7 @@ export function AcceptConfirmationForm({
                 <AlertDialogHeader>
                   <AlertDialogTitle className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-amber-500" />
-                    Accept Reservation?
+                    Terima Reservasi?
                   </AlertDialogTitle>
                   <AlertDialogDescription asChild>
                     <div>
@@ -323,7 +323,7 @@ export function AcceptConfirmationForm({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() => handleAcceptReservation(form.getValues())}
                     disabled={isProcessing}
@@ -332,10 +332,10 @@ export function AcceptConfirmationForm({
                     {isProcessing ? (
                       <>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                        Accepting...
+                        Menerima...
                       </>
                     ) : (
-                      "Yes, Accept Reservation"
+                      "Ya, Terima Reservasi"
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>

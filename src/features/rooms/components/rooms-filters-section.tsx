@@ -10,7 +10,7 @@ export function RoomsFiltersSection() {
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
             <Filter className="h-4 w-4 text-primary" />
           </div>
-          <h2 className="text-lg font-semibold">🔍 Filter & Search</h2>
+          <h2 className="text-lg font-semibold">🔍 Filter & Pencarian</h2>
         </div>
         <RoomFilters />
       </CardContent>

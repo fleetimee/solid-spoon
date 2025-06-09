@@ -251,11 +251,13 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                       markNotificationAsRead(Number(notification.id))
                         .then((result) => {
                           if (result.success) {
-                            toast.success("Notification marked as read.");
+                            toast.success(
+                              "Notifikasi ditandai sebagai dibaca."
+                            );
                           } else {
                             toast.error(
                               result.error ||
-                                "Failed to mark notification as read."
+                                "Gagal menandai notifikasi sebagai dibaca."
                             );
                           }
                         })
@@ -264,7 +266,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                             "Mark as read transition error:",
                             error
                           );
-                          toast.error("An unexpected error occurred.");
+                          toast.error("Terjadi kesalahan yang tidak terduga.");
                         });
                     });
                   }}
@@ -272,7 +274,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                   className="hover:scale-105 transition-transform duration-200"
                 >
                   <Check className="h-3 w-3 mr-1.5" />
-                  Mark as Read
+                  Tandai Dibaca
                 </Button>
               )}
 
@@ -285,11 +287,13 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                       markNotificationAsUnread(Number(notification.id))
                         .then((result) => {
                           if (result.success) {
-                            toast.success("Notification marked as unread.");
+                            toast.success(
+                              "Notifikasi ditandai sebagai belum dibaca."
+                            );
                           } else {
                             toast.error(
                               result.error ||
-                                "Failed to mark notification as unread."
+                                "Gagal menandai notifikasi sebagai belum dibaca."
                             );
                           }
                         })
@@ -298,7 +302,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                             "Mark as unread transition error:",
                             error
                           );
-                          toast.error("An unexpected error occurred.");
+                          toast.error("Terjadi kesalahan yang tidak terduga.");
                         });
                     });
                   }}
@@ -306,7 +310,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                   className="hover:scale-105 transition-transform duration-200"
                 >
                   <Undo2 className="h-3 w-3 mr-1.5" />
-                  Mark as Unread
+                  Tandai Belum Dibaca
                 </Button>
               )}
 
@@ -319,7 +323,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                   )}
                 >
                   <span className="flex items-center gap-1.5">
-                    View
+                    Lihat
                     <ExternalLink className="h-3 w-3" />
                   </span>
                 </Link>
@@ -330,16 +334,16 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                   variant="destructive"
                   size="sm"
                   className="h-8 w-8 p-0 hover:scale-105 transition-transform duration-200"
-                  aria-label="Delete notification"
+                  aria-label="Hapus notifikasi"
                   onClick={() => {
                     startTransition(() => {
                       deleteNotification(Number(notification.id))
                         .then((result) => {
                           if (result.success) {
-                            toast.success("Notification deleted.");
+                            toast.success("Notifikasi berhasil dihapus.");
                           } else {
                             toast.error(
-                              result.error || "Failed to delete notification."
+                              result.error || "Gagal menghapus notifikasi."
                             );
                           }
                         })
@@ -349,7 +353,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
                             error
                           );
                           toast.error(
-                            "An unexpected error occurred during deletion."
+                            "Terjadi kesalahan yang tidak terduga saat menghapus."
                           );
                         });
                     });

@@ -53,7 +53,7 @@ export function DashboardAnalyticsSection({
     <div className="space-y-8">
       <div className="flex items-center gap-2">
         <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full"></div>
-        <h2 className="text-xl font-semibold">Analytics Overview</h2>
+        <h2 className="text-xl font-semibold">Ringkasan Analitik</h2>
       </div>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
@@ -68,8 +68,8 @@ export function DashboardAnalyticsSection({
           <div className="min-w-0">
             <EmptyStateCard
               icon={TrendingUp}
-              title="No reservation data for the last 30 days"
-              description="Data will appear here once reservations are made"
+              title="Tidak ada data reservasi dalam 30 hari terakhir"
+              description="Data akan muncul di sini setelah reservasi dibuat"
             />
           </div>
         )}
@@ -85,8 +85,8 @@ export function DashboardAnalyticsSection({
           <div className="min-w-0">
             <EmptyStateCard
               icon={Activity}
-              title="No reservation status data available"
-              description="Status breakdown will appear here"
+              title="Tidak ada data status reservasi"
+              description="Rincian status akan muncul di sini"
             />
           </div>
         )}
@@ -104,8 +104,8 @@ export function DashboardAnalyticsSection({
           <div className="min-w-0">
             <EmptyStateCard
               icon={BedDouble}
-              title="Not enough data for room activity"
-              description="Room usage statistics will appear here"
+              title="Data aktivitas ruangan tidak mencukupi"
+              description="Statistik penggunaan ruangan akan muncul di sini"
             />
           </div>
         )}
@@ -121,8 +121,8 @@ export function DashboardAnalyticsSection({
           <div className="min-w-0">
             <EmptyStateCard
               icon={Calendar}
-              title="Unable to calculate room utilization"
-              description="Utilization metrics will display here"
+              title="Tidak dapat menghitung utilisasi ruangan"
+              description="Metrik utilisasi akan ditampilkan di sini"
             />
           </div>
         )}

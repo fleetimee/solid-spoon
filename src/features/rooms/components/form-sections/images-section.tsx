@@ -54,12 +54,12 @@ export function ImagesSection({
           </div>
           <div>
             <CardTitle className="text-xl font-bold flex items-center gap-2">
-              🖼️ {isUpdateMode ? "Manage Images" : "Visual Showcase"}
+              🖼️ {isUpdateMode ? "Kelola Gambar" : "Galeri Visual"}
             </CardTitle>
             <CardDescription className="text-base">
               {isUpdateMode
-                ? "Update or add new high-quality images to showcase your room&apos;s best features"
-                : "A picture is worth a thousand words. Upload high-quality images to showcase your room&apos;s best features"}
+                ? "Perbarui atau tambahkan gambar berkualitas tinggi untuk menampilkan fitur terbaik ruangan Anda"
+                : "Sebuah gambar berbicara lebih dari seribu kata. Unggah gambar berkualitas tinggi untuk menampilkan fitur terbaik ruangan Anda"}
             </CardDescription>
           </div>
         </div>
@@ -71,13 +71,13 @@ export function ImagesSection({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Current Images</span>
+                <span className="text-sm font-medium">Gambar Saat Ini</span>
                 <span className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
                   {existingImages.length}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Select an image as cover or remove unnecessary images
+                Pilih gambar sebagai sampul atau hapus gambar yang tidak perlu
               </p>
             </div>
 
@@ -99,7 +99,7 @@ export function ImagesSection({
                     {img.isCover && (
                       <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
                         <Star className="w-3 h-3" />
-                        Cover
+                        Sampul
                       </div>
                     )}
                   </div>
@@ -120,7 +120,7 @@ export function ImagesSection({
                         variant="secondary"
                         className="w-8 h-8 rounded-full"
                         onClick={() => setExistingCoverImage(index)}
-                        title="Set as cover"
+                        title="Jadikan sampul"
                       >
                         <Star className="w-4 h-4" />
                       </Button>
@@ -137,7 +137,7 @@ export function ImagesSection({
           <div className="flex items-center gap-2">
             <Upload className="h-4 w-4 text-violet-500" />
             <span className="text-base font-semibold">
-              {isUpdateMode ? "Add More Images" : "Room Images"}
+              {isUpdateMode ? "Tambah Gambar Lagi" : "Gambar Ruangan"}
               {!isUpdateMode && (
                 <span className="text-destructive ml-1">*</span>
               )}
@@ -145,8 +145,8 @@ export function ImagesSection({
           </div>
           <p className="text-sm text-muted-foreground">
             {isUpdateMode
-              ? "Upload additional photos to showcase your room"
-              : "Upload clear, well-lit photos showing different angles of the room"}
+              ? "Unggah foto tambahan untuk menampilkan ruangan Anda"
+              : "Unggah foto yang jelas dan terang yang menunjukkan berbagai sudut ruangan"}
           </p>
 
           <div className="flex items-center gap-2">
@@ -170,10 +170,10 @@ export function ImagesSection({
                   <>
                     <Loader2 className="w-12 h-12 text-violet-500 animate-spin" />
                     <p className="mt-3 text-base font-medium text-muted-foreground">
-                      Uploading your images...
+                      Mengunggah gambar Anda...
                     </p>
                     <p className="text-sm text-muted-foreground/70 mt-1">
-                      This might take a moment
+                      Ini mungkin memerlukan waktu sebentar
                     </p>
                   </>
                 ) : (
@@ -184,10 +184,10 @@ export function ImagesSection({
                     <p
                       className={`mt-3 text-base font-medium ${!isUpdateMode && !hasSuccessfulUploads() && existingImages.length === 0 ? "text-destructive/70" : "text-muted-foreground"}`}
                     >
-                      Click to upload photos
+                      Klik untuk mengunggah foto
                     </p>
                     <p className="text-sm text-muted-foreground/70 mt-1">
-                      PNG, JPG, WEBP up to 10MB each
+                      PNG, JPG, WEBP hingga 10MB per file
                     </p>
                   </>
                 )}
@@ -212,13 +212,16 @@ export function ImagesSection({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">New Uploaded Photos</span>
+                <span className="text-sm font-medium">
+                  Foto Baru yang Diunggah
+                </span>
                 <span className="bg-muted text-muted-foreground text-xs px-2 py-1 rounded-full">
                   {images.length}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                First image or selected image will be used as cover
+                Gambar pertama atau gambar yang dipilih akan digunakan sebagai
+                sampul
               </p>
             </div>
 
@@ -244,7 +247,7 @@ export function ImagesSection({
                     {img.isCover && (
                       <div className="absolute top-2 left-2 bg-primary text-primary-foreground px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1">
                         <Star className="w-3 h-3" />
-                        Cover
+                        Sampul
                       </div>
                     )}
 
@@ -257,7 +260,7 @@ export function ImagesSection({
 
                     {img.status === "error" && (
                       <div className="absolute bottom-0 inset-x-0 bg-destructive text-destructive-foreground p-2 text-xs text-center font-medium">
-                        Upload failed
+                        Unggah gagal
                       </div>
                     )}
                   </div>
@@ -278,7 +281,7 @@ export function ImagesSection({
                         variant="secondary"
                         className="w-8 h-8 rounded-full"
                         onClick={() => setCoverImage(index)}
-                        title="Set as cover"
+                        title="Jadikan sampul"
                       >
                         <Star className="w-4 h-4" />
                       </Button>
@@ -306,17 +309,17 @@ export function ImagesSection({
             {!isUpdateMode &&
             !hasSuccessfulUploads() &&
             existingImages.length === 0
-              ? "Photos Required"
-              : "Upload Tips"}
+              ? "Foto Diperlukan"
+              : "Tips Unggah"}
           </AlertTitle>
           <AlertDescription className="text-sm mt-1">
             {!isUpdateMode &&
             !hasSuccessfulUploads() &&
             existingImages.length === 0
-              ? "Please upload at least one photo to showcase the room. This helps users make informed decisions."
+              ? "Silakan unggah setidaknya satu foto untuk menampilkan ruangan. Ini membantu pengguna membuat keputusan yang tepat."
               : isUpdateMode
-                ? "You can add new images or remove existing ones. At least one image must remain for the room."
-                : "Photos are uploaded immediately. You can rearrange them by setting a different cover image. Clear, bright photos help your room stand out!"}
+                ? "Anda dapat menambahkan gambar baru atau menghapus yang sudah ada. Setidaknya satu gambar harus tetap ada untuk ruangan."
+                : "Foto diunggah langsung. Anda dapat mengatur ulang dengan menetapkan gambar sampul yang berbeda. Foto yang jelas dan terang membantu ruangan Anda menonjol!"}
           </AlertDescription>
         </Alert>
       </CardContent>

@@ -291,7 +291,7 @@ export function BookingsList({
                         <div className="flex items-center gap-2 px-2 py-1 rounded bg-gray-50 dark:bg-gray-800/50">
                           <Clock className="h-3 w-3 text-gray-500 dark:text-gray-400" />
                           <div className="text-xs text-gray-600 dark:text-gray-400">
-                            Created{" "}
+                            Dibuat{" "}
                             {new Date(reservation.createdAt).toLocaleDateString(
                               "en-US",
                               {
@@ -335,8 +335,8 @@ export function BookingsList({
                           className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 border-gray-300 dark:border-gray-600"
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          <span className="hidden sm:inline">View Details</span>
-                          <span className="sm:hidden">View</span>
+                          <span className="hidden sm:inline">Lihat Detail</span>
+                          <span className="sm:hidden">Lihat</span>
                         </Button>
                       </DialogTrigger>
                     </Dialog>
@@ -366,11 +366,11 @@ export function BookingsList({
               </div>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              No bookings found
+              Tidak ada pemesanan ditemukan
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-              You haven&apos;t made any room reservations yet. When you book a
-              room, your reservations will appear here.
+              Anda belum membuat reservasi ruangan. Ketika Anda memesan ruangan,
+              reservasi Anda akan muncul di sini.
             </p>
           </CardContent>
         </Card>
@@ -398,7 +398,7 @@ export function BookingsList({
                           {selectedReservation.roomName}
                         </DialogTitle>
                         <DialogDescription className="text-gray-600 dark:text-gray-400">
-                          Booking Details • {selectedReservation.title}
+                          Detail Pemesanan • {selectedReservation.title}
                         </DialogDescription>
                       </div>
                     </div>
@@ -415,7 +415,7 @@ export function BookingsList({
                               <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                             </div>
                             <span className="font-medium text-gray-900 dark:text-gray-100">
-                              Room
+                              Ruangan
                             </span>
                           </div>
                           <span className="font-semibold text-gray-900 dark:text-gray-100">
@@ -429,7 +429,7 @@ export function BookingsList({
                               <User className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                             </div>
                             <span className="font-medium text-gray-900 dark:text-gray-100">
-                              Event
+                              Acara
                             </span>
                           </div>
                           <span className="font-medium text-gray-700 dark:text-gray-300 text-right max-w-xs">
@@ -444,7 +444,7 @@ export function BookingsList({
                                 <CalendarDays className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                               </div>
                               <span className="font-medium text-gray-900 dark:text-gray-100">
-                                Schedule
+                                Jadwal
                               </span>
                             </div>
                             <div className="text-right space-y-1">
@@ -488,7 +488,7 @@ export function BookingsList({
                                   <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                 </div>
                                 <span className="font-medium text-gray-900 dark:text-gray-100">
-                                  Created
+                                  Dibuat
                                 </span>
                               </div>
                               <div className="text-right">

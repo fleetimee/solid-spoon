@@ -80,9 +80,9 @@ function RecentActivityCard({
           </div>
           <div>
             <CardTitle className="text-slate-800 dark:text-slate-200">
-              Recent Activity
+              Aktivitas Terbaru
             </CardTitle>
-            <CardDescription>Latest events in the system</CardDescription>
+            <CardDescription>Peristiwa terbaru dalam sistem</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -131,10 +131,10 @@ function RecentActivityCard({
           <div className="text-center py-8">
             <Activity className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground font-medium">
-              No recent activity
+              Tidak ada aktivitas terbaru
             </p>
             <p className="text-xs text-muted-foreground/70">
-              System events will appear here
+              Peristiwa sistem akan muncul di sini
             </p>
           </div>
         )}
@@ -148,8 +148,8 @@ function QuickActionsCard() {
     {
       href: "/admin/rooms/reservations",
       icon: ListChecks,
-      title: "Manage Pending",
-      description: "Review reservations",
+      title: "Kelola Menunggu",
+      description: "Tinjau reservasi",
       gradient:
         "from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 dark:from-amber-950/20 dark:to-orange-950/20",
       iconGradient: "from-amber-400 to-orange-500",
@@ -160,8 +160,8 @@ function QuickActionsCard() {
     {
       href: "/admin/rooms/add",
       icon: Plus,
-      title: "Add New Room",
-      description: "Create room listing",
+      title: "Tambah Ruangan Baru",
+      description: "Buat daftar ruangan",
       gradient:
         "from-emerald-50 to-green-50 hover:from-emerald-100 hover:to-green-100 dark:from-emerald-950/20 dark:to-green-950/20",
       iconGradient: "from-emerald-400 to-green-500",
@@ -172,8 +172,8 @@ function QuickActionsCard() {
     {
       href: "/admin/users",
       icon: Users2,
-      title: "View All Users",
-      description: "Manage user accounts",
+      title: "Lihat Semua Pengguna",
+      description: "Kelola akun pengguna",
       gradient:
         "from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 dark:from-blue-950/20 dark:to-indigo-950/20",
       iconGradient: "from-blue-400 to-indigo-500",
@@ -184,8 +184,8 @@ function QuickActionsCard() {
     {
       href: "/admin/notifications",
       icon: Bell,
-      title: "View Notifications",
-      description: "Check system alerts",
+      title: "Lihat Notifikasi",
+      description: "Periksa peringatan sistem",
       gradient:
         "from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 dark:from-violet-950/20 dark:to-purple-950/20",
       iconGradient: "from-violet-400 to-purple-500",
@@ -204,9 +204,9 @@ function QuickActionsCard() {
           </div>
           <div>
             <CardTitle className="text-purple-800 dark:text-purple-200">
-              Quick Actions
+              Tindakan Cepat
             </CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
+            <CardDescription>Tugas administratif umum</CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -250,7 +250,7 @@ export function DashboardActivitySection({
     <div className="space-y-8">
       <div className="flex items-center gap-2">
         <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/50 rounded-full"></div>
-        <h2 className="text-xl font-semibold">Activity & Quick Actions</h2>
+        <h2 className="text-xl font-semibold">Aktivitas & Tindakan Cepat</h2>
       </div>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">

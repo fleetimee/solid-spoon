@@ -29,50 +29,50 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
 
   const infoCards = [
     {
-      title: "Basic Information",
+      title: "Informasi Dasar",
       items: [
         {
           icon: Users,
-          label: "Capacity",
-          value: `${room.capacity} people`,
+          label: "Kapasitas",
+          value: `${room.capacity} orang`,
         },
         {
           icon: MapPin,
-          label: "Location",
-          value: room.location || "Location not specified",
+          label: "Lokasi",
+          value: room.location || "Lokasi tidak ditentukan",
         },
         {
           icon: Building2,
           label: "Status",
-          value: room.isActive ? "Active" : "Inactive",
+          value: room.isActive ? "Aktif" : "Tidak Aktif",
           badge: true,
           badgeVariant: room.isActive ? "default" : "destructive",
         },
       ],
     },
     {
-      title: "Room History",
+      title: "Riwayat Ruangan",
       items: [
         {
           icon: User,
-          label: "Created by",
-          value: room.createdByName || "Unknown",
+          label: "Dibuat oleh",
+          value: room.createdByName || "Tidak diketahui",
         },
         {
           icon: Calendar,
-          label: "Created",
+          label: "Dibuat",
           value: format(new Date(room.createdAt), "MMM d, yyyy"),
         },
         ...(room.updatedBy
           ? [
               {
                 icon: Pencil,
-                label: "Updated by",
-                value: room.updatedByName || "Unknown",
+                label: "Diperbarui oleh",
+                value: room.updatedByName || "Tidak diketahui",
               },
               {
                 icon: Calendar,
-                label: "Last updated",
+                label: "Terakhir diperbarui",
                 value: format(new Date(room.updatedAt), "MMM d, yyyy"),
               },
             ]
@@ -86,7 +86,7 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
       <div className="flex items-center gap-2">
         <div className="w-1 h-6 bg-gradient-to-b from-violet-400 to-purple-500 rounded-full"></div>
         <h2 className="text-xl font-semibold bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-          Room Information
+          Informasi Ruangan
         </h2>
       </div>
 
@@ -145,7 +145,7 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
 
         <CardHeader className="relative">
           <CardTitle className="text-lg bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-            Facilities & Amenities
+            Fasilitas & Amenitas
           </CardTitle>
         </CardHeader>
 
@@ -168,11 +168,11 @@ export function RoomInfoSection({ room }: RoomInfoSectionProps) {
                   <span className="text-2xl text-white">🏗️</span>
                 </div>
                 <p className="text-violet-700 dark:text-violet-300 font-medium">
-                  No facilities listed
+                  Tidak ada fasilitas terdaftar
                 </p>
                 <p className="text-sm text-violet-600/70 dark:text-violet-400/70 max-w-sm mx-auto">
-                  Add facilities to help users understand what amenities are
-                  available in this room
+                  Tambahkan fasilitas untuk membantu pengguna memahami amenitas
+                  apa yang tersedia di ruangan ini
                 </p>
               </div>
             </div>

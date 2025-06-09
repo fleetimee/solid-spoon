@@ -7,7 +7,7 @@ export interface ReservationContentSectionProps {
 
 export function ReservationContentSection({
   children,
-  title = "Reservation Management",
+  title = "Manajemen Reservasi",
 }: ReservationContentSectionProps) {
   return (
     <div className="space-y-6">

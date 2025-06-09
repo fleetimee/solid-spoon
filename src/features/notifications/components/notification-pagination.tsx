@@ -156,7 +156,7 @@ export function NotificationPagination({
           <div className="flex items-center gap-2">
             <Hash className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             <span className="text-sm font-medium text-foreground">
-              Items per page:
+              Item per halaman:
             </span>
           </div>
 
@@ -179,7 +179,7 @@ export function NotificationPagination({
                   "transition-colors duration-200"
                 )}
               >
-                <SelectValue placeholder="Size" />
+                <SelectValue placeholder="Ukuran" />
               </SelectTrigger>
               <SelectContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-sm">
                 <SelectItem value="3">3</SelectItem>
@@ -199,7 +199,7 @@ export function NotificationPagination({
                 "focus:ring-purple-500/20 focus:border-purple-400",
                 "transition-colors duration-200"
               )}
-              placeholder="Custom"
+              placeholder="Kustom"
               value={customSizeInput}
               onChange={(e) => setCustomSizeInput(e.target.value)}
               onKeyDown={(e) => {

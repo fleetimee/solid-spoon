@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
+  // Redirect sign-up attempts to home page since registration is disabled
+  if (request.nextUrl.pathname === "/auth/sign-up") {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   const sessionCookie = getSessionCookie(request);
 
   if (!sessionCookie) {
@@ -12,5 +17,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/"],
+  matcher: ["/", "/auth/sign-up"],
 };

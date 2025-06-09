@@ -36,16 +36,16 @@ export function ClearNotificationsButton({
         .then((result) => {
           if (result.success) {
             toast.success(
-              `Cleared ${result.deletedCount || 0} read notifications.`
+              `${result.deletedCount || 0} notifikasi yang dibaca berhasil dihapus.`
             );
             // UI updates via revalidation in action
           } else {
-            toast.error(result.error || "Failed to clear notifications.");
+            toast.error(result.error || "Gagal menghapus notifikasi.");
           }
         })
         .catch((error) => {
           console.error("Clear notifications transition error:", error);
-          toast.error("An unexpected error occurred.");
+          toast.error("Terjadi kesalahan yang tidak terduga.");
         });
     });
   };
@@ -70,7 +70,7 @@ export function ClearNotificationsButton({
           )}
         >
           <Trash2 className="h-4 w-4 mr-1.5 group-hover:animate-pulse" />
-          Clear Read
+          Hapus yang Dibaca
         </Button>
       </AlertDialogTrigger>
 
@@ -91,12 +91,12 @@ export function ClearNotificationsButton({
               <AlertTriangle className="h-5 w-5 text-white" />
             </div>
             <AlertDialogTitle className="text-xl font-semibold">
-              Are you absolutely sure?
+              Apakah Anda benar-benar yakin?
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-base leading-relaxed">
-            This action cannot be undone. This will permanently delete all your
-            read notifications from the system.
+            Tindakan ini tidak dapat dibatalkan. Ini akan secara permanen
+            menghapus semua notifikasi yang telah dibaca dari sistem.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -108,7 +108,7 @@ export function ClearNotificationsButton({
               "hover:scale-105 transition-transform duration-200"
             )}
           >
-            Cancel
+            Batal
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleClear}
@@ -123,10 +123,10 @@ export function ClearNotificationsButton({
             {isPending ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Clearing...
+                Menghapus...
               </div>
             ) : (
-              "Continue"
+              "Lanjutkan"
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

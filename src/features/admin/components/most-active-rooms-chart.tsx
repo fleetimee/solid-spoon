@@ -30,9 +30,9 @@ export function MostActiveRoomsChart({
       {" "}
       {/* Added h-full for consistent height */}
       <CardHeader>
-        <CardTitle>Most Active Rooms - Last 30 Days</CardTitle>
+        <CardTitle>Ruangan Paling Aktif - 30 Hari Terakhir</CardTitle>
         <CardDescription>
-          Top rooms by number of reservations in the last 30 days.
+          Ruangan teratas berdasarkan jumlah reservasi dalam 30 hari terakhir.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -77,7 +77,7 @@ export function MostActiveRoomsChart({
               layout="vertical" // Specify layout for Bar
               fill="var(--color-count)" // Assumes 'count' is defined in chartConfig
               radius={4}
-              name="Reservations" // Name shown in tooltip
+              name="Reservasi" // Name shown in tooltip
             />
           </BarChart>
         </ChartContainer>

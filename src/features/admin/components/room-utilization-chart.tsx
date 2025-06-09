@@ -34,10 +34,10 @@ export function RoomUtilizationChart({
       {" "}
       {/* Use flex-col to allow content growth */}
       <CardHeader>
-        <CardTitle>Room Utilization - Last 30 Days</CardTitle>
+        <CardTitle>Utilisasi Ruangan - 30 Hari Terakhir</CardTitle>
         <CardDescription>
-          Percentage of time each active room was booked (Approved reservations,
-          24/7 availability).
+          Persentase waktu setiap ruangan aktif dipesan (Reservasi disetujui,
+          ketersediaan 24/7).
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
@@ -79,7 +79,7 @@ export function RoomUtilizationChart({
             >
               {/* Add Axis Label */}
               <Label
-                value="Utilization (%)"
+                value="Utilisasi (%)"
                 offset={-15}
                 position="insideBottomRight"
               />
@@ -99,7 +99,7 @@ export function RoomUtilizationChart({
               layout="vertical"
               fill="var(--color-utilization)" // Assumes 'utilization' is defined in chartConfig
               radius={4}
-              name="Utilization" // Name shown in tooltip
+              name="Utilisasi" // Name shown in tooltip
               barSize={20} // Optional: Adjust bar thickness
             />
           </BarChart>

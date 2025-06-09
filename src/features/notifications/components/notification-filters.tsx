@@ -35,7 +35,7 @@ export function NotificationFilters({
       case "all":
         return {
           icon: Bell,
-          label: "All Notifications",
+          label: "Semua Notifikasi",
           gradient: "from-purple-500 to-violet-500",
           hoverBg: "hover:bg-purple-50 dark:hover:bg-purple-950/20",
           activeBg:
@@ -44,7 +44,7 @@ export function NotificationFilters({
       case "unread":
         return {
           icon: BellRing,
-          label: "Unread",
+          label: "Belum Dibaca",
           gradient: "from-orange-500 to-red-500",
           hoverBg: "hover:bg-orange-50 dark:hover:bg-orange-950/20",
           activeBg:
@@ -53,7 +53,7 @@ export function NotificationFilters({
       case "read":
         return {
           icon: Check,
-          label: "Read",
+          label: "Sudah Dibaca",
           gradient: "from-emerald-500 to-green-500",
           hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-950/20",
           activeBg:

@@ -24,7 +24,7 @@ export async function acceptReservationAction(
   // --- 1. Validate reservationId from formData ---
   const schema = z.object({
     // Use coerce to ensure it's treated as a string before validation
-    reservationId: z.coerce.string().min(1, "Reservation ID is required."),
+    reservationId: z.coerce.string().min(1, "ID reservasi diperlukan."),
   });
 
   const parseResult = schema.safeParse({
@@ -34,7 +34,7 @@ export async function acceptReservationAction(
   if (!parseResult.success) {
     return {
       success: false,
-      message: "Validation failed.",
+      message: "Validasi gagal.",
       errors: parseResult.error.flatten().fieldErrors,
     };
   }
@@ -51,7 +51,7 @@ export async function acceptReservationAction(
   if (!session?.user?.id || session.user.role !== "admin") {
     return {
       success: false,
-      message: "Unauthorized: Only admins can accept reservations.",
+      message: "Tidak diizinkan: Hanya admin yang dapat menerima reservasi.",
     };
   }
 
@@ -64,7 +64,7 @@ export async function acceptReservationAction(
   if (!acceptedStatus) {
     return {
       success: false,
-      message: "Configuration error: 'Accepted' status lookup value not found.",
+      message: "Kesalahan konfigurasi: Status 'Approved' tidak ditemukan.",
     };
   }
   const acceptedStatusId = acceptedStatus.id; // Get the ID from the found status object
@@ -114,7 +114,7 @@ export async function acceptReservationAction(
         try {
           const notifyUrl = new URL(
             "/api/reservations/notify",
-            process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000" // Fallback needed
+            process.env.BETTER_AUTH_URL || "http://localhost:3000" // Fallback needed
           ).toString();
 
           await fetch(notifyUrl, {
@@ -148,8 +148,8 @@ export async function acceptReservationAction(
              VALUES ($1, $2, $3, $4, $5)`,
             [
               reservationDetails.userId,
-              "Reservation Approved",
-              `Your reservation for room '${reservationDetails.roomName}' has been approved.`,
+              "Reservasi Disetujui",
+              `Reservasi Anda untuk ruangan '${reservationDetails.roomName}' telah disetujui.`,
               "user",
               "/me/bookings",
             ]
@@ -188,7 +188,7 @@ export async function acceptReservationAction(
 
     return {
       success: true,
-      message: "Reservation accepted successfully.",
+      message: "Reservasi berhasil diterima.",
     };
   } catch (error) {
     console.error("Failed to accept reservation:", error);
@@ -196,7 +196,7 @@ export async function acceptReservationAction(
       error instanceof Error ? error.message : "Database error occurred.";
     return {
       success: false,
-      message: `Failed to accept reservation: ${errorMessage}`,
+      message: `Gagal menerima reservasi: ${errorMessage}`,
     };
   }
 }

@@ -36,7 +36,7 @@ export function ReservationMetadataCard({
     <Card className={className}>
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">Metadata</CardTitle>
-        <CardDescription>System information and timestamps</CardDescription>
+        <CardDescription>Informasi sistem dan timestamp</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Created At */}
@@ -47,7 +47,7 @@ export function ReservationMetadataCard({
               variant="small"
               className="font-semibold text-blue-900 dark:text-blue-100"
             >
-              Created At
+              Dibuat Pada
             </Typography>
             <Typography variant="small" className="text-muted-foreground">
               {formatDate(createdAt)}
@@ -64,7 +64,7 @@ export function ReservationMetadataCard({
                 variant="small"
                 className="font-semibold text-green-900 dark:text-green-100"
               >
-                Approved By
+                Disetujui Oleh
               </Typography>
               <Typography variant="small" className="text-muted-foreground">
                 {approverName}
@@ -82,7 +82,7 @@ export function ReservationMetadataCard({
                 variant="small"
                 className="font-semibold text-emerald-900 dark:text-emerald-100"
               >
-                Approved At
+                Disetujui Pada
               </Typography>
               <Typography variant="small" className="text-muted-foreground">
                 {formatDate(approvedAt)}
@@ -99,7 +99,7 @@ export function ReservationMetadataCard({
               variant="small"
               className="font-semibold text-gray-900 dark:text-gray-100"
             >
-              Reservation ID
+              ID Reservasi
             </Typography>
             <Typography
               variant="small"

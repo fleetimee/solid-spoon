@@ -6,6 +6,11 @@ import db from "../../../lib/db";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers"; // Import headers
 import { PoolClient } from "pg"; // Import PoolClient for type safety if needed
+import {
+  sendAdminNotification,
+  formatDateIndonesian,
+  formatTimeRange,
+} from "./sendAdminNotification";
 
 // Define the Zod schema for validation
 const newReservationSchema = z
@@ -13,13 +18,15 @@ const newReservationSchema = z
     roomId: z.coerce
       .number()
       .int()
-      .positive("Room ID must be a positive integer"),
-    title: z.string().min(1, "Title is required"),
-    description: z.string().optional(),
+      .positive("ID ruangan harus berupa bilangan bulat positif"),
+    title: z.string().min(1, "Judul diperlukan"),
+    description: z.string().min(1, "Deskripsi diperlukan"),
     start_time: z
       .string()
-      .datetime({ message: "Invalid start date/time format" }),
-    end_time: z.string().datetime({ message: "Invalid end date/time format" }),
+      .datetime({ message: "Format tanggal/waktu mulai tidak valid" }),
+    end_time: z
+      .string()
+      .datetime({ message: "Format tanggal/waktu selesai tidak valid" }),
   })
   .refine(
     (data) => {
@@ -31,7 +38,7 @@ const newReservationSchema = z
       }
     },
     {
-      message: "End time must be after start time",
+      message: "Waktu selesai harus setelah waktu mulai",
       path: ["end_time"], // Attach the error specifically to the end_time field
     }
   );
@@ -58,7 +65,7 @@ export async function createReservationAction(
   const session = await auth.api.getSession({ headers: mutableHeaders }); // Pass mutable headers object
 
   if (!session?.user?.id) {
-    return { success: false, message: "Authentication required" };
+    return { success: false, message: "Autentikasi diperlukan" };
   }
 
   const userId = session.user.id;
@@ -79,7 +86,7 @@ export async function createReservationAction(
     console.error("Validation Errors:", result.error.flatten().fieldErrors);
     return {
       success: false,
-      message: "Invalid data provided. Please check the fields.",
+      message: "Data tidak valid. Silakan periksa kolom-kolom yang diisi.",
       fieldErrors: result.error.flatten().fieldErrors,
     };
   }
@@ -95,9 +102,9 @@ export async function createReservationAction(
   if (durationMs > twentyFourHoursInMs) {
     return {
       success: false,
-      message: "Reservation duration cannot exceed 24 hours.",
+      message: "Durasi reservasi tidak boleh melebihi 24 jam.",
       fieldErrors: {
-        end_time: ["Reservation duration cannot exceed 24 hours."],
+        end_time: ["Durasi reservasi tidak boleh melebihi 24 jam."],
       },
     };
   }
@@ -122,7 +129,7 @@ export async function createReservationAction(
       validatedData.roomId,
       userId,
       validatedData.title,
-      validatedData.description || null, // Use null if description is empty/undefined
+      validatedData.description, // Description is now required, no need for null fallback
       validatedData.start_time, // Use the validated ISO string
       validatedData.end_time, // Use the validated ISO string
       2, // Assume status ID 1 means 'Pending'
@@ -165,11 +172,11 @@ export async function createReservationAction(
     }
 
     // Insert notification for admins within the transaction
-    const notificationTitle = "New Reservation Pending";
+    const notificationTitle = "Reservasi Baru Menunggu Persetujuan";
     // Use roomName in the message, fallback to ID
     const notificationMessage = `User ${
       session.user?.name || userId
-    } requested reservation for room "${
+    } mengajukan reservasi untuk ruangan "${
       roomName || `ID: ${validatedData.roomId}` // Use name, fallback to ID
     }".`;
     const notificationType = "admin";
@@ -194,6 +201,41 @@ export async function createReservationAction(
     // Commit the transaction
     await client.query("COMMIT");
 
+    // Send admin notification email (after successful commit)
+    // Don't await this to avoid blocking the response - run in background
+    (async () => {
+      try {
+        const adminNotificationData = {
+          userName:
+            session.user?.name || session.user?.email || `User ${userId}`,
+          userEmail: session.user?.email || "",
+          roomName: roomName || `Ruangan ID: ${validatedData.roomId}`,
+          reservationDate: formatDateIndonesian(validatedData.start_time),
+          reservationTime: formatTimeRange(
+            validatedData.start_time,
+            validatedData.end_time
+          ),
+          purpose: validatedData.title,
+          roomSlug: roomSlug || undefined,
+        };
+
+        const emailSent = await sendAdminNotification(adminNotificationData);
+
+        if (emailSent) {
+          console.log(
+            `Admin notification email sent successfully for reservation ${newReservationId}`
+          );
+        } else {
+          console.warn(
+            `Failed to send admin notification email for reservation ${newReservationId}`
+          );
+        }
+      } catch (emailError) {
+        console.error("Error sending admin notification email:", emailError);
+        // Don't fail the reservation creation due to email errors
+      }
+    })();
+
     // Revalidate relevant paths (after successful commit)
     if (roomSlug) {
       revalidatePath(`/v/${roomSlug}`); // Revalidate the specific room page
@@ -208,7 +250,7 @@ export async function createReservationAction(
 
     return {
       success: true,
-      message: "Reservation created successfully!",
+      message: "Reservasi berhasil dibuat!",
       reservationId: newReservationId,
     };
   } catch (error: any) {
@@ -226,7 +268,7 @@ export async function createReservationAction(
     // Example: if (error.code === '23505' && error.constraint === 'unique_room_time') { ... }
     return {
       success: false,
-      message: "Failed to create reservation. Please try again later.",
+      message: "Gagal membuat reservasi. Silakan coba lagi nanti.",
       // Optionally include more specific error details in development
       // fieldErrors: process.env.NODE_ENV === 'development' ? { _form: [error.message] } : undefined,
     };

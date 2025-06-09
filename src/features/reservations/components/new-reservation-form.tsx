@@ -40,7 +40,7 @@ import { ReservationCalendar } from "@/components/ui/reservation-calendar";
 const reservationFormSchema = z
   .object({
     title: z.string().min(1, "Judul wajib diisi"),
-    description: z.string().optional(),
+    description: z.string().min(1, "Deskripsi wajib diisi"),
     start_time: z.date({ required_error: "Waktu mulai wajib diisi." }), // Change to z.date
     end_time: z.date({ required_error: "Waktu selesai wajib diisi." }), // Change to z.date
     roomId: z.number(), // Add roomId to the schema
@@ -121,9 +121,7 @@ export function NewReservationForm({
   async function onSubmit(values: ReservationFormValues) {
     const formData = new FormData();
     formData.append("title", values.title);
-    if (values.description) {
-      formData.append("description", values.description);
-    }
+    formData.append("description", values.description); // Description is now required
     // Convert dates to ISO strings for the server action
     formData.append("start_time", values.start_time.toISOString());
     formData.append("end_time", values.end_time.toISOString());
@@ -225,9 +223,7 @@ export function NewReservationForm({
                   <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 Deskripsi
-                <span className="text-sm text-muted-foreground font-normal">
-                  (Opsional)
-                </span>
+                <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Textarea

@@ -7,6 +7,36 @@ import { getUserReservations } from "@/features/reservations/api/getUserReservat
 import { BookingsList } from "@/features/reservations/components/bookings-list"; // Import the new component
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { BookOpen } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Booking Saya - Capstone Room Reservation",
+  description:
+    "Lihat dan kelola semua reservasi ruangan dan riwayat booking Anda. Pantau status booking dan jadwal reservasi terbaru.",
+  keywords: [
+    "booking saya",
+    "reservasi saya",
+    "riwayat booking",
+    "jadwal reservasi",
+    "kelola booking",
+    "status reservasi",
+    "capstone",
+    "Indonesia",
+  ],
+  openGraph: {
+    title: "Booking Saya - Capstone Room Reservation",
+    description:
+      "Lihat dan kelola semua reservasi ruangan dan riwayat booking Anda. Pantau status booking dan jadwal reservasi terbaru.",
+    type: "website",
+    locale: "id_ID",
+    url: "/me/bookings",
+    siteName: "Capstone Room Reservation",
+  },
+  robots: {
+    index: false, // User profile pages should not be indexed
+    follow: false,
+  },
+};
 
 // Removed getStatusColor helper function
 

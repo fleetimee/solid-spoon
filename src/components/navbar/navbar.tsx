@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
@@ -110,9 +110,14 @@ export function Navbar({ session, initialNotificationCount }: NavbarProps) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <LogoutConfirmation asChild>
-                      <button className="flex items-center w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
+                      <button className="flex items-center w-full justify-center text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 group transition-colors duration-200 px-2 py-1.5 text-sm rounded-sm hover:bg-red-50 dark:hover:bg-red-950/30">
+                        <LogOut className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform duration-200" />
+                        <span className="flex items-center gap-2">
+                          Log out
+                          <span className="text-xs opacity-60 group-hover:opacity-80">
+                            ✨
+                          </span>
+                        </span>
                       </button>
                     </LogoutConfirmation>
                   </DropdownMenuItem>
@@ -127,9 +132,6 @@ export function Navbar({ session, initialNotificationCount }: NavbarProps) {
                 asChild
               >
                 <Link href="/auth/sign-in">Sign In</Link>
-              </Button>
-              <Button className="hidden xs:inline-flex" asChild>
-                <Link href="/auth/signup">Get Started</Link>
               </Button>
             </>
           )}

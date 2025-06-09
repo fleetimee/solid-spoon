@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   getReservationById,
@@ -11,6 +12,12 @@ import { ReservationDescriptionCard } from "@/features/reservations/components/r
 import { ReservationStatusCard } from "@/features/reservations/components/reservation-status-card";
 import { ReservationMetadataCard } from "@/features/reservations/components/reservation-metadata-card";
 import { ReservationRejectionCard } from "@/features/reservations/components/reservation-rejection-card";
+
+export const metadata: Metadata = {
+  title: "Detail Reservasi - Admin Dashboard",
+  description:
+    "Lihat informasi lengkap reservasi ruangan termasuk detail acara, jadwal, dan status",
+};
 
 // Define the props interface
 interface ReservationDetailsPageProps {
@@ -33,9 +40,9 @@ export default async function ReservationDetailsPage(
   }
 
   const breadcrumbs = [
-    { label: "Home", href: "/admin/dashboard" },
-    { label: "Rooms", href: "/admin/rooms" },
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Beranda", href: "/admin/dashboard" },
+    { label: "Ruangan", href: "/admin/rooms" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
       label: reservation.id, // Use reservation ID for the label
       href: `/admin/rooms/reservations/${reservation.id}`,

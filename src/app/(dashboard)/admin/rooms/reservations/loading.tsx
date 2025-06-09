@@ -9,9 +9,9 @@ export default function ReservationsLoading() {
       {/* Add BreadcrumbSetter */}
       <BreadcrumbSetter
         items={[
-          { label: "Home", href: "/admin/dashboard" },
-          { label: "Rooms", href: "/admin/rooms" },
-          { label: "Reservations", href: "/admin/rooms/reservations" },
+          { label: "Beranda", href: "/admin/dashboard" },
+          { label: "Ruangan", href: "/admin/rooms" },
+          { label: "Reservasi", href: "/admin/rooms/reservations" },
         ]}
       />
 

@@ -26,10 +26,10 @@ export function ReservationDetailHeader({
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-              Reservation Details
+              Detail Reservasi
             </h1>
             <p className="text-lg text-muted-foreground">
-              Complete information for reservation #{reservationId}
+              Informasi lengkap untuk reservasi #{reservationId}
             </p>
           </div>
         </div>
@@ -44,12 +44,12 @@ export function ReservationDetailHeader({
         {onBackClick ? (
           <>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Reservations
+            Kembali ke Reservasi
           </>
         ) : (
           <Link href={backHref}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Reservations
+            Kembali ke Reservasi
           </Link>
         )}
       </Button>

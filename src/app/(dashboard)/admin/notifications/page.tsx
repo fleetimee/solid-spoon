@@ -22,16 +22,13 @@ import { NotificationStatsCards } from "@/features/notifications/components/noti
 import { NotificationContentSection } from "@/features/notifications/components/notification-content-section";
 
 export const metadata: Metadata = {
-  title: "Notifications | Room Reservation System",
-  description: "View and manage system notifications",
+  title: "Notifikasi | Sistem Reservasi Ruangan",
+  description: "Lihat dan kelola notifikasi sistem",
 };
 
 export const fetchCache = "default-cache";
 
-const notificationsBreadcrumb = [
-  { label: "Dashboard" },
-  { label: "Notifications" },
-];
+const notificationsBreadcrumb = [{ label: "Dasbor" }, { label: "Notifikasi" }];
 
 interface NotificationsPageProps {
   searchParams: Promise<{
@@ -110,7 +107,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
 
     if (currentPage > 1) {
       result.push({
-        label: "Previous Page",
+        label: "Halaman Sebelumnya",
         page: currentPage - 1,
         icon: <ChevronLeft className="h-4 w-4" />,
       });
@@ -118,7 +115,7 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
 
     if (currentPage < totalPages) {
       result.push({
-        label: "Next Page",
+        label: "Halaman Selanjutnya",
         page: currentPage + 1,
         icon: <ChevronRight className="h-4 w-4" />,
       });
@@ -155,8 +152,8 @@ export default async function NotificationsPage(props: NotificationsPageProps) {
         {/* Header Section */}
         <div className="flex items-center justify-between">
           <NotificationHeader
-            title="Notifications"
-            description="Stay updated with your system activities"
+            title="Notifikasi"
+            description="Tetap terupdate dengan aktivitas sistem Anda"
           />
           {isDevMode && (
             <NotificationJsonToggle

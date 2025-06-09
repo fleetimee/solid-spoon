@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import * as React from "react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -13,6 +14,12 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { Typography } from "@/components/ui/typography";
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { XCircle } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Tolak Reservasi - Admin Dashboard",
+  description:
+    "Tolak reservasi ruangan dengan memberikan alasan penolakan yang jelas",
+};
 
 interface RejectionPageProps {
   params: Promise<{
@@ -63,11 +70,11 @@ async function ReservationRejectionContent({
 
   // Prepare breadcrumbs for rejection page
   const breadcrumbs = [
-    { label: "Home", href: "/" },
+    { label: "Beranda", href: "/" },
     { label: "Admin", href: "/admin/dashboard" }, // Assuming admin dashboard exists
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
-      label: `Reject: ${reservationForForm.title}`, // Update label
+      label: `Tolak: ${reservationForForm.title}`, // Update label
       isCurrent: true,
     },
   ];
@@ -86,11 +93,11 @@ async function ReservationRejectionContent({
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                Reject Reservation
+                Tolak Reservasi
               </h1>
               <p className="text-lg text-muted-foreground mt-1">
-                Review the details below and provide a reason for rejecting this
-                reservation
+                Tinjau detail di bawah ini dan berikan alasan untuk menolak
+                reservasi ini
               </p>
             </div>
           </div>
@@ -121,11 +128,11 @@ export default async function AdminReservationRejectionPage(
 // Skeleton for the rejection page while data is loading
 function RejectionPageSkeleton() {
   const breadcrumbs = [
-    { label: "Home", href: "/" },
+    { label: "Beranda", href: "/" },
     { label: "Admin", href: "/admin/dashboard" },
-    { label: "Reservations", href: "/admin/rooms/reservations" },
+    { label: "Reservasi", href: "/admin/rooms/reservations" },
     {
-      label: `Reject Reservation`, // Update label
+      label: `Tolak Reservasi`, // Update label
       isCurrent: true,
     },
   ];
@@ -143,11 +150,11 @@ function RejectionPageSkeleton() {
             </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                Reject Reservation
+                Tolak Reservasi
               </h1>
               <p className="text-lg text-muted-foreground mt-1">
-                Review the details below and provide a reason for rejecting this
-                reservation
+                Tinjau detail di bawah ini dan berikan alasan untuk menolak
+                reservasi ini
               </p>
             </div>
           </div>

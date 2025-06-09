@@ -1,4 +1,4 @@
-import { authClient } from "@/lib/auth-client";
+import db from "@/lib/db";
 
 export interface UserStatsData {
   totalUsers: number;
@@ -9,34 +9,7 @@ export interface UserStatsData {
 
 export async function getUserStats(): Promise<UserStatsData> {
   try {
-    // Get total users
-    const totalResult = await authClient.admin.listUsers({
-      query: { limit: 1, offset: 0 },
-    });
-
-    // Get active users (not banned)
-    const activeResult = await authClient.admin.listUsers({
-      query: {
-        limit: 1,
-        offset: 0,
-        filterField: "banned",
-        filterOperator: "eq",
-        filterValue: false,
-      },
-    });
-
-    // Get banned users
-    const bannedResult = await authClient.admin.listUsers({
-      query: {
-        limit: 1,
-        offset: 0,
-        filterField: "banned",
-        filterOperator: "eq",
-        filterValue: true,
-      },
-    });
-
-    // Calculate new users this month
+    // Calculate the first day of current month for new users filtering
     const currentDate = new Date();
     const firstDayOfMonth = new Date(
       currentDate.getFullYear(),
@@ -44,30 +17,36 @@ export async function getUserStats(): Promise<UserStatsData> {
       1
     );
 
-    // For new users this month, we'll use a simplified approach
-    // Since we don't have direct date filtering in the current API,
-    // we'll fetch recent users and filter client-side as a fallback
-    const recentResult = await authClient.admin.listUsers({
-      query: {
-        limit: 1000,
-        offset: 0,
-        sortBy: "createdAt",
-        sortDirection: "desc",
-      },
-    });
+    // Execute all queries in parallel for better performance
+    const [totalResult, activeResult, bannedResult, newUsersResult] =
+      await Promise.all([
+        // Total users count
+        db.query('SELECT COUNT(*) as count FROM "user"'),
 
-    let newUsersThisMonth = 0;
-    if (recentResult.data?.users) {
-      newUsersThisMonth = recentResult.data.users.filter((user) => {
-        const userCreatedAt = new Date(user.createdAt);
-        return userCreatedAt >= firstDayOfMonth;
-      }).length;
-    }
+        // Active users count (not banned: banned = false OR banned IS NULL)
+        db.query(
+          'SELECT COUNT(*) as count FROM "user" WHERE banned IS NOT TRUE'
+        ),
+
+        // Banned users count (explicitly banned: banned = true)
+        db.query('SELECT COUNT(*) as count FROM "user" WHERE banned = true'),
+
+        // New users this month
+        db.query(
+          'SELECT COUNT(*) as count FROM "user" WHERE "createdAt" >= $1',
+          [firstDayOfMonth]
+        ),
+      ]);
+
+    const totalUsers = parseInt(totalResult.rows[0]?.count || "0");
+    const activeUsers = parseInt(activeResult.rows[0]?.count || "0");
+    const bannedUsers = parseInt(bannedResult.rows[0]?.count || "0");
+    const newUsersThisMonth = parseInt(newUsersResult.rows[0]?.count || "0");
 
     return {
-      totalUsers: totalResult.data?.total || 0,
-      activeUsers: activeResult.data?.total || 0,
-      bannedUsers: bannedResult.data?.total || 0,
+      totalUsers,
+      activeUsers,
+      bannedUsers,
       newUsersThisMonth,
     };
   } catch (error) {

@@ -58,8 +58,8 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
           }}
         >
           {status === "approved"
-            ? "Reservation Approved!"
-            : "Reservation Not Approved"}
+            ? "Reservasi Disetujui!"
+            : "Reservasi Tidak Disetujui"}
         </h1>
       </td>
     </tr>
@@ -73,7 +73,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
             color: "#374151",
           }}
         >
-          Dear {userName},
+          Yang Terhormat {userName},
         </p>
         {status === "approved" ? (
           <div>
@@ -85,9 +85,10 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                 color: "#374151",
               }}
             >
-              We&apos;re pleased to inform you that your reservation for{" "}
-              <strong style={{ color: "#15803d" }}>{roomName}</strong> has been
-              approved! You can now proceed with using the room as scheduled.
+              Kami dengan senang hati memberitahukan bahwa reservasi Anda untuk
+              ruangan <strong style={{ color: "#15803d" }}>{roomName}</strong>{" "}
+              telah disetujui! Anda sekarang dapat menggunakan ruangan tersebut
+              sesuai jadwal yang telah ditentukan.
             </p>
           </div>
         ) : (
@@ -100,9 +101,9 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                 color: "#374151",
               }}
             >
-              We regret to inform you that your reservation for{" "}
-              <strong style={{ color: "#dc2626" }}>{roomName}</strong> could not
-              be approved at this time.
+              Kami menyesal memberitahukan bahwa reservasi Anda untuk ruangan{" "}
+              <strong style={{ color: "#dc2626" }}>{roomName}</strong> tidak
+              dapat disetujui pada saat ini.
             </p>
             {reason && (
               <div
@@ -121,7 +122,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                     color: "#991b1b",
                   }}
                 >
-                  <strong>Reason:</strong> {reason}
+                  <strong>Alasan:</strong> {reason}
                 </p>
               </div>
             )}
@@ -144,11 +145,11 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                   margin: "0 0 8px 0",
                 }}
               >
-                You can view your bookings and manage your reservations at any
-                time
+                Anda dapat melihat booking dan mengelola reservasi Anda kapan
+                saja
               </p>
               <a
-                href="/me/bookings"
+                href={`${process.env.BETTER_AUTH_URL}/me/bookings`}
                 style={{
                   display: "inline-block",
                   backgroundColor: "#2563eb",
@@ -160,7 +161,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
                   fontSize: "14px",
                 }}
               >
-                View My Bookings
+                Lihat Booking Saya
               </a>
             </td>
           </tr>
@@ -183,7 +184,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
             color: "#64748b",
           }}
         >
-          Thank you for using Capstone Room Reservation
+          Terima kasih telah menggunakan CapstoneD Manajemen Ruangan Meeting
         </p>
       </td>
     </tr>

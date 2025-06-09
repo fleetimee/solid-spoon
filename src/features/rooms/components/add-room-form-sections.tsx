@@ -71,7 +71,7 @@ export function AddRoomFormSections({
           {errorMessage && (
             <Alert variant="destructive" className="border-2">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>Kesalahan</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}

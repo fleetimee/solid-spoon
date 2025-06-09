@@ -9,8 +9,8 @@ export interface AddRoomHeaderProps {
 }
 
 export function AddRoomHeader({
-  title = "🏢 Add New Room",
-  description = "Create a space that inspires productivity and collaboration",
+  title = "🏢 Tambah Ruangan Baru",
+  description = "Buat ruangan yang menginspirasi produktivitas dan kolaborasi",
   icon: Icon = PlusCircle,
 }: AddRoomHeaderProps) {
   return (
@@ -36,7 +36,7 @@ export function AddRoomHeader({
       >
         <Link href="/admin/rooms">
           <ArrowLeft className="h-4 w-4" />
-          Back to Rooms
+          Kembali ke Ruangan
         </Link>
       </Button>
     </div>

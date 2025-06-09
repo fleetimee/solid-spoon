@@ -7,7 +7,7 @@ export interface UserContentSectionProps {
 
 export function UserContentSection({
   children,
-  title = "User Management",
+  title = "Manajemen Pengguna",
 }: UserContentSectionProps) {
   return (
     <div className="space-y-6">

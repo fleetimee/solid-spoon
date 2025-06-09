@@ -9,6 +9,8 @@ import {
 } from "@daveyplate/better-auth-ui";
 import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { Settings } from "lucide-react";
+// Note: Metadata is handled by the parent layout at /me/layout.tsx
+// since this is a client component
 
 export default function SettingsPage() {
   return (

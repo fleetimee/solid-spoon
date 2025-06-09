@@ -241,8 +241,15 @@ export default async function NewReservationPage(
                   <div className="flex items-start gap-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
                     <p className="text-sm text-muted-foreground">
-                      Tambahkan judul yang jelas untuk membantu mengidentifikasi
-                      pemesanan Anda
+                      Tambahkan judul dan deskripsi yang jelas untuk membantu
+                      mengidentifikasi pemesanan Anda
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-muted-foreground">
+                      Deskripsi wajib diisi untuk memberikan detail lengkap
+                      reservasi
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
