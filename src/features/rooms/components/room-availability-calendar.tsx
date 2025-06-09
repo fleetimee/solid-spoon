@@ -450,7 +450,7 @@ export function RoomAvailabilityCalendar({
 
       {/* Summary Statistics */}
       <div className="w-full mt-4 p-4 bg-muted/30 rounded-lg border border-border/30">
-        <div className="grid grid-cols-2 gap-6 text-center">
+        <div className="grid grid-cols-3 gap-4 text-center">
           <div className="space-y-2">
             <div className="text-xl font-bold text-destructive">
               {bookedDays.length}
@@ -461,10 +461,18 @@ export function RoomAvailabilityCalendar({
           </div>
           <div className="space-y-2">
             <div className="text-xl font-bold text-green-600 dark:text-green-400">
-              {reservations.length}
+              {reservations.filter((r) => r.status === "Approved").length}
             </div>
             <div className="text-sm text-muted-foreground font-medium">
-              Total Reservasi
+              Aktif
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="text-xl font-bold text-blue-600 dark:text-blue-400">
+              {reservations.filter((r) => r.status === "Completed").length}
+            </div>
+            <div className="text-sm text-muted-foreground font-medium">
+              Selesai
             </div>
           </div>
         </div>
