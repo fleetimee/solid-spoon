@@ -6,6 +6,7 @@ import { DashboardHeader } from "@/features/admin/components/dashboard-header";
 import { DashboardKPICards } from "@/features/admin/components/dashboard-kpi-cards";
 import { DashboardAnalyticsSection } from "@/features/admin/components/dashboard-analytics-section";
 import { DashboardActivitySection } from "@/features/admin/components/dashboard-activity-section";
+import { CompletionAnalyticsChart } from "@/features/admin/components/completion-analytics-chart";
 
 export const metadata: Metadata = {
   title: "Dashboard Admin - Sistem Reservasi Ruangan",
@@ -139,6 +140,14 @@ export default async function AdminDashboardPage() {
       />
 
       <DashboardKPICards stats={stats} />
+
+      <div className="space-y-8">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
+          <h2 className="text-xl font-semibold">Analitik Penyelesaian</h2>
+        </div>
+        <CompletionAnalyticsChart data={stats.completionStats} />
+      </div>
 
       <DashboardAnalyticsSection
         data={analyticsData}

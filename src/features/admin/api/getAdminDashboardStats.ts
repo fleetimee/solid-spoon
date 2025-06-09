@@ -15,10 +15,20 @@ interface RoomUtilizationDataPoint {
   utilization: number;
 }
 
+export interface CompletionStats {
+  totalCompleted: number;
+  completedToday: number;
+  completedThisMonth: number;
+  completionRate: number;
+  averageCompletionTimeHours: number | null;
+  completedLast7Days: Array<{ date: string; count: number }>;
+}
+
 export interface AdminDashboardStats {
   pendingReservationCount: number;
   totalUserCount: number;
   activeRoomCount: number;
+  completionStats: CompletionStats;
   reservationsLast30Days: ReservationDataPoint[];
   mostActiveRooms: ActiveRoomDataPoint[];
   roomUtilization: RoomUtilizationDataPoint[];
@@ -32,10 +42,19 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
     thirtyDaysAgo.setHours(0, 0, 0, 0);
     const windowEnd = new Date(now);
 
+    // Date calculations for completion stats
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
     const windowStartMs = thirtyDaysAgo.getTime();
     const windowEndMs = windowEnd.getTime();
     const totalWindowMs = windowEndMs - windowStartMs;
 
+    // Get all status IDs
     const pendingStatusResult = await db.query(
       `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
       ["reservation_status", "PENDING"]
@@ -52,6 +71,12 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
         "CRITICAL: Could not find 'Approved' status ID in lookup table. Utilization calculation skipped."
       );
     }
+
+    const completedStatusResult = await db.query(
+      `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
+      ["reservation_status", "COMPLETED"]
+    );
+    const completedStatusId = completedStatusResult.rows[0]?.id;
 
     let pendingReservationCount = 0;
     if (pendingStatusId !== undefined) {
@@ -79,6 +104,121 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
       activeRoomsResult.rows[0]?.count ?? "0",
       10
     );
+
+    // Calculate completion statistics
+    const completionStats: CompletionStats = {
+      totalCompleted: 0,
+      completedToday: 0,
+      completedThisMonth: 0,
+      completionRate: 0,
+      averageCompletionTimeHours: null,
+      completedLast7Days: [],
+    };
+
+    if (completedStatusId !== undefined) {
+      // Total completed reservations
+      const totalCompletedResult = await db.query(
+        `SELECT COUNT(*) as count FROM room_reservation WHERE status_id = $1`,
+        [completedStatusId]
+      );
+      completionStats.totalCompleted = parseInt(
+        totalCompletedResult.rows[0]?.count ?? "0",
+        10
+      );
+
+      // Completed today
+      const completedTodayResult = await db.query(
+        `SELECT COUNT(*) as count FROM room_reservation
+         WHERE status_id = $1 AND updated_at >= $2 AND updated_at < $3`,
+        [completedStatusId, today, tomorrow]
+      );
+      completionStats.completedToday = parseInt(
+        completedTodayResult.rows[0]?.count ?? "0",
+        10
+      );
+
+      // Completed this month
+      const completedThisMonthResult = await db.query(
+        `SELECT COUNT(*) as count FROM room_reservation
+         WHERE status_id = $1 AND updated_at >= $2`,
+        [completedStatusId, startOfMonth]
+      );
+      completionStats.completedThisMonth = parseInt(
+        completedThisMonthResult.rows[0]?.count ?? "0",
+        10
+      );
+
+      // Completion rate (completed / total reservations)
+      const totalReservationsResult = await db.query(
+        `SELECT COUNT(*) as count FROM room_reservation`
+      );
+      const totalReservations = parseInt(
+        totalReservationsResult.rows[0]?.count ?? "0",
+        10
+      );
+
+      if (totalReservations > 0) {
+        completionStats.completionRate = Math.round(
+          (completionStats.totalCompleted / totalReservations) * 100
+        );
+      }
+
+      // Average completion time (from creation to completion)
+      const avgCompletionTimeResult = await db.query(
+        `SELECT AVG(EXTRACT(EPOCH FROM (updated_at - created_at))/3600) as avg_hours
+         FROM room_reservation
+         WHERE status_id = $1 AND updated_at IS NOT NULL`,
+        [completedStatusId]
+      );
+      const avgHours = avgCompletionTimeResult.rows[0]?.avg_hours;
+      if (avgHours !== null && !isNaN(parseFloat(avgHours))) {
+        completionStats.averageCompletionTimeHours =
+          Math.round(parseFloat(avgHours) * 10) / 10;
+      }
+
+      // Weekly completion data (last 7 days)
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+
+      const weeklyCompletionResult = await db.query(
+        `SELECT
+           DATE(updated_at) as completion_date,
+           COUNT(*) as count
+         FROM room_reservation
+         WHERE status_id = $1 AND updated_at >= $2 AND updated_at < $3
+         GROUP BY DATE(updated_at)
+         ORDER BY completion_date`,
+        [completedStatusId, sevenDaysAgo, tomorrow]
+      );
+
+      // Create a map for the last 7 days with 0 counts
+      const weeklyDataMap = new Map<string, number>();
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dateStr = date.toLocaleDateString("id-ID", {
+          month: "short",
+          day: "numeric",
+        });
+        weeklyDataMap.set(dateStr, 0);
+      }
+
+      // Fill in actual completion counts
+      weeklyCompletionResult.rows.forEach((row: any) => {
+        const completionDate = new Date(row.completion_date);
+        const dateStr = completionDate.toLocaleDateString("id-ID", {
+          month: "short",
+          day: "numeric",
+        });
+        if (weeklyDataMap.has(dateStr)) {
+          weeklyDataMap.set(dateStr, parseInt(row.count, 10));
+        }
+      });
+
+      completionStats.completedLast7Days = Array.from(
+        weeklyDataMap.entries()
+      ).map(([date, count]) => ({ date, count }));
+    }
 
     const reservationsForChartsResult = await db.query(
       `SELECT
@@ -166,6 +306,7 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
       pendingReservationCount,
       totalUserCount,
       activeRoomCount,
+      completionStats,
       reservationsLast30Days,
       mostActiveRooms,
       roomUtilization,
@@ -176,6 +317,14 @@ export async function getAdminDashboardStats(): Promise<AdminDashboardStats> {
       pendingReservationCount: 0,
       totalUserCount: 0,
       activeRoomCount: 0,
+      completionStats: {
+        totalCompleted: 0,
+        completedToday: 0,
+        completedThisMonth: 0,
+        completionRate: 0,
+        averageCompletionTimeHours: null,
+        completedLast7Days: [],
+      },
       reservationsLast30Days: [],
       mostActiveRooms: [],
       roomUtilization: [],
