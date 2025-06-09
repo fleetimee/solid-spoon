@@ -105,3 +105,58 @@ export function formatTimeRange(startTime: Date, endTime: Date): string {
 
   return `${start} - ${end}`;
 }
+
+/**
+ * Formats a time range with Indonesian locale preference
+ * @param startTime - Start time
+ * @param endTime - End time
+ * @returns Formatted time range string in Indonesian style
+ */
+export function formatTimeRangeIndonesian(
+  startTime: Date,
+  endTime: Date
+): string {
+  const formatOptions: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false, // Use 24-hour format which is common in Indonesia
+  };
+
+  const start = startTime.toLocaleTimeString("id-ID", formatOptions);
+  const end = endTime.toLocaleTimeString("id-ID", formatOptions);
+
+  return `${start} - ${end} WIB`;
+}
+
+/**
+ * Gets a relative day description in Indonesian
+ * @param date - The date to describe
+ * @returns Indonesian relative day description
+ */
+export function getRelativeDayIndonesian(date: Date): string {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Hari ini";
+  } else if (date.toDateString() === tomorrow.toDateString()) {
+    return "Besok";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Kemarin";
+  }
+
+  // For other dates, return the day name in Indonesian
+  const dayNames = [
+    "Minggu",
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+  ];
+  return dayNames[date.getDay()];
+}
