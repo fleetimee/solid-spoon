@@ -35,7 +35,7 @@ import {
 import { type ApprovedReservationTime } from "@/features/reservations/api/getApprovedRoomReservations";
 
 interface ReservationCalendarProps {
-  approvedReservations: ApprovedReservationTime[];
+  approvedReservations: (ApprovedReservationTime & { status: string })[];
   selectedDate?: Date;
   onSelectDate: (date: Date) => void;
   disabled?: (date: Date) => boolean;
@@ -44,7 +44,7 @@ interface ReservationCalendarProps {
 
 // Enhanced Reservation Tooltip Component
 interface ReservationTooltipProps {
-  reservations: ApprovedReservationTime[];
+  reservations: (ApprovedReservationTime & { status: string })[];
   date: Date;
   children: React.ReactNode;
 }
@@ -139,23 +139,48 @@ export function ReservationCalendar({
     selectedDate || new Date()
   );
 
-  // Calculate the set of booked days
+  // Calculate the set of blocked days (only APPROVED reservations block availability)
   const bookedDays = React.useMemo(() => {
     const days = new Set<number>();
 
-    approvedReservations.forEach((reservation: ApprovedReservationTime) => {
-      const start = new Date(reservation.startTime);
-      const end = new Date(reservation.endTime);
+    approvedReservations
+      .filter((reservation) => reservation.status === "Approved")
+      .forEach((reservation) => {
+        const start = new Date(reservation.startTime);
+        const end = new Date(reservation.endTime);
 
-      const intervalDays = eachDayOfInterval({
-        start: startOfDay(start),
-        end: startOfDay(end),
+        const intervalDays = eachDayOfInterval({
+          start: startOfDay(start),
+          end: startOfDay(end),
+        });
+
+        intervalDays.forEach((day) => {
+          days.add(day.getTime());
+        });
       });
 
-      intervalDays.forEach((day) => {
-        days.add(day.getTime());
+    return Array.from(days).map((timestamp) => new Date(timestamp));
+  }, [approvedReservations]);
+
+  // Calculate the set of completed days (for visual indication only)
+  const completedDays = React.useMemo(() => {
+    const days = new Set<number>();
+
+    approvedReservations
+      .filter((reservation) => reservation.status === "Completed")
+      .forEach((reservation) => {
+        const start = new Date(reservation.startTime);
+        const end = new Date(reservation.endTime);
+
+        const intervalDays = eachDayOfInterval({
+          start: startOfDay(start),
+          end: startOfDay(end),
+        });
+
+        intervalDays.forEach((day) => {
+          days.add(day.getTime());
+        });
       });
-    });
 
     return Array.from(days).map((timestamp) => new Date(timestamp));
   }, [approvedReservations]);
@@ -195,6 +220,13 @@ export function ReservationCalendar({
     );
   };
 
+  const isDateCompleted = (date: Date) => {
+    const dateTimestamp = startOfDay(date).getTime();
+    return completedDays.some(
+      (completedDay) => completedDay.getTime() === dateTimestamp
+    );
+  };
+
   const isDateReserved = (date: Date) => {
     return isDateBooked(date);
   };
@@ -206,6 +238,7 @@ export function ReservationCalendar({
   const getDateStatus = (date: Date) => {
     if (isToday(date)) return "today";
     if (isDateBooked(date)) return "booked";
+    if (isDateCompleted(date)) return "completed";
     if (isDateAvailable(date)) return "available";
     return "past";
   };
@@ -287,6 +320,7 @@ export function ReservationCalendar({
             const dateStatus = getDateStatus(date);
             const isCurrentMonth = isSameMonth(date, currentDate);
             const isBooked = dateStatus === "booked";
+            const isCompleted = dateStatus === "completed";
             const isSelected = isDateSelected(date);
             const isReserved = isDateReserved(date);
             const isDateDisabled = disabled
@@ -336,6 +370,15 @@ export function ReservationCalendar({
                       "after:top-1 after:right-1 after:w-2 after:h-2",
                     ],
                   !isSelected &&
+                    dateStatus === "completed" && [
+                      "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                      "border border-blue-300/30 dark:border-blue-600/30",
+                      "relative after:absolute after:inset-0 after:flex after:items-center after:justify-center",
+                      "after:text-xs after:font-bold after:text-blue-500/60 after:content-['✓']",
+                      "after:top-1 after:right-1 after:w-2 after:h-2",
+                      isClickable && "hover:bg-blue-500/20",
+                    ],
+                  !isSelected &&
                     dateStatus === "available" && [
                       "bg-green-500/10 text-green-600 dark:text-green-400",
                       "border border-green-300/30 dark:border-green-600/30",
@@ -371,11 +414,13 @@ export function ReservationCalendar({
                 aria-label={
                   isBooked
                     ? `${format(date, "MMMM d, yyyy")} - Sudah Dipesan (tidak dapat dipilih)`
-                    : dateStatus === "past"
-                      ? `${format(date, "MMMM d, yyyy")} - Tanggal lampau (tidak dapat dipilih)`
-                      : dateStatus === "available"
-                        ? `${format(date, "MMMM d, yyyy")} - Tersedia untuk pemesanan`
-                        : format(date, "MMMM d, yyyy")
+                    : isCompleted
+                      ? `${format(date, "MMMM d, yyyy")} - Selesai (dapat dipesan ulang)`
+                      : dateStatus === "past"
+                        ? `${format(date, "MMMM d, yyyy")} - Tanggal lampau (tidak dapat dipilih)`
+                        : dateStatus === "available"
+                          ? `${format(date, "MMMM d, yyyy")} - Tersedia untuk pemesanan`
+                          : format(date, "MMMM d, yyyy")
                 }
                 aria-disabled={isDateDisabled}
               >
@@ -383,8 +428,8 @@ export function ReservationCalendar({
               </button>
             );
 
-            // Wrap booked dates with reservation tooltip
-            if (isBooked) {
+            // Wrap booked and completed dates with reservation tooltip
+            if (isBooked || isCompleted) {
               return (
                 <ReservationTooltip
                   key={date.toISOString()}
@@ -410,7 +455,7 @@ export function ReservationCalendar({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="flex items-center gap-2 group">
             <div className="h-3 w-3 rounded-sm border bg-green-100 dark:bg-green-900/30 border-green-300 dark:border-green-600" />
             <div className="flex items-center gap-1">
@@ -434,8 +479,18 @@ export function ReservationCalendar({
           <div className="flex items-center gap-2 group">
             <div className="h-3 w-3 rounded-sm border bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600" />
             <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+              <CheckCircle className="h-3 w-3 text-blue-600 dark:text-blue-400" />
               <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                Selesai
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 group">
+            <div className="h-3 w-3 rounded-sm border bg-cyan-100 dark:bg-cyan-900/30 border-cyan-300 dark:border-cyan-600" />
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
+              <span className="text-xs font-medium text-cyan-600 dark:text-cyan-400">
                 Hari Ini
               </span>
             </div>

@@ -85,6 +85,18 @@ const getStatusConfig = (status: string | null | undefined) => {
         badgeColor:
           "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600",
       };
+    case "completed":
+      return {
+        bgColor: "bg-gray-50 dark:bg-gray-900/50",
+        borderColor: "border-blue-200 dark:border-blue-800",
+        statusBadge: "default" as const,
+        statusIcon: CheckCircle,
+        statusColor: "bg-blue-600",
+        textColor: "text-blue-800 dark:text-blue-300",
+        iconColor: "text-blue-600 dark:text-blue-400",
+        badgeColor:
+          "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400",
+      };
     default:
       return {
         bgColor: "bg-gray-50 dark:bg-gray-900/50",

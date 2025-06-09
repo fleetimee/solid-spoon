@@ -73,6 +73,7 @@ export default async function AdminDashboardPage() {
     Pending: { label: "Menunggu", color: "hsl(var(--chart-4))" },
     Rejected: { label: "Ditolak", color: "hsl(var(--chart-5))" },
     Cancelled: { label: "Dibatalkan", color: "hsl(var(--chart-3))" },
+    Completed: { label: "Selesai", color: "hsl(var(--chart-1))" },
     Unknown: { label: "Tidak Diketahui", color: "hsl(var(--muted))" },
   } satisfies ChartConfig;
 

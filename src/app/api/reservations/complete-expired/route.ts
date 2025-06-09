@@ -6,11 +6,36 @@ import { PoolClient } from "pg";
 export async function GET() {
   try {
     const result = await withTransaction(async (client: PoolClient) => {
+      // Get status IDs from lookup table
+      const approvedStatusResult = await client.query(
+        `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
+        ["reservation_status", "APPROVED"]
+      );
+      const approvedStatusId = approvedStatusResult.rows[0]?.id;
+
+      const completedStatusResult = await client.query(
+        `SELECT id FROM lookup WHERE category = $1 AND code = $2 LIMIT 1`,
+        ["reservation_status", "COMPLETED"]
+      );
+      const completedStatusId = completedStatusResult.rows[0]?.id;
+
+      if (!approvedStatusId || !completedStatusId) {
+        console.error(
+          "Could not find APPROVED or COMPLETED status in lookup table"
+        );
+        return {
+          updatedCount: 0,
+          updatedReservations: [],
+          timestamp: new Date().toISOString(),
+        };
+      }
+
       // Query for expired approved reservations
       const expiredReservationsResult = await client.query(
-        `SELECT id, title, end_time 
-         FROM room_reservation 
-         WHERE status_id = 3 AND end_time < NOW() AND is_active = true`
+        `SELECT id, title, end_time
+         FROM room_reservation
+         WHERE status_id = $1 AND end_time < NOW() AND is_active = true`,
+        [approvedStatusId]
       );
 
       if (expiredReservationsResult.rowCount === 0) {
@@ -26,10 +51,10 @@ export async function GET() {
 
       // Update expired reservations to COMPLETED status
       const updateResult = await client.query(
-        `UPDATE room_reservation 
-         SET status_id = 6, updated_at = NOW() 
-         WHERE id = ANY($1)`,
-        [reservationIds]
+        `UPDATE room_reservation
+         SET status_id = $1, updated_at = NOW()
+         WHERE id = ANY($2)`,
+        [completedStatusId, reservationIds]
       );
 
       return {

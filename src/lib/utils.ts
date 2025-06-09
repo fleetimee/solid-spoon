@@ -45,12 +45,18 @@ export function parseArrayParam(
 }
 
 // TODO: Define or import ReservationStatus type correctly and ensure values are validated
-type ReservationStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+type ReservationStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELLED"
+  | "COMPLETED";
 const validStatuses: Set<ReservationStatus> = new Set([
   "PENDING",
   "APPROVED",
   "REJECTED",
   "CANCELLED",
+  "COMPLETED",
 ]);
 
 /**

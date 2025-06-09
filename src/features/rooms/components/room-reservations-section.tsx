@@ -49,6 +49,8 @@ export function RoomReservationsSection({
       case "Rejected":
       case "Cancelled":
         return "destructive";
+      case "Completed":
+        return "default";
       default:
         return "outline";
     }
@@ -64,6 +66,8 @@ export function RoomReservationsSection({
         return "bg-red-100 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800";
       case "Cancelled":
         return "bg-gray-100 text-gray-700 border-gray-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600";
+      case "Completed":
+        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-800";
       default:
         return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-950/30 dark:text-slate-400 dark:border-slate-800";
     }
@@ -79,6 +83,8 @@ export function RoomReservationsSection({
         return "✗";
       case "Cancelled":
         return "🚫";
+      case "Completed":
+        return "✅";
       default:
         return "•";
     }

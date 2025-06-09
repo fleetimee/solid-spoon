@@ -96,6 +96,11 @@ export default async function ActivityPage() {
           "bg-gradient-to-r from-slate-500 to-gray-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300",
         icon: "XCircle",
       },
+      Completed: {
+        className:
+          "bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300",
+        icon: "CheckCircle2",
+      },
     };
 
     return (
@@ -114,6 +119,7 @@ export default async function ActivityPage() {
       Pending: "Menunggu",
       Rejected: "Ditolak",
       Cancelled: "Dibatalkan",
+      Completed: "Selesai",
     };
     return translations[status as keyof typeof translations] || status;
   };
@@ -195,6 +201,7 @@ export default async function ActivityPage() {
     Pending: { label: "Menunggu", color: "hsl(var(--chart-2))" },
     Rejected: { label: "Ditolak", color: "hsl(var(--chart-3))" },
     Cancelled: { label: "Dibatalkan", color: "hsl(var(--chart-4))" },
+    Completed: { label: "Selesai", color: "hsl(var(--chart-5))" },
     // Add more statuses and colors as needed
   } satisfies ChartConfig;
 

@@ -34,14 +34,15 @@ export async function getRoomDetailStats(
       approvedStatusId ? [roomId, approvedStatusId] : [roomId]
     );
 
-    // Get active bookings (current and upcoming approved reservations)
+    // Get active bookings (upcoming approved reservations only)
     const activeBookingsResult = await db.query(
       `
       SELECT COUNT(*) as active
       FROM room_reservation rr
       WHERE rr.room_id = $1
       ${approvedStatusId ? "AND rr.status_id = $2" : ""}
-      AND rr.end_time > CURRENT_TIMESTAMP
+      AND rr.start_time > CURRENT_TIMESTAMP
+      AND rr.is_active = true
     `,
       approvedStatusId ? [roomId, approvedStatusId] : [roomId]
     );
