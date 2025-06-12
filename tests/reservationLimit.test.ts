@@ -6,7 +6,7 @@ jest.mock('@/lib/db', () => ({
   default: { query: jest.fn() },
 }));
 
-const mockedDb = db as jest.Mocked<typeof db>;
+const mockedDb = db as unknown as { query: jest.Mock };
 
 describe('getReservationLimit', () => {
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('getReservationLimit', () => {
   });
 
   it('returns the limit from the database when available', async () => {
-    mockedDb.query.mockResolvedValueOnce({ rows: [{ value: '5' }] } as any);
+    mockedDb.query.mockResolvedValueOnce({ rows: [{ value: '5' }] });
     await expect(getReservationLimit()).resolves.toBe(5);
   });
 
