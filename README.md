@@ -52,11 +52,11 @@ cd your-repo-folder
 ### 2. Install dependencies
 
 ```bash
-npm install
+npm install --force
 # or
-yarn install
+yarn install --force
 # or
-pnpm install
+pnpm install --force
 ```
 
 ### 3. Configure environment
