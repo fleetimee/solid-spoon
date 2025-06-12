@@ -52,11 +52,11 @@ cd your-repo-folder
 ### 2. Install dependencies
 
 ```bash
-npm install
+npm install --force
 # or
-yarn install
+yarn install --force
 # or
-pnpm install
+pnpm install --force
 ```
 
 ### 3. Configure environment
@@ -126,8 +126,12 @@ npm run dev        # Start dev server
 npm run build      # Build for production
 npm run start      # Start production server
 npm run lint       # Lint code
-npm run test       # Run tests (if available)
+npm run test       # Run Jest unit tests
 ```
+
+## 🧪 Testing
+
+Run `npm test` to execute Jest unit tests. The initial suite covers utility functions.
 
 ---
 
