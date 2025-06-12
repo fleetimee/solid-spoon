@@ -126,8 +126,12 @@ npm run dev        # Start dev server
 npm run build      # Build for production
 npm run start      # Start production server
 npm run lint       # Lint code
-npm run test       # Run tests (if available)
+npm run test       # Run Jest unit tests
 ```
+
+## 🧪 Testing
+
+Run `npm test` to execute Jest unit tests. The initial suite covers utility functions.
 
 ---
 
