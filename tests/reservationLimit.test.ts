@@ -1,5 +1,3 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
-import { getReservationLimit } from "@/features/application/api/getReservationLimit";
 import type { QueryResult } from "pg";
 
 // Define the interface for lookup results
@@ -7,24 +5,15 @@ interface LookupResult {
   value: string | null;
 }
 
-// Create a properly typed mock function that matches PostgreSQL's QueryResult interface
-const mockQuery = mock<(...args: any[]) => Promise<QueryResult<LookupResult>>>(
-  () =>
-    Promise.resolve({
-      rows: [] as LookupResult[],
-      rowCount: 0,
-      command: "SELECT",
-      oid: 0,
-      fields: [],
-    })
-);
+// Mock the db module
+jest.mock("@/lib/db");
 
-// Mock the entire db module
-mock.module("@/lib/db", () => ({
-  default: {
-    query: mockQuery,
-  },
-}));
+import { getReservationLimit } from "@/features/application/api/getReservationLimit";
+// Import the entire mocked module
+import db from "@/lib/db";
+
+// Cast to get access to the mock function
+const mockQuery = (db as any).query;
 
 describe("getReservationLimit", () => {
   // Store original console.error to restore after tests
@@ -35,9 +24,7 @@ describe("getReservationLimit", () => {
     mockQuery.mockClear();
 
     // Mock console.error to suppress unwanted error messages during tests
-    console.error = () => {
-      // Error messages are suppressed during tests for clean output
-    };
+    console.error = jest.fn();
   });
 
   afterEach(() => {
