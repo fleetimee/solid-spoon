@@ -14,56 +14,85 @@ import { useEffect, useState } from "react";
 
 const footerSections = [
   {
-    title: "Project Info",
+    title: "Produk",
     links: [
       {
-        title: "About Project",
+        title: "Tentang",
         href: "#",
       },
       {
-        title: "Features",
+        title: "Fitur",
         href: "#",
       },
       {
-        title: "Documentation",
-        href: "#",
+        title: "Booking Ruangan",
+        href: "/rooms",
       },
       {
-        title: "Source Code",
-        href: "#",
-      },
-      {
-        title: "Report Issues",
+        title: "Cara Kerja",
         href: "#",
       },
     ],
   },
-
   {
-    title: "Legal",
+    title: "Platform",
     links: [
       {
-        title: "Terms",
+        title: "Dashboard",
+        href: "/dashboard",
+      },
+      {
+        title: "Booking Saya",
+        href: "/me/bookings",
+      },
+      {
+        title: "Notifikasi",
+        href: "/me/notifications",
+      },
+      {
+        title: "Bantuan & Dukungan",
+        href: "#",
+      },
+    ],
+  },
+  {
+    title: "Perusahaan",
+    links: [
+      {
+        title: "Tim Kami",
+        href: "/teams",
+      },
+      {
+        title: "Hubungi Kami",
         href: "#",
       },
       {
-        title: "Privacy",
+        title: "Karir",
         href: "#",
       },
       {
-        title: "Cookies",
+        title: "Blog",
+        href: "#",
+      },
+    ],
+  },
+  {
+    title: "Hukum",
+    links: [
+      {
+        title: "Syarat Layanan",
         href: "#",
       },
       {
-        title: "Licenses",
+        title: "Kebijakan Privasi",
         href: "#",
       },
       {
-        title: "Settings",
+        title: "Kebijakan Cookie",
         href: "#",
       },
       {
-        title: "Contact",
+        title: "Keamanan",
         href: "#",
       },
     ],
@@ -121,7 +150,7 @@ export function Footer() {
         </div>
 
         {footerSections.map(({ title, links }) => (
-          <div key={title} className="xl:justify-self-end">
+          <div key={title} className="col-span-1">
             <h6 className="font-semibold text-foreground">{title}</h6>
             <ul className="mt-6 space-y-4">
               {links.map(({ title, href }) => (
