@@ -39,7 +39,7 @@ export function BookingsPagination({
   const searchParams = useSearchParams();
   const [customSizeInput, setCustomSizeInput] = useState("");
 
-  if (totalPages <= 1) return null;
+  // Always show pagination controls regardless of total pages
 
   const getPaginationUrl = (targetPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -56,23 +56,28 @@ export function BookingsPagination({
   };
 
   const getPaginationItems = () => {
-    if (totalPages <= 5) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <PaginationItem key={page}>
-          <PaginationLink
-            href={getPaginationUrl(page)}
-            isActive={page === currentPage}
-            className={cn(
-              "w-12 h-12 rounded-2xl font-semibold transition-all duration-300",
-              page === currentPage
-                ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/30 scale-110"
-                : "bg-white/60 dark:bg-gray-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:scale-105 backdrop-blur-sm"
-            )}
-          >
-            {page}
-          </PaginationLink>
-        </PaginationItem>
-      ));
+    // Always show at least page 1, even if there are no items
+    const pagesToShow = Math.max(totalPages, 1);
+
+    if (pagesToShow <= 5) {
+      return Array.from({ length: pagesToShow }, (_, i) => i + 1).map(
+        (page) => (
+          <PaginationItem key={page}>
+            <PaginationLink
+              href={totalPages > 0 ? getPaginationUrl(page) : undefined}
+              isActive={page === currentPage}
+              className={cn(
+                "w-12 h-12 rounded-2xl font-semibold transition-all duration-300",
+                page === currentPage
+                  ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/30 scale-110"
+                  : "bg-white/60 dark:bg-gray-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:scale-105 backdrop-blur-sm"
+              )}
+            >
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        )
+      );
     }
 
     const items = [];
@@ -158,7 +163,7 @@ export function BookingsPagination({
   };
 
   const currentSize = pageSize.toString();
-  const isPresetSize = ["10", "12", "20", "50"].includes(currentSize);
+  const isPresetSize = ["5", "10", "20", "50"].includes(currentSize);
 
   return (
     <div className="flex flex-col items-center justify-center mt-12 space-y-8">
@@ -201,11 +206,11 @@ export function BookingsPagination({
                   "rounded-2xl shadow-2xl shadow-purple-200/30 dark:shadow-purple-900/20"
                 )}
               >
+                <SelectItem value="5" className="rounded-xl font-medium">
+                  5
+                </SelectItem>
                 <SelectItem value="10" className="rounded-xl font-medium">
                   10
-                </SelectItem>
-                <SelectItem value="12" className="rounded-xl font-medium">
-                  12
                 </SelectItem>
                 <SelectItem value="20" className="rounded-xl font-medium">
                   20
@@ -276,51 +281,57 @@ export function BookingsPagination({
       <div className="flex justify-center">
         <Pagination>
           <PaginationContent className="gap-2">
-            {currentPage > 1 && (
-              <PaginationItem>
-                <PaginationPrevious
-                  href={getPaginationUrl(currentPage - 1)}
-                  className={cn(
-                    "h-12 px-6 rounded-2xl font-semibold",
-                    "bg-gradient-to-r from-white/80 to-purple-50/60",
-                    "dark:from-gray-900/80 dark:to-purple-950/60",
-                    "hover:from-purple-100/80 hover:to-indigo-100/60",
-                    "dark:hover:from-purple-900/60 dark:hover:to-indigo-900/60",
-                    "ring-1 ring-purple-200/50 dark:ring-purple-800/30",
-                    "transition-all duration-300 hover:scale-105",
-                    "backdrop-blur-sm shadow-lg shadow-purple-100/20 dark:shadow-purple-900/10",
-                    "text-purple-700 dark:text-purple-300"
-                  )}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Prev
-                </PaginationPrevious>
-              </PaginationItem>
-            )}
+            <PaginationItem>
+              <PaginationPrevious
+                href={
+                  currentPage > 1
+                    ? getPaginationUrl(currentPage - 1)
+                    : undefined
+                }
+                className={cn(
+                  "h-12 px-6 rounded-2xl font-semibold",
+                  "bg-gradient-to-r from-white/80 to-purple-50/60",
+                  "dark:from-gray-900/80 dark:to-purple-950/60",
+                  "ring-1 ring-purple-200/50 dark:ring-purple-800/30",
+                  "transition-all duration-300",
+                  "backdrop-blur-sm shadow-lg shadow-purple-100/20 dark:shadow-purple-900/10",
+                  currentPage > 1
+                    ? "hover:from-purple-100/80 hover:to-indigo-100/60 dark:hover:from-purple-900/60 dark:hover:to-indigo-900/60 hover:scale-105 text-purple-700 dark:text-purple-300 cursor-pointer"
+                    : "opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600"
+                )}
+                aria-disabled={currentPage <= 1}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Prev
+              </PaginationPrevious>
+            </PaginationItem>
 
             {getPaginationItems()}
 
-            {currentPage < totalPages && (
-              <PaginationItem>
-                <PaginationNext
-                  href={getPaginationUrl(currentPage + 1)}
-                  className={cn(
-                    "h-12 px-6 rounded-2xl font-semibold",
-                    "bg-gradient-to-r from-white/80 to-indigo-50/60",
-                    "dark:from-gray-900/80 dark:to-indigo-950/60",
-                    "hover:from-indigo-100/80 hover:to-purple-100/60",
-                    "dark:hover:from-indigo-900/60 dark:hover:to-purple-900/60",
-                    "ring-1 ring-indigo-200/50 dark:ring-indigo-800/30",
-                    "transition-all duration-300 hover:scale-105",
-                    "backdrop-blur-sm shadow-lg shadow-indigo-100/20 dark:shadow-indigo-900/10",
-                    "text-indigo-700 dark:text-indigo-300"
-                  )}
-                >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </PaginationNext>
-              </PaginationItem>
-            )}
+            <PaginationItem>
+              <PaginationNext
+                href={
+                  currentPage < totalPages
+                    ? getPaginationUrl(currentPage + 1)
+                    : undefined
+                }
+                className={cn(
+                  "h-12 px-6 rounded-2xl font-semibold",
+                  "bg-gradient-to-r from-white/80 to-indigo-50/60",
+                  "dark:from-gray-900/80 dark:to-indigo-950/60",
+                  "ring-1 ring-indigo-200/50 dark:ring-indigo-800/30",
+                  "transition-all duration-300",
+                  "backdrop-blur-sm shadow-lg shadow-indigo-100/20 dark:shadow-indigo-900/10",
+                  currentPage < totalPages
+                    ? "hover:from-indigo-100/80 hover:to-purple-100/60 dark:hover:from-indigo-900/60 dark:hover:to-purple-900/60 hover:scale-105 text-indigo-700 dark:text-indigo-300 cursor-pointer"
+                    : "opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-600"
+                )}
+                aria-disabled={currentPage >= totalPages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </PaginationNext>
+            </PaginationItem>
           </PaginationContent>
         </Pagination>
       </div>

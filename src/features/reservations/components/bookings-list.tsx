@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +26,16 @@ import {
   CalendarDays,
   Building2,
   AlertCircle,
+  Ban,
 } from "lucide-react";
 import { formatDateRangeHumanized } from "@/lib/utils/formatDate";
 import { type UserReservation } from "@/features/reservations/api/getUserReservations";
+import { CancelBookingDialog } from "./cancel-booking-dialog";
+import {
+  canCancelReservation,
+  getCancelButtonText,
+  getTimeUntilReservation,
+} from "@/features/reservations/utils/reservation-utils";
 
 // Define the type for a single reservation
 type Reservation = UserReservation;
@@ -117,14 +125,35 @@ export function BookingsList({
   isLoading = false,
   showEmptyState = true,
 }: BookingsListProps) {
+  const router = useRouter();
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null);
+  const [cancelReservation, setCancelReservation] =
+    useState<Reservation | null>(null);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const isDialogOpen = !!selectedReservation;
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setSelectedReservation(null);
     }
+  };
+
+  const handleCancelClick = (reservation: Reservation) => {
+    setCancelReservation(reservation);
+    setIsCancelDialogOpen(true);
+  };
+
+  const handleCancelDialogClose = (open: boolean) => {
+    if (!open) {
+      setCancelReservation(null);
+      setIsCancelDialogOpen(false);
+    }
+  };
+
+  const handleCancellationSuccess = () => {
+    // Use Next.js router to refresh the page more elegantly
+    router.refresh();
   };
 
   // Professional loading skeleton
@@ -253,6 +282,29 @@ export function BookingsList({
                           </div>
                         </div>
                       </div>
+
+                      {/* Cancellation info badge for mobile - only show for eligible reservations */}
+                      {(() => {
+                        const cancellationCheck =
+                          canCancelReservation(reservation);
+                        if (cancellationCheck.canCancel) {
+                          const timeCheck =
+                            getTimeUntilReservation(reservation);
+                          return (
+                            <div className="mt-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50">
+                              <div className="flex items-center gap-2">
+                                <Ban className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
+                                  {cancellationCheck.reason === "pending"
+                                    ? "Dapat dibatalkan kapan saja"
+                                    : `Dapat dibatalkan ${timeCheck.days > 0 ? `${timeCheck.days} hari` : `${timeCheck.hours} jam`} lagi`}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                   </div>
 
@@ -338,22 +390,45 @@ export function BookingsList({
                     </Badge>
                   </div>
 
-                  {/* Action button */}
+                  {/* Action buttons */}
                   <div className="flex flex-col gap-2 items-end">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedReservation(reservation)}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 border-gray-300 dark:border-gray-600"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          <span className="hidden sm:inline">Lihat Detail</span>
-                          <span className="sm:hidden">Lihat</span>
-                        </Button>
-                      </DialogTrigger>
-                    </Dialog>
+                    <div className="flex gap-2">
+                      {/* Cancel button - only show if reservation can be cancelled */}
+                      {(() => {
+                        const cancellationCheck =
+                          canCancelReservation(reservation);
+                        return cancellationCheck.canCancel ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCancelClick(reservation)}
+                            className="hover:bg-red-50 dark:hover:bg-red-950/20 hover:border-red-300 dark:hover:border-red-800 transition-colors duration-200 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400"
+                          >
+                            <Ban className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">Batalkan</span>
+                            <span className="sm:hidden">Batal</span>
+                          </Button>
+                        ) : null;
+                      })()}
+
+                      {/* View details button */}
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedReservation(reservation)}
+                            className="hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 border-gray-300 dark:border-gray-600"
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            <span className="hidden sm:inline">
+                              Lihat Detail
+                            </span>
+                            <span className="sm:hidden">Lihat</span>
+                          </Button>
+                        </DialogTrigger>
+                      </Dialog>
+                    </div>
 
                     {/* Mobile status badge */}
                     <div className="sm:hidden">
@@ -389,6 +464,14 @@ export function BookingsList({
           </CardContent>
         </Card>
       ) : null}
+
+      {/* Cancellation Dialog */}
+      <CancelBookingDialog
+        reservation={cancelReservation}
+        open={isCancelDialogOpen}
+        onOpenChange={handleCancelDialogClose}
+        onCancel={handleCancellationSuccess}
+      />
 
       {/* Professional Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
