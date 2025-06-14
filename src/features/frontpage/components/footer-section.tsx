@@ -14,31 +14,6 @@ import { useEffect, useState } from "react";
 
 const footerSections = [
   {
-    title: "Team Members",
-    links: [
-      {
-        title: "John Smith",
-        href: "#",
-      },
-      {
-        title: "Sarah Johnson",
-        href: "#",
-      },
-      {
-        title: "Michael Chen",
-        href: "#",
-      },
-      {
-        title: "Emily Davis",
-        href: "#",
-      },
-      {
-        title: "Alex Rodriguez",
-        href: "#",
-      },
-    ],
-  },
-  {
     title: "Project Info",
     links: [
       {
@@ -63,60 +38,7 @@ const footerSections = [
       },
     ],
   },
-  {
-    title: "Academic",
-    links: [
-      {
-        title: "Course Info",
-        href: "#",
-      },
-      {
-        title: "Project Goals",
-        href: "#",
-      },
-      {
-        title: "Technologies",
-        href: "#",
-      },
-      {
-        title: "Methodology",
-        href: "#",
-      },
-      {
-        title: "References",
-        href: "#",
-      },
-    ],
-  },
-  {
-    title: "Social",
-    links: [
-      {
-        title: "Twitter",
-        href: "#",
-      },
-      {
-        title: "LinkedIn",
-        href: "#",
-      },
-      {
-        title: "Facebook",
-        href: "#",
-      },
-      {
-        title: "GitHub",
-        href: "#",
-      },
-      {
-        title: "AngelList",
-        href: "#",
-      },
-      {
-        title: "Dribbble",
-        href: "#",
-      },
-    ],
-  },
+
   {
     title: "Legal",
     links: [
@@ -193,8 +115,8 @@ export function Footer() {
           <FooterLogo />
 
           <p className="text-muted-foreground">
-            A collaborative team project for room reservation management - built
-            with modern web technologies.
+            Streamline your room booking experience with our modern reservation
+            management system. Simple, efficient, and reliable.
           </p>
         </div>
 
