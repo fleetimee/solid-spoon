@@ -4,6 +4,7 @@ export interface TeamMember {
   nim: string;
   role: string;
   description: string;
+  image?: string;
   avatar: string;
   skills: string[];
   social: {
@@ -32,6 +33,7 @@ export const teamMembers: TeamMember[] = [
     role: "UI/UX Designer & Creative Lead",
     description:
       "Bertanggung jawab untuk desain antarmuka pengguna, materi presentasi, konten promosi, dan komunikasi visual. Menciptakan pengalaman pengguna yang menarik dan solusi desain visual yang komprehensif untuk proyek.",
+    image: "/teams/fadil.jpeg",
     avatar: "/api/placeholder/120/120",
     skills: [
       "UI/UX Design",
@@ -57,6 +59,7 @@ export const teamMembers: TeamMember[] = [
     role: "Documentation Specialist",
     description:
       "Mengelola dokumentasi proyek, penulisan teknis, dan memastikan catatan proyek yang komprehensif. Bertanggung jawab untuk membuat dan memelihara dokumentasi detail yang mendukung pengembangan proyek dan transfer pengetahuan.",
+    image: "/teams/indri.jpeg",
     avatar: "/api/placeholder/120/120",
     skills: [
       "Technical Writing",
@@ -79,6 +82,7 @@ export const teamMembers: TeamMember[] = [
     name: "Novian Andika",
     nim: "050193163",
     role: "Lead Developer",
+    image: "/teams/novian.jpeg",
     description:
       "Menangani semua aspek pengembangan sistem reservasi ruangan termasuk frontend, backend, dan arsitektur sistem. Bertanggung jawab untuk implementasi teknis yang lengkap dan memastikan kualitas kode di seluruh tumpukan aplikasi.",
     avatar: "/api/placeholder/120/120",
@@ -109,6 +113,7 @@ export const teamMembers: TeamMember[] = [
     role: "Project Coordinator & Documentation",
     description:
       "Menangani dokumentasi proyek, koordinasi, dan memelihara hasil proyek serta laporan. Memastikan catatan proyek yang komprehensif dan memfasilitasi komunikasi dan koordinasi yang efektif antar anggota tim.",
+    image: "/teams/putri.jpeg",
     avatar: "/api/placeholder/120/120",
     skills: [
       "Project Management",

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Typography } from "@/components/ui/typography";
+import { ImageZoom } from "@/components/ui/kibo-ui/image-zoom";
 import { Github, Linkedin, Twitter, Mail, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TeamMember } from "@/features/teams/types/team";
@@ -56,28 +57,26 @@ export function TeamMemberCard({ member, className }: TeamMemberCardProps) {
         {/* Avatar Section */}
         <div className="relative mb-4 sm:mb-6">
           <div className="relative inline-block">
-            <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto border-4 border-white/20 shadow-lg group-hover:border-primary/30 transition-all duration-300">
-              <AvatarImage
-                src={member.avatar}
-                alt={member.name}
-                className="object-cover"
-              />
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-purple-500/20 text-primary font-semibold text-lg sm:text-xl">
-                {getInitials(member.name)}
-              </AvatarFallback>
-            </Avatar>
-
-            {/* Status indicator */}
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-8 sm:h-8">
-              <div
-                className={cn(
-                  "w-full h-full rounded-full border-2 border-white shadow-lg",
-                  member.status === "active"
-                    ? "bg-green-500 animate-pulse"
-                    : "bg-gray-400"
-                )}
-              />
-            </div>
+            {member.image ? (
+              <ImageZoom className="relative rounded-full overflow-hidden border-4 border-white/20 shadow-lg group-hover:border-primary/30 transition-all duration-300">
+                <img
+                  src={member.image}
+                  alt={`${member.name} - ${member.role}`}
+                  className="h-28 w-28 sm:h-32 sm:w-32 object-cover object-center cursor-zoom-in rounded-full"
+                />
+              </ImageZoom>
+            ) : (
+              <Avatar className="w-28 h-28 sm:w-32 sm:h-32 mx-auto border-4 border-white/20 shadow-lg group-hover:border-primary/30 transition-all duration-300">
+                <AvatarImage
+                  src={member.avatar}
+                  alt={member.name}
+                  className="object-cover object-center"
+                />
+                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-purple-500/20 text-primary font-semibold text-xl sm:text-2xl">
+                  {getInitials(member.name)}
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
         </div>
 
