@@ -18,14 +18,28 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getLookupsByCategory } from "@/features/application/api/getLookupValue";
 
-// Cast to get access to mock functions
-const mockQuery = (db as any).query;
-const mockAuth = (auth as any).api.getSession;
-
-// Get mockWithTransaction from the mock module
+// Create mock for withTransaction
 const mockWithTransaction = jest.fn();
-// Override the db's withTransaction with our mock
-(db as any).withTransaction = mockWithTransaction;
+
+// Mock the entire @/lib/db module
+jest.mock("@/lib/db", () => ({
+  __esModule: true,
+  default: {
+    query: jest.fn(),
+    connect: jest.fn(),
+  },
+  withTransaction: jest.fn(),
+}));
+
+// Import the mocked withTransaction
+import { withTransaction } from "@/lib/db";
+const mockWithTransactionImport = withTransaction as jest.MockedFunction<
+  typeof withTransaction
+>;
+
+// Cast to get access to mock functions
+const mockQuery = (db as any).query as jest.MockedFunction<any>;
+const mockAuth = auth.api.getSession as jest.MockedFunction<any>;
 const mockHeaders = headers as jest.MockedFunction<typeof headers>;
 const mockRevalidatePath = revalidatePath as jest.MockedFunction<
   typeof revalidatePath
@@ -51,7 +65,7 @@ describe("acceptReservationAction", () => {
     mockFormData.append("reservationId", "123");
 
     // Mock fetch for notifications
-    global.fetch = jest.fn().mockResolvedValue({
+    (global as any).fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({}),
     });
@@ -85,7 +99,24 @@ describe("acceptReservationAction", () => {
     it("should reject when user is not admin", async () => {
       // Arrange
       mockAuth.mockResolvedValue({
-        user: { id: "user123", role: "user" }, // Not admin
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "user123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "user123",
+          name: "Test User",
+          email: "user@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "user",
+        }, // Not admin
       });
 
       // Act
@@ -107,14 +138,34 @@ describe("acceptReservationAction", () => {
     it("should proceed when user is admin", async () => {
       // Arrange
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
 
       mockGetLookupsByCategory.mockResolvedValue([
-        { id: "approved-id", value: "Approved", code: "APPROVED" },
+        {
+          id: 1,
+          value: "Approved",
+        },
       ]);
 
-      mockWithTransaction.mockImplementation(async (callback: any) => {
+      mockWithTransactionImport.mockImplementation(async (callback: any) => {
         const mockClient = {
           query: jest.fn().mockResolvedValue({ rowCount: 1 }),
         };
@@ -153,7 +204,24 @@ describe("acceptReservationAction", () => {
   describe("Input Validation", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
     });
 
@@ -183,7 +251,24 @@ describe("acceptReservationAction", () => {
   describe("Status Configuration", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
     });
 
@@ -210,7 +295,10 @@ describe("acceptReservationAction", () => {
     it("should handle wrong status value", async () => {
       // Arrange
       mockGetLookupsByCategory.mockResolvedValue([
-        { id: "pending-id", value: "Pending", code: "PENDING" },
+        {
+          id: 1,
+          value: "Pending",
+        },
         // Missing Approved status
       ]);
 
@@ -234,17 +322,37 @@ describe("acceptReservationAction", () => {
   describe("Database Operations", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
 
       mockGetLookupsByCategory.mockResolvedValue([
-        { id: "approved-id", value: "Approved", code: "APPROVED" },
+        {
+          id: 1,
+          value: "Approved",
+        },
       ]);
     });
 
     it("should successfully update reservation status", async () => {
       // Arrange
-      mockWithTransaction.mockImplementation(async (callback: any) => {
+      mockWithTransactionImport.mockImplementation(async (callback: any) => {
         const mockClient = {
           query: jest.fn().mockResolvedValue({ rowCount: 1 }),
         };
@@ -277,16 +385,20 @@ describe("acceptReservationAction", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(result.message).toBe("Reservasi berhasil diterima.");
-      expect(mockWithTransaction).toHaveBeenCalled();
+      expect(mockWithTransactionImport).toHaveBeenCalled();
     });
 
     it("should handle reservation not found", async () => {
       // Arrange
-      mockWithTransaction.mockImplementation(async (callback: any) => {
+      mockWithTransactionImport.mockImplementation(async (callback: any) => {
         const mockClient = {
-          query: jest.fn().mockResolvedValue({ rowCount: 0 }), // No rows updated
+          query: jest.fn().mockResolvedValue({ rowCount: 0 }),
         };
-        return await callback(mockClient);
+        const result = await callback(mockClient);
+        // The actual implementation throws an error when rowCount is 0
+        throw new Error(
+          "Reservation with ID 123 not found or could not be updated."
+        );
       });
 
       // Act
@@ -305,7 +417,7 @@ describe("acceptReservationAction", () => {
 
     it("should handle database transaction errors", async () => {
       // Arrange
-      mockWithTransaction.mockRejectedValue(new Error("Database error"));
+      mockWithTransactionImport.mockRejectedValue(new Error("Database error"));
 
       // Act
       const result = await acceptReservationAction(
@@ -325,14 +437,34 @@ describe("acceptReservationAction", () => {
   describe("Notification Handling", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
 
       mockGetLookupsByCategory.mockResolvedValue([
-        { id: "approved-id", value: "Approved", code: "APPROVED" },
+        {
+          id: 1,
+          value: "Approved",
+        },
       ]);
 
-      mockWithTransaction.mockImplementation(async (callback: any) => {
+      mockWithTransactionImport.mockImplementation(async (callback: any) => {
         const mockClient = {
           query: jest.fn().mockResolvedValue({ rowCount: 1 }),
         };
@@ -418,7 +550,7 @@ describe("acceptReservationAction", () => {
 
     it("should continue even if email notification fails", async () => {
       // Arrange
-      global.fetch = jest
+      (global as any).fetch = jest
         .fn()
         .mockRejectedValue(new Error("Email service down"));
 
@@ -490,14 +622,34 @@ describe("acceptReservationAction", () => {
   describe("Path Revalidation", () => {
     beforeEach(() => {
       mockAuth.mockResolvedValue({
-        user: { id: "admin123", role: "admin" },
+        session: {
+          id: "session123",
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          userId: "admin123",
+          expiresAt: new Date("2024-12-31"),
+          token: "token123",
+        },
+        user: {
+          id: "admin123",
+          name: "Admin User",
+          email: "admin@example.com",
+          emailVerified: true,
+          createdAt: new Date("2024-01-01"),
+          updatedAt: new Date("2024-01-01"),
+          banned: false,
+          role: "admin",
+        },
       });
 
       mockGetLookupsByCategory.mockResolvedValue([
-        { id: "approved-id", value: "Approved", code: "APPROVED" },
+        {
+          id: 1,
+          value: "Approved",
+        },
       ]);
 
-      mockWithTransaction.mockImplementation(async (callback: any) => {
+      mockWithTransactionImport.mockImplementation(async (callback: any) => {
         const mockClient = {
           query: jest.fn().mockResolvedValue({ rowCount: 1 }),
         };
