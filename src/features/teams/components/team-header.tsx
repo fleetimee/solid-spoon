@@ -42,25 +42,25 @@ export function TeamHeader({ className }: TeamHeaderProps) {
                 variant="secondary"
                 className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-blue-700 dark:text-blue-300 border-blue-200/50 dark:border-blue-800/50 hover:from-blue-500/20 hover:to-purple-500/20 transition-all duration-300"
               >
-                💼 Professional Team
+                💼 Tim Profesional
               </Badge>
               <Badge
                 variant="secondary"
                 className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50 hover:from-emerald-500/20 hover:to-teal-500/20 transition-all duration-300"
               >
-                🚀 Innovation Focused
+                🚀 Fokus Inovasi
               </Badge>
               <Badge
                 variant="secondary"
                 className="bg-gradient-to-r from-orange-500/10 to-red-500/10 text-orange-700 dark:text-orange-300 border-orange-200/50 dark:border-orange-800/50 hover:from-orange-500/20 hover:to-red-500/20 transition-all duration-300"
               >
-                🎯 Result Oriented
+                🎯 Berorientasi Hasil
               </Badge>
               <Badge
                 variant="secondary"
                 className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-700 dark:text-purple-300 border-purple-200/50 dark:border-purple-800/50 hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300"
               >
-                🤝 Collaborative
+                🤝 Kolaboratif
               </Badge>
             </div>
 

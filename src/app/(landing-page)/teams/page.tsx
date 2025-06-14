@@ -91,7 +91,7 @@ export default function TeamsPage() {
             </div>
 
             {/* Enhanced grid with animations and modern layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {teamMembers.map((member, index) => (
                 <div
                   key={member.id}
@@ -120,7 +120,7 @@ export default function TeamsPage() {
                   <div className="text-2xl sm:text-3xl">⚡</div>
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                      Technology Stack
+                      Teknologi yang Digunakan
                     </h2>
                     <p className="text-sm sm:text-base text-muted-foreground">
                       Teknologi modern yang kami gunakan untuk membangun

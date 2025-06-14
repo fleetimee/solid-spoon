@@ -123,7 +123,7 @@ export function TeamMemberCard({ member, className }: TeamMemberCardProps) {
         <div className="mb-4 sm:mb-6">
           <div className="flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
             <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span>Bergabung {formatJoinDate(member.joinDate)}</span>
+            <span>Bergabung Sejak {formatJoinDate(member.joinDate)}</span>
           </div>
         </div>
 

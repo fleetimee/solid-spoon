@@ -15,7 +15,7 @@ export function TeamStats({ className }: TeamStatsProps) {
       title: "Total Anggota",
       value: teamStats.totalMembers,
       icon: Users,
-      description: "developer berpengalaman",
+      description: "anggota tim",
       color: "from-blue-500 to-blue-600",
       bgColor: "from-blue-500/10 to-blue-600/10",
       borderColor: "border-blue-200/50 dark:border-blue-800/50",
@@ -42,7 +42,7 @@ export function TeamStats({ className }: TeamStatsProps) {
     },
     {
       id: "experience",
-      title: "Pengalaman",
+      title: "Tahun Pengalaman",
       value: `${teamStats.yearsExperience}+`,
       icon: Clock,
       description: "tahun di industri",
