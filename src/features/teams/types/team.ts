@@ -136,7 +136,7 @@ export const teamMembers: TeamMember[] = [
 
 export const teamStats: TeamStats = {
   totalMembers: teamMembers.length,
-  activeProjects: 3,
-  completedProjects: 12,
-  yearsExperience: 5,
+  activeProjects: 1,
+  completedProjects: 1,
+  yearsExperience: 1,
 };
