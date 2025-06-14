@@ -113,13 +113,13 @@ export default function TeamsPage() {
 
           {/* Technology Stack Section */}
           <div className="mt-12 sm:mt-16 space-y-6 sm:space-y-8">
-            <div className="relative p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-white/20 shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5 rounded-2xl sm:rounded-3xl"></div>
+            <div className="relative p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 dark:from-emerald-500/20 dark:via-blue-500/20 dark:to-purple-500/20 backdrop-blur-sm border border-white/20 dark:border-white/30 shadow-xl dark:shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-blue-500/5 to-purple-500/5 dark:from-emerald-500/10 dark:via-blue-500/10 dark:to-purple-500/10 rounded-2xl sm:rounded-3xl"></div>
               <div className="relative">
                 <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                   <div className="text-2xl sm:text-3xl">⚡</div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-400 bg-clip-text text-transparent">
                       Teknologi yang Digunakan
                     </h2>
                     <p className="text-sm sm:text-base text-muted-foreground">
@@ -134,47 +134,55 @@ export default function TeamsPage() {
                     {
                       name: "Next.js",
                       icon: "⚛️",
-                      color: "from-black to-gray-800",
+                      color:
+                        "from-black to-gray-800 dark:from-gray-200 dark:to-white",
                     },
                     {
                       name: "TypeScript",
                       icon: "📘",
-                      color: "from-blue-600 to-blue-800",
+                      color:
+                        "from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-300",
                     },
                     {
                       name: "Tailwind CSS",
                       icon: "🎨",
-                      color: "from-cyan-500 to-blue-500",
-                    },
-                    {
-                      name: "Prisma",
-                      icon: "🔷",
-                      color: "from-indigo-500 to-purple-600",
+                      color:
+                        "from-cyan-500 to-blue-500 dark:from-cyan-400 dark:to-blue-400",
                     },
                     {
                       name: "PostgreSQL",
                       icon: "🐘",
-                      color: "from-blue-700 to-blue-900",
+                      color:
+                        "from-blue-700 to-blue-900 dark:from-blue-400 dark:to-blue-300",
                     },
                     {
-                      name: "Auth.js",
+                      name: "Better Auth",
                       icon: "🔐",
-                      color: "from-green-600 to-emerald-600",
+                      color:
+                        "from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400",
                     },
                     {
-                      name: "Shadcn/ui",
-                      icon: "🎯",
-                      color: "from-slate-600 to-slate-800",
+                      name: "Minio",
+                      icon: "🗂️",
+                      color:
+                        "from-red-500 to-red-700 dark:from-red-400 dark:to-red-300",
+                    },
+                    {
+                      name: "Resend",
+                      icon: "📧",
+                      color:
+                        "from-purple-500 to-purple-700 dark:from-purple-400 dark:to-purple-300",
                     },
                     {
                       name: "Vercel",
                       icon: "▲",
-                      color: "from-black to-gray-700",
+                      color:
+                        "from-black to-gray-700 dark:from-gray-200 dark:to-white",
                     },
                   ].map((tech, index) => (
                     <div
                       key={tech.name}
-                      className="group p-3 sm:p-4 rounded-xl bg-gradient-to-br from-background/80 to-muted/30 backdrop-blur-sm border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                      className="group p-3 sm:p-4 rounded-xl bg-gradient-to-br from-background/80 to-muted/30 dark:from-background/90 dark:to-muted/40 backdrop-blur-sm border border-white/10 dark:border-white/20 shadow-lg hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 hover:scale-105"
                       style={{
                         animationDelay: `${index * 100}ms`,
                       }}
@@ -198,7 +206,7 @@ export default function TeamsPage() {
 
           {/* Call to Action Section */}
           <div className="mt-12 sm:mt-16 text-center">
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm border border-white/10">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full bg-gradient-to-r from-muted/50 to-muted/30 dark:from-muted/70 dark:to-muted/50 backdrop-blur-sm border border-white/10 dark:border-white/20">
               <div className="text-base sm:text-lg">🚀</div>
               <span className="text-xs sm:text-sm text-muted-foreground">
                 <span className="font-semibold text-primary">
