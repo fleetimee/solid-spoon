@@ -10,8 +10,8 @@ jest.mock("@/lib/db");
 
 import db from "@/lib/db";
 
-// Cast to get access to mock functions
-const mockQuery = db.query as jest.MockedFunction<typeof db.query>;
+// Cast to get access to mock functions with proper typing
+const mockQuery = db.query as jest.MockedFunction<any>;
 
 describe("getAdminDashboardStats", () => {
   beforeEach(() => {

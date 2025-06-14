@@ -1,12 +1,7 @@
 import type { QueryResult, QueryResultRow } from "pg";
 
-// Export the mock function so it can be controlled from tests - use any for flexibility
-export const mockQuery = jest.fn() as jest.MockedFunction<
-  <T extends QueryResultRow = any>(
-    text: string,
-    params?: any[]
-  ) => Promise<QueryResult<T>>
->;
+// Export the mock function so it can be controlled from tests
+export const mockQuery = jest.fn() as jest.MockedFunction<any>;
 
 // Mock client connection
 export const mockConnect = jest.fn();
