@@ -27,14 +27,15 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { formatDateRangeHumanized } from "@/lib/utils/formatDate";
-import { type getUserReservations } from "@/features/reservations/api/getUserReservations";
+import { type UserReservation } from "@/features/reservations/api/getUserReservations";
 
 // Define the type for a single reservation
-type Reservation = Awaited<ReturnType<typeof getUserReservations>>[number];
+type Reservation = UserReservation;
 
 interface BookingsListProps {
   reservations: Reservation[];
   isLoading?: boolean;
+  showEmptyState?: boolean;
 }
 
 // Professional status configuration with muted corporate colors
@@ -114,6 +115,7 @@ const getStatusConfig = (status: string | null | undefined) => {
 export function BookingsList({
   reservations,
   isLoading = false,
+  showEmptyState = true,
 }: BookingsListProps) {
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null);
@@ -368,7 +370,7 @@ export function BookingsList({
             </Card>
           );
         })
-      ) : (
+      ) : showEmptyState ? (
         // Professional empty state
         <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <CardContent className="p-12 text-center">
@@ -381,12 +383,12 @@ export function BookingsList({
               Tidak ada pemesanan ditemukan
             </h3>
             <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-              Anda belum membuat reservasi ruangan. Ketika Anda memesan ruangan,
-              reservasi Anda akan muncul di sini.
+              Tidak ada reservasi yang sesuai dengan filter yang dipilih. Coba
+              ubah filter atau buat reservasi baru.
             </p>
           </CardContent>
         </Card>
-      )}
+      ) : null}
 
       {/* Professional Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>

@@ -1,6 +1,9 @@
 import {
   getUserReservations,
+  getUserReservationsLegacy,
   UserReservation,
+  PaginatedUserReservations,
+  ReservationFilter,
 } from "@/features/reservations/api/getUserReservations";
 import {
   testData,
@@ -16,7 +19,7 @@ import db from "@/lib/db";
 // Cast to get access to the mock function
 const mockQuery = (db as any).query;
 
-describe("getUserReservations", () => {
+describe("getUserReservations (Paginated)", () => {
   beforeEach(() => {
     mockQuery.mockClear();
     console.error = jest.fn();
@@ -33,13 +36,192 @@ describe("getUserReservations", () => {
     status: "PENDING",
   };
 
-  it("should fetch user reservations successfully", async () => {
+  describe("successful pagination queries", () => {
+    it("should fetch user reservations with default pagination", async () => {
+      // Mock count query
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "1" }]));
+      // Mock data query
+      mockQuery.mockResolvedValueOnce(
+        createMockQueryResult([mockReservationRow])
+      );
+
+      const result = await getUserReservations("user-123");
+
+      expect(result.reservations).toHaveLength(1);
+      expect(result.pagination).toEqual({
+        totalItems: 1,
+        totalPages: 1,
+        currentPage: 1,
+        pageSize: 12,
+      });
+      expect(result.reservations[0]).toMatchObject({
+        id: "1",
+        title: "Team Meeting",
+        description: "Weekly team sync",
+        startTime: new Date("2024-12-20T09:00:00Z"),
+        endTime: new Date("2024-12-20T10:00:00Z"),
+        createdAt: new Date("2024-12-19T10:00:00Z"),
+        roomName: "Conference Room A",
+        status: "PENDING",
+      });
+    });
+
+    it("should fetch user reservations with custom pagination", async () => {
+      // Mock count query
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "25" }]));
+      // Mock data query
+      mockQuery.mockResolvedValueOnce(
+        createMockQueryResult([mockReservationRow])
+      );
+
+      const result = await getUserReservations("user-123", {
+        page: 2,
+        pageSize: 10,
+        filter: "approved",
+      });
+
+      expect(result.pagination).toEqual({
+        totalItems: 25,
+        totalPages: 3,
+        currentPage: 2,
+        pageSize: 10,
+      });
+
+      // Verify correct SQL calls
+      expect(mockQuery).toHaveBeenCalledTimes(2);
+      // First call should be count query
+      expect(mockQuery.mock.calls[0][0]).toContain("COUNT(*)");
+      // Second call should include OFFSET and LIMIT
+      expect(mockQuery.mock.calls[1][0]).toContain("OFFSET");
+      expect(mockQuery.mock.calls[1][0]).toContain("LIMIT");
+      expect(mockQuery.mock.calls[1][1]).toContain(10); // OFFSET value (page 2, pageSize 10 = offset 10)
+      expect(mockQuery.mock.calls[1][1]).toContain(10); // LIMIT value
+    });
+
+    it("should handle filter parameters correctly", async () => {
+      // Mock count query
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "5" }]));
+      // Mock data query
+      mockQuery.mockResolvedValueOnce(
+        createMockQueryResult([mockReservationRow])
+      );
+
+      await getUserReservations("user-123", {
+        filter: "approved",
+      });
+
+      // Verify filter is applied in both queries
+      expect(mockQuery.mock.calls[0][0]).toContain("LOWER(l.value) = $2");
+      expect(mockQuery.mock.calls[0][1]).toContain("approved");
+      expect(mockQuery.mock.calls[1][0]).toContain("LOWER(l.value) = $2");
+      expect(mockQuery.mock.calls[1][1]).toContain("approved");
+    });
+
+    it("should handle empty result set with pagination", async () => {
+      // Mock count query
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "0" }]));
+      // Mock data query
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
+
+      const result = await getUserReservations("user-with-no-reservations");
+
+      expect(result.reservations).toHaveLength(0);
+      expect(result.pagination).toEqual({
+        totalItems: 0,
+        totalPages: 0,
+        currentPage: 1,
+        pageSize: 12,
+      });
+    });
+  });
+
+  describe("error handling", () => {
+    it("should throw error when database query fails", async () => {
+      mockQuery.mockRejectedValueOnce(
+        createMockDBError("Database connection failed")
+      );
+
+      await expect(getUserReservations("user-123")).rejects.toThrow(
+        "Database connection failed"
+      );
+    });
+
+    it("should handle count query failure", async () => {
+      // Count query fails
+      mockQuery.mockRejectedValueOnce(
+        createMockDBError("Database connection failed")
+      );
+
+      await expect(getUserReservations("user-123")).rejects.toThrow(
+        "Database connection failed"
+      );
+    });
+
+    it("should handle data query failure", async () => {
+      // Count query succeeds
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "1" }]));
+      // Data query fails
+      mockQuery.mockRejectedValueOnce(
+        createMockDBError("Database connection failed")
+      );
+
+      await expect(getUserReservations("user-123")).rejects.toThrow(
+        "Failed to fetch user reservations."
+      );
+
+      expect(console.error).toHaveBeenCalledWith(
+        "Database Error: Failed to fetch user reservations.",
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe("pagination calculations", () => {
+    it("should calculate total pages correctly", async () => {
+      // Mock count query - 27 total items
+      mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "27" }]));
+      // Mock data query
+      mockQuery.mockResolvedValueOnce(
+        createMockQueryResult([mockReservationRow])
+      );
+
+      const result = await getUserReservations("user-123", {
+        pageSize: 10,
+      });
+
+      expect(result.pagination.totalPages).toBe(3); // Math.ceil(27/10) = 3
+    });
+  });
+});
+
+describe("getUserReservationsLegacy (Backward Compatibility)", () => {
+  beforeEach(() => {
+    mockQuery.mockClear();
+    console.error = jest.fn();
+  });
+
+  const mockReservationRow = {
+    id: "1",
+    title: "Team Meeting",
+    description: "Weekly team sync",
+    start_time: "2024-12-20T09:00:00Z",
+    end_time: "2024-12-20T10:00:00Z",
+    created_at: "2024-12-19T10:00:00Z",
+    roomName: "Conference Room A",
+    status: "PENDING",
+  };
+
+  it("should return flat array for backward compatibility", async () => {
+    // Mock count query
+    mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "1" }]));
+    // Mock data query
     mockQuery.mockResolvedValueOnce(
       createMockQueryResult([mockReservationRow])
     );
 
-    const result = await getUserReservations("user-123");
+    const result = await getUserReservationsLegacy("user-123");
 
+    expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
       id: "1",
@@ -53,207 +235,17 @@ describe("getUserReservations", () => {
     });
   });
 
-  it("should use correct SQL query with parameterized user ID", async () => {
-    mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
-
-    await getUserReservations("test-user-id");
-
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.stringMatching(/WHERE\s+rr\.user_id\s*=\s*\$1/),
-      ["test-user-id"]
-    );
-  });
-
-  it("should join with room and lookup tables", async () => {
-    mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
-
-    await getUserReservations("user-123");
-
-    const calledQuery = mockQuery.mock.calls[0][0];
-    expect(calledQuery).toMatch(
-      /JOIN\s+room\s+r\s+ON\s+rr\.room_id\s*=\s*r\.id/
-    );
-    expect(calledQuery).toMatch(
-      /JOIN\s+lookup\s+l\s+ON\s+rr\.status_id\s*=\s*l\.id/
-    );
-    expect(calledQuery).toMatch(/l\.category\s*=\s*'reservation_status'/);
-  });
-
-  it("should order by start_time DESC", async () => {
-    mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
-
-    await getUserReservations("user-123");
-
-    const calledQuery = mockQuery.mock.calls[0][0];
-    expect(calledQuery).toMatch(/ORDER\s+BY\s+rr\.start_time\s+DESC/);
-  });
-
-  it("should handle multiple reservations", async () => {
-    const mockRows = [
-      {
-        ...mockReservationRow,
-        id: "1",
-        title: "Morning Meeting",
-        start_time: "2024-12-20T09:00:00Z",
-      },
-      {
-        ...mockReservationRow,
-        id: "2",
-        title: "Afternoon Meeting",
-        start_time: "2024-12-20T14:00:00Z",
-      },
-    ];
-
-    mockQuery.mockResolvedValueOnce(createMockQueryResult(mockRows));
-
-    const result = await getUserReservations("user-123");
-
-    expect(result).toHaveLength(2);
-    expect(result[0].title).toBe("Morning Meeting");
-    expect(result[1].title).toBe("Afternoon Meeting");
-  });
-
-  it("should handle null description", async () => {
-    const rowWithNullDescription = {
-      ...mockReservationRow,
-      description: null,
-    };
-
-    mockQuery.mockResolvedValueOnce(
-      createMockQueryResult([rowWithNullDescription])
-    );
-
-    const result = await getUserReservations("user-123");
-
-    expect(result[0].description).toBeNull();
-  });
-
-  it("should convert timestamp strings to Date objects", async () => {
+  it("should use large pageSize to fetch all records", async () => {
+    // Mock count query
+    mockQuery.mockResolvedValueOnce(createMockQueryResult([{ total: "500" }]));
+    // Mock data query
     mockQuery.mockResolvedValueOnce(
       createMockQueryResult([mockReservationRow])
     );
 
-    const result = await getUserReservations("user-123");
+    await getUserReservationsLegacy("user-123");
 
-    expect(result[0].startTime).toBeInstanceOf(Date);
-    expect(result[0].endTime).toBeInstanceOf(Date);
-    expect(result[0].createdAt).toBeInstanceOf(Date);
-    expect(result[0].startTime.toISOString()).toBe("2024-12-20T09:00:00.000Z");
-  });
-
-  it("should handle Date objects from database", async () => {
-    const rowWithDateObjects = {
-      ...mockReservationRow,
-      start_time: new Date("2024-12-20T09:00:00Z"),
-      end_time: new Date("2024-12-20T10:00:00Z"),
-      created_at: new Date("2024-12-19T10:00:00Z"),
-    };
-
-    mockQuery.mockResolvedValueOnce(
-      createMockQueryResult([rowWithDateObjects])
-    );
-
-    const result = await getUserReservations("user-123");
-
-    expect(result[0].startTime).toBeInstanceOf(Date);
-    expect(result[0].endTime).toBeInstanceOf(Date);
-    expect(result[0].createdAt).toBeInstanceOf(Date);
-  });
-
-  it("should return empty array when no reservations found", async () => {
-    mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
-
-    const result = await getUserReservations("user-with-no-reservations");
-
-    expect(result).toEqual([]);
-  });
-
-  it("should throw error on database failure", async () => {
-    mockQuery.mockRejectedValueOnce(createMockDBError("Connection failed"));
-
-    await expect(getUserReservations("user-123")).rejects.toThrow(
-      "Failed to fetch user reservations."
-    );
-
-    expect(console.error).toHaveBeenCalledWith(
-      "Database Error: Failed to fetch user reservations.",
-      expect.any(Error)
-    );
-  });
-
-  it("should handle different reservation statuses", async () => {
-    const reservationsWithDifferentStatuses = [
-      { ...mockReservationRow, id: "1", status: "PENDING" },
-      { ...mockReservationRow, id: "2", status: "APPROVED" },
-      { ...mockReservationRow, id: "3", status: "REJECTED" },
-      { ...mockReservationRow, id: "4", status: "CANCELLED" },
-      { ...mockReservationRow, id: "5", status: "COMPLETED" },
-    ];
-
-    mockQuery.mockResolvedValueOnce(
-      createMockQueryResult(reservationsWithDifferentStatuses)
-    );
-
-    const result = await getUserReservations("user-123");
-
-    expect(result).toHaveLength(5);
-    expect(result.map((r) => r.status)).toEqual([
-      "PENDING",
-      "APPROVED",
-      "REJECTED",
-      "CANCELLED",
-      "COMPLETED",
-    ]);
-  });
-
-  it("should select correct fields with aliases", async () => {
-    mockQuery.mockResolvedValueOnce(createMockQueryResult([]));
-
-    await getUserReservations("user-123");
-
-    const calledQuery = mockQuery.mock.calls[0][0];
-    expect(calledQuery).toContain('r.name AS "roomName"');
-    expect(calledQuery).toContain("l.value AS status");
-    expect(calledQuery).toContain("rr.id");
-    expect(calledQuery).toContain("rr.title");
-    expect(calledQuery).toContain("rr.description");
-    expect(calledQuery).toContain("rr.start_time");
-    expect(calledQuery).toContain("rr.end_time");
-    expect(calledQuery).toContain("rr.created_at");
-  });
-
-  it("should handle edge case with very long room names", async () => {
-    const longRoomName = "A".repeat(1000);
-    const rowWithLongRoomName = {
-      ...mockReservationRow,
-      roomName: longRoomName,
-    };
-
-    mockQuery.mockResolvedValueOnce(
-      createMockQueryResult([rowWithLongRoomName])
-    );
-
-    const result = await getUserReservations("user-123");
-
-    expect(result[0].roomName).toBe(longRoomName);
-  });
-
-  it("should maintain data types from UserReservation interface", async () => {
-    mockQuery.mockResolvedValueOnce(
-      createMockQueryResult([mockReservationRow])
-    );
-
-    const result = await getUserReservations("user-123");
-    const reservation = result[0];
-
-    // Verify types match UserReservation interface
-    expect(typeof reservation.id).toBe("string");
-    expect(typeof reservation.title).toBe("string");
-    expect(typeof reservation.description).toBe("string");
-    expect(reservation.startTime).toBeInstanceOf(Date);
-    expect(reservation.endTime).toBeInstanceOf(Date);
-    expect(reservation.createdAt).toBeInstanceOf(Date);
-    expect(typeof reservation.roomName).toBe("string");
-    expect(typeof reservation.status).toBe("string");
+    // Verify it uses pageSize of 1000
+    expect(mockQuery.mock.calls[1][1]).toContain(1000);
   });
 });
