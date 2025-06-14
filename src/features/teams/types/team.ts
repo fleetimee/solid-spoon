@@ -8,10 +8,7 @@ export interface TeamMember {
   avatar: string;
   skills: string[];
   social: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    email?: string;
+    email: string;
   };
   status: "active" | "inactive";
   joinDate: string;
@@ -45,12 +42,10 @@ export const teamMembers: TeamMember[] = [
       "Figma",
     ],
     social: {
-      github: "https://github.com/fadilbiyan",
-      linkedin: "https://linkedin.com/in/fadilbiyan",
-      email: "fadil.biyan@student.university.ac.id",
+      email: "048634082@ecampus.ut.ac.id",
     },
     status: "active",
-    joinDate: "2024-01-15",
+    joinDate: "Februari 2025",
   },
   {
     id: "2",
@@ -70,12 +65,10 @@ export const teamMembers: TeamMember[] = [
       "Quality Assurance",
     ],
     social: {
-      github: "https://github.com/indriyana",
-      linkedin: "https://linkedin.com/in/indriyana",
-      email: "indriyana@student.university.ac.id",
+      email: "048332265@ecampus.ut.ac.id",
     },
     status: "active",
-    joinDate: "2024-01-20",
+    joinDate: "Februari 2025",
   },
   {
     id: "3",
@@ -99,12 +92,10 @@ export const teamMembers: TeamMember[] = [
       "Authentication",
     ],
     social: {
-      github: "https://github.com/novianandika",
-      linkedin: "https://linkedin.com/in/novianandika",
-      email: "novian.andika@student.university.ac.id",
+      email: "050193163@ecampus.ut.ac.id",
     },
     status: "active",
-    joinDate: "2024-02-01",
+    joinDate: "Februari 2025",
   },
   {
     id: "4",
@@ -125,12 +116,10 @@ export const teamMembers: TeamMember[] = [
       "Team Communication",
     ],
     social: {
-      github: "https://github.com/putrinurul",
-      linkedin: "https://linkedin.com/in/putrinuruladha",
-      email: "putri.nurul@student.university.ac.id",
+      email: "051409799@ecampus.ut.ac.id",
     },
     status: "active",
-    joinDate: "2024-01-10",
+    joinDate: "Februari 2025",
   },
 ];
 
