@@ -26,9 +26,9 @@ module.exports = {
   // Setup files
   setupFilesAfterEnv: ['<rootDir>/tests/setup.test.ts'],
   
-  // Transform ignore patterns
+  // Transform ignore patterns - updated to handle nanoid and other ES modules
   transformIgnorePatterns: [
-    'node_modules/(?!(.*\\.mjs$))',
+    'node_modules/(?!(nanoid|@aws-sdk|.*\\.mjs$))',
   ],
   
   // Test file patterns - using testMatch instead of deprecated options
