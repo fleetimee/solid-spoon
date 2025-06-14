@@ -16,13 +16,36 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-// Cast to get access to mock functions
-const mockQuery = (db as any).query;
-const mockAuth = (auth as any).api.getSession;
+// Type-safe mock functions
+const mockQuery = db.query as jest.MockedFunction<any>;
+const mockAuth = auth.api.getSession as jest.MockedFunction<any>;
 const mockHeaders = headers as jest.MockedFunction<typeof headers>;
 const mockRevalidatePath = revalidatePath as jest.MockedFunction<
   typeof revalidatePath
 >;
+
+// Helper to create proper session objects for tests
+const createTestSession = (userOverrides: any = {}) => ({
+  session: {
+    id: "session-123",
+    createdAt: new Date("2024-01-01"),
+    updatedAt: new Date("2024-01-01"),
+    userId: userOverrides.id || "user123",
+    expiresAt: new Date("2024-12-31"),
+    token: "test-token",
+  },
+  user: {
+    id: "user123",
+    name: "Test User",
+    email: "test@example.com",
+    emailVerified: true,
+    createdAt: new Date("2024-01-01"),
+    updatedAt: new Date("2024-01-01"),
+    banned: false,
+    role: "user",
+    ...userOverrides,
+  },
+});
 
 describe("cancelReservation", () => {
   beforeEach(() => {
@@ -52,9 +75,7 @@ describe("cancelReservation", () => {
 
     it("should return error when user id is missing", async () => {
       // Arrange
-      mockAuth.mockResolvedValue({
-        user: { id: undefined },
-      });
+      mockAuth.mockResolvedValue(createTestSession({ id: "" }));
 
       // Act
       const result = await cancelReservation("123");
@@ -69,9 +90,7 @@ describe("cancelReservation", () => {
 
   describe("Input Validation", () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({
-        user: { id: "user123", name: "Test User" },
-      });
+      mockAuth.mockResolvedValue(createTestSession());
     });
 
     it("should validate reservation ID", async () => {
@@ -86,24 +105,11 @@ describe("cancelReservation", () => {
 
   describe("Reservation Status Checks", () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({
-        user: { id: "user123", name: "Test User" },
-      });
-
-      // Mock status lookup
-      mockQuery.mockResolvedValueOnce(
-        createMockQueryResult([
-          { id: "pending-id", code: "PENDING" },
-          { id: "approved-id", code: "APPROVED" },
-          { id: "cancelled-id", code: "CANCELLED" },
-        ])
-      );
+      mockAuth.mockResolvedValue(createTestSession());
     });
 
     it("should successfully cancel pending reservation", async () => {
       // Arrange
-      // Reset mocks to avoid conflicts with beforeEach
-      mockQuery.mockReset();
       mockQuery
         .mockResolvedValueOnce(
           createMockQueryResult([
@@ -149,8 +155,6 @@ describe("cancelReservation", () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 2); // 2 days from now
 
-      // Reset mocks to avoid conflicts with beforeEach
-      mockQuery.mockReset();
       mockQuery
         .mockResolvedValueOnce(
           createMockQueryResult([
@@ -193,8 +197,6 @@ describe("cancelReservation", () => {
       const nearFutureDate = new Date();
       nearFutureDate.setHours(nearFutureDate.getHours() + 12); // 12 hours from now
 
-      // Reset mocks to avoid conflicts with beforeEach
-      mockQuery.mockReset();
       mockQuery
         .mockResolvedValueOnce(
           createMockQueryResult([
@@ -298,9 +300,7 @@ describe("cancelReservation", () => {
 
   describe("Database Operations", () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({
-        user: { id: "user123", name: "Test User" },
-      });
+      mockAuth.mockResolvedValue(createTestSession());
     });
 
     it("should handle status lookup failure", async () => {
@@ -373,9 +373,12 @@ describe("cancelReservation", () => {
 
   describe("Notification Creation", () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({
-        user: { id: "user123", name: "Test User", email: "test@example.com" },
-      });
+      mockAuth.mockResolvedValue(
+        createTestSession({
+          name: "Test User",
+          email: "test@example.com",
+        })
+      );
     });
 
     it("should create notification for successful cancellation", async () => {
@@ -471,9 +474,7 @@ describe("cancelReservation", () => {
 
   describe("Path Revalidation", () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({
-        user: { id: "user123", name: "Test User" },
-      });
+      mockAuth.mockResolvedValue(createTestSession());
     });
 
     it("should revalidate relevant paths after successful cancellation", async () => {
