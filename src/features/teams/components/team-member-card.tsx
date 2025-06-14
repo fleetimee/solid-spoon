@@ -89,6 +89,9 @@ export function TeamMemberCard({ member, className }: TeamMemberCardProps) {
           >
             {member.name}
           </Typography>
+          <Typography className="text-xs sm:text-sm text-muted-foreground font-mono mb-1 sm:mb-2">
+            NIM: {member.nim}
+          </Typography>
           <Typography className="text-sm sm:text-base text-primary font-medium bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
             {member.role}
           </Typography>
