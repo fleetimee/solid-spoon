@@ -64,7 +64,7 @@ const footerSections = [
       },
       {
         title: "Hubungi Kami",
-        href: "#",
+        href: "/content?hubungi-kami",
       },
       {
         title: "Karir",
@@ -81,19 +81,19 @@ const footerSections = [
     links: [
       {
         title: "Syarat Layanan",
-        href: "#",
+        href: "/content?syarat-dan-ketentuan",
       },
       {
         title: "Kebijakan Privasi",
-        href: "#",
+        href: "/content?kebijakan-privasi",
       },
       {
         title: "Kebijakan Cookie",
-        href: "#",
+        href: "/content?kebijakan-cookie",
       },
       {
         title: "Keamanan",
-        href: "#",
+        href: "/content?keamanan",
       },
     ],
   },
