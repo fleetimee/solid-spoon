@@ -5,7 +5,11 @@ import { BreadcrumbSetter } from "@/components/breadcrumb-setter";
 import { ContentHeader } from "@/features/content/components/content-header";
 import { ContentRenderer } from "@/features/content/components/content-renderer";
 import { contentData } from "@/features/content/data/content-data";
-import { ContentType } from "@/features/content/types/content";
+import { productContentData } from "@/features/content/data/product-data";
+import {
+  ContentType,
+  ProductContentType,
+} from "@/features/content/types/content";
 
 interface ContentPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -20,36 +24,65 @@ const validContentTypes: Record<string, ContentType> = {
   "hubungi-kami": "hubungi-kami",
 };
 
+// Define valid product content types mapping
+const validProductContentTypes: Record<string, ProductContentType> = {
+  tentang: "tentang",
+  fitur: "fitur",
+  "cara-kerja": "cara-kerja",
+  bantuan: "bantuan",
+};
+
 // Generate metadata based on content type
 export async function generateMetadata({
   searchParams,
 }: ContentPageProps): Promise<Metadata> {
   const resolvedSearchParams = await searchParams;
   const contentTypeKey = Object.keys(resolvedSearchParams)[0];
-  const contentType = validContentTypes[contentTypeKey];
 
-  if (!contentType) {
+  // Check if it's a legal content type
+  const contentType = validContentTypes[contentTypeKey];
+  if (contentType) {
+    const data = contentData[contentType];
     return {
-      title: "Halaman Tidak Ditemukan",
-      description: "Halaman yang Anda cari tidak tersedia.",
+      title: data.title,
+      description: data.description,
+      openGraph: {
+        title: data.title,
+        description: data.description,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: data.title,
+        description: data.description,
+      },
     };
   }
 
-  const data = contentData[contentType];
+  // Check if it's a product content type
+  const productContentType = validProductContentTypes[contentTypeKey];
+  if (productContentType) {
+    const data = productContentData[productContentType];
+    return {
+      title: data.title,
+      description: data.description,
+      openGraph: {
+        title: data.title,
+        description: data.description,
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: data.title,
+        description: data.description,
+      },
+    };
+  }
 
+  // If neither type is found
   return {
-    title: data.title,
-    description: data.description,
-    openGraph: {
-      title: data.title,
-      description: data.description,
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: data.title,
-      description: data.description,
-    },
+    title: "Halaman Tidak Ditemukan",
+    description: "Halaman yang Anda cari tidak tersedia.",
   };
 }
 
@@ -58,40 +91,76 @@ export default async function ContentPage({ searchParams }: ContentPageProps) {
 
   // Get the first search parameter key as content type
   const contentTypeKey = Object.keys(resolvedSearchParams)[0];
-  const contentType = validContentTypes[contentTypeKey];
 
-  // If no valid content type is found, return 404
-  if (!contentType) {
-    notFound();
+  // Check if it's a legal content type
+  const contentType = validContentTypes[contentTypeKey];
+  if (contentType) {
+    const data = contentData[contentType];
+    const breadcrumbTitle = getLegalBreadcrumbTitle(contentType);
+
+    return renderContentPage(data, breadcrumbTitle, contentTypeKey);
   }
 
-  const data = contentData[contentType];
+  // Check if it's a product content type
+  const productContentType = validProductContentTypes[contentTypeKey];
+  if (productContentType) {
+    const data = productContentData[productContentType];
+    const breadcrumbTitle = getProductBreadcrumbTitle(productContentType);
 
-  // Generate breadcrumb based on content type
-  const getBreadcrumbTitle = (type: ContentType): string => {
-    switch (type) {
-      case "syarat-dan-ketentuan":
-        return "Syarat Layanan";
-      case "kebijakan-privasi":
-        return "Kebijakan Privasi";
-      case "kebijakan-cookie":
-        return "Kebijakan Cookie";
-      case "keamanan":
-        return "Keamanan";
-      case "hubungi-kami":
-        return "Hubungi Kami";
-      default:
-        return "Konten";
-    }
-  };
+    return renderContentPage(data, breadcrumbTitle, contentTypeKey);
+  }
 
+  // If no valid content type is found, return 404
+  notFound();
+}
+
+// Generate breadcrumb based on legal content type
+function getLegalBreadcrumbTitle(type: ContentType): string {
+  switch (type) {
+    case "syarat-dan-ketentuan":
+      return "Syarat Layanan";
+    case "kebijakan-privasi":
+      return "Kebijakan Privasi";
+    case "kebijakan-cookie":
+      return "Kebijakan Cookie";
+    case "keamanan":
+      return "Keamanan";
+    case "hubungi-kami":
+      return "Hubungi Kami";
+    default:
+      return "Konten";
+  }
+}
+
+// Generate breadcrumb based on product content type
+function getProductBreadcrumbTitle(type: ProductContentType): string {
+  switch (type) {
+    case "tentang":
+      return "Tentang";
+    case "fitur":
+      return "Fitur";
+    case "cara-kerja":
+      return "Cara Kerja";
+    case "bantuan":
+      return "Bantuan & Dukungan";
+    default:
+      return "Produk";
+  }
+}
+
+// Render the content page
+function renderContentPage(
+  data: any,
+  breadcrumbTitle: string,
+  contentTypeKey: string
+) {
   return (
     <>
       <BreadcrumbSetter
         items={[
           { label: "Beranda", href: "/" },
           {
-            label: getBreadcrumbTitle(contentType),
+            label: breadcrumbTitle,
             href: `/content?${contentTypeKey}`,
           },
         ]}

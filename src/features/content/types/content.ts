@@ -25,6 +25,8 @@ export type ContentType =
   | "keamanan"
   | "hubungi-kami";
 
+export type ProductContentType = "tentang" | "fitur" | "cara-kerja" | "bantuan";
+
 export interface ContentPageProps {
   contentType: ContentType;
   data: ContentData;

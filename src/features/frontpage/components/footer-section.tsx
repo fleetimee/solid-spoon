@@ -18,11 +18,11 @@ const footerSections = [
     links: [
       {
         title: "Tentang",
-        href: "#",
+        href: "/content?tentang",
       },
       {
         title: "Fitur",
-        href: "#",
+        href: "/content?fitur",
       },
       {
         title: "Booking Ruangan",
@@ -30,7 +30,7 @@ const footerSections = [
       },
       {
         title: "Cara Kerja",
-        href: "#",
+        href: "/content?cara-kerja",
       },
     ],
   },
@@ -51,7 +51,7 @@ const footerSections = [
       },
       {
         title: "Bantuan & Dukungan",
-        href: "#",
+        href: "/content?bantuan",
       },
     ],
   },

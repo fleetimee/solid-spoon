@@ -35,6 +35,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
 
+    // Product Pages (priority: 0.7-0.8)
+    {
+      url: `${baseUrl}/content?tentang`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/content?fitur`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/content?cara-kerja`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/content?bantuan`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+
     // Content/Legal Pages (priority: 0.5-0.6)
     {
       url: `${baseUrl}/content?syarat-dan-ketentuan`,
