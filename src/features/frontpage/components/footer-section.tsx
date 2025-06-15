@@ -2,10 +2,11 @@
 
 import { Separator } from "@/components/ui/separator";
 import {
-  DribbbleIcon,
   GithubIcon,
-  TwitchIcon,
   TwitterIcon,
+  XIcon,
+  InstagramIcon,
+  MessageCircleIcon,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -46,10 +47,6 @@ const footerSections = [
         href: "/me/bookings",
       },
       {
-        title: "Notifikasi",
-        href: "/me/notifications",
-      },
-      {
         title: "Bantuan & Dukungan",
         href: "/content?bantuan",
       },
@@ -65,14 +62,6 @@ const footerSections = [
       {
         title: "Hubungi Kami",
         href: "/content?hubungi-kami",
-      },
-      {
-        title: "Karir",
-        href: "#",
-      },
-      {
-        title: "Blog",
-        href: "#",
       },
     ],
   },
@@ -149,6 +138,9 @@ export function Footer() {
           </p>
         </div>
 
+        {/* Spacer column for XL screens to create proper spacing between logo and footer sections */}
+        <div className="hidden xl:block xl:col-span-1" />
+
         {footerSections.map(({ title, links }) => (
           <div key={title} className="col-span-1">
             <h6 className="font-semibold text-foreground">{title}</h6>
@@ -175,17 +167,37 @@ export function Footer() {
         </span>
 
         <div className="flex items-center gap-5 text-muted-foreground">
-          <Link href="#" target="_blank">
-            <TwitterIcon className="h-5 w-5" />
-          </Link>
-          <Link href="#" target="_blank">
-            <DribbbleIcon className="h-5 w-5" />
-          </Link>
-          <Link href="#" target="_blank">
-            <TwitchIcon className="h-5 w-5" />
-          </Link>
-          <Link href="#" target="_blank">
+          <Link
+            href="https://github.com/fleetimee"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
             <GithubIcon className="h-5 w-5" />
+          </Link>
+          <Link
+            href="https://twitter.com/negativegateee"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            <XIcon className="h-5 w-5" />
+          </Link>
+          <Link
+            href="https://www.instagram.com/allunanika/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            <InstagramIcon className="h-5 w-5" />
+          </Link>
+          <Link
+            href="https://wa.me/083840663610"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors"
+          >
+            <MessageCircleIcon className="h-5 w-5" />
           </Link>
         </div>
       </div>
